@@ -1,5 +1,5 @@
 {
-  "name": "TimeOff React",
+  "name": "TimeOff-React",
   "version": "0.0.2",
   "description": "Time-off Management Application",
   "main": "index.js",
@@ -9,7 +9,12 @@
     "build": "next build",
     "start": "next start"
   },
-  "keywords": ["react", "nextjs", "timeoff", "vacation"],
+  "keywords": [
+    "react",
+    "nextjs",
+    "timeoff",
+    "vacation"
+  ],
   "author": "Nico Domino <yo@ndo.dev>",
   "license": "MIT",
   "dependencies": {
@@ -42,7 +47,8 @@
     "parser": "babel-eslint",
     "standard.validate": [
       "javascript",
-      "javascriptreact", {
+      "javascriptreact",
+      {
         "language": "html",
         "autoFix": true
       }

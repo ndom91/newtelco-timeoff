@@ -32,7 +32,7 @@ export default class MyApp extends App {
     const { Component, pageProps } = this.props
 
     return (
-      <ErrorBoundary>
+      <>
         <Head>
           <title>Newtelco Time-Off</title>
           <meta name='viewport' content='width=device-width, initial-scale=1' />
@@ -56,7 +56,6 @@ export default class MyApp extends App {
           <link rel='mask-icon' href='/static/icons/safari-pinned-tab.svg' color='#5bbad5' />
           <link rel='shortcut icon' id='favicon' href='/static/images/favicon/favicon.ico' />
         </Head>
-        <OfflineSupport />
         <Component {...pageProps} />
         <style jsx global>{`
           body,
@@ -67,7 +66,7 @@ export default class MyApp extends App {
           }
         `}
         </style>
-      </ErrorBoundary>
+      </>
     )
   }
 }
