@@ -1,6 +1,6 @@
 import React from 'react'
-// import { faSearch } from "@fortawesome/free-solid-svg-icons"
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faSearch } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   Navbar,
   NavbarToggler,
@@ -87,7 +87,7 @@ export default class NavBar extends React.Component {
             <InputGroup size="sm" seamless>
               <InputGroupAddon type="prepend">
                 <InputGroupText>
-                  {/* <FontAwesomeIcon icon={faSearch} /> */}
+                  <FontAwesomeIcon icon={faSearch} />
                 </InputGroupText>
               </InputGroupAddon>
               <FormInput className="border-0" placeholder="Search..." />

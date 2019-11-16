@@ -2,10 +2,10 @@ import React from 'react'
 import Router from 'next/router'
 import Link from 'next/link'
 import { NextAuth } from 'next-auth/client'
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-// import {
-//   faGoogle
-// } from '@fortawesome/free-brands-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  faGoogle
+} from '@fortawesome/free-brands-svg-icons'
 
 export default class App extends React.Component {
   static async getInitialProps ({ req }) {
@@ -173,7 +173,7 @@ export class SignInButtons extends React.Component {
             return (
               <p key={i}>
                 <a className='btn btn-block btn-outline-secondary' href={this.props.providers[provider].signin}>
-                  {/* <FontAwesomeIcon icon={faGoogle} width='1em' style={{ float: 'left', color: 'secondary' }} /> */}
+                  <FontAwesomeIcon icon={faGoogle} width='1em' style={{ float: 'left', color: 'secondary' }} />
                   Sign in with {provider}
                 </a>
               </p>
