@@ -1,0 +1,12 @@
+node_modules
+.next
+.vscode
+out
+.env
+oauth*.json
+serviceacct.json
+ecosystem.config.js.og
+ecosystem.config.js
+public/precache*
+public/sw.js
+db_backup

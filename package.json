@@ -1,20 +1,56 @@
 {
-  "name": "vacation-next",
+  "name": "TimeOff React",
   "version": "0.0.2",
   "description": "Time-off Management Application",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "next",
-		"build": "next build",
-		"start": "next start"
+    "build": "next build",
+    "start": "next start"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["react", "nextjs", "timeoff", "vacation"],
+  "author": "Nico Domino <yo@ndo.dev>",
+  "license": "MIT",
   "dependencies": {
+    "@zeit/next-css": "^1.0.1",
+    "connect-mongo": "^3.1.2",
+    "date-fns": "^2.7.0",
+    "date-fns-tz": "^1.0.8",
+    "dotenv": "^8.2.0",
+    "dotenv-webpack": "^1.7.0",
+    "express-session": "^1.17.0",
+    "googleapis": "^45.0.0",
+    "isomorphic-unfetch": "^3.0.0",
+    "mongodb": "^3.3.4",
+    "nedb": "^1.8.0",
     "next": "^9.1.3",
+    "next-auth": "^1.12.1",
     "react": "^16.12.0",
-    "react-dom": "^16.12.0"
+    "react-dom": "^16.12.0",
+    "react-select": "^3.0.8",
+    "react-tippy": "^1.3.1",
+    "serverless-mysql": "^1.5.1",
+    "sql-template-strings": "^2.2.2"
+  },
+  "devDependencies": {
+    "ag-grid-community": "^22.0.0",
+    "ag-grid-react": "^22.0.0",
+    "standard": "^14.3.1"
+  },
+  "standard": {
+    "parser": "babel-eslint",
+    "standard.validate": [
+      "javascript",
+      "javascriptreact", {
+        "language": "html",
+        "autoFix": true
+      }
+    ],
+    "ignore": [
+      "node_modules/",
+      "out",
+      ".next"
+    ]
   }
 }
