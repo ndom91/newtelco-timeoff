@@ -1,4 +1,6 @@
 import React from 'react'
+import "bootstrap/dist/css/bootstrap.min.css"
+import "shards-ui/dist/css/shards.min.css"
 import Layout from  '../components/layout/index'
 import RequireLogin from '../components/requiredLogin'
 
