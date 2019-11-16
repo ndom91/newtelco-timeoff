@@ -3,17 +3,17 @@
   "name": "Newtelco Time-Off",
   "icons": [
     {
-      "src": "/static/images/icons/nt-128.png",
+      "src": "/static/img/icons/nt-128.png",
       "type": "image/png",
       "sizes": "128x128"
     },
     {
-      "src": "/static/images/icons/nt-256.png",
+      "src": "/static/img/icons/nt-256.png",
       "type": "image/png",
       "sizes": "256x256"
     },
     {
-      "src": "/static/images/icons/nt-512.png",
+      "src": "/static/img/icons/nt-512.png",
       "type": "image/png",
       "sizes": "512x512"
     }

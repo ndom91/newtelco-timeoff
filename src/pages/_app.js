@@ -4,7 +4,7 @@ import Head from 'next/head'
 // const LogRocket = require('logrocket')
 // const Sentry = require('@sentry/browser')
 
-export default class MyApp extends App {
+export default class AppWrapper extends App {
   static async getInitialProps ({ Component, ctx }) {
     let pageProps = {}
 
