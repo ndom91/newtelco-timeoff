@@ -10,3 +10,4 @@ ecosystem.config.js
 public/precache*
 public/sw.js
 db_backup
+report.*.json

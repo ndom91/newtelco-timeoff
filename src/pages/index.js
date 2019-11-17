@@ -1,8 +1,10 @@
 import React from 'react'
-import "bootstrap/dist/css/bootstrap.min.css"
-import "shards-ui/dist/css/shards.min.css"
-import Layout from  '../components/layout/index'
+import Layout from '../components/layout/index'
 import RequireLogin from '../components/requiredLogin'
+import { Button, FlexboxGrid, Container, Sidebar, Header, Content, Footer } from 'rsuite'
+// import { faSearch } from '@fortawesome/free-solid-svg-icons'
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+// import Link from 'next/link'
 
 class Wrapper extends React.Component {
   constructor (props) {
@@ -17,13 +19,13 @@ class Wrapper extends React.Component {
     // if (this.props.session.user) {
     if (this.props) {
       return (
-        <>
-          <Layout />
-          <div className='app-wrapper'>
-            TEXT!
-          </div>
-        </>
-      ) 
+        <Layout>
+          <Header>
+            <h2>Page Title</h2>
+          </Header>
+          <Content>Content</Content>
+        </Layout>
+      )
     } else {
       return <RequireLogin />
     }

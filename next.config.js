@@ -2,6 +2,7 @@ const { parsed: localEnv } = require('dotenv').config({ path: './.env' })
 const dev = process.env.NODE_ENV !== 'production'
 const webpack = require('webpack')
 const withCSS = require('@zeit/next-css')
+const withLess = require('@zeit/next-less')
 require('dotenv').config()
 const path = require('path')
 const Dotenv = require('dotenv-webpack')
@@ -24,6 +25,9 @@ function HACK_removeMinimizeOptionFromCssLoaders (config) {
 const nextConfig = {
   target: 'server',
   compress: false,
+  lessLoaderOptions: {
+    javascriptEnabled: true
+  },
   exportPathMap: function () {
     return {
       '/': { page: '/' }
@@ -42,4 +46,4 @@ const nextConfig = {
   }
 }
 
-module.exports = withCSS(nextConfig)
+module.exports = withLess(withCSS(nextConfig))
