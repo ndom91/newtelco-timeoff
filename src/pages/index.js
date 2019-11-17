@@ -24,14 +24,6 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor (props) {
-    super(props)
-
-    this.state = {
-      dummy: true
-    }
-  }
-
   render () {
     if (this.props.session.user) {
       return (

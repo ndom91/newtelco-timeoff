@@ -1,5 +1,6 @@
 import React from 'react'
 import Router from 'next/router'
+import fetch from 'isomorphic-unfetch'
 import Link from 'next/link'
 import { NextAuth } from 'next-auth/client'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -13,7 +14,6 @@ import {
   ControlLabel,
   FormControl,
   HelpBlock,
-  Input,
   Container,
   Header,
   Content,
@@ -43,6 +43,20 @@ export default class App extends React.Component {
     }
     this.handleEmailChange = this.handleEmailChange.bind(this)
     this.handleSignInSubmit = this.handleSignInSubmit.bind(this)
+  }
+
+  componentDidMount () {
+    const host = window.location.host
+    fetch(`http://${host}/api/settings/company/info`)
+      .then(res => res.json())
+      .then(data => {
+        if (data) {
+          this.setState({
+            companyName: data.companyInfo[0].companyName
+          })
+        }
+      })
+      .catch(err => console.error(err))
   }
 
   handleEmailChange (event) {
@@ -114,7 +128,7 @@ export default class App extends React.Component {
                       <FormGroup>
                         <ControlLabel style={{ display: 'inline' }}>Email Address</ControlLabel>
                         <HelpBlock style={{ marginTop: '-1px' }} tooltip>Not Required with Google Login</HelpBlock>
-                        <FormControl style={{ width: 300, marginTop: '5px' }} name='email' type='text' value={this.state.email} onChange={this.handleEmailChange} placeholder='jcleese@newtelco.de' />
+                        <FormControl style={{ width: '100%', marginTop: '10px' }} name='email' type='text' value={this.state.email} onChange={formValue => { this.setState({ email: formValue }) }} placeholder='jcleese@newtelco.de' />
                       </FormGroup>
                       <Divider />
                       <FormGroup>
@@ -129,7 +143,12 @@ export default class App extends React.Component {
               </FlexboxGrid>
             </Content>
             <Footer className='login-footer-wrapper'>
-              Footer
+              {this.state.companyName
+                ? (
+                  `${this.state.companyName} ${new Date().getFullYear()}`
+                ) : (
+                  null
+                )}
             </Footer>
           </Container>
           <style jsx>{`
@@ -156,6 +175,11 @@ export default class App extends React.Component {
               flex-grow: 1;
             }
             :global(.login-footer-wrapper) {
+              height: 56px;
+              display: flex;
+              padding: 10px 30px;
+              align-items: center;
+              background-color: #e4e4e4;
             }
             #email::placeholder {
               opacity: 0.4;
@@ -222,7 +246,7 @@ export class SignInButtons extends React.Component {
           Object.keys(this.props.providers).map((provider, i) => {
             return (
               <a key={i} className='btn btn-block btn-outline-secondary' href={this.props.providers[provider].signin}>
-                <Button style={{ width: '48%' }} appearance='default'>
+                <Button style={{ width: '48%', display: 'inline-flex', alignItems: 'center', justifyContent: 'space-around' }} appearance='default'>
                   <FontAwesomeIcon icon={faGoogle} width='1em' style={{ float: 'left', color: 'secondary' }} />
                   Sign in with {provider}
                 </Button>

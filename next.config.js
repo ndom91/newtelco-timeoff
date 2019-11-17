@@ -1,5 +1,5 @@
 const { parsed: localEnv } = require('dotenv').config({ path: './.env' })
-// const dev = process.env.NODE_ENV !== 'production'
+const dev = process.env.NODE_ENV !== 'production'
 const webpack = require('webpack')
 const withCSS = require('@zeit/next-css')
 const withImages = require('next-images')
