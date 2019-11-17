@@ -6,6 +6,25 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faGoogle
 } from '@fortawesome/free-brands-svg-icons'
+import '../../style/newtelco-rsuite.less'
+import {
+  Navbar,
+  Divider,
+  ControlLabel,
+  FormControl,
+  HelpBlock,
+  Input,
+  Container,
+  Header,
+  Content,
+  Footer,
+  FlexboxGrid,
+  Panel,
+  Form,
+  FormGroup,
+  ButtonToolbar,
+  Button
+} from 'rsuite'
 
 export default class App extends React.Component {
   static async getInitialProps ({ req }) {
@@ -77,36 +96,67 @@ export default class App extends React.Component {
       )
     } else {
       return (
-        <div className='container'>
-          <div className='text-center'>
-            <img width='384px' src='/static/images/nt-black.png' alt='Newtelco Maintenance' />
-          </div>
-          <div className='row'>
-            <div className='col-sm-6 mr-auto ml-auto'>
-              <div className='card mt-3 mb-3'>
-                <h4 className='card-header'>Sign In</h4>
-                <div className='card-body pb-0'>
-                  <SignInButtons providers={this.props.providers} />
-                  <form id='signin' method='post' action='/auth/email/signin' onSubmit={this.handleSignInSubmit}>
-                    <input name='_csrf' type='hidden' value={this.state.session.csrfToken} />
-                    <p>
-                      <label htmlFor='email'>Email address</label><br />
-                      <input name='email' type='text' placeholder='jcleese@newtelco.de' id='email' className='form-control' value={this.state.email} onChange={this.handleEmailChange} />
-                    </p>
-                    <p className='text-right'>
-                      <button id='submitButton' type='submit' style={{ width: '10rem' }} className='btn btn-outline-success'>
-                        Sign in
-                      </button>
-                    </p>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div className='show-fake-browser login-page'>
+          <Container className='login-wrapper'>
+            <Header className='login-header-wrapper'>
+              <Navbar appearance='inverse'>
+                <Navbar.Header>
+                  <a className='navbar-brand logo' />
+                </Navbar.Header>
+              </Navbar>
+            </Header>
+            <Content className='login-content-wrapper'>
+              <FlexboxGrid style={{ marginTop: '2rem' }} justify='center'>
+                <FlexboxGrid.Item colspan={8}>
+                  <Panel header={<h3 className='login-text-header'>Login</h3>} bordered>
+                    <Form fluid id='signin' method='post' action='/auth/email/signin' onSubmit={this.handleSignInSubmit}>
+                      <input name='_csrf' type='hidden' value={this.state.session.csrfToken} />
+                      <FormGroup>
+                        <ControlLabel style={{ display: 'inline' }}>Email Address</ControlLabel>
+                        <HelpBlock style={{ marginTop: '-1px' }} tooltip>Not Required with Google Login</HelpBlock>
+                        <FormControl style={{ width: 300, marginTop: '5px' }} name='email' type='text' value={this.state.email} onChange={this.handleEmailChange} placeholder='jcleese@newtelco.de' />
+                      </FormGroup>
+                      <Divider />
+                      <FormGroup>
+                        <ButtonToolbar>
+                          <Button appearance='primary' id='submitButton' type='submit' style={{ width: '50%' }} className='btn btn-outline-success'>Sign In</Button>
+                          <SignInButtons providers={this.props.providers} />
+                        </ButtonToolbar>
+                      </FormGroup>
+                    </Form>
+                  </Panel>
+                </FlexboxGrid.Item>
+              </FlexboxGrid>
+            </Content>
+            <Footer className='login-footer-wrapper'>
+              Footer
+            </Footer>
+          </Container>
           <style jsx>{`
             .text-center {
               margin: 100px 0 50px 0;
             } 
+            :global(.rs-panel-heading) {
+              background-color: #e4e4e4;
+            }
+            :global(.login-text-header) {
+              background-color: #e4e4e4;
+            }
+            :global(.login-page) {
+              display: flex;
+              flex-direction: column;
+            }
+            :global(.login-wrapper) {
+              height: 100vh;
+            }
+            :global(.login-header-wrapper) {
+
+            }
+            :global(.login-content-wrapper) {
+              flex-grow: 1;
+            }
+            :global(.login-footer-wrapper) {
+            }
             #email::placeholder {
               opacity: 0.4;
             }
@@ -171,12 +221,12 @@ export class SignInButtons extends React.Component {
         {
           Object.keys(this.props.providers).map((provider, i) => {
             return (
-              <p key={i}>
-                <a className='btn btn-block btn-outline-secondary' href={this.props.providers[provider].signin}>
+              <a key={i} className='btn btn-block btn-outline-secondary' href={this.props.providers[provider].signin}>
+                <Button style={{ width: '48%' }} appearance='default'>
                   <FontAwesomeIcon icon={faGoogle} width='1em' style={{ float: 'left', color: 'secondary' }} />
                   Sign in with {provider}
-                </a>
-              </p>
+                </Button>
+              </a>
             )
           })
         }

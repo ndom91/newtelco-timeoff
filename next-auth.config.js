@@ -47,7 +47,7 @@ module.exports = () => {
         // Define a port (if none passed, will not start Express)
           port: process.env.PORT || 3000,
           // Secret used to encrypt session data on the server.
-          sessionSecret: '*&TvZRT*#qwQPs8!jduMXmE!ygmUbkCX2Drkxv8zT^YXV9PACJd#wwkTfbzkbkJG',
+          sessionSecret: '*&TvZRT*#qwQPs8!jd49dfE!ygmUbkCX2Drkxv8zT^YXV9PACJd#wwkTfbzkbkJG',
           // Maximum Session Age in ms (optional, default is 7 days).
           // The expiry time for a session is reset every time a user revisits
           // the site or revalidates their session token. This is the maximum

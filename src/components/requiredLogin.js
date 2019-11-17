@@ -1,29 +1,55 @@
 import React from 'react'
 import Link from 'next/link'
+import '../style/newtelco-rsuite.less'
+import {
+  Navbar,
+  Container,
+  Header,
+  Content,
+  Footer,
+  FlexboxGrid,
+  Panel,
+  Form,
+  FormGroup,
+  ControlLabel,
+  ButtonToolbar,
+  Button
+} from 'rsuite'
 
 export default class RequireLogin extends React.Component {
   render () {
     return (
-      <div className='require-login-wrapper'>
-        <div className='container'>
-          <div className='row'>
-            <div className='col-sm-6 mr-auto ml-auto'>
-              <div className='card card-outline mt-3 mb-3'>
-                <h4 className='card-header text-error'>Error!</h4>
-                <div className='card-body pb-0'>
-                  <p>
-                      You must be signed-in to view this content.
-                  </p>
-                  <p className='text-right'>
-                    <Link href='/auth'>
-                      <button id='signin-btn' type='submit' className='btn btn-outline-success'>Sign in</button>
-                    </Link>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className='show-fake-browser login-page'>
+        <Container>
+          <Header>
+            <Navbar appearance='inverse'>
+              <Navbar.Header>
+                <a className='navbar-brand logo'>Brand</a>
+              </Navbar.Header>
+            </Navbar>
+          </Header>
+          <Content>
+            <FlexboxGrid justify='center'>
+              <FlexboxGrid.Item colspan={12}>
+                <Panel header={<h3>Login</h3>} bordered>
+                  <Form fluid>
+                    <FormGroup>
+                      <ControlLabel>You must be signed in to view this content</ControlLabel>
+                    </FormGroup>
+                    <FormGroup>
+                      <ButtonToolbar>
+                        <Link href='/auth'>
+                          <Button appearance='primary'>Sign in</Button>
+                        </Link>
+                      </ButtonToolbar>
+                    </FormGroup>
+                  </Form>
+                </Panel>
+              </FlexboxGrid.Item>
+            </FlexboxGrid>
+          </Content>
+          <Footer>Footer</Footer>
+        </Container>
         <style jsx>{`
           .card-outline {
             border: 3px solid rgba(244,10,10,0.3);
