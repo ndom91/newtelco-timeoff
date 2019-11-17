@@ -2,6 +2,10 @@
 
 Internal Time-Off Management Application
 
+## Features
+
+- Based on the [rsuite](https://rsuitejs.com/en/guide) UI library
+
 ## Setup
 
 1. Clone the repo `git clone https://repo.url`
