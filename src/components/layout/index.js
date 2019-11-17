@@ -1,6 +1,18 @@
 import React from 'react'
 import '../../style/newtelco-rsuite.less'
-import { Nav, Navbar, Dropdown, Sidenav, Sidebar, Icon, Container } from 'rsuite'
+import {
+  Nav,
+  Navbar,
+  Dropdown,
+  Sidenav,
+  Sidebar,
+  Icon,
+  Container,
+  Header,
+  Content,
+  Footer,
+  Breadcrumb
+} from 'rsuite'
 import NTLogo from '../../../public/static/img/newtelco_letters.svg'
 
 const headerStyles = {
@@ -119,10 +131,42 @@ class Layout extends React.Component {
             <NavToggle expand={expand} onChange={this.handleToggle} />
           </Sidebar>
           <Container>
-            {this.props.children}
+            <Header>
+              <div className='header-wrapper'>
+                <span>TITLE</span>
+                <span>
+                  <Breadcrumb style={{ marginBottom: '0px' }}>
+                    <Breadcrumb.Item>Home</Breadcrumb.Item>
+                    <Breadcrumb.Item>Components</Breadcrumb.Item>
+                    <Breadcrumb.Item active>Breadcrumb</Breadcrumb.Item>
+                  </Breadcrumb>
+                </span>
+              </div>
+            </Header>
+            <Content className='content-wrapper'>
+              {this.props.children}
+            </Content>
+            <Footer className='footer-wrapper'>
+              Footer
+            </Footer>
           </Container>
         </Container>
         <style jsx>{`
+          :global(.header-wrapper) {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+          }
+          :global(.content-wrapper) {
+            padding: 20px;
+          }
+          :global(.footer-wrapper) {
+            height: 56px;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+          }
           :global(.wrapper, .rs-container-has-sidebar) {
             height: 100vh;
           }
