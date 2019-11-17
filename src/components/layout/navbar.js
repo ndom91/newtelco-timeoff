@@ -53,19 +53,24 @@ export default class NavBar extends React.Component {
   render() {
     return (
       <Navbar type="dark" theme="primary" expand="md">
-        <NavbarBrand href="#">Shards React</NavbarBrand>
+        <NavbarBrand href="#">Time Off</NavbarBrand>
         <NavbarToggler onClick={this.toggleNavbar} />
 
         <Collapse open={this.state.collapseOpen} navbar>
           <Nav navbar>
             <NavItem>
               <NavLink active href="#">
-                Active
+                New Request
               </NavLink>
             </NavItem>
             <NavItem>
-              <NavLink href="#" disabled>
-                Disabled
+              <NavLink href="#">
+                User
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink href="#">
+                Team
               </NavLink>
             </NavItem>
             <Dropdown
@@ -73,7 +78,7 @@ export default class NavBar extends React.Component {
               toggle={this.toggleDropdown}
             >
               <DropdownToggle nav caret>
-                Dropdown
+                Settings
               </DropdownToggle>
               <DropdownMenu>
                 <DropdownItem>Action</DropdownItem>
