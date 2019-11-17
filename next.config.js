@@ -2,6 +2,7 @@ const { parsed: localEnv } = require('dotenv').config({ path: './.env' })
 const dev = process.env.NODE_ENV !== 'production'
 const webpack = require('webpack')
 const withCSS = require('@zeit/next-css')
+const withImages = require('next-images')
 const withLess = require('@zeit/next-less')
 require('dotenv').config()
 const path = require('path')
@@ -37,6 +38,15 @@ const nextConfig = {
     config.plugins.push(new webpack.EnvironmentPlugin(localEnv))
     HACK_removeMinimizeOptionFromCssLoaders(config)
     config.stats = { warningsFilter: warn => warn.indexOf('Conflicting order between:') > -1 }
+    // config.module.rules.push({
+    //   test: /\.(svg|eot|ttf|woff|woff2)$/,
+    //   use: {
+    //     loader: 'url-loader',
+    //     options: {
+    //       limit: 100000
+    //     }
+    //   }
+    // })
     // eslint-disable-next-line
     new Dotenv({
       path: path.join(__dirname, '.env'),
@@ -46,4 +56,4 @@ const nextConfig = {
   }
 }
 
-module.exports = withLess(withCSS(nextConfig))
+module.exports = withImages(withLess(withCSS(nextConfig)))

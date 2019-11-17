@@ -1,12 +1,13 @@
 import React from 'react'
-import 'rsuite/lib/styles/index.less'
+import '../../style/newtelco-rsuite.less'
 import { Nav, Navbar, Dropdown, Sidenav, Sidebar, Icon, Container } from 'rsuite'
+import NTLogo from '../../../public/static/img/newtelco_letters.svg'
 
 const headerStyles = {
   padding: 18,
   fontSize: 16,
   height: 56,
-  background: '#34c3ff',
+  background: '#67B246',
   color: ' #fff',
   whiteSpace: 'nowrap',
   overflow: 'hidden'
@@ -75,13 +76,13 @@ class Layout extends React.Component {
           >
             <Sidenav.Header>
               <div style={headerStyles}>
-                <Icon icon='logo-analytics' size='lg' style={{ verticalAlign: 0 }} />
-                <span style={{ marginLeft: 12 }}> BRAND</span>
+                <img src={NTLogo} alt='Logo' style={{ height: '32px', width: '32px', marginTop: '-5px', marginLeft: '-5px' }} />
+                <span style={{ marginLeft: 12 }}>NewTelco</span>
               </div>
             </Sidenav.Header>
             <Sidenav
               expanded={expand}
-              defaultOpenKeys={['3']}
+              defaultOpenKeys={['3', '4']}
               appearance='subtle'
             >
               <Sidenav.Body>
@@ -90,20 +91,17 @@ class Layout extends React.Component {
                     Dashboard
                   </Nav.Item>
                   <Nav.Item eventKey='2' icon={<Icon icon='group' />}>
-                    User Group
+                    User
                   </Nav.Item>
                   <Dropdown
                     eventKey='3'
                     trigger='hover'
-                    title='Advanced'
+                    title='Team'
                     icon={<Icon icon='magic' />}
                     placement='rightStart'
                   >
-                    <Dropdown.Item eventKey='3-1'>Geo</Dropdown.Item>
-                    <Dropdown.Item eventKey='3-2'>Devices</Dropdown.Item>
-                    <Dropdown.Item eventKey='3-3'>Brand</Dropdown.Item>
-                    <Dropdown.Item eventKey='3-4'>Loyalty</Dropdown.Item>
-                    <Dropdown.Item eventKey='3-5'>Visit Depth</Dropdown.Item>
+                    <Dropdown.Item eventKey='3-1'>Dashboard</Dropdown.Item>
+                    <Dropdown.Item eventKey='3-2'>Calendar</Dropdown.Item>
                   </Dropdown>
                   <Dropdown
                     eventKey='4'
@@ -112,11 +110,8 @@ class Layout extends React.Component {
                     icon={<Icon icon='gear-circle' />}
                     placement='rightStart'
                   >
-                    <Dropdown.Item eventKey='4-1'>Applications</Dropdown.Item>
-                    <Dropdown.Item eventKey='4-2'>Websites</Dropdown.Item>
-                    <Dropdown.Item eventKey='4-3'>Channels</Dropdown.Item>
-                    <Dropdown.Item eventKey='4-4'>Tags</Dropdown.Item>
-                    <Dropdown.Item eventKey='4-5'>Versions</Dropdown.Item>
+                    <Dropdown.Item eventKey='4-1'>General</Dropdown.Item>
+                    <Dropdown.Item eventKey='4-2'>Admin</Dropdown.Item>
                   </Dropdown>
                 </Nav>
               </Sidenav.Body>
