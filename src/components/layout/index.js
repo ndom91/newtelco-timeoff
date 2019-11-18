@@ -1,4 +1,6 @@
 import React from 'react'
+import Link from 'next/link'
+import fetch from 'isomorphic-unfetch'
 import '../../style/newtelco-rsuite.less'
 import {
   Nav,
@@ -69,6 +71,22 @@ class Layout extends React.Component {
     this.handleToggle = this.handleToggle.bind(this)
   }
 
+  componentDidMount () {
+    const host = window.location.host
+    fetch(`http://${host}/api/settings/company/info`)
+      .then(res => res.json())
+      .then(data => {
+        if (data) {
+          this.setState({
+            settings: {
+              companyName: data.companyInfo[0].companyName
+            }
+          })
+        }
+      })
+      .catch(err => console.error(err))
+  }
+
   handleToggle () {
     this.setState({
       expand: !this.state.expand
@@ -89,7 +107,7 @@ class Layout extends React.Component {
             <Sidenav.Header>
               <div style={headerStyles}>
                 <img src={NTLogo} alt='Logo' style={{ height: '32px', width: '32px', marginTop: '-5px', marginLeft: '-5px' }} />
-                <span style={{ marginLeft: 12 }}>NewTelco</span>
+                <span style={{ marginLeft: 12 }}>{this.state.settings.companyName}</span>
               </div>
             </Sidenav.Header>
             <Sidenav
@@ -100,10 +118,14 @@ class Layout extends React.Component {
               <Sidenav.Body>
                 <Nav>
                   <Nav.Item eventKey='1' active icon={<Icon icon='dashboard' />}>
-                    Dashboard
+                    <Link href='/dashboard'>
+                      Dashboard
+                    </Link>
                   </Nav.Item>
                   <Nav.Item eventKey='2' icon={<Icon icon='group' />}>
+                    <Link href='/user'>
                     User
+                    </Link>
                   </Nav.Item>
                   <Dropdown
                     eventKey='3'
