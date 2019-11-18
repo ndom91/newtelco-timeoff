@@ -66,25 +66,38 @@ class Layout extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      expand: true
+      expand: true,
+      settings: {
+        companyName: ''
+      }
     }
     this.handleToggle = this.handleToggle.bind(this)
   }
 
   componentDidMount () {
     const host = window.location.host
-    fetch(`http://${host}/api/settings/company/info`)
-      .then(res => res.json())
-      .then(data => {
-        if (data) {
-          this.setState({
-            settings: {
-              companyName: data.companyInfo[0].companyName
-            }
-          })
+    const companyInfo = JSON.parse(window.localStorage.getItem('company'))
+    if (companyInfo) {
+      this.setState({
+        settings: {
+          companyName: companyInfo.companyName
         }
       })
-      .catch(err => console.error(err))
+    } else {
+      fetch(`http://${host}/api/settings/company/info`)
+        .then(res => res.json())
+        .then(data => {
+          if (data) {
+            window.localStorage.setItem('company', JSON.stringify(data.companyInfo[0]))
+            this.setState({
+              settings: {
+                companyName: data.companyInfo[0].companyName
+              }
+            })
+          }
+        })
+        .catch(err => console.error(err))
+    }
   }
 
   handleToggle () {
@@ -117,16 +130,16 @@ class Layout extends React.Component {
             >
               <Sidenav.Body>
                 <Nav>
-                  <Nav.Item eventKey='1' active icon={<Icon icon='dashboard' />}>
-                    <Link href='/dashboard'>
-                      Dashboard
-                    </Link>
-                  </Nav.Item>
-                  <Nav.Item eventKey='2' icon={<Icon icon='group' />}>
-                    <Link href='/user'>
-                    User
-                    </Link>
-                  </Nav.Item>
+                  <Link href='/dashboard'>
+                    <Nav.Item eventKey='1' active icon={<Icon icon='dashboard' />}>
+                        Dashboard
+                    </Nav.Item>
+                  </Link>
+                  <Link href='/user'>
+                    <Nav.Item eventKey='2' icon={<Icon icon='group' />}>
+                      User
+                    </Nav.Item>
+                  </Link>
                   <Dropdown
                     eventKey='3'
                     trigger='hover'
