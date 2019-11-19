@@ -130,9 +130,9 @@ class Layout extends React.Component {
             >
               <Sidenav.Body>
                 <Nav>
-                  <Link href='/dashboard'>
+                  <Link href='/'>
                     <Nav.Item eventKey='1' active icon={<Icon icon='dashboard' />}>
-                        Dashboard
+                      Dashboard
                     </Nav.Item>
                   </Link>
                   <Link href='/user'>

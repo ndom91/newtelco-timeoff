@@ -6,6 +6,14 @@ import RequireLogin from '../components/requiredLogin'
 // import { faSearch } from '@fortawesome/free-solid-svg-icons'
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 // import Link from 'next/link'
+import {
+  Dropdown,
+  Icon,
+  Container,
+  Header,
+  Content,
+  Footer
+} from 'rsuite'
 
 class Wrapper extends React.Component {
   static async getInitialProps ({ res, req, query }) {
@@ -28,7 +36,14 @@ class Wrapper extends React.Component {
     if (this.props.session.user) {
       return (
         <Layout>
-          So much content!
+          <Container>
+            <Header>
+              Dashboard
+            </Header>
+            <Content>
+              [GRAPHICS]
+            </Content>
+          </Container>
         </Layout>
       )
     } else {
