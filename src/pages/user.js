@@ -39,6 +39,7 @@ class Wrapper extends React.Component {
     super(props)
     const lastYear = new Date().getFullYear() - 1
     const thisYear = new Date().getFullYear()
+
     // approval_datetime: null
     // approval_hash: null
     // approved: 2
@@ -184,7 +185,6 @@ class Wrapper extends React.Component {
     fetch(`http://${host}/api/user/entries?user=${user}`)
       .then(res => res.json())
       .then(data => {
-        console.log(data)
         if (data.userEntries) {
           this.setState({
             rowData: data.userEntries
@@ -257,6 +257,9 @@ class Wrapper extends React.Component {
             }
             :global(.user-grid) {
               height: 50vh;
+            }
+            :global(.row-awaitingResponse) {
+              background-color: transparent;
             }
             :global(.section-header) {
               font-size: 1.3rem;

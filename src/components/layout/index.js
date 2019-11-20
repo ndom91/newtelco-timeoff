@@ -19,23 +19,6 @@ import {
 } from 'rsuite'
 import NTLogo from '../../../public/static/img/newtelco_letters.svg'
 
-const headerStyles = {
-  padding: 18,
-  fontSize: 16,
-  height: 56,
-  background: '#67B246',
-  color: ' #fff',
-  whiteSpace: 'nowrap',
-  overflow: 'hidden'
-}
-
-const iconStyles = {
-  width: 56,
-  height: 56,
-  lineHeight: '56px',
-  textAlign: 'center'
-}
-
 const NavToggle = ({ expand, onChange }, props) => {
   return (
     <Navbar appearance='subtle' className='nav-toggle'>
@@ -45,7 +28,7 @@ const NavToggle = ({ expand, onChange }, props) => {
             placement='topStart'
             trigger='click'
             renderTitle={children => {
-              return <Icon style={iconStyles} icon='cog' />
+              return <Icon className='icon-style' icon='cog' />
             }}
           >
             <Dropdown.Item>Help</Dropdown.Item>
@@ -78,19 +61,21 @@ class Layout extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      expand: true,
+      expand: '',
       settings: {
         companyName: ''
       }
     }
-    this.handleToggle = this.handleToggle.bind(this)
+    // this.handleToggle = this.handleToggle.bind(this)
   }
 
   componentDidMount () {
     const host = window.location.host
     const companyInfo = JSON.parse(window.localStorage.getItem('company'))
+    const expandStorage = window.localStorage.getItem('layout-expand')
     if (companyInfo) {
       this.setState({
+        expand: expandStorage === 'true',
         settings: {
           companyName: companyInfo.companyName
         }
@@ -112,7 +97,8 @@ class Layout extends React.Component {
     }
   }
 
-  handleToggle () {
+  handleToggle = () => {
+    window.localStorage.setItem('layout-expand', !this.state.expand)
     this.setState({
       expand: !this.state.expand
     })
@@ -149,9 +135,9 @@ class Layout extends React.Component {
             collapsible
           >
             <Sidenav.Header>
-              <div style={headerStyles}>
+              <div className='sidenav-header'>
                 <img src={NTLogo} alt='Logo' style={{ height: '32px', width: '32px', marginTop: '-5px', marginLeft: '-5px' }} />
-                <span style={{ marginLeft: 12 }}>{this.state.settings.companyName}</span>
+                <h3 style={{ display: 'inline', fontWeight: '200', marginLeft: 12 }}>{this.state.settings.companyName}</h3>
               </div>
             </Sidenav.Header>
             <Sidenav
@@ -162,34 +148,55 @@ class Layout extends React.Component {
               <Sidenav.Body>
                 <Nav>
                   <Link href='/'>
-                    <Nav.Item eventKey='1' active={typeof window !== 'undefined' && Router.pathname === '/'} icon={<Icon icon='dashboard' />}>
+                    <Nav.Item eventKey='1' active={typeof window !== 'undefined' && Router.pathname === '/'} icon={<Icon icon='area-chart' />}>
                       Dashboard
                     </Nav.Item>
                   </Link>
                   <Link href='/user'>
-                    <Nav.Item eventKey='2' active={typeof window !== 'undefined' && Router.pathname === '/user'} icon={<Icon icon='group' />}>
+                    <Nav.Item eventKey='2' active={typeof window !== 'undefined' && Router.pathname === '/user'} icon={<Icon icon='user' />}>
                       User
+                    </Nav.Item>
+                  </Link>
+                  <Link href='/new'>
+                    <Nav.Item eventKey='2' active={typeof window !== 'undefined' && Router.pathname === '/new'} icon={<Icon icon='plus-square' />}>
+                      New
                     </Nav.Item>
                   </Link>
                   <Dropdown
                     eventKey='3'
                     trigger='hover'
                     title='Team'
-                    icon={<Icon icon='magic' />}
+                    icon={<Icon icon='group' />}
                     placement='rightStart'
                   >
-                    <Dropdown.Item eventKey='3-1'>Dashboard</Dropdown.Item>
-                    <Dropdown.Item eventKey='3-2'>Calendar</Dropdown.Item>
+                    <Link href='/team/dashboard'>
+                      <Dropdown.Item eventKey='3-1'>
+                        Dashboard
+                      </Dropdown.Item>
+                    </Link>
+                    <Link href='/team/calendar'>
+                      <Dropdown.Item eventKey='3-2'>
+                        Calendar
+                      </Dropdown.Item>
+                    </Link>
                   </Dropdown>
                   <Dropdown
                     eventKey='4'
                     trigger='hover'
                     title='Settings'
-                    icon={<Icon icon='gear-circle' />}
+                    icon={<Icon icon='cog' />}
                     placement='rightStart'
                   >
-                    <Dropdown.Item eventKey='4-1'>General</Dropdown.Item>
-                    <Dropdown.Item eventKey='4-2'>Admin</Dropdown.Item>
+                    <Link href='/settings/general'>
+                      <Dropdown.Item eventKey='4-1'>
+                        General
+                      </Dropdown.Item>
+                    </Link>
+                    <Link href='/settings/admin'>
+                      <Dropdown.Item eventKey='4-2'>
+                        Admin
+                      </Dropdown.Item>
+                    </Link>
                   </Dropdown>
                 </Nav>
               </Sidenav.Body>
@@ -199,9 +206,9 @@ class Layout extends React.Component {
           <Container>
             <Header>
               <div className='header-wrapper'>
-                <span className='header-section-title'>
-                  {typeof window !== 'undefined' && this.capitalizeFirstLetter(Router.pathname.substr(1, Router.pathname.length))}
-                </span>
+                <h4 className='header-section-title'>
+                  {typeof window !== 'undefined' && this.capitalizeFirstLetter(Router.pathname.split('/').slice(1)[Router.pathname.split('/').slice(1).length - 1].substr(0, Router.pathname.length))}
+                </h4>
                 <span>
                   <Breadcrumb separator='>' style={{ marginBottom: '0px' }}>
                     <Breadcrumb.Item>Home</Breadcrumb.Item>
@@ -223,7 +230,7 @@ class Layout extends React.Component {
               {this.props.children}
             </Content>
             <Footer className='footer-wrapper'>
-              Footer
+              {`${this.state.settings.companyName} ${new Date().getFullYear()}`}
             </Footer>
           </Container>
         </Container>
@@ -241,7 +248,8 @@ class Layout extends React.Component {
             height: 56px;
             display: flex;
             align-items: center;
-            padding: 10px;
+            justify-content: flex-end;
+            padding: 10px 20px;
           }
           :global(.logout-btn) {
             background-color: transparent;
@@ -253,10 +261,31 @@ class Layout extends React.Component {
           :global(.rs-sidenav) {
             flex-grow: 1;
           }
+          :global(.sidenav-header h3) {
+            line-height: 20px;
+          }
+          :global(.sidenav-header) {
+            padding: 18px;
+            font-size: 16px;
+            height: 56px;
+            background: #67B246;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            display: ${!this.state.expand ? 'inline-block' : 'flex'};
+            width: ${!this.state.expand ? '56px' : '260px'};
+            justify-content: space-around;
+            transition: all 150ms linear;
+          }
           :global(.header-section-title) {
             font-size: 1.3rem;
-            letter-spacing: 0.2rem;
             font-weight: 100;
+          }
+          :global(.icon-style) {
+            width: 56px;
+            height: 56px;
+            line-height: 56px;
+            text-align: center;
           }
           :global(::-webkit-scrollbar-track) {
               -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0);
