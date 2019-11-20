@@ -23,7 +23,8 @@ import {
   Form,
   FormGroup,
   ButtonToolbar,
-  Button
+  Button,
+  Col
 } from 'rsuite'
 
 export default class App extends React.Component {
@@ -121,7 +122,7 @@ export default class App extends React.Component {
             </Header>
             <Content className='login-content-wrapper'>
               <FlexboxGrid style={{ marginTop: '2rem' }} justify='center'>
-                <FlexboxGrid.Item colspan={8}>
+                <FlexboxGrid.Item componentClass={Col} colspan={6} md={12}>
                   <Panel header={<h3 className='login-text-header'>Login</h3>} bordered>
                     <Form fluid id='signin' method='post' action='/auth/email/signin' onSubmit={this.handleSignInSubmit}>
                       <input name='_csrf' type='hidden' value={this.state.session.csrfToken} />
@@ -133,8 +134,8 @@ export default class App extends React.Component {
                       <Divider />
                       <FormGroup>
                         <ButtonToolbar>
-                          <Button appearance='primary' id='submitButton' type='submit' style={{ width: '50%' }} className='btn btn-outline-success'>Sign In</Button>
                           <SignInButtons providers={this.props.providers} />
+                          <Button appearance='primary' id='submitButton' type='submit' style={{ width: '50%' }} className='btn btn-outline-success'>Sign In</Button>
                         </ButtonToolbar>
                       </FormGroup>
                     </Form>
