@@ -3,16 +3,10 @@ import Layout from '../components/layout/index'
 import Router from 'next/router'
 import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../components/requiredLogin'
-// import { faSearch } from '@fortawesome/free-solid-svg-icons'
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-// import Link from 'next/link'
 import {
-  Dropdown,
-  Icon,
   Container,
   Header,
-  Content,
-  Footer
+  Content
 } from 'rsuite'
 
 class Wrapper extends React.Component {
@@ -35,10 +29,10 @@ class Wrapper extends React.Component {
   render () {
     if (this.props.session.user) {
       return (
-        <Layout>
+        <Layout token={this.props.session.csrfToken}>
           <Container>
             <Header>
-              Dashboard
+              Lorem Ipsum
             </Header>
             <Content>
               [GRAPHICS]

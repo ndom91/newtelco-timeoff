@@ -36,8 +36,8 @@ export default class AppWrapper extends App {
         <Head>
           <title>Newtelco Time-Off</title>
           <meta name='viewport' content='width=device-width, initial-scale=1' />
-          <link rel='apple-touch-icon' sizes='180x180' href='/static/images/favicon/apple-touch-icon.png' />
-          <link rel='mask-icon' href='/static/images/favicon/safari-pinned-tab.svg' color='#5bbad5' />
+          <link rel='apple-touch-icon' sizes='180x180' href='/static/img/favicon/apple-touch-icon.png' />
+          <link rel='mask-icon' href='/static/img/favicon/safari-pinned-tab.svg' color='#5bbad5' />
           <meta name='msapplication-TileColor' content='#603cba' />
           <meta name='theme-color' content='#ffffff' />
           <meta name='application-name' content='Newtelco Time-Off' />
@@ -51,10 +51,10 @@ export default class AppWrapper extends App {
           <meta name='msapplication-tap-highlight' content='no' />
           <meta name='theme-color' content='#000000' />
           <meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover' />
-          <link rel='apple-touch-icon' sizes='180x180' href='/static/images/favicon/apple-touch-icon.png' />
+          <link rel='apple-touch-icon' sizes='180x180' href='/static/img/favicon/apple-touch-icon.png' />
           <link rel='manifest' href='/manifest.json' />
           <link rel='mask-icon' href='/static/icons/safari-pinned-tab.svg' color='#5bbad5' />
-          <link rel='shortcut icon' id='favicon' href='/static/images/favicon/favicon.ico' />
+          <link rel='shortcut icon' id='favicon' href='/static/img/favicon/favicon.ico' />
         </Head>
         <Component {...pageProps} />
         <style jsx global>{`

@@ -6,21 +6,16 @@ import moment from 'moment-timezone'
 import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../components/requiredLogin'
 import DateTimeField from '../components/aggrid/datetime'
+import DateField from '../components/aggrid/date'
 import ApprovedField from '../components/aggrid/approved'
-// import { faSearch } from '@fortawesome/free-solid-svg-icons'
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-// import Link from 'next/link'
 import { AgGridReact } from 'ag-grid-react'
 import 'ag-grid-community/dist/styles/ag-grid.css'
 import 'ag-grid-community/dist/styles/ag-theme-material.css'
 import {
-  Dropdown,
-  Icon,
   Container,
   Header,
   Content,
-  Button,
-  Footer
+  Button
 } from 'rsuite'
 
 class Wrapper extends React.Component {
@@ -42,7 +37,8 @@ class Wrapper extends React.Component {
 
   constructor (props) {
     super(props)
-
+    const lastYear = new Date().getFullYear() - 1
+    const thisYear = new Date().getFullYear()
     // approval_datetime: null
     // approval_hash: null
     // approved: 2
@@ -68,57 +64,90 @@ class Wrapper extends React.Component {
           resizable: true,
           sortable: true,
           filter: true,
-          selectable: true
+          selectable: false,
+          editable: false
         },
         columnDefs: [
           {
             headerName: 'ID',
             field: 'id',
-            width: 80,
             hide: true,
             sort: { direction: 'asc', priority: 0 }
           }, {
-            headerName: 'Days Remaining (Last Year)',
+            headerName: `Days Remaining ${lastYear}`,
             field: 'resturlaubVorjahr',
-            width: 130
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            }
           }, {
-            headerName: 'Days Remaining (This Year)',
-            field: 'resturlaubJAHR'
+            headerName: `Days Remaining ${thisYear}`,
+            field: 'resturlaubJAHR',
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            }
           }, {
             headerName: 'Days Remaining (Total)',
             field: 'jahresurlaubInsgesamt',
-            tooltipField: 'jahresurlaubInsgesamt'
+            tooltipField: 'jahresurlaubInsgesamt',
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            }
           }, {
             headerName: 'Requested Days',
             field: 'beantragt',
-            width: 130
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            }
           }, {
             headerName: 'Days Remaining',
             field: 'restjahresurlaubInsgesamt',
-            width: 160
+            width: 160,
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            }
           }, {
             headerName: 'From',
             field: 'fromDate',
             tooltipField: 'fromDate',
-            cellRenderer: 'dateTimeShort'
+            cellRenderer: 'dateShort',
+            width: 150
           }, {
             headerName: 'To',
             field: 'toDate',
             tooltipField: 'toDate',
-            cellRenderer: 'dateTimeShort'
+            cellRenderer: 'dateShort',
+            width: 150
           }, {
             headerName: 'Submitted',
             cellRenderer: 'dateTimeShort',
-            field: 'submitted_datetime'
+            field: 'submitted_datetime',
+            width: 160
           }, {
             headerName: 'Approval Date/Time',
             field: 'approval_datetime',
-            cellRenderer: 'dateTimeShort'
+            cellRenderer: 'dateTimeShort',
+            width: 160
           }, {
             headerName: 'Approved',
             field: 'approved',
-            width: 100,
+            width: 120,
             cellRenderer: 'approved',
+            pinned: 'right',
             cellStyle: {
               display: 'flex',
               justifyContent: 'center',
@@ -130,6 +159,7 @@ class Wrapper extends React.Component {
         context: { componentParent: this },
         frameworkComponents: {
           dateTimeShort: DateTimeField,
+          dateShort: DateField,
           approved: ApprovedField
         },
         rowSelection: 'multiple',
@@ -196,15 +226,15 @@ class Wrapper extends React.Component {
         <Layout>
           <Container>
             <Header className='user-content-header'>
-              <span>
-                User
+              <span className='section-header'>
+                My Vacations
               </span>
               <Button>
                 Export
               </Button>
             </Header>
             <Content className='user-grid-wrapper'>
-              <div className='ag-theme-material'>
+              <div className='ag-theme-material user-grid'>
                 <AgGridReact
                   gridOptions={gridOptions}
                   rowData={rowData}
@@ -224,6 +254,12 @@ class Wrapper extends React.Component {
             }
             :global(.user-grid-wrapper) {
               height: 50vh;
+            }
+            :global(.user-grid) {
+              height: 50vh;
+            }
+            :global(.section-header) {
+              font-size: 1.3rem;
             }
           `}
           </style>

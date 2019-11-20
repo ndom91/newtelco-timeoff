@@ -122,7 +122,7 @@ export default class App extends React.Component {
             </Header>
             <Content className='login-content-wrapper'>
               <FlexboxGrid style={{ marginTop: '2rem' }} justify='center'>
-                <FlexboxGrid.Item componentClass={Col} colspan={6} md={12}>
+                <FlexboxGrid.Item componentClass={Col} colspan={20} md={8} lg={6}>
                   <Panel header={<h3 className='login-text-header'>Login</h3>} bordered>
                     <Form fluid id='signin' method='post' action='/auth/email/signin' onSubmit={this.handleSignInSubmit}>
                       <input name='_csrf' type='hidden' value={this.state.session.csrfToken} />
@@ -181,6 +181,9 @@ export default class App extends React.Component {
               padding: 10px 30px;
               align-items: center;
               background-color: #e4e4e4;
+            }
+            :global(a.btn-outline-secondary:hover) {
+              text-decoration: none;
             }
             #email::placeholder {
               opacity: 0.4;
@@ -247,7 +250,7 @@ export class SignInButtons extends React.Component {
           Object.keys(this.props.providers).map((provider, i) => {
             return (
               <a key={i} className='btn btn-block btn-outline-secondary' href={this.props.providers[provider].signin}>
-                <Button style={{ width: '48%', display: 'inline-flex', alignItems: 'center', justifyContent: 'space-around' }} appearance='default'>
+                <Button style={{ width: '48%', display: 'inline-flex', alignItems: 'center', justifyContent: 'space-around' }} className='google-signin-btn' appearance='default'>
                   <FontAwesomeIcon icon={faGoogle} width='1em' style={{ float: 'left', color: 'secondary' }} />
                   Sign in with {provider}
                 </Button>

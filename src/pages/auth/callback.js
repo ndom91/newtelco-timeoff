@@ -10,8 +10,6 @@ export default class extends React.Component {
   }
 
   async componentDidMount () {
-    // Get latest session data after rendering on client then redirect.
-    // The ensures client state is always updated after signing in or out.
     const session = await NextAuth.init({ force: true })
     console.log('prepush')
     Router.push('/')
@@ -19,7 +17,6 @@ export default class extends React.Component {
   }
 
   render () {
-    // Provide a link for clients without JavaScript as a fallback.
     return (
       <>
         <style jsx global>{`

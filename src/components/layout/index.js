@@ -1,5 +1,7 @@
 import React from 'react'
+import Router from 'next/router'
 import Link from 'next/link'
+import { NextAuth } from 'next-auth/client'
 import fetch from 'isomorphic-unfetch'
 import '../../style/newtelco-rsuite.less'
 import {
@@ -34,7 +36,7 @@ const iconStyles = {
   textAlign: 'center'
 }
 
-const NavToggle = ({ expand, onChange }) => {
+const NavToggle = ({ expand, onChange }, props) => {
   return (
     <Navbar appearance='subtle' className='nav-toggle'>
       <Navbar.Body>
@@ -48,7 +50,17 @@ const NavToggle = ({ expand, onChange }) => {
           >
             <Dropdown.Item>Help</Dropdown.Item>
             <Dropdown.Item>Settings</Dropdown.Item>
-            <Dropdown.Item>Sign out</Dropdown.Item>
+            <Dropdown.Item>
+              <form id='signout' method='post' action='/auth/signout' onSubmit={props.handleSignOut}>
+                <input name='_csrf' type='hidden' value={props.token} />
+                <div className='logout-btn-wrapper'>
+                  <button className='logout-btn' type='submit' onClick={(ev) => ev.preventDefault()}>
+                    Sign out
+                  </button>
+                </div>
+              </form>
+
+            </Dropdown.Item>
           </Dropdown>
         </Nav>
 
@@ -106,6 +118,25 @@ class Layout extends React.Component {
     })
   }
 
+  onSignOutSubmit = (event) => {
+    event.preventDefault()
+    NextAuth.signout()
+      .then(() => {
+        Router.push('/auth/callback')
+      })
+      .catch(err => {
+        process.env.NODE_ENV === 'development' && console.err(err)
+        Router.push('/auth/error?action=signout')
+      })
+  }
+
+  capitalizeFirstLetter = (string) => {
+    if (string === '') {
+      return 'Dashboard'
+    }
+    return string.charAt(0).toUpperCase() + string.slice(1)
+  }
+
   render () {
     const { expand } = this.state
 
@@ -131,12 +162,12 @@ class Layout extends React.Component {
               <Sidenav.Body>
                 <Nav>
                   <Link href='/'>
-                    <Nav.Item eventKey='1' active icon={<Icon icon='dashboard' />}>
+                    <Nav.Item eventKey='1' active={typeof window !== 'undefined' && Router.pathname === '/'} icon={<Icon icon='dashboard' />}>
                       Dashboard
                     </Nav.Item>
                   </Link>
                   <Link href='/user'>
-                    <Nav.Item eventKey='2' icon={<Icon icon='group' />}>
+                    <Nav.Item eventKey='2' active={typeof window !== 'undefined' && Router.pathname === '/user'} icon={<Icon icon='group' />}>
                       User
                     </Nav.Item>
                   </Link>
@@ -163,17 +194,27 @@ class Layout extends React.Component {
                 </Nav>
               </Sidenav.Body>
             </Sidenav>
-            <NavToggle expand={expand} onChange={this.handleToggle} />
+            <NavToggle expand={expand} handleSignOut={this.onSignOutSubmit} token={this.props.token} onChange={this.handleToggle} />
           </Sidebar>
           <Container>
             <Header>
               <div className='header-wrapper'>
-                <span>TITLE</span>
+                <span className='header-section-title'>
+                  {typeof window !== 'undefined' && this.capitalizeFirstLetter(Router.pathname.substr(1, Router.pathname.length))}
+                </span>
                 <span>
-                  <Breadcrumb style={{ marginBottom: '0px' }}>
+                  <Breadcrumb separator='>' style={{ marginBottom: '0px' }}>
                     <Breadcrumb.Item>Home</Breadcrumb.Item>
-                    <Breadcrumb.Item>Components</Breadcrumb.Item>
-                    <Breadcrumb.Item active>Breadcrumb</Breadcrumb.Item>
+                    {typeof window !== 'undefined' &&
+                      Router.pathname.split('/').slice(1).map((level, index) => {
+                        if (level !== '') {
+                          return (
+                            <Breadcrumb.Item active={index === Router.pathname.split('/').slice(1).length - 1} key={`${index}${level}`}>
+                              {this.capitalizeFirstLetter(level)}
+                            </Breadcrumb.Item>
+                          )
+                        }
+                      })}
                   </Breadcrumb>
                 </span>
               </div>
@@ -202,11 +243,35 @@ class Layout extends React.Component {
             align-items: center;
             padding: 10px;
           }
+          :global(.logout-btn) {
+            background-color: transparent;
+            padding: 0;
+          }
           :global(.wrapper, .rs-container-has-sidebar) {
             height: 100vh;
           }
           :global(.rs-sidenav) {
             flex-grow: 1;
+          }
+          :global(.header-section-title) {
+            font-size: 1.3rem;
+            letter-spacing: 0.2rem;
+            font-weight: 100;
+          }
+          :global(::-webkit-scrollbar-track) {
+              -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0);
+              border-radius: 10px;
+              background-color: rgba(0,0,0,0);
+          }
+          :global(::-webkit-scrollbar) {
+            width: 8px;
+            height: 8px;
+            background-color: transparent;
+          }
+          :global(::-webkit-scrollbar-thumb) {
+            border-radius: 10px;
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.2);
+            background-color: rgba(0,0,0,0.4);
           }
         `}
         </style>
