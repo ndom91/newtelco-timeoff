@@ -37,7 +37,11 @@ const NavToggle = ({ expand, onChange }, props) => {
               <form id='signout' method='post' action='/auth/signout' onSubmit={props.handleSignOut}>
                 <input name='_csrf' type='hidden' value={props.token} />
                 <div className='logout-btn-wrapper'>
-                  <button className='logout-btn' type='submit' onClick={(ev) => ev.preventDefault()}>
+                  <button
+                    className='logout-btn'
+                    type='submit'
+                    onClick={(ev) => ev.preventDefault()}
+                  >
                     Sign out
                   </button>
                 </div>
@@ -66,7 +70,6 @@ class Layout extends React.Component {
         companyName: ''
       }
     }
-    // this.handleToggle = this.handleToggle.bind(this)
   }
 
   componentDidMount () {
@@ -137,13 +140,15 @@ class Layout extends React.Component {
             <Sidenav.Header>
               <div className='sidenav-header'>
                 <img src={NTLogo} alt='Logo' style={{ height: '32px', width: '32px', marginTop: '-5px', marginLeft: '-5px' }} />
-                <h3 style={{ display: 'inline', fontWeight: '200', marginLeft: 12 }}>{this.state.settings.companyName}</h3>
+                <h3 style={{ display: 'inline', fontWeight: '200', marginLeft: 12 }}>
+                  {this.state.settings.companyName}
+                </h3>
               </div>
             </Sidenav.Header>
             <Sidenav
               expanded={expand}
-              defaultOpenKeys={['3', '4']}
-              appearance='subtle'
+              defaultOpenKeys={['4', '5']}
+              appearance='default'
             >
               <Sidenav.Body>
                 <Nav>
@@ -158,42 +163,56 @@ class Layout extends React.Component {
                     </Nav.Item>
                   </Link>
                   <Link href='/new'>
-                    <Nav.Item eventKey='2' active={typeof window !== 'undefined' && Router.pathname === '/new'} icon={<Icon icon='plus-square' />}>
+                    <Nav.Item eventKey='3' active={typeof window !== 'undefined' && Router.pathname === '/new'} icon={<Icon icon='plus-square' />}>
                       New
                     </Nav.Item>
                   </Link>
                   <Dropdown
-                    eventKey='3'
+                    eventKey='4'
                     trigger='hover'
                     title='Team'
                     icon={<Icon icon='group' />}
                     placement='rightStart'
+                    active={typeof window !== 'undefined' && Router.pathname.includes('team')}
                   >
                     <Link href='/team/dashboard'>
-                      <Dropdown.Item eventKey='3-1'>
+                      <Dropdown.Item
+                        eventKey='4-1'
+                        active={typeof window !== 'undefined' && Router.pathname === '/team/dashboard'}
+                      >
                         Dashboard
                       </Dropdown.Item>
                     </Link>
                     <Link href='/team/calendar'>
-                      <Dropdown.Item eventKey='3-2'>
+                      <Dropdown.Item
+                        eventKey='4-2'
+                        active={typeof window !== 'undefined' && Router.pathname === '/team/calendar'}
+                      >
                         Calendar
                       </Dropdown.Item>
                     </Link>
                   </Dropdown>
                   <Dropdown
-                    eventKey='4'
+                    eventKey='5'
                     trigger='hover'
                     title='Settings'
                     icon={<Icon icon='cog' />}
                     placement='rightStart'
+                    active={typeof window !== 'undefined' && Router.pathname.includes('settings')}
                   >
                     <Link href='/settings/general'>
-                      <Dropdown.Item eventKey='4-1'>
+                      <Dropdown.Item
+                        eventKey='5-1'
+                        active={typeof window !== 'undefined' && Router.pathname === '/settings/general'}
+                      >
                         General
                       </Dropdown.Item>
                     </Link>
                     <Link href='/settings/admin'>
-                      <Dropdown.Item eventKey='4-2'>
+                      <Dropdown.Item
+                        eventKey='5-2'
+                        active={typeof window !== 'undefined' && Router.pathname === '/settings/admin'}
+                      >
                         Admin
                       </Dropdown.Item>
                     </Link>
@@ -203,7 +222,7 @@ class Layout extends React.Component {
             </Sidenav>
             <NavToggle expand={expand} handleSignOut={this.onSignOutSubmit} token={this.props.token} onChange={this.handleToggle} />
           </Sidebar>
-          <Container>
+          <Container className='wrapper'>
             <Header>
               <div className='header-wrapper'>
                 <h4 className='header-section-title'>
@@ -235,6 +254,8 @@ class Layout extends React.Component {
           </Container>
         </Container>
         <style jsx>{`
+          :global(.wrapper) {
+          }
           :global(.header-wrapper) {
             display: flex;
             justify-content: space-between;
@@ -243,6 +264,7 @@ class Layout extends React.Component {
           }
           :global(.content-wrapper) {
             padding: 20px;
+            overflow-y: scroll;
           }
           :global(.footer-wrapper) {
             height: 56px;
@@ -263,6 +285,7 @@ class Layout extends React.Component {
           }
           :global(.sidenav-header h3) {
             line-height: 20px;
+            margin-left: 42px !important;
           }
           :global(.sidenav-header) {
             padding: 18px;
@@ -274,12 +297,12 @@ class Layout extends React.Component {
             overflow: hidden;
             display: ${!this.state.expand ? 'inline-block' : 'flex'};
             width: ${!this.state.expand ? '56px' : '260px'};
-            justify-content: space-around;
+            justify-content: flex-start;
             transition: all 150ms linear;
           }
           :global(.header-section-title) {
             font-size: 1.3rem;
-            font-weight: 100;
+            font-weight: 400;
           }
           :global(.icon-style) {
             width: 56px;
@@ -287,10 +310,13 @@ class Layout extends React.Component {
             line-height: 56px;
             text-align: center;
           }
+          :global(.rs-btn-subtle.rs-btn-active) {
+            color: #8e8e93;
+          }
           :global(::-webkit-scrollbar-track) {
-              -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0);
-              border-radius: 10px;
-              background-color: rgba(0,0,0,0);
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0);
+            border-radius: 10px;
+            background-color: rgba(0,0,0,0);
           }
           :global(::-webkit-scrollbar) {
             width: 8px;
