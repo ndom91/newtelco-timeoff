@@ -1,4 +1,4 @@
-node_modules
+node_modules/
 .next
 .vscode
 out
@@ -11,3 +11,4 @@ public/precache*
 public/sw.js
 db_backup
 report.*.json
+node_modules/*

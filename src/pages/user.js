@@ -6,6 +6,7 @@ import moment from 'moment-timezone'
 import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../components/requiredLogin'
 import DateTimeField from '../components/aggrid/datetime'
+import ApprovedField from '../components/aggrid/approved'
 // import { faSearch } from '@fortawesome/free-solid-svg-icons'
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 // import Link from 'next/link'
@@ -74,11 +75,12 @@ class Wrapper extends React.Component {
             headerName: 'ID',
             field: 'id',
             width: 80,
+            hide: true,
             sort: { direction: 'asc', priority: 0 }
           }, {
             headerName: 'Days Remaining (Last Year)',
             field: 'resturlaubVorjahr',
-            width: 100
+            width: 130
           }, {
             headerName: 'Days Remaining (This Year)',
             field: 'resturlaubJAHR'
@@ -89,34 +91,46 @@ class Wrapper extends React.Component {
           }, {
             headerName: 'Requested Days',
             field: 'beantragt',
-            width: 60
+            width: 130
           }, {
             headerName: 'Days Remaining',
-            field: 'restjahresurlaubinsgesamt',
+            field: 'restjahresurlaubInsgesamt',
             width: 160
           }, {
             headerName: 'From',
             field: 'fromDate',
-            tooltipField: 'fromDate'
+            tooltipField: 'fromDate',
+            cellRenderer: 'dateTimeShort'
           }, {
             headerName: 'To',
             field: 'toDate',
-            tooltipField: 'toDate'
+            tooltipField: 'toDate',
+            cellRenderer: 'dateTimeShort'
           }, {
             headerName: 'Submitted',
+            cellRenderer: 'dateTimeShort',
             field: 'submitted_datetime'
           }, {
             headerName: 'Approval Date/Time',
-            field: 'approval_datetime'
+            field: 'approval_datetime',
+            cellRenderer: 'dateTimeShort'
           }, {
             headerName: 'Approved',
             field: 'approved',
-            width: 70
+            width: 100,
+            cellRenderer: 'approved',
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            }
           }
         ],
         context: { componentParent: this },
         frameworkComponents: {
-          edittedby: DateTimeField
+          dateTimeShort: DateTimeField,
+          approved: ApprovedField
         },
         rowSelection: 'multiple',
         paginationPageSize: 10,
@@ -145,6 +159,7 @@ class Wrapper extends React.Component {
           this.setState({
             rowData: data.userEntries
           })
+          window.gridApi && window.gridApi.refreshCells()
         }
       })
       .catch(err => console.error(err))
@@ -188,15 +203,17 @@ class Wrapper extends React.Component {
                 Export
               </Button>
             </Header>
-            <Content>
-              <AgGridReact
-                gridOptions={gridOptions}
-                rowData={rowData}
-                onGridReady={this.handleGridReady}
-                animateRows
-                pagination
-                onFirstDataRendered={this.onFirstDataRendered.bind(this)}
-              />
+            <Content className='user-grid-wrapper'>
+              <div className='ag-theme-material'>
+                <AgGridReact
+                  gridOptions={gridOptions}
+                  rowData={rowData}
+                  onGridReady={this.handleGridReady}
+                  animateRows
+                  pagination
+                  onFirstDataRendered={this.onFirstDataRendered.bind(this)}
+                />
+              </div>
             </Content>
           </Container>
           <style jsx>{`
@@ -204,6 +221,9 @@ class Wrapper extends React.Component {
               display: flex;
               width: 100%;
               justify-content: space-between;
+            }
+            :global(.user-grid-wrapper) {
+              height: 50vh;
             }
           `}
           </style>
