@@ -8,7 +8,7 @@
     "dev": "NODE_ENV=development node index.js",
     "dev:inspect": "NODE_OPTIONS='--inspect' NODE_ENV=development node index.js",
     "build": "next build",
-    "start": "PORT=7666 next start"
+    "start": "PORT=7666 node index.js"
   },
   "keywords": [
     "react",
