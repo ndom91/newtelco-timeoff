@@ -11,9 +11,9 @@ export default class extends React.Component {
 
   async componentDidMount () {
     const session = await NextAuth.init({ force: true })
-    console.log('prepush')
-    Router.push('/')
-    console.log('postpush')
+    setTimeout(() => {
+      Router.push('/')
+    }, 500)
   }
 
   render () {

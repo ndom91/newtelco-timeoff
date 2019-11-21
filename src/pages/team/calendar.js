@@ -6,7 +6,6 @@ import RequireLogin from '../../components/requiredLogin'
 import { getDate } from 'date-fns'
 import {
   Container,
-  Header,
   Content,
   Calendar,
   Whisper,
@@ -106,7 +105,7 @@ class Wrapper extends React.Component {
           <style jsx>{`
             :global(.calendar-todo-list) {
               list-style: none;
-              font-size: 0.6rem;
+              font-size: 0.7rem;
               text-align: left;
             }
             :global(.rs-calendar-table-cell-content) {
