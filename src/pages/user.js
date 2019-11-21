@@ -182,8 +182,9 @@ class Wrapper extends React.Component {
 
   componentDidMount () {
     const host = window.location.host
+    const protocol = window.location.protocol
     const user = this.props.session.user.email
-    fetch(`http://${host}/api/user/entries?user=${user}`)
+    fetch(`${protocol}//${host}/api/user/entries?user=${user}`)
       .then(res => res.json())
       .then(data => {
         if (data.userEntries) {

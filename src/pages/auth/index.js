@@ -48,7 +48,8 @@ export default class App extends React.Component {
 
   componentDidMount () {
     const host = window.location.host
-    fetch(`http://${host}/api/settings/company/info`)
+    const protocol = window.location.protocol
+    fetch(`${protocol}//${host}/api/settings/company/info`)
       .then(res => res.json())
       .then(data => {
         if (data) {

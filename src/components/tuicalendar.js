@@ -16,8 +16,9 @@ class TuiCalendar extends React.Component {
 
   componentDidMount () {
     const host = window.location.host
+    const protocol = window.location.protocol
     const team = 'Technik'
-    fetch(`http://${host}/api/team/cal?t=${team}`)
+    fetch(`${protocol}://${host}/api/team/cal?t=${team}`)
       .then(res => res.json())
       .then(data => {
         if (data.userEntries) {
@@ -48,7 +49,6 @@ class TuiCalendar extends React.Component {
         month={{
           startDayOfWeek: 0
         }}
-        monthView
         defaultView='month'
         timezones={[
           {

@@ -31,7 +31,8 @@ class Wrapper extends React.Component {
       }
     }
     const host = req ? req.headers['x-forwarded-host'] : location.host
-    const pageRequest = `http://${host}/api/user/list`
+    const protocol = location.protocol
+    const pageRequest = `${protocol}//${host}/api/user/list`
     const userRequest = await fetch(pageRequest)
     const userJson = await userRequest.json()
     return {
@@ -101,7 +102,8 @@ class Wrapper extends React.Component {
 
   handleAdGroupSync = () => {
     const host = window.location.host
-    const adRequestUrl = `http://${host}/api/ad`
+    const protocol = window.location.protocol
+    const adRequestUrl = `${protocol}//${host}/api/ad`
     fetch(adRequestUrl)
       .then(res => res.json())
       .then(data => {
@@ -145,7 +147,8 @@ class Wrapper extends React.Component {
 
     if (adUsers.length > 0) {
       const host = window.location.host
-      const adRequestUrl = `http://${host}/api/user/add?u=${JSON.stringify(adUsers)}`
+      const protocol = window.location.protocol
+      const adRequestUrl = `${protocol}//${host}/api/user/add?u=${JSON.stringify(adUsers)}`
       fetch(adRequestUrl, {
         // method: 'POST',
         // body: JSON.stringify({ u: JSON.stringify(adUsers) }),

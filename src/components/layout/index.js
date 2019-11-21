@@ -73,6 +73,7 @@ class Layout extends React.Component {
   }
 
   componentDidMount () {
+    const protocol = window.location.protocol
     const host = window.location.host
     const companyInfo = JSON.parse(window.localStorage.getItem('company'))
     const expandStorage = window.localStorage.getItem('layout-expand')
@@ -84,7 +85,7 @@ class Layout extends React.Component {
         }
       })
     } else {
-      fetch(`http://${host}/api/settings/company/info`)
+      fetch(`${protocol}//${host}/api/settings/company/info`)
         .then(res => res.json())
         .then(data => {
           if (data) {
