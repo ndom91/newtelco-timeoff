@@ -1,6 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import Router from 'next/router'
+import { NextAuth } from 'next-auth/client'
 import fetch from 'isomorphic-unfetch'
 import {
   Nav,
@@ -12,7 +13,7 @@ import {
 } from 'rsuite'
 import NTLogo from '../../public/static/img/newtelco_letters.svg'
 
-const NavToggle = ({ expand, onChange }, props) => {
+const NavToggle = ({ expand, onChange, token, handleSignOut }) => {
   return (
     <Navbar appearance='subtle' className='nav-toggle'>
       <Navbar.Body>
@@ -27,8 +28,8 @@ const NavToggle = ({ expand, onChange }, props) => {
             <Dropdown.Item>Help</Dropdown.Item>
             <Dropdown.Item>Settings</Dropdown.Item>
             <Dropdown.Item>
-              <form id='signout' method='post' action='/auth/signout' onSubmit={props.handleSignOut}>
-                <input name='_csrf' type='hidden' value={props.token} />
+              <form id='signout' method='post' action='/auth/signout' onSubmit={handleSignOut}>
+                <input name='_csrf' type='hidden' value={token} />
                 <div className='logout-btn-wrapper'>
                   <button
                     className='logout-btn'
@@ -57,7 +58,7 @@ class SidebarNT extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      expand: false,
+      // expand: props.expand,
       settings: {
         companyName: ''
       }
@@ -68,10 +69,10 @@ class SidebarNT extends React.Component {
     const protocol = window.location.protocol
     const host = window.location.host
     const companyInfo = JSON.parse(window.localStorage.getItem('company'))
-    const expandStorage = window.localStorage.getItem('layout-expand')
+    // const expandStorage = window.localStorage.getItem('layout-expand')
     if (companyInfo) {
       this.setState({
-        expand: expandStorage === 'true',
+        // expand: expandStorage === 'true',
         settings: {
           companyName: companyInfo.companyName
         }
@@ -93,9 +94,19 @@ class SidebarNT extends React.Component {
     }
   }
 
-  render () {
-    const { expand } = this.state
+  onSignOutSubmit = (event) => {
+    event.preventDefault()
+    NextAuth.signout()
+      .then(() => {
+        Router.push('/auth/callback')
+      })
+      .catch(err => {
+        process.env.NODE_ENV === 'development' && console.err(err)
+        Router.push('/auth/error?action=signout')
+      })
+  }
 
+  render () {
     return (
       <Sidebar
         style={{ display: 'flex', flexDirection: 'column' }}
@@ -112,7 +123,7 @@ class SidebarNT extends React.Component {
           </div>
         </Sidenav.Header>
         <Sidenav
-          expanded={expand}
+          expanded={this.props.expand}
           defaultOpenKeys={['4', '5']}
           appearance='default'
         >
@@ -186,10 +197,10 @@ class SidebarNT extends React.Component {
             </Nav>
           </Sidenav.Body>
         </Sidenav>
-        <NavToggle expand={expand} handleSignOut={this.onSignOutSubmit} token={this.props.token} onChange={this.handleToggle} />
+        <NavToggle expand={this.props.expand} handleSignOut={this.onSignOutSubmit} token={this.props.token} onChange={this.props.handleToggle} />
         <style jsx>{`
           :global(.sidebar-wrapper) {
-            width: ${this.state.expand ? '260px' : '56px'};
+            width: ${this.props.expand ? '260px' : '56px'};
           }
         `}
         </style>

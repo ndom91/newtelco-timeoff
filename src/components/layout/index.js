@@ -1,6 +1,5 @@
 import React from 'react'
 import Router from 'next/router'
-import { NextAuth } from 'next-auth/client'
 import fetch from 'isomorphic-unfetch'
 import SidebarNT from '../../components/sidebarnt'
 import '../../style/newtelco-rsuite.less'
@@ -52,23 +51,11 @@ class Layout extends React.Component {
     }
   }
 
-  handleToggle = () => {
+  onToggle = () => {
     window.localStorage.setItem('layout-expand', !this.state.expand)
     this.setState({
       expand: !this.state.expand
     })
-  }
-
-  onSignOutSubmit = (event) => {
-    event.preventDefault()
-    NextAuth.signout()
-      .then(() => {
-        Router.push('/auth/callback')
-      })
-      .catch(err => {
-        process.env.NODE_ENV === 'development' && console.err(err)
-        Router.push('/auth/error?action=signout')
-      })
   }
 
   capitalizeFirstLetter = (string) => {
@@ -82,7 +69,7 @@ class Layout extends React.Component {
     return (
       <div className='show-fake-browser sidebar-page wrapper'>
         <Container>
-          <SidebarNT />
+          <SidebarNT token={this.props.token} expand={this.state.expand} handleToggle={this.onToggle} />
           <Container className='wrapper'>
             <Header>
               <div className='header-wrapper'>
