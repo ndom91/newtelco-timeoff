@@ -51,84 +51,86 @@ class Wrapper extends React.Component {
     if (this.props.session.user) {
       return (
         <Layout token={this.props.session.csrfToken}>
-          <Container>
-            <Content>
-              <Form className='new-request-form' layout='horizontal'>
-                <PanelGroup style={{ maxWidth: '700px' }}>
-                  <Panel bordered header={<h4 style={{ position: 'relative' }}>User Details<FontAwesomeIcon icon={faUser} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} /></h4>}>
-                    <FormGroup>
-                      <ControlLabel>Name</ControlLabel>
-                      <FormControl name='name' value={this.props.session.user.name} />
-                    </FormGroup>
-                    <FormGroup>
-                      <ControlLabel>Email</ControlLabel>
-                      <FormControl name='email' type='email' value={this.props.session.user.email} />
-                    </FormGroup>
-                  </Panel>
-                  <Panel bordered header={<h4 style={{ position: 'relative' }}>History<FontAwesomeIcon icon={faHistory} width='1em' style={{ marginLeft: '10px', top: '5px', position: 'absolute', color: 'secondary' }} /></h4>}>
-                    <FormGroup>
-                      <ControlLabel>Days from Last Year</ControlLabel>
-                      <FormControl name='daysLastYear' type='text' />
-                    </FormGroup>
-                    <FormGroup>
-                      <ControlLabel>Days from this Year</ControlLabel>
-                      <FormControl name='daysThisYear' type='text' />
-                    </FormGroup>
-                    <FormGroup>
-                      <ControlLabel>Total Days Available</ControlLabel>
-                      <FormControl name='totalDaysAvailable' type='text' />
-                    </FormGroup>
-                    <FormGroup>
-                      <ControlLabel>Requested Days</ControlLabel>
-                      <FormControl name='requestedDays' type='text' />
-                    </FormGroup>
-                    <FormGroup>
-                      <ControlLabel>Days Remaining this Year</ControlLabel>
-                      <FormControl name='remainingDays' type='text' />
-                    </FormGroup>
-                  </Panel>
-                  <Panel bordered header={<h4 style={{ position: 'relative' }}>Other<FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} /></h4>}>
-                    <FormGroup>
-                      <ControlLabel>Type of Absence</ControlLabel>
-                      <RadioGroup name='radioList' inline appearance='picker' defaultValue='A'>
-                        <Radio value='A'>Vacation</Radio>
-                        <Radio value='B'>Illness</Radio>
-                        <Radio value='C'>Newborn</Radio>
-                        <Radio value='D'>Moving</Radio>
-                      </RadioGroup>
-                      <HelpBlock tooltip>Required</HelpBlock>
-                    </FormGroup>
-                    <FormGroup>
-                      <ControlLabel>When do you need off?</ControlLabel>
-                      <DateRangePicker
-                        placement='top'
-                        style={{ width: 320 }}
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <ControlLabel className='filedrop-label'>Documents</ControlLabel>
-                      <Dropzone onDrop={acceptedFiles => console.log(acceptedFiles)}>
-                        {({ getRootProps, getInputProps }) => (
-                          <section className='filedrop-section'>
-                            <div {...getRootProps()}>
-                              <input {...getInputProps()} />
-                              <p className='filedrop-target'>Click here or drop file to upload optional documentation</p>
-                            </div>
-                          </section>
-                        )}
-                      </Dropzone>
-                    </FormGroup>
-                    <FormGroup>
-                      <ButtonToolbar>
-                        <ButtonGroup style={{ width: '320px' }}>
-                          <Button style={{ width: '50%' }} appearance='default'>Cancel</Button>
-                          <Button style={{ width: '50%' }} appearance='primary'>Submit</Button>
-                        </ButtonGroup>
-                      </ButtonToolbar>
-                    </FormGroup>
-                  </Panel>
-                </PanelGroup>
-              </Form>
+          <Container style={{ alignItems: 'center' }}>
+            <Content style={{ width: '640px' }}>
+              <Panel bordered>
+                <Form className='new-request-form' layout='horizontal'>
+                  <PanelGroup style={{ maxWidth: '700px' }}>
+                    <Panel bordered header={<h4 style={{ position: 'relative' }}>User Details<FontAwesomeIcon icon={faUser} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} /></h4>}>
+                      <FormGroup>
+                        <ControlLabel>Name</ControlLabel>
+                        <FormControl name='name' value={this.props.session.user.name} />
+                      </FormGroup>
+                      <FormGroup>
+                        <ControlLabel>Email</ControlLabel>
+                        <FormControl name='email' type='email' value={this.props.session.user.email} />
+                      </FormGroup>
+                    </Panel>
+                    <Panel bordered header={<h4 style={{ position: 'relative' }}>History<FontAwesomeIcon icon={faHistory} width='1em' style={{ marginLeft: '10px', top: '5px', position: 'absolute', color: 'secondary' }} /></h4>}>
+                      <FormGroup>
+                        <ControlLabel>Days from Last Year</ControlLabel>
+                        <FormControl name='daysLastYear' type='text' />
+                      </FormGroup>
+                      <FormGroup>
+                        <ControlLabel>Days from this Year</ControlLabel>
+                        <FormControl name='daysThisYear' type='text' />
+                      </FormGroup>
+                      <FormGroup>
+                        <ControlLabel>Total Days Available</ControlLabel>
+                        <FormControl name='totalDaysAvailable' type='text' />
+                      </FormGroup>
+                      <FormGroup>
+                        <ControlLabel>Requested Days</ControlLabel>
+                        <FormControl name='requestedDays' type='text' />
+                      </FormGroup>
+                      <FormGroup>
+                        <ControlLabel>Days Remaining this Year</ControlLabel>
+                        <FormControl name='remainingDays' type='text' />
+                      </FormGroup>
+                    </Panel>
+                    <Panel bordered header={<h4 style={{ position: 'relative' }}>Other<FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} /></h4>}>
+                      <FormGroup>
+                        <ControlLabel>Type of Absence</ControlLabel>
+                        <RadioGroup name='radioList' inline appearance='picker' defaultValue='A'>
+                          <Radio value='A'>Vacation</Radio>
+                          <Radio value='B'>Illness</Radio>
+                          <Radio value='C'>Newborn</Radio>
+                          <Radio value='D'>Moving</Radio>
+                        </RadioGroup>
+                        <HelpBlock tooltip>Required</HelpBlock>
+                      </FormGroup>
+                      <FormGroup>
+                        <ControlLabel>When do you need off?</ControlLabel>
+                        <DateRangePicker
+                          placement='top'
+                          style={{ width: 320 }}
+                        />
+                      </FormGroup>
+                      <FormGroup>
+                        <ControlLabel className='filedrop-label'>Documents</ControlLabel>
+                        <Dropzone onDrop={acceptedFiles => console.log(acceptedFiles)}>
+                          {({ getRootProps, getInputProps }) => (
+                            <section className='filedrop-section'>
+                              <div {...getRootProps()}>
+                                <input {...getInputProps()} />
+                                <p className='filedrop-target'>Click here or drop file to upload optional documentation</p>
+                              </div>
+                            </section>
+                          )}
+                        </Dropzone>
+                      </FormGroup>
+                      <FormGroup>
+                        <ButtonToolbar>
+                          <ButtonGroup style={{ width: '320px' }}>
+                            <Button style={{ width: '50%' }} appearance='default'>Cancel</Button>
+                            <Button style={{ width: '50%' }} appearance='primary'>Submit</Button>
+                          </ButtonGroup>
+                        </ButtonToolbar>
+                      </FormGroup>
+                    </Panel>
+                  </PanelGroup>
+                </Form>
+              </Panel>
             </Content>
           </Container>
           <style jsx>{`

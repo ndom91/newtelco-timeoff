@@ -1,6 +1,7 @@
 import React from 'react'
 import Layout from '../../components/layout/index'
 import Router from 'next/router'
+import dynamic from 'next/dynamic'
 import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../../components/requiredLogin'
 import {
@@ -9,6 +10,10 @@ import {
   Content
 } from 'rsuite'
 
+const TuiCalendar = dynamic(
+  () => import('../../components/tuicalendar'),
+  { ssr: false }
+)
 class Wrapper extends React.Component {
   static async getInitialProps ({ res, req, query }) {
     if (req && !req.user) {
@@ -35,7 +40,7 @@ class Wrapper extends React.Component {
               Lorem Ipsum
             </Header>
             <Content>
-              [TEAM INDEX]
+              {typeof window !== 'undefined' && <TuiCalendar />}
             </Content>
           </Container>
         </Layout>

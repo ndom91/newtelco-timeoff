@@ -8,7 +8,7 @@
     "dev": "NODE_ENV=development node index.js",
     "dev:inspect": "NODE_OPTIONS='--inspect' NODE_ENV=development node index.js",
     "build": "next build",
-    "start": "next start"
+    "start": "PORT=7666 next start"
   },
   "keywords": [
     "react",
@@ -24,6 +24,7 @@
     "@fortawesome/free-regular-svg-icons": "^5.11.2",
     "@fortawesome/free-solid-svg-icons": "^5.11.2",
     "@fortawesome/react-fontawesome": "^0.1.7",
+    "@toast-ui/react-calendar": "^1.0.4",
     "@zeit/next-css": "^1.0.1",
     "@zeit/next-less": "^1.0.1",
     "activedirectory2": "^1.3.0",

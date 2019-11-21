@@ -14,7 +14,8 @@ import {
   Content,
   Button,
   Modal,
-  Alert
+  Alert,
+  Panel
 } from 'rsuite'
 
 class Wrapper extends React.Component {
@@ -188,11 +189,6 @@ class Wrapper extends React.Component {
   }
 
   onFirstDataRendered = params => {
-    // const allColumnIds = []
-    // params.columnApi.getAllColumns().forEach((column) => {
-    //   allColumnIds.push(column.colId)
-    // })
-    // params.columnApi.autoSizeColumns(allColumnIds)
     // params.api.sizeColumnsToFit()
   }
 
@@ -209,24 +205,26 @@ class Wrapper extends React.Component {
       return (
         <Layout token={this.props.session.csrfToken}>
           <Container>
-            <Header className='user-content-header'>
-              <span className='section-header'>
-                Users
-              </span>
-              <Button onClick={this.handleAdGroupSync}>Sync AD Groups</Button>
-            </Header>
-            <Content className='user-grid-wrapper'>
-              <div className='ag-theme-material user-grid'>
-                <AgGridReact
-                  gridOptions={gridOptions}
-                  rowData={rowData}
-                  onGridReady={this.handleGridReady}
-                  animateRows
-                  pagination
-                  onFirstDataRendered={this.onFirstDataRendered.bind(this)}
-                />
-              </div>
-            </Content>
+            <Panel bordered>
+              <Header className='user-content-header'>
+                <span className='section-header'>
+                  Users
+                </span>
+                <Button onClick={this.handleAdGroupSync}>Sync AD Groups</Button>
+              </Header>
+              <Content className='user-grid-wrapper'>
+                <div className='ag-theme-material user-grid'>
+                  <AgGridReact
+                    gridOptions={gridOptions}
+                    rowData={rowData}
+                    onGridReady={this.handleGridReady}
+                    animateRows
+                    pagination
+                    onFirstDataRendered={this.onFirstDataRendered.bind(this)}
+                  />
+                </div>
+              </Content>
+            </Panel>
           </Container>
           <Modal show={showSyncModal} onHide={this.handleSyncModalClose}>
             <Modal.Header>

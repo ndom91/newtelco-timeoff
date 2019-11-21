@@ -11,7 +11,8 @@ import {
   Calendar,
   Whisper,
   Popover,
-  Badge
+  Badge,
+  Panel
 } from 'rsuite'
 
 function getTodoList (date) {
@@ -103,12 +104,14 @@ class Wrapper extends React.Component {
       return (
         <Layout token={this.props.session.csrfToken}>
           <Container>
-            <Header>
-              Newtelco Absences
-            </Header>
-            <Content>
-              <Calendar bordered renderCell={renderCell} />
-            </Content>
+            <Panel bordered>
+              <Header>
+                Newtelco Absences
+              </Header>
+              <Content>
+                <Calendar bordered renderCell={renderCell} />
+              </Content>
+            </Panel>
           </Container>
           <style jsx>{`
             :global(.calendar-todo-list) {
