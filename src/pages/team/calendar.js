@@ -99,7 +99,7 @@ class Wrapper extends React.Component {
         <Layout token={this.props.session.csrfToken}>
           <Container>
             <Content>
-              <Calendar bordered renderCell={renderCell} />
+              {/* <Calendar bordered renderCell={renderCell} /> */}
             </Content>
           </Container>
           <style jsx>{`

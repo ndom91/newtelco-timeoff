@@ -18,7 +18,7 @@ class TuiCalendar extends React.Component {
     const host = window.location.host
     const protocol = window.location.protocol
     const team = 'Technik'
-    fetch(`${protocol}://${host}/api/team/cal?t=${team}`)
+    fetch(`${protocol}//${host}/api/team/cal?t=${team}`)
       .then(res => res.json())
       .then(data => {
         if (data.userEntries) {
