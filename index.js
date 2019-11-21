@@ -12,6 +12,7 @@ const nextApp = next({
 nextApp.prepare()
   .then(async () => {
     const nextAuthOptions = await nextAuthConfig()
+    nextAuthOptions.csrf = { blacklist: ['/api/user/add'] }
     const nextAuthApp = await nextAuth(nextApp, nextAuthOptions)
     console.log(`Ready on http://localhost:${process.env.PORT || 3000}`)
   })

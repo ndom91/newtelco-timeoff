@@ -26,7 +26,8 @@ import {
   RadioGroup,
   PanelGroup,
   Panel,
-  ButtonToolbar
+  ButtonToolbar,
+  ButtonGroup
 } from 'rsuite'
 
 class Wrapper extends React.Component {
@@ -119,8 +120,10 @@ class Wrapper extends React.Component {
                     </FormGroup>
                     <FormGroup>
                       <ButtonToolbar>
-                        <Button appearance='primary'>Submit</Button>
-                        <Button appearance='default'>Cancel</Button>
+                        <ButtonGroup style={{ width: '320px' }}>
+                          <Button style={{ width: '50%' }} appearance='default'>Cancel</Button>
+                          <Button style={{ width: '50%' }} appearance='primary'>Submit</Button>
+                        </ButtonGroup>
                       </ButtonToolbar>
                     </FormGroup>
                   </Panel>
