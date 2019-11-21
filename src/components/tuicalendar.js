@@ -33,7 +33,7 @@ class TuiCalendar extends React.Component {
   render () {
     return (
       <Calendar
-        height='900px'
+        height='auto'
         calendars={[
           {
             id: '0',
@@ -48,16 +48,13 @@ class TuiCalendar extends React.Component {
         month={{
           startDayOfWeek: 0
         }}
+        monthView
+        defaultView='month'
         timezones={[
           {
-            timezoneOffset: 540,
-            displayLabel: 'GMT+09:00',
-            tooltip: 'Seoul'
-          },
-          {
-            timezoneOffset: -420,
-            displayLabel: 'GMT-08:00',
-            tooltip: 'Los Angeles'
+            timezoneOffset: 60,
+            displayLabel: 'GMT+01:00',
+            tooltip: 'Berlin'
           }
         ]}
       />
