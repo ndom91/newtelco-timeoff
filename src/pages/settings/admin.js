@@ -31,7 +31,7 @@ class Wrapper extends React.Component {
       }
     }
     const host = req ? req.headers['x-forwarded-host'] : location.host
-    const protocol = location.protocol
+    const protocol = typeof window !== 'undefined' ? window.location.protocol : 'https:'
     const pageRequest = `${protocol}//${host}/api/user/list`
     const userRequest = await fetch(pageRequest)
     const userJson = await userRequest.json()
@@ -206,7 +206,7 @@ class Wrapper extends React.Component {
 
     if (this.props.session.user) {
       return (
-        <Layout token={this.props.session.csrfToken}>
+        <Layout user={this.props.session.user.email} token={this.props.session.csrfToken}>
           <Container>
             <Panel bordered>
               <Header className='user-content-header'>

@@ -102,7 +102,7 @@ class Wrapper extends React.Component {
   render () {
     if (this.props.session.user) {
       return (
-        <Layout token={this.props.session.csrfToken}>
+        <Layout user={this.props.session.user.email} token={this.props.session.csrfToken}>
           <Container>
             <Panel bordered>
               <Header>

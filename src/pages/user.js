@@ -76,6 +76,28 @@ class Wrapper extends React.Component {
             hide: true,
             sort: { direction: 'asc', priority: 0 }
           }, {
+            headerName: 'From',
+            field: 'fromDate',
+            tooltipField: 'fromDate',
+            cellRenderer: 'dateShort',
+            width: 100
+          }, {
+            headerName: 'To',
+            field: 'toDate',
+            tooltipField: 'toDate',
+            cellRenderer: 'dateShort',
+            width: 100
+          }, {
+            headerName: 'Requested Days',
+            field: 'beantragt',
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            },
+            width: 160
+          }, {
             headerName: `Days Remaining ${lastYear}`,
             field: 'resturlaubVorjahr',
             cellStyle: {
@@ -83,7 +105,8 @@ class Wrapper extends React.Component {
               justifyContent: 'center',
               alignItems: 'center',
               height: '100%'
-            }
+            },
+            width: 180
           }, {
             headerName: `Days Remaining ${thisYear}`,
             field: 'resturlaubJAHR',
@@ -92,20 +115,12 @@ class Wrapper extends React.Component {
               justifyContent: 'center',
               alignItems: 'center',
               height: '100%'
-            }
+            },
+            width: 180
           }, {
             headerName: 'Days Remaining (Total)',
             field: 'jahresurlaubInsgesamt',
             tooltipField: 'jahresurlaubInsgesamt',
-            cellStyle: {
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100%'
-            }
-          }, {
-            headerName: 'Requested Days',
-            field: 'beantragt',
             cellStyle: {
               display: 'flex',
               justifyContent: 'center',
@@ -122,18 +137,6 @@ class Wrapper extends React.Component {
               alignItems: 'center',
               height: '100%'
             }
-          }, {
-            headerName: 'From',
-            field: 'fromDate',
-            tooltipField: 'fromDate',
-            cellRenderer: 'dateShort',
-            width: 150
-          }, {
-            headerName: 'To',
-            field: 'toDate',
-            tooltipField: 'toDate',
-            cellRenderer: 'dateShort',
-            width: 150
           }, {
             headerName: 'Submitted',
             cellRenderer: 'dateTimeShort',
@@ -206,11 +209,13 @@ class Wrapper extends React.Component {
     params.columnApi.autoSizeColumns()
   }
 
-  handleGridExport () {
+  handleGridExport = () => {
     if (this.gridApi) {
+      const email = this.props.session.user.email
+      const username = email.substr(0, email.lastIndexOf('@'))
       const params = {
         allColumns: true,
-        fileName: `userTimeoff_${moment(new Date()).format('YYYYMMDD')}`,
+        fileName: `${username}_timeoff_${moment(new Date()).format('YYYYMMDD')}.csv`,
         columnSeparator: ','
       }
       this.gridApi.exportDataAsCsv(params)
@@ -225,14 +230,14 @@ class Wrapper extends React.Component {
 
     if (this.props.session.user) {
       return (
-        <Layout token={this.props.session.csrfToken}>
+        <Layout user={this.props.session.user.email} token={this.props.session.csrfToken}>
           <Container>
             <Panel bordered>
               <Header className='user-content-header'>
                 <span className='section-header'>
                   My Vacations
                 </span>
-                <Button>
+                <Button onClick={this.handleGridExport}>
                   Export
                 </Button>
               </Header>
@@ -267,6 +272,9 @@ class Wrapper extends React.Component {
             }
             :global(.section-header) {
               font-size: 1.3rem;
+            }
+            :global(.ag-cell-label-container) {
+              width: 110%;
             }
           `}
           </style>

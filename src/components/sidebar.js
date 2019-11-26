@@ -110,7 +110,7 @@ class SidebarNT extends React.Component {
     return (
       <Sidebar
         style={{ display: 'flex', flexDirection: 'column' }}
-        // width={expand ? 260 : 56}
+        width={this.props.expand ? 260 : 56}
         collapsible
         className='sidebar-wrapper'
       >

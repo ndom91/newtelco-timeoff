@@ -1,0 +1,66 @@
+type User @db(name: "users") {
+  id: Int! @id
+  dateJoined: DateTime @default(value: "NULL")
+  daysAvailable: Float @default(value: 0.0)
+  email: String @default(value: "NULL")
+  fname: String @default(value: "NULL")
+  lname: String @default(value: "NULL")
+  team: UsersTeamEnum @default(value: Technik)
+}
+
+type Manager @db(name: "managers") {
+  id: Int! @id
+  email: String!
+  name: String!
+}
+
+type Setting @db(name: "settings") {
+  id: Int! @id
+  address: String @default(value: "NULL")
+  companyName: String @default(value: "NULL")
+  url: String @default(value: "NULL")
+}
+
+type Team @db(name: "teams") {
+  id: Int! @id
+  manager: Int @default(value: 0)
+  name: String @default(value: "NULL")
+}
+
+enum UsersTeamEnum {
+  Billing
+  Empfang
+  Management
+  Marketing
+  Order
+  Sales
+  Technik
+}
+
+type Vacation @db(name: "vacations") {
+  id: Int! @id
+  approvalDatetime: DateTime @db(name: "approval_datetime") @default(value: "NULL")
+  approvalHash: String @db(name: "approval_hash") @default(value: "NULL")
+  approved: Boolean @default(value: false)
+  beantragt: Float!
+  email: String!
+  fromDate: DateTime!
+  jahresurlaubInsgesamt: Float!
+  manager: String! @default(value: "'nhartmann@newtelco.de'")
+  name: String!
+  note: String @default(value: "NULL")
+  restjahresurlaubInsgesamt: Float!
+  resturlaubJAHR: Float!
+  resturlaubVorjahr: Float!
+  submittedBy: String! @db(name: "submitted_by")
+  submittedDatetime: DateTime! @db(name: "submitted_datetime")
+  toDate: DateTime!
+  type: VacationsTypeEnum @default(value: Vacation)
+}
+
+enum VacationsTypeEnum {
+  Moving
+  Newborn
+  Sick
+  Vacation
+}

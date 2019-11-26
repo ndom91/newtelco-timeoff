@@ -1,7 +1,7 @@
 import React from 'react'
 import Router from 'next/router'
 import fetch from 'isomorphic-unfetch'
-import SidebarNT from '../../components/sidebarnt'
+import SidebarNT from '../sidebar'
 import '../../style/newtelco-rsuite.less'
 import {
   Container,
@@ -26,23 +26,42 @@ class Layout extends React.Component {
     const protocol = window.location.protocol
     const host = window.location.host
     const companyInfo = JSON.parse(window.localStorage.getItem('company'))
+    const userTeam = JSON.parse(window.localStorage.getItem('userTeam'))
     const expandStorage = window.localStorage.getItem('layout-expand')
-    if (companyInfo) {
+    if (companyInfo && userTeam) {
       this.setState({
         expand: expandStorage === 'true',
         settings: {
-          companyName: companyInfo.companyName
+          companyName: companyInfo.companyName,
+          team: userTeam.team
         }
       })
-    } else {
-      fetch(`${protocol}//${host}/api/settings/company/info`)
+    } else if (!companyInfo || !userTeam) {
+      !companyInfo && fetch(`${protocol}//${host}/api/settings/company/info`)
         .then(res => res.json())
         .then(data => {
           if (data) {
             window.localStorage.setItem('company', JSON.stringify(data.companyInfo[0]))
             this.setState({
               settings: {
+                ...this.state.settings,
                 companyName: data.companyInfo[0].companyName
+              }
+            })
+          }
+        })
+        .catch(err => console.error(err))
+
+      const email = this.props.user
+      !userTeam && fetch(`${protocol}//${host}/api/settings/user/team?mail=${encodeURIComponent(email)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data) {
+            window.localStorage.setItem('userTeam', JSON.stringify({ team: data.user[0].team }))
+            this.setState({
+              settings: {
+                ...this.state.settings,
+                team: data.user[0].team
               }
             })
           }
