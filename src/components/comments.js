@@ -27,7 +27,7 @@ class InfiniteHistory extends React.Component {
     const protocol = window.location.protocol
     const host = window.location.host
     const team = this.props.team
-    const user = encodeURIComponent(this.props.user)
+    const user = encodeURIComponent(this.props.user.email)
     const body = encodeURIComponent(this.state.commentText)
     const pageRequest = `${protocol}//${host}/api/comments/post?team=${team}&user=${user}&body=${body}`
     fetch(pageRequest)
@@ -36,6 +36,20 @@ class InfiniteHistory extends React.Component {
         console.log(data)
         if (data.discussionInsert.affectedRows === 1) {
           Alert.success('Comment Posted')
+          const newComments = this.state.items
+          const userFullname = this.props.user.name
+          newComments.unshift({
+            userDetails: {
+              fname: userFullname.substr(0, userFullname.lastIndexOf(' ')),
+              lname: userFullname.substr(userFullname.lastIndexOf(' '), userFullname.length)
+            },
+            id: data.discussionInsert.insertId,
+            body: body,
+            datetime: new Date()
+          })
+          this.setState({
+            items: newComments
+          })
         } else {
           Alert.error('Error Posting Comment')
         }
@@ -53,6 +67,11 @@ class InfiniteHistory extends React.Component {
         console.log(data)
         if (data.discussionDelete.affectedRows === 1) {
           Alert.success('Comment Deleted')
+          const comments = this.state.items
+          const remainingComments = comments.filter(com => com.id !== id)
+          this.setState({
+            items: remainingComments
+          })
         } else {
           Alert.error('Error Deleting Comment')
         }

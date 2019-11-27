@@ -73,10 +73,10 @@ class Wrapper extends React.Component {
     if (this.props.session.user) {
       return (
         <Layout user={this.props.session.user.email} token={this.props.session.csrfToken}>
-          <Container style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Container style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
             <Panel className='user-panel'>
               {teamName
-                ? <Comments user={this.props.session.user.email} length={2} team={this.state.teamName} />
+                ? <Comments user={this.props.session.user} length={2} team={this.state.teamName} />
                 : <h4>Loading...</h4>}
             </Panel>
             <Panel className='team-panel' bordered>
