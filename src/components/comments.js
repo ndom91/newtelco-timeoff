@@ -26,7 +26,7 @@ class Comments extends React.Component {
   notifyInfo = (header, text) => {
     Notification.info({
       title: header,
-      duration: 20000,
+      duration: 2000,
       description: <div className='notify-body'>{text}</div>
     })
   }
@@ -34,7 +34,7 @@ class Comments extends React.Component {
   notifyWarn = (header, text) => {
     Notification.warning({
       title: header,
-      duration: 20000,
+      duration: 2000,
       description: <div className='notify-body'>{text}</div>
     })
   }
@@ -60,14 +60,16 @@ class Comments extends React.Component {
           newComments.unshift({
             userDetails: {
               fname: userFullname.substr(0, userFullname.lastIndexOf(' ')),
-              lname: userFullname.substr(userFullname.lastIndexOf(' '), userFullname.length)
+              lname: userFullname.substr(userFullname.lastIndexOf(' '), userFullname.length),
+              email: this.props.user.email
             },
             id: data.discussionInsert.insertId,
-            body: body,
+            body: this.state.commentText,
             datetime: new Date()
           })
           this.setState({
-            items: newComments
+            items: newComments,
+            commentText: ''
           })
         } else {
           this.notifyWarn('Error Posting Comment')
@@ -158,6 +160,7 @@ class Comments extends React.Component {
             rows={3}
             style={{ width: '80%', resize: 'auto' }}
             placeholder='What do you want to say?'
+            value={this.state.commentText}
             onChange={this.handleCommentChange}
           />
           <Button

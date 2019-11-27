@@ -10,6 +10,8 @@ import 'ag-grid-community/dist/styles/ag-grid.css'
 import 'ag-grid-community/dist/styles/ag-theme-material.css'
 import DateField from '../../components/aggrid/date'
 import DateTimeField from '../../components/aggrid/datetime'
+import DateTimeFieldApproval from '../../components/aggrid/datetimeapproval'
+import ApprovedBtn from '../../components/aggrid/approvedbtn'
 import ApprovedField from '../../components/aggrid/approved'
 import {
   Container,
@@ -21,6 +23,13 @@ import {
   Panel,
   SelectPicker
 } from 'rsuite'
+import {
+  Accordion,
+  AccordionItem,
+  AccordionItemHeading,
+  AccordionItemButton,
+  AccordionItemPanel
+} from 'react-accessible-accordion'
 
 class Wrapper extends React.Component {
   static async getInitialProps ({ res, req, query }) {
@@ -56,6 +65,127 @@ class Wrapper extends React.Component {
       showSyncModal: false,
       rowData: props.users.userList,
       allUsers: [],
+      allRowData: [],
+      allGridOptions: {
+        defaultColDef: {
+          resizable: true,
+          sortable: true,
+          filter: true,
+          selectable: false,
+          editable: false
+        },
+        columnDefs: [
+          {
+            headerName: 'ID',
+            field: 'id',
+            hide: true,
+            sort: { direction: 'asc', priority: 0 }
+          }, {
+            headerName: 'Name',
+            field: 'name',
+            tooltipField: 'name',
+            width: 150
+          }, {
+            headerName: 'From',
+            field: 'fromDate',
+            tooltipField: 'fromDate',
+            cellRenderer: 'dateShort',
+            width: 100
+          }, {
+            headerName: 'To',
+            field: 'toDate',
+            tooltipField: 'toDate',
+            cellRenderer: 'dateShort',
+            width: 100
+          }, {
+            headerName: 'Requested Days',
+            field: 'beantragt',
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            },
+            width: 160
+          }, {
+            headerName: `Days Remaining ${lastYear}`,
+            field: 'resturlaubVorjahr',
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            },
+            width: 180
+          }, {
+            headerName: `Days Remaining ${thisYear}`,
+            field: 'resturlaubJAHR',
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            },
+            width: 180
+          }, {
+            headerName: 'Days Remaining (Total)',
+            field: 'jahresurlaubInsgesamt',
+            tooltipField: 'jahresurlaubInsgesamt',
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            }
+          }, {
+            headerName: 'Days Remaining',
+            field: 'restjahresurlaubInsgesamt',
+            width: 160,
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            }
+          }, {
+            headerName: 'Type',
+            field: 'type',
+            width: 130
+          }, {
+            headerName: 'Submitted',
+            cellRenderer: 'dateTimeShort',
+            field: 'submitted_datetime',
+            width: 160
+          }, {
+            headerName: 'Approval Date/Time',
+            field: 'approval_datetime',
+            cellRenderer: 'dateTimeShortApproval',
+            width: 160
+          }, {
+            headerName: 'Approved',
+            field: 'approved',
+            width: 140,
+            cellRenderer: 'approvedbtn',
+            pinned: 'right',
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            }
+          }
+        ],
+        context: { componentParent: this },
+        frameworkComponents: {
+          dateTimeShort: DateTimeField,
+          dateTimeShortApproval: DateTimeFieldApproval,
+          dateShort: DateField,
+          approvedbtn: ApprovedBtn
+        },
+        rowSelection: 'multiple',
+        paginationPageSize: 10,
+        rowClass: 'row-class'
+      },
       personalRowData: [],
       personalGridOptions: {
         defaultColDef: {
@@ -133,6 +263,10 @@ class Wrapper extends React.Component {
               alignItems: 'center',
               height: '100%'
             }
+          }, {
+            headerName: 'Type',
+            field: 'type',
+            width: 130
           }, {
             headerName: 'Submitted',
             cellRenderer: 'dateTimeShort',
@@ -293,6 +427,19 @@ class Wrapper extends React.Component {
     this.setState({
       allUsers: selectUserList
     })
+    const host = window.location.host
+    const protocol = window.location.protocol
+    fetch(`${protocol}//${host}/api/user/entries/all`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.userEntries) {
+          this.setState({
+            allRowData: data.userEntries
+          })
+          // window.gridApi && window.gridApi.refreshCells()
+        }
+      })
+      .catch(err => console.error(err))
   }
 
   handleSyncModalClose = () => {
@@ -311,12 +458,17 @@ class Wrapper extends React.Component {
 
   handlePersonalGridReady = params => {
     params.api.sizeColumnsToFit()
-    this.gridApi = params.api
+    this.personalGridApi = params.api
     this.gridColumnApi = params.columnApi
   }
 
+  handleAllGridReady = params => {
+    params.api.sizeColumnsToFit()
+    this.allGridApi = params.api
+  }
+
   handlePersonalGridExport = () => {
-    if (this.gridApi) {
+    if (this.personalGridApi) {
       const email = this.state.userSelection.value
       const username = email.substr(0, email.lastIndexOf('@'))
       const params = {
@@ -324,7 +476,7 @@ class Wrapper extends React.Component {
         fileName: `${username}_timeoff_${moment(new Date()).format('YYYYMMDD')}.csv`,
         columnSeparator: ','
       }
-      this.gridApi.exportDataAsCsv(params)
+      this.personalGridApi.exportDataAsCsv(params)
     }
   }
 
@@ -345,6 +497,17 @@ class Wrapper extends React.Component {
       .catch(err => console.error(err))
   }
 
+  handleAllGridExport = () => {
+    if (this.allGridApi) {
+      const params = {
+        allColumns: true,
+        fileName: `newtelco_allUsers_timeoff_${moment(new Date()).format('YYYYMMDD')}.csv`,
+        columnSeparator: ','
+      }
+      this.allGridApi.exportDataAsCsv(params)
+    }
+  }
+
   render () {
     const {
       gridOptions,
@@ -354,57 +517,109 @@ class Wrapper extends React.Component {
       updateCount,
       personalGridOptions,
       personalRowData,
-      allUsers
+      allUsers,
+      allGridOptions,
+      allRowData
     } = this.state
 
     if (this.props.session.user && this.props.admin) {
       return (
         <Layout user={this.props.session.user.email} token={this.props.session.csrfToken}>
-          <Container>
-            <Panel bordered>
-              <Header className='user-content-header'>
-                <span className='section-header'>
-                  Users
-                </span>
-                <Button appearance='ghost' onClick={this.handleAdGroupSync}>Sync AD Groups</Button>
-              </Header>
-              <Content className='user-grid-wrapper'>
-                <div className='ag-theme-material user-grid'>
-                  <AgGridReact
-                    gridOptions={gridOptions}
-                    rowData={rowData}
-                    onGridReady={this.handleGridReady}
-                    animateRows
-                    pagination
-                  />
-                </div>
-              </Content>
-            </Panel>
-            <Panel bordered>
-              <Header className='user-content-header'>
-                <span className='section-header'>
-                  Personal Absences
-                </span>
-                <Button appearance='ghost' onClick={this.handlePersonalGridExport}>Export</Button>
-              </Header>
-              <Content className='user-grid-wrapper'>
-                <SelectPicker
-                  onChange={this.handlePersonalSelectChange}
-                  data={allUsers}
-                  placeholder='Please Select a User'
-                  style={{ width: '300px' }}
-                />
-                <div className='ag-theme-material user-grid'>
-                  <AgGridReact
-                    gridOptions={personalGridOptions}
-                    rowData={personalRowData}
-                    onGridReady={this.handlePersonalGridReady}
-                    animateRows
-                    pagination
-                  />
-                </div>
-              </Content>
-            </Panel>
+          <Container className='settings-admin-container'>
+            {/* <Panel bordered> */}
+            <Accordion
+              allowZeroExpanded
+              preExpanded='3'
+            >
+              <AccordionItem uuid='1'>
+                <AccordionItemHeading>
+                  <AccordionItemButton>
+                    <Header className='user-content-header'>
+                      <span className='section-header'>
+                        User List
+                      </span>
+                      <Button appearance='ghost' onClick={this.handleAdGroupSync}>Sync AD Groups</Button>
+                    </Header>
+                  </AccordionItemButton>
+                </AccordionItemHeading>
+                <AccordionItemPanel>
+                  <Panel bordered>
+                    <Content className='user-grid-wrapper'>
+                      <div className='ag-theme-material user-grid'>
+                        <AgGridReact
+                          gridOptions={gridOptions}
+                          rowData={rowData}
+                          onGridReady={this.handleGridReady}
+                          animateRows
+                          pagination
+                        />
+                      </div>
+                    </Content>
+                  </Panel>
+                </AccordionItemPanel>
+              </AccordionItem>
+              <AccordionItem uuid='2'>
+                <AccordionItemHeading>
+                  <AccordionItemButton>
+                    <Header className='user-content-header'>
+                      <span className='section-header'>
+                        Per Person
+                      </span>
+                      <Button appearance='ghost' onClick={this.handlePersonalGridExport}>Export</Button>
+                    </Header>
+                  </AccordionItemButton>
+                </AccordionItemHeading>
+                <AccordionItemPanel>
+                  <Panel bordered>
+                    <Content className='user-grid-wrapper'>
+                      <SelectPicker
+                        onChange={this.handlePersonalSelectChange}
+                        data={allUsers}
+                        placeholder='Please Select a User'
+                        style={{ width: '300px' }}
+                      />
+                      <div className='ag-theme-material user-grid'>
+                        <AgGridReact
+                          gridOptions={personalGridOptions}
+                          rowData={personalRowData}
+                          onGridReady={this.handlePersonalGridReady}
+                          animateRows
+                          pagination
+                        />
+                      </div>
+                    </Content>
+                  </Panel>
+                </AccordionItemPanel>
+              </AccordionItem>
+              <AccordionItem uuid='3'>
+                <AccordionItemHeading>
+                  <AccordionItemButton>
+                    <Header className='user-content-header'>
+                      <span className='section-header'>
+                        All Colleagues
+                      </span>
+                      <Button appearance='ghost' onClick={this.handleAllGridExport}>Export</Button>
+                    </Header>
+                  </AccordionItemButton>
+                </AccordionItemHeading>
+                <AccordionItemPanel>
+                  <Panel bordered>
+                    <Content className='user-grid-wrapper'>
+                      <div className='ag-theme-material user-grid'>
+                        <AgGridReact
+                          gridOptions={allGridOptions}
+                          rowData={allRowData}
+                          onGridReady={this.handleAllGridReady}
+                          animateRows
+                          pagination
+                        />
+                      </div>
+                    </Content>
+                  </Panel>
+                </AccordionItemPanel>
+              </AccordionItem>
+            </Accordion>
+            {/* </Panel> */}
           </Container>
           <Modal show={showSyncModal} onHide={this.handleSyncModalClose}>
             <Modal.Header>
@@ -428,10 +643,28 @@ class Wrapper extends React.Component {
             </Modal.Footer>
           </Modal>
           <style jsx>{`
+            :global(.settings-admin-container > .rs-panel) {
+              margin: 10px;
+            }
+            :global(.accordion__heading) {
+              background-color: #ececec;
+              padding: 15px;
+              border-radius: 5px;
+              margin-top: 10px;
+            }
+            :global(.accordion__heading:hover) {
+              cursor: pointer;
+            }
             :global(.user-content-header) {
               display: flex;
               width: 100%;
               justify-content: space-between;
+            }
+            :global(.accordion__button:focus) {
+              outline: none;
+            }
+            :global(.user-content-header:focus) {
+              outline: none;
             }
             :global(.user-grid-wrapper) {
               height: 50vh;

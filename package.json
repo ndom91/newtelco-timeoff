@@ -48,6 +48,7 @@
     "nodemailer-smtp-transport": "^2.7.4",
     "passport-google-oauth": "^2.0.0",
     "react": "^16.12.0",
+    "react-accessible-accordion": "^3.0.1",
     "react-dom": "^16.12.0",
     "react-dropzone": "^10.2.0",
     "react-infinite-scroll-component": "^5.0.4",
