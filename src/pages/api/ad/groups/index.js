@@ -8,16 +8,20 @@ module.exports = async (req, res) => {
     password: process.env.LDAP_BIND_PW
   }
   const ad = new ActiveDirectory(config)
-  const query = process.env.LDAP_USER_QUERY
-  ad.findUsers(query, true, function (err, users) {
+
+  const mail = req.query.m
+  const user = mail.substr(0, mail.lastIndexOf('@'))
+  const query = process.env.LDAP_ADMIN_QUERY
+  ad.find(query, function (err, results) {
     if (err) {
       console.log('ERROR: ' + JSON.stringify(err))
       return
     }
 
-    if ((!users) || (users.length === 0)) console.log('No users found.')
-    else {
-      res.status(200).json({ users })
+    if (results.users.find(u => u.cn === user)) {
+      res.status(200).json({ memberAdmin: true })
+    } else {
+      res.status(201).json({ memberAdmin: false, results: results })
     }
   })
 }

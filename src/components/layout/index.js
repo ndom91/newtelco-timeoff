@@ -27,6 +27,7 @@ class Layout extends React.Component {
     const host = window.location.host
     const companyInfo = JSON.parse(window.localStorage.getItem('company'))
     const userTeam = JSON.parse(window.localStorage.getItem('userTeam'))
+    const userAdmin = JSON.parse(window.localStorage.getItem('mA'))
     const expandStorage = window.localStorage.getItem('layout-expand')
     if (companyInfo && userTeam) {
       this.setState({
@@ -68,6 +69,29 @@ class Layout extends React.Component {
         })
         .catch(err => console.error(err))
     }
+    if (typeof userAdmin !== 'boolean') {
+      fetch(`${protocol}//${host}/api/ad/groups?m=${this.props.user}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.memberAdmin) {
+            window.localStorage.setItem('mA', data.memberAdmin)
+          }
+          this.setState({
+            settings: {
+              ...this.state.settings,
+              admin: data.memberAdmin
+            }
+          })
+        })
+        .catch(err => console.error(err))
+    } else {
+      this.setState({
+        settings: {
+          ...this.state.settings,
+          admin: userAdmin
+        }
+      })
+    }
   }
 
   onToggle = () => {
@@ -88,12 +112,12 @@ class Layout extends React.Component {
     return (
       <div className='show-fake-browser sidebar-page wrapper'>
         <Container>
-          <SidebarNT token={this.props.token} expand={this.state.expand} handleToggle={this.onToggle} />
+          <SidebarNT admin={this.state.settings.admin} token={this.props.token} expand={this.state.expand} handleToggle={this.onToggle} />
           <Container className='wrapper'>
             <Header>
               <div className='header-wrapper'>
                 <h4 className='header-section-title'>
-                  {typeof window !== 'undefined' && this.capitalizeFirstLetter(Router.pathname.split('/').slice(1)[Router.pathname.split('/').slice(1).length - 1].substr(0, Router.pathname.length))}
+                  {/* {typeof window !== 'undefined' && this.capitalizeFirstLetter(Router.pathname.split('/').slice(1)[Router.pathname.split('/').slice(1).length - 1].substr(0, Router.pathname.length))} */}
                 </h4>
                 <span>
                   <Breadcrumb separator='>' style={{ marginBottom: '0px' }}>
@@ -194,6 +218,10 @@ class Layout extends React.Component {
             border-radius: 10px;
             -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.2);
             background-color: rgba(0,0,0,0.4);
+          }
+          :global(.rs-notification-content) {
+            display: flex;
+            align-items: center;
           }
         `}
         </style>

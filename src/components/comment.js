@@ -36,9 +36,14 @@ const Comment = (props) => {
         {props.data.body}
       </div>
       <div className='comment-actions'>
-        <Button onClick={() => props.onDelete(props.data.id)} className='comment-del-btn'>
-          <FontAwesomeIcon icon={faTrashAlt} />
-        </Button>
+        {props.user === props.data.userDetails.email
+          ? (
+            <Button onClick={() => props.onDelete(props.data.id)} className='comment-del-btn'>
+              <FontAwesomeIcon icon={faTrashAlt} />
+            </Button>
+          ) : (
+            null
+          )}
       </div>
       <style jsx>{`
         :global(.comment-panel) {

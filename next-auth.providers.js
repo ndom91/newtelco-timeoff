@@ -62,11 +62,13 @@ module.exports = () => {
       },
       getProfile (profile) {
         // Normalize profile into one with {id, name, email} keys
+        // console.log(profile)
         return {
           id: profile.id,
           name: profile.displayName,
           email: profile.emails[0].value,
-          avatar: profile.photos[0].value
+          avatar: profile.photos[0].value,
+          picture: profile._json.picture
         }
       }
     })

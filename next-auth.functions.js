@@ -44,9 +44,9 @@ require('dotenv').config({ path: './.env' })
 // This config file uses MongoDB for User accounts, as well as session storage.
 // This config includes options for NeDB, which it defaults to if no DB URI
 // is specified. NeDB is an in-memory only database intended here for testing.
-const MongoClient = require('mongodb').MongoClient
+// const MongoClient = require('mongodb').MongoClient
 const NeDB = require('nedb')
-const MongoObjectId = (process.env.MONGO_URI) ? require('mongodb').ObjectId : (id) => { return id }
+// const MongoObjectId = (process.env.MONGO_URI) ? require('mongodb').ObjectId : (id) => { return id }
 
 // Use Node Mailer for email sign in
 const nodemailer = require('nodemailer')
@@ -71,14 +71,14 @@ module.exports = () => {
   return new Promise((resolve, reject) => {
     if (process.env.MONGO_URI) {
       // Connect to MongoDB Database and return user connection
-      MongoClient.connect(process.env.MONGO_URI, {
-        useNewUrlParser: true
-      }, (err, mongoClient) => {
-        if (err) return reject(err)
-        const dbName = process.env.MONGO_URI.split('/').pop().split('?').shift()
-        const db = mongoClient.db(dbName)
-        return resolve(db.collection('users'))
-      })
+      // MongoClient.connect(process.env.MONGO_URI, {
+      //   useNewUrlParser: true
+      // }, (err, mongoClient) => {
+      //   if (err) return reject(err)
+      //   const dbName = process.env.MONGO_URI.split('/').pop().split('?').shift()
+      //   const db = mongoClient.db(dbName)
+      //   return resolve(db.collection('users'))
+      // })
     } else {
       // If no MongoDB URI string specified, use NeDB, an in-memory work-a-like.
       // NeDB is not persistant and is intended for testing only.
@@ -98,7 +98,7 @@ module.exports = () => {
           // Find needs to support looking up a user by ID, Email, Email Token,
           // and Provider Name + Users ID for that Provider
           if (id) {
-            query = { _id: MongoObjectId(id) }
+            query = { _id: id }
           } else if (email) {
             query = { email: email }
           } else if (emailToken) {
@@ -143,7 +143,7 @@ module.exports = () => {
         // You can use this to capture profile.avatar, profile.location, etc.
         update: (user, profile) => {
           return new Promise((resolve, reject) => {
-            usersCollection.update({ _id: MongoObjectId(user._id) }, user, {}, (err) => {
+            usersCollection.update({ _id: user._id }, user, {}, (err) => {
               if (err) return reject(err)
               return resolve(user)
             })
@@ -155,7 +155,7 @@ module.exports = () => {
         // be in a future release, to provide an endpoint for account deletion.
         remove: (id) => {
           return new Promise((resolve, reject) => {
-            usersCollection.remove({ _id: MongoObjectId(id) }, (err) => {
+            usersCollection.remove({ _id: id }, (err) => {
               if (err) return reject(err)
               return resolve(true)
             })
@@ -179,7 +179,7 @@ module.exports = () => {
         // only fields you want to expose via the user interface.
         deserialize: (id) => {
           return new Promise((resolve, reject) => {
-            usersCollection.findOne({ _id: MongoObjectId(id) }, (err, user) => {
+            usersCollection.findOne({ _id: id }, (err, user) => {
               if (err) return reject(err)
 
               // If user not found (e.g. account deleted) return null object
@@ -189,7 +189,7 @@ module.exports = () => {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                avatar: user.picture,
+                picture: user.picture,
                 emailVerified: user.emailVerified,
                 admin: user.admin || false
               })

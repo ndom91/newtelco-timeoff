@@ -5,9 +5,13 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import {
   Input,
   Button,
-  Alert
+  Alert,
+  Notification,
+  Placeholder
 } from 'rsuite'
-class InfiniteHistory extends React.Component {
+const { Paragraph } = Placeholder
+
+class Comments extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -19,11 +23,27 @@ class InfiniteHistory extends React.Component {
     // Roll your own: https://www.taniarascia.com/add-comments-to-static-site/
   }
 
+  notifyInfo = (header, text) => {
+    Notification.info({
+      title: header,
+      duration: 20000,
+      description: <div className='notify-body'>{text}</div>
+    })
+  }
+
+  notifyWarn = (header, text) => {
+    Notification.warning({
+      title: header,
+      duration: 20000,
+      description: <div className='notify-body'>{text}</div>
+    })
+  }
+
   componentDidMount () {
     this.fetchData()
   }
 
-  submitComment = () => {
+  handleSubmit = () => {
     const protocol = window.location.protocol
     const host = window.location.host
     const team = this.props.team
@@ -33,9 +53,8 @@ class InfiniteHistory extends React.Component {
     fetch(pageRequest)
       .then(res => res.json())
       .then(data => {
-        console.log(data)
         if (data.discussionInsert.affectedRows === 1) {
-          Alert.success('Comment Posted')
+          this.notifyInfo('Comment Posted')
           const newComments = this.state.items
           const userFullname = this.props.user.name
           newComments.unshift({
@@ -51,7 +70,7 @@ class InfiniteHistory extends React.Component {
             items: newComments
           })
         } else {
-          Alert.error('Error Posting Comment')
+          this.notifyWarn('Error Posting Comment')
         }
       })
       .catch(err => console.error(err))
@@ -64,16 +83,15 @@ class InfiniteHistory extends React.Component {
     fetch(pageRequest)
       .then(res => res.json())
       .then(data => {
-        console.log(data)
         if (data.discussionDelete.affectedRows === 1) {
-          Alert.success('Comment Deleted')
+          this.notifyInfo('Comment Deleted')
           const comments = this.state.items
           const remainingComments = comments.filter(com => com.id !== id)
           this.setState({
             items: remainingComments
           })
         } else {
-          Alert.error('Error Deleting Comment')
+          this.notifyWarn('Error Deleting Comment')
         }
       })
       .catch(err => console.error(err))
@@ -117,9 +135,8 @@ class InfiniteHistory extends React.Component {
           dataLength={this.state.items.length}
           next={this.fetchData}
           hasMore={hasMore}
+          scrollableTarget='content-wrapper'
           // scrollThreshold='900px'
-          // scrollableTarget='scrolltarget'
-          // scrollableTarget='scrollablediv'
           // initialScrollY='0.8'
           // loader={<h4 style={{ textAlign: 'center' }}>Loading..</h4>}
           endMessage={
@@ -130,7 +147,7 @@ class InfiniteHistory extends React.Component {
         >
           <div className='infinite-scroll-item-wrapper'>
             {items.map(comment => {
-              return <Comment onDelete={this.handleDeleteComment} data={comment} key={comment.id} />
+              return <Comment user={this.props.user.email} onDelete={this.handleDeleteComment} data={comment} key={comment.id} />
             })}
           </div>
         </InfiniteScroll>
@@ -146,7 +163,7 @@ class InfiniteHistory extends React.Component {
           <Button
             className='comment-submit-btn'
             appearance='primary'
-            onClick={this.submitComment}
+            onClick={this.handleSubmit}
           >
             Post
           </Button>
@@ -161,10 +178,14 @@ class InfiniteHistory extends React.Component {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            overflow-y: scroll;
           }
           :global(.comment-submit-btn) {
             height: 56px;
             margin: 10px;
+          }
+          :global(.scrollable-div) {
+            overflow-y: scroll;
           }
         `}
         </style>
@@ -173,4 +194,4 @@ class InfiniteHistory extends React.Component {
   }
 }
 
-export default InfiniteHistory
+export default Comments

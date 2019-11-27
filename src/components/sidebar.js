@@ -129,17 +129,17 @@ class SidebarNT extends React.Component {
         >
           <Sidenav.Body>
             <Nav>
-              <Link href='/'>
+              <Link passHref href='/'>
                 <Nav.Item eventKey='1' active={typeof window !== 'undefined' && Router.pathname === '/'} icon={<Icon icon='area-chart' />}>
                       Dashboard
                 </Nav.Item>
               </Link>
-              <Link href='/user'>
+              <Link passHref href='/user'>
                 <Nav.Item eventKey='2' active={typeof window !== 'undefined' && Router.pathname === '/user'} icon={<Icon icon='user' />}>
                       User
                 </Nav.Item>
               </Link>
-              <Link href='/new'>
+              <Link passHref href='/new'>
                 <Nav.Item eventKey='3' active={typeof window !== 'undefined' && Router.pathname === '/new'} icon={<Icon icon='plus-square' />}>
                       New
                 </Nav.Item>
@@ -152,7 +152,7 @@ class SidebarNT extends React.Component {
                 placement='rightStart'
                 active={typeof window !== 'undefined' && Router.pathname.includes('team')}
               >
-                <Link href='/team/dashboard'>
+                <Link passHref href='/team/dashboard'>
                   <Dropdown.Item
                     eventKey='4-1'
                     active={typeof window !== 'undefined' && Router.pathname === '/team/dashboard'}
@@ -160,7 +160,7 @@ class SidebarNT extends React.Component {
                         Dashboard
                   </Dropdown.Item>
                 </Link>
-                <Link href='/team/calendar'>
+                <Link passHref href='/team/calendar'>
                   <Dropdown.Item
                     eventKey='4-2'
                     active={typeof window !== 'undefined' && Router.pathname === '/team/calendar'}
@@ -177,7 +177,7 @@ class SidebarNT extends React.Component {
                 placement='rightStart'
                 active={typeof window !== 'undefined' && Router.pathname.includes('settings')}
               >
-                <Link href='/settings/general'>
+                <Link passHref href='/settings/general'>
                   <Dropdown.Item
                     eventKey='5-1'
                     active={typeof window !== 'undefined' && Router.pathname === '/settings/general'}
@@ -185,14 +185,28 @@ class SidebarNT extends React.Component {
                         General
                   </Dropdown.Item>
                 </Link>
-                <Link href='/settings/admin'>
-                  <Dropdown.Item
-                    eventKey='5-2'
-                    active={typeof window !== 'undefined' && Router.pathname === '/settings/admin'}
-                  >
-                        Admin
-                  </Dropdown.Item>
-                </Link>
+                {this.props.admin
+                  ? (
+                    <Link
+                      href={{
+                        pathname: '/settings/admin',
+                        query: {
+                          admin: this.props.admin
+                        }
+                      }}
+                      as='/settings/admin'
+                      passHref
+                    >
+                      <Dropdown.Item
+                        eventKey='5-2'
+                        active={typeof window !== 'undefined' && Router.pathname === '/settings/admin'}
+                      >
+                            Admin
+                      </Dropdown.Item>
+                    </Link>
+                  ) : (
+                    null
+                  )}
               </Dropdown>
             </Nav>
           </Sidenav.Body>

@@ -50,9 +50,15 @@ class Wrapper extends React.Component {
       fetch(`${protocol}//${host}/api/settings/team/members?team=${team.team}`)
         .then(res => res.json())
         .then(data => {
-          if (data) {
+          if (data.teamMembers) {
+            const teamMembers = data.teamMembers.filter(member => {
+              if (member.lname !== 'Cleese' &&
+                member.lname !== 'Device') {
+                return member
+              }
+            })
             this.setState({
-              team: data.teamMembers
+              team: teamMembers
             })
           }
         })
@@ -73,7 +79,7 @@ class Wrapper extends React.Component {
     if (this.props.session.user) {
       return (
         <Layout user={this.props.session.user.email} token={this.props.session.csrfToken}>
-          <Container style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+          <Container className='container-wrapper' style={{}}>
             <Panel className='user-panel'>
               {teamName
                 ? <Comments user={this.props.session.user} length={2} team={this.state.teamName} />
@@ -123,6 +129,16 @@ class Wrapper extends React.Component {
             }
             :global(.team-panel) {
               width: 500px;
+            }
+            :global(.content-wrapper) {
+              overflow-y:hidden;
+            }
+            :global(.container-wrapper) {
+              flex-direction: row;
+              justify-content: space-around;
+              padding: 10px;
+              border: 1px solid #f6f6f6;
+              border-radius: 10px;
             }
           `}
           </style>

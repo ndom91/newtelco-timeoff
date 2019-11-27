@@ -2,12 +2,15 @@ import React from 'react'
 import fetch from 'isomorphic-unfetch'
 import Layout from '../../components/layout/index'
 import Router from 'next/router'
+import moment from 'moment-timezone'
 import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../../components/requiredLogin'
 import { AgGridReact } from 'ag-grid-react'
 import 'ag-grid-community/dist/styles/ag-grid.css'
 import 'ag-grid-community/dist/styles/ag-theme-material.css'
 import DateField from '../../components/aggrid/date'
+import DateTimeField from '../../components/aggrid/datetime'
+import ApprovedField from '../../components/aggrid/approved'
 import {
   Container,
   Header,
@@ -15,7 +18,8 @@ import {
   Button,
   Modal,
   Alert,
-  Panel
+  Panel,
+  SelectPicker
 } from 'rsuite'
 
 class Wrapper extends React.Component {
@@ -37,20 +41,132 @@ class Wrapper extends React.Component {
     const userJson = await userRequest.json()
     return {
       session: await NextAuth.init({ req }),
-      // users: userJson === undefined ? [] : userJson
-      users: userJson
+      users: userJson,
+      admin: query.admin
     }
   }
 
   constructor (props) {
     super(props)
+    const lastYear = new Date().getFullYear() - 1
+    const thisYear = new Date().getFullYear()
     this.state = {
       addCount: 0,
       updateCount: 0,
       showSyncModal: false,
-      // users: props.userJson === undefined ? [] : props.userJson,
-      // rowData: props.users,
       rowData: props.users.userList,
+      allUsers: [],
+      personalRowData: [],
+      personalGridOptions: {
+        defaultColDef: {
+          resizable: true,
+          sortable: true,
+          filter: true,
+          selectable: false,
+          editable: false
+        },
+        columnDefs: [
+          {
+            headerName: 'ID',
+            field: 'id',
+            hide: true,
+            sort: { direction: 'asc', priority: 0 }
+          }, {
+            headerName: 'From',
+            field: 'fromDate',
+            tooltipField: 'fromDate',
+            cellRenderer: 'dateShort',
+            width: 100
+          }, {
+            headerName: 'To',
+            field: 'toDate',
+            tooltipField: 'toDate',
+            cellRenderer: 'dateShort',
+            width: 100
+          }, {
+            headerName: 'Requested Days',
+            field: 'beantragt',
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            },
+            width: 160
+          }, {
+            headerName: `Days Remaining ${lastYear}`,
+            field: 'resturlaubVorjahr',
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            },
+            width: 180
+          }, {
+            headerName: `Days Remaining ${thisYear}`,
+            field: 'resturlaubJAHR',
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            },
+            width: 180
+          }, {
+            headerName: 'Days Remaining (Total)',
+            field: 'jahresurlaubInsgesamt',
+            tooltipField: 'jahresurlaubInsgesamt',
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            }
+          }, {
+            headerName: 'Days Remaining',
+            field: 'restjahresurlaubInsgesamt',
+            width: 160,
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            }
+          }, {
+            headerName: 'Submitted',
+            cellRenderer: 'dateTimeShort',
+            field: 'submitted_datetime',
+            width: 160
+          }, {
+            headerName: 'Approval Date/Time',
+            field: 'approval_datetime',
+            cellRenderer: 'dateTimeShort',
+            width: 160
+          }, {
+            headerName: 'Approved',
+            field: 'approved',
+            width: 120,
+            cellRenderer: 'approved',
+            pinned: 'right',
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            }
+          }
+        ],
+        context: { componentParent: this },
+        frameworkComponents: {
+          dateTimeShort: DateTimeField,
+          dateShort: DateField,
+          approved: ApprovedField
+        },
+        rowSelection: 'multiple',
+        paginationPageSize: 10,
+        rowClass: 'row-class'
+      },
       gridOptions: {
         defaultColDef: {
           resizable: true,
@@ -149,15 +265,7 @@ class Wrapper extends React.Component {
       const host = window.location.host
       const protocol = window.location.protocol
       const adRequestUrl = `${protocol}//${host}/api/user/add?u=${JSON.stringify(adUsers)}`
-      fetch(adRequestUrl, {
-        // method: 'POST',
-        // body: JSON.stringify({ u: JSON.stringify(adUsers) }),
-        // headers: {
-        //   'Access-Control-Allow-Origin': '*',
-        //   'Content-Type': 'application/json',
-        //   _csrf: this.props.session.csrfToken
-        // }
-      })
+      fetch(adRequestUrl)
         .then(res => res.json())
         .then(data => {
           console.log(data)
@@ -177,6 +285,16 @@ class Wrapper extends React.Component {
     }
   }
 
+  componentDidMount () {
+    const selectUserList = []
+    this.props.users.userList.forEach(user => {
+      selectUserList.push({ value: user.email, label: `${user.fname} ${user.lname}` })
+    })
+    this.setState({
+      allUsers: selectUserList
+    })
+  }
+
   handleSyncModalClose = () => {
     this.setState({ showSyncModal: false })
   }
@@ -191,8 +309,40 @@ class Wrapper extends React.Component {
     this.gridColumnApi = params.columnApi
   }
 
-  onFirstDataRendered = params => {
-    // params.api.sizeColumnsToFit()
+  handlePersonalGridReady = params => {
+    params.api.sizeColumnsToFit()
+    this.gridApi = params.api
+    this.gridColumnApi = params.columnApi
+  }
+
+  handlePersonalGridExport = () => {
+    if (this.gridApi) {
+      const email = this.state.userSelection.value
+      const username = email.substr(0, email.lastIndexOf('@'))
+      const params = {
+        allColumns: true,
+        fileName: `${username}_timeoff_${moment(new Date()).format('YYYYMMDD')}.csv`,
+        columnSeparator: ','
+      }
+      this.gridApi.exportDataAsCsv(params)
+    }
+  }
+
+  handlePersonalSelectChange = (data) => {
+    console.log(data)
+    const host = window.location.host
+    const protocol = window.location.protocol
+    fetch(`${protocol}//${host}/api/user/entries?user=${data}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.userEntries) {
+          this.setState({
+            personalRowData: data.userEntries
+          })
+          // window.gridApi && window.gridApi.refreshCells()
+        }
+      })
+      .catch(err => console.error(err))
   }
 
   render () {
@@ -201,10 +351,13 @@ class Wrapper extends React.Component {
       rowData,
       showSyncModal,
       addCount,
-      updateCount
+      updateCount,
+      personalGridOptions,
+      personalRowData,
+      allUsers
     } = this.state
 
-    if (this.props.session.user) {
+    if (this.props.session.user && this.props.admin) {
       return (
         <Layout user={this.props.session.user.email} token={this.props.session.csrfToken}>
           <Container>
@@ -213,7 +366,7 @@ class Wrapper extends React.Component {
                 <span className='section-header'>
                   Users
                 </span>
-                <Button onClick={this.handleAdGroupSync}>Sync AD Groups</Button>
+                <Button appearance='ghost' onClick={this.handleAdGroupSync}>Sync AD Groups</Button>
               </Header>
               <Content className='user-grid-wrapper'>
                 <div className='ag-theme-material user-grid'>
@@ -223,7 +376,31 @@ class Wrapper extends React.Component {
                     onGridReady={this.handleGridReady}
                     animateRows
                     pagination
-                    onFirstDataRendered={this.onFirstDataRendered.bind(this)}
+                  />
+                </div>
+              </Content>
+            </Panel>
+            <Panel bordered>
+              <Header className='user-content-header'>
+                <span className='section-header'>
+                  Personal Absences
+                </span>
+                <Button appearance='ghost' onClick={this.handlePersonalGridExport}>Export</Button>
+              </Header>
+              <Content className='user-grid-wrapper'>
+                <SelectPicker
+                  onChange={this.handlePersonalSelectChange}
+                  data={allUsers}
+                  placeholder='Please Select a User'
+                  style={{ width: '300px' }}
+                />
+                <div className='ag-theme-material user-grid'>
+                  <AgGridReact
+                    gridOptions={personalGridOptions}
+                    rowData={personalRowData}
+                    onGridReady={this.handlePersonalGridReady}
+                    animateRows
+                    pagination
                   />
                 </div>
               </Content>

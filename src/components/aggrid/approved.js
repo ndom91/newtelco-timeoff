@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCheck,
-  faCross
+  faTimes
 } from '@fortawesome/free-solid-svg-icons'
 
 export default class ApprovedField extends Component {
@@ -16,7 +16,7 @@ export default class ApprovedField extends Component {
     } else {
       return (
         <span>
-          <FontAwesomeIcon width='1.325em' icon={faCross} />
+          <FontAwesomeIcon width='1.325em' icon={faTimes} />
         </span>
       )
     }
