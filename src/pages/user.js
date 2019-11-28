@@ -205,6 +205,7 @@ class Wrapper extends React.Component {
             for (const day of range.by('day')) {
               heatmap.push({ date: day, value: 1 })
             }
+            // https://www.npmjs.com/package/reactjs-calendar-heatmap
           })
           this.setState({
             heatmapData: heatmap
