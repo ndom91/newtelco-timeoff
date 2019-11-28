@@ -2,7 +2,7 @@ import React from 'react'
 import Layout from '../components/layout/index'
 import Router from 'next/router'
 import fetch from 'isomorphic-unfetch'
-import moment from 'moment-timezone'
+import Moment from 'moment-timezone'
 import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../components/requiredLogin'
 import DateTimeField from '../components/aggrid/datetime'
@@ -11,6 +11,8 @@ import ApprovedField from '../components/aggrid/approved'
 import { AgGridReact } from 'ag-grid-react'
 import 'ag-grid-community/dist/styles/ag-grid.css'
 import 'ag-grid-community/dist/styles/ag-theme-material.css'
+import CalendarHeatmap from 'reactjs-calendar-heatmap'
+import { extendMoment } from 'moment-range'
 import {
   Container,
   Header,
@@ -18,6 +20,7 @@ import {
   Button,
   Panel
 } from 'rsuite'
+const moment = extendMoment(Moment)
 
 class Wrapper extends React.Component {
   static async getInitialProps ({ res, req, query }) {
@@ -88,6 +91,36 @@ class Wrapper extends React.Component {
             cellRenderer: 'dateShort',
             width: 100
           }, {
+            headerName: 'Days from Last Year',
+            field: 'resturlaubVorjahr',
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            },
+            width: 180
+          }, {
+            headerName: 'Days Earned this Year',
+            field: 'jahresurlaubInsgesamt',
+            tooltipField: 'jahresurlaubInsgesamt',
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            }
+          }, {
+            headerName: 'Total Days Available',
+            field: 'restjahresurlaubInsgesamt',
+            width: 160,
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            }
+          }, {
             headerName: 'Requested Days',
             field: 'beantragt',
             cellStyle: {
@@ -98,16 +131,6 @@ class Wrapper extends React.Component {
             },
             width: 160
           }, {
-            headerName: `Days Remaining ${lastYear}`,
-            field: 'resturlaubVorjahr',
-            cellStyle: {
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100%'
-            },
-            width: 180
-          }, {
             headerName: `Days Remaining ${thisYear}`,
             field: 'resturlaubJAHR',
             cellStyle: {
@@ -117,26 +140,6 @@ class Wrapper extends React.Component {
               height: '100%'
             },
             width: 180
-          }, {
-            headerName: 'Days Remaining (Total)',
-            field: 'jahresurlaubInsgesamt',
-            tooltipField: 'jahresurlaubInsgesamt',
-            cellStyle: {
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100%'
-            }
-          }, {
-            headerName: 'Days Remaining',
-            field: 'restjahresurlaubInsgesamt',
-            width: 160,
-            cellStyle: {
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100%'
-            }
           }, {
             headerName: 'Submitted',
             cellRenderer: 'dateTimeShort',
@@ -191,8 +194,20 @@ class Wrapper extends React.Component {
       .then(res => res.json())
       .then(data => {
         if (data.userEntries) {
+          const heatmap = []
           this.setState({
             rowData: data.userEntries
+          })
+          data.userEntries.forEach(entry => {
+            const from = moment(entry.from)
+            const to = moment(entry.to)
+            const range = moment.range(from, to)
+            for (const day of range.by('day')) {
+              heatmap.push({ date: day, value: 1 })
+            }
+          })
+          this.setState({
+            heatmapData: heatmap
           })
           window.gridApi && window.gridApi.refreshCells()
         }
@@ -225,7 +240,8 @@ class Wrapper extends React.Component {
   render () {
     const {
       gridOptions,
-      rowData
+      rowData,
+      heatmapData
     } = this.state
 
     if (this.props.session.user) {
@@ -253,6 +269,13 @@ class Wrapper extends React.Component {
                   />
                 </div>
               </Content>
+            </Panel>
+            <Panel bordered>
+              <CalendarHeatmap
+                data={heatmapData}
+                color='67b256'
+                overview='year'
+              />
             </Panel>
           </Container>
           <style jsx>{`

@@ -2,7 +2,6 @@ import React from 'react'
 import Link from 'next/link'
 import {
   Navbar,
-  Divider,
   Container,
   Header,
   Content,

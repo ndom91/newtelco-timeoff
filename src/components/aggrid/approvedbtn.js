@@ -23,14 +23,20 @@ export default class ApprovedBtn extends Component {
         <span>
           <ButtonToolbar>
             <ButtonGroup>
-              <Button size='sm' appearance='primary'>
+              <Button className='approve-btns' style={{ paddingTop: '8px' }} size='sm' appearance='primary'>
                 <FontAwesomeIcon width='1.2em' icon={faCheck} />
               </Button>
-              <Button style={{ height: '32px' }} size='sm' apperaance='subtle'>
+              <Button className='approve-btns' style={{ height: '32px' }} size='sm' appearance='default'>
                 <FontAwesomeIcon width='1em' icon={faTimes} />
               </Button>
             </ButtonGroup>
           </ButtonToolbar>
+          <style jsx>{`
+              :global(.approve-btns) {
+                line-height: 1;
+              }
+          `}
+          </style>
         </span>
       )
     }

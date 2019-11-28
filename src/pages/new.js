@@ -6,10 +6,6 @@ import RequireLogin from '../components/requiredLogin'
 import Dropzone from 'react-dropzone'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-  faUser
-} from '@fortawesome/free-regular-svg-icons'
-import {
-  faHistory,
   faCalendarAlt
 } from '@fortawesome/free-solid-svg-icons'
 import {
@@ -19,7 +15,6 @@ import {
   FormGroup,
   ControlLabel,
   FormControl,
-  HelpBlock,
   DateRangePicker,
   Button,
   Radio,

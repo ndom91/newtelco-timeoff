@@ -13,11 +13,13 @@ import DateTimeField from '../../components/aggrid/datetime'
 import DateTimeFieldApproval from '../../components/aggrid/datetimeapproval'
 import ApprovedBtn from '../../components/aggrid/approvedbtn'
 import ApprovedField from '../../components/aggrid/approved'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   Container,
   Header,
   Content,
   Button,
+  ButtonGroup,
   ButtonToolbar,
   Notification,
   Modal,
@@ -32,6 +34,10 @@ import {
   Row,
   Col
 } from 'rsuite'
+import {
+  faPencilAlt,
+  faTrashAlt
+} from '@fortawesome/free-solid-svg-icons'
 
 const { Column, HeaderCell, Cell } = Table
 
@@ -85,7 +91,8 @@ class Wrapper extends React.Component {
           sortable: true,
           filter: true,
           selectable: false,
-          editable: false
+          editable: false,
+          suppressSizeToFit: true
         },
         columnDefs: [
           {
@@ -111,6 +118,36 @@ class Wrapper extends React.Component {
             cellRenderer: 'dateShort',
             width: 100
           }, {
+            headerName: 'Days from Last Year',
+            field: 'resturlaubVorjahr',
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            },
+            width: 200
+          }, {
+            headerName: 'Days Earned This Year',
+            field: 'jahresurlaubInsgesamt',
+            tooltipField: 'jahresurlaubInsgesamt',
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            }
+          }, {
+            headerName: 'Total Days Available',
+            field: 'restjahresurlaubInsgesamt',
+            width: 160,
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            }
+          }, {
             headerName: 'Requested Days',
             field: 'beantragt',
             cellStyle: {
@@ -121,16 +158,6 @@ class Wrapper extends React.Component {
             },
             width: 160
           }, {
-            headerName: `Days Remaining ${lastYear}`,
-            field: 'resturlaubVorjahr',
-            cellStyle: {
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100%'
-            },
-            width: 180
-          }, {
             headerName: `Days Remaining ${thisYear}`,
             field: 'resturlaubJAHR',
             cellStyle: {
@@ -139,27 +166,7 @@ class Wrapper extends React.Component {
               alignItems: 'center',
               height: '100%'
             },
-            width: 180
-          }, {
-            headerName: 'Days Remaining (Total)',
-            field: 'jahresurlaubInsgesamt',
-            tooltipField: 'jahresurlaubInsgesamt',
-            cellStyle: {
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100%'
-            }
-          }, {
-            headerName: 'Days Remaining',
-            field: 'restjahresurlaubInsgesamt',
-            width: 160,
-            cellStyle: {
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100%'
-            }
+            width: 200
           }, {
             headerName: 'Type',
             field: 'type',
@@ -206,7 +213,8 @@ class Wrapper extends React.Component {
           sortable: true,
           filter: true,
           selectable: false,
-          editable: false
+          editable: false,
+          suppressSizeToFit: true
         },
         columnDefs: [
           {
@@ -226,6 +234,36 @@ class Wrapper extends React.Component {
             cellRenderer: 'dateShort',
             width: 100
           }, {
+            headerName: 'Days from Last Year',
+            field: 'resturlaubVorjahr',
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            },
+            width: 200
+          }, {
+            headerName: 'Days Earned This Year',
+            field: 'jahresurlaubInsgesamt',
+            tooltipField: 'jahresurlaubInsgesamt',
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            }
+          }, {
+            headerName: 'Total Days Available',
+            field: 'restjahresurlaubInsgesamt',
+            width: 160,
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            }
+          }, {
             headerName: 'Requested Days',
             field: 'beantragt',
             cellStyle: {
@@ -236,16 +274,6 @@ class Wrapper extends React.Component {
             },
             width: 160
           }, {
-            headerName: `Days Remaining ${lastYear}`,
-            field: 'resturlaubVorjahr',
-            cellStyle: {
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100%'
-            },
-            width: 180
-          }, {
             headerName: `Days Remaining ${thisYear}`,
             field: 'resturlaubJAHR',
             cellStyle: {
@@ -254,27 +282,7 @@ class Wrapper extends React.Component {
               alignItems: 'center',
               height: '100%'
             },
-            width: 180
-          }, {
-            headerName: 'Days Remaining (Total)',
-            field: 'jahresurlaubInsgesamt',
-            tooltipField: 'jahresurlaubInsgesamt',
-            cellStyle: {
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100%'
-            }
-          }, {
-            headerName: 'Days Remaining',
-            field: 'restjahresurlaubInsgesamt',
-            width: 160,
-            cellStyle: {
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100%'
-            }
+            width: 200
           }, {
             headerName: 'Type',
             field: 'type',
@@ -314,48 +322,14 @@ class Wrapper extends React.Component {
         paginationPageSize: 10,
         rowClass: 'row-class'
       },
-      managerGridOptions: {
-        defaultColDef: {
-          resizable: true,
-          sortable: true,
-          filter: true,
-          selectable: false,
-          editable: false
-        },
-        columnDefs: [
-          {
-            headerName: 'ID',
-            field: 'id',
-            hide: true,
-            sort: { direction: 'asc', priority: 0 }
-          }, {
-            headerName: 'Name',
-            field: 'name',
-            width: 180
-          }, {
-            headerName: 'Email',
-            field: 'email'
-          }, {
-            headerName: 'Team',
-            field: 'team',
-            width: 120
-          }
-        ],
-        context: { componentParent: this },
-        frameworkComponents: {
-          dateShort: DateField
-        },
-        rowSelection: 'multiple',
-        paginationPageSize: 10,
-        rowClass: 'row-class'
-      },
       gridOptions: {
         defaultColDef: {
           resizable: true,
           sortable: true,
           filter: true,
           selectable: false,
-          editable: false
+          editable: false,
+          suppressSizeToFit: true
         },
         columnDefs: [
           {
@@ -373,11 +347,12 @@ class Wrapper extends React.Component {
             width: 140
           }, {
             headerName: 'Email',
-            field: 'email'
+            field: 'email',
+            width: 160
           }, {
             headerName: 'Team',
             field: 'team',
-            width: 120
+            width: 140
           }, {
             headerName: 'Date Joined',
             field: 'datejoined',
@@ -549,7 +524,7 @@ class Wrapper extends React.Component {
 
   handlePersonalGridExport = () => {
     if (this.personalGridApi) {
-      const email = this.state.userSelection.value
+      const email = this.state.selectedUser
       const username = email.substr(0, email.lastIndexOf('@'))
       const params = {
         allColumns: true,
@@ -560,15 +535,16 @@ class Wrapper extends React.Component {
     }
   }
 
-  handlePersonalSelectChange = (data) => {
+  handlePersonalSelectChange = (user) => {
     const host = window.location.host
     const protocol = window.location.protocol
-    fetch(`${protocol}//${host}/api/user/entries?user=${data}`)
+    fetch(`${protocol}//${host}/api/user/entries?user=${user}`)
       .then(res => res.json())
       .then(data => {
         if (data.userEntries) {
           this.setState({
-            personalRowData: data.userEntries
+            personalRowData: data.userEntries,
+            selectedUser: user
           })
           // window.gridApi && window.gridApi.refreshCells()
         }
@@ -807,7 +783,7 @@ class Wrapper extends React.Component {
                     </Column>
                     <Column width={120} fixed='right'>
                       <HeaderCell>Action</HeaderCell>
-                      <Cell>
+                      <Cell style={{ padding: '8px' }}>
                         {rowData => {
                           const handleEdit = () => {
                             this.toggleManagerEditModal(rowData)
@@ -817,8 +793,16 @@ class Wrapper extends React.Component {
                           }
                           return (
                             <span>
-                              <a onClick={handleEdit}> Edit </a> |{' '}
-                              <a onClick={handleDelete}> Delete </a>
+                              <ButtonToolbar>
+                                <ButtonGroup>
+                                  <Button size='sm' appearance='primary' onClick={handleEdit}>
+                                    <FontAwesomeIcon icon={faPencilAlt} width='0.8rem' />
+                                  </Button>
+                                  <Button size='sm' onClick={handleDelete}>
+                                    <FontAwesomeIcon icon={faTrashAlt} width='0.7rem' />
+                                  </Button>
+                                </ButtonGroup>
+                              </ButtonToolbar>
                             </span>
                           )
                         }}
