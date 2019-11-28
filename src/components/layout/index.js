@@ -28,11 +28,15 @@ class Layout extends React.Component {
     const companyInfo = JSON.parse(window.localStorage.getItem('company'))
     const userTeam = JSON.parse(window.localStorage.getItem('userTeam'))
     const userAdmin = JSON.parse(window.localStorage.getItem('mA'))
-    const expandStorage = window.localStorage.getItem('layout-expand')
+    const expandStorage = window.localStorage.getItem('layout-expand') === 'true'
+    console.log(companyInfo)
+    console.log(userTeam)
     if (companyInfo && userTeam) {
+      console.log('inside')
       this.setState({
-        expand: expandStorage === 'true',
+        expand: expandStorage,
         settings: {
+          ...this.state.settings,
           companyName: companyInfo.companyName,
           team: userTeam.team
         }
@@ -112,7 +116,7 @@ class Layout extends React.Component {
     return (
       <div className='show-fake-browser sidebar-page wrapper'>
         <Container>
-          <SidebarNT admin={this.state.settings.admin} token={this.props.token} expand={this.state.expand} handleToggle={this.onToggle} />
+          <SidebarNT user={this.props.user} admin={this.state.settings.admin} token={this.props.token} expand={this.state.expand} handleToggle={this.onToggle} />
           <Container className='wrapper'>
             <Header>
               <div className='header-wrapper'>

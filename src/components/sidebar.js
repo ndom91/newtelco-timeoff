@@ -135,7 +135,7 @@ class SidebarNT extends React.Component {
               </Link>
               <Link passHref href='/user'>
                 <Nav.Item eventKey='2' active={typeof window !== 'undefined' && Router.pathname === '/user'} icon={<Icon icon='user' />}>
-                      User
+                  {this.props.user.substr(0, this.props.user.indexOf('@'))}
                 </Nav.Item>
               </Link>
               <Link passHref href='/new'>

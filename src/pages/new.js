@@ -52,11 +52,11 @@ class Wrapper extends React.Component {
       return (
         <Layout user={this.props.session.user.email} token={this.props.session.csrfToken}>
           <Container style={{ alignItems: 'center' }}>
-            <Content style={{ width: '640px' }}>
+            <Content style={{ width: '410px' }}>
               <Panel bordered>
                 <Form className='new-request-form' layout='horizontal'>
                   <PanelGroup style={{ maxWidth: '700px' }}>
-                    <Panel bordered header={<h4 style={{ position: 'relative' }}>User Details<FontAwesomeIcon icon={faUser} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} /></h4>}>
+                    <Panel bordered style={{ position: 'relative' }} header={<><hr className='section-header-hr' /><h4 className='form-section-heading' style={{ position: 'relative' }}>User<FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} /></h4><hr className='section-header-hr end' /></>}>
                       <FormGroup>
                         <ControlLabel>Name</ControlLabel>
                         <FormControl name='name' value={this.props.session.user.name} />
@@ -66,7 +66,7 @@ class Wrapper extends React.Component {
                         <FormControl name='email' type='email' value={this.props.session.user.email} />
                       </FormGroup>
                     </Panel>
-                    <Panel bordered header={<h4 style={{ position: 'relative' }}>History<FontAwesomeIcon icon={faHistory} width='1em' style={{ marginLeft: '10px', top: '5px', position: 'absolute', color: 'secondary' }} /></h4>}>
+                    <Panel bordered header={<><hr className='section-header-hr' /><h4 className='form-section-heading' style={{ position: 'relative' }}>History<FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} /></h4><hr className='section-header-hr end' /></>}>
                       <FormGroup>
                         <ControlLabel>Days from Last Year</ControlLabel>
                         <FormControl name='daysLastYear' type='text' />
@@ -88,7 +88,7 @@ class Wrapper extends React.Component {
                         <FormControl name='remainingDays' type='text' />
                       </FormGroup>
                     </Panel>
-                    <Panel bordered header={<h4 style={{ position: 'relative' }}>Other<FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} /></h4>}>
+                    <Panel bordered header={<><hr className='section-header-hr' /><h4 className='form-section-heading' style={{ position: 'relative' }}>Dates<FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} /></h4><hr className='section-header-hr end' /></>}>
                       <FormGroup>
                         <ControlLabel>Type of Absence</ControlLabel>
                         <RadioGroup name='radioList' inline appearance='picker' defaultValue='A'>
@@ -97,7 +97,7 @@ class Wrapper extends React.Component {
                           <Radio value='C'>Newborn</Radio>
                           <Radio value='D'>Moving</Radio>
                         </RadioGroup>
-                        <HelpBlock tooltip>Required</HelpBlock>
+                        {/* <HelpBlock tooltip>Required</HelpBlock> */}
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>When do you need off?</ControlLabel>
@@ -120,7 +120,7 @@ class Wrapper extends React.Component {
                         </Dropzone>
                       </FormGroup>
                       <FormGroup>
-                        <ButtonToolbar>
+                        <ButtonToolbar style={{ paddingLeft: '0px' }}>
                           <ButtonGroup style={{ width: '320px' }}>
                             <Button style={{ width: '50%' }} appearance='default'>Cancel</Button>
                             <Button style={{ width: '50%' }} appearance='primary'>Submit</Button>
@@ -138,19 +138,32 @@ class Wrapper extends React.Component {
               width: 100%;
               text-align: center;
             }
+            :global(.section-header-hr) {
+              width: 30%;
+              position: absolute;
+            }
+            :global(.section-header-hr.end) {
+              right: 0;
+              top: 20px;
+            }
             :global(.new-request-form) {
               display: flex;
               justify-content: center;
             }
+            :global(.rs-panel-group .rs-panel + .rs-panel::before) {
+              border: none;
+            }
             :global(.filedrop-label) {
-              height: 70px;
               display: flex !important;
               align-items: center;
-              justify-content: flex-end;
+              justify-content: center;
             }
             :global(.filedrop-section) {
               width: 320px;
               float: left;
+            }
+            :global(.filedrop-section:hover) {
+              cursor: pointer;
             }
             :global(.filedrop-target) {
               min-height: 50px;
@@ -165,6 +178,10 @@ class Wrapper extends React.Component {
               width: 320px;
             }
             :global(.rs-panel-heading) {
+              text-align: center;
+            }
+            :global(.rs-form-horizontal .rs-form-group .rs-control-label) {
+              width: 100%;
               text-align: center;
             }
           `}
