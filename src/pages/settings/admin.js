@@ -18,18 +18,22 @@ import {
   Header,
   Content,
   Button,
+  ButtonToolbar,
+  Notification,
   Modal,
   Alert,
   Panel,
-  SelectPicker
+  SelectPicker,
+  Table,
+  Form,
+  FormControl,
+  FormGroup,
+  ControlLabel,
+  Row,
+  Col
 } from 'rsuite'
-import {
-  Accordion,
-  AccordionItem,
-  AccordionItemHeading,
-  AccordionItemButton,
-  AccordionItemPanel
-} from 'react-accessible-accordion'
+
+const { Column, HeaderCell, Cell } = Table
 
 class Wrapper extends React.Component {
   static async getInitialProps ({ res, req, query }) {
@@ -43,7 +47,7 @@ class Wrapper extends React.Component {
         Router.push('/auth')
       }
     }
-    const host = req ? req.headers['x-forwarded-host'] : location.host
+    const host = req ? req.headers['x-forwarded-host'] : window.location.host
     const protocol = typeof window !== 'undefined' ? window.location.protocol : 'https:'
     const pageRequest = `${protocol}//${host}/api/user/list`
     const userRequest = await fetch(pageRequest)
@@ -64,8 +68,17 @@ class Wrapper extends React.Component {
       updateCount: 0,
       showSyncModal: false,
       rowData: props.users.userList,
+      openManagerEditModal: false,
+      openManagerAddModal: false,
       allUsers: [],
       allRowData: [],
+      managerRowData: [],
+      activeManager: {
+        name: '',
+        team: '',
+        email: ''
+      },
+      teamSelectData: [],
       allGridOptions: {
         defaultColDef: {
           resizable: true,
@@ -164,7 +177,7 @@ class Wrapper extends React.Component {
           }, {
             headerName: 'Approved',
             field: 'approved',
-            width: 140,
+            width: 160,
             cellRenderer: 'approvedbtn',
             pinned: 'right',
             cellStyle: {
@@ -199,8 +212,7 @@ class Wrapper extends React.Component {
           {
             headerName: 'ID',
             field: 'id',
-            hide: true,
-            sort: { direction: 'asc', priority: 0 }
+            hide: true
           }, {
             headerName: 'From',
             field: 'fromDate',
@@ -271,6 +283,7 @@ class Wrapper extends React.Component {
             headerName: 'Submitted',
             cellRenderer: 'dateTimeShort',
             field: 'submitted_datetime',
+            sort: { direction: 'desc', priority: 0 },
             width: 160
           }, {
             headerName: 'Approval Date/Time',
@@ -301,6 +314,41 @@ class Wrapper extends React.Component {
         paginationPageSize: 10,
         rowClass: 'row-class'
       },
+      managerGridOptions: {
+        defaultColDef: {
+          resizable: true,
+          sortable: true,
+          filter: true,
+          selectable: false,
+          editable: false
+        },
+        columnDefs: [
+          {
+            headerName: 'ID',
+            field: 'id',
+            hide: true,
+            sort: { direction: 'asc', priority: 0 }
+          }, {
+            headerName: 'Name',
+            field: 'name',
+            width: 180
+          }, {
+            headerName: 'Email',
+            field: 'email'
+          }, {
+            headerName: 'Team',
+            field: 'team',
+            width: 120
+          }
+        ],
+        context: { componentParent: this },
+        frameworkComponents: {
+          dateShort: DateField
+        },
+        rowSelection: 'multiple',
+        paginationPageSize: 10,
+        rowClass: 'row-class'
+      },
       gridOptions: {
         defaultColDef: {
           resizable: true,
@@ -318,11 +366,11 @@ class Wrapper extends React.Component {
           }, {
             headerName: 'First Name',
             field: 'fname',
-            width: 120
+            width: 140
           }, {
             headerName: 'Last Name',
             field: 'lname',
-            width: 120
+            width: 140
           }, {
             headerName: 'Email',
             field: 'email'
@@ -348,6 +396,22 @@ class Wrapper extends React.Component {
         rowClass: 'row-class'
       }
     }
+  }
+
+  notifyInfo = (header, text) => {
+    Notification.info({
+      title: header,
+      duration: 2000,
+      description: <div className='notify-body'>{text}</div>
+    })
+  }
+
+  notifyWarn = (header, text) => {
+    Notification.warning({
+      title: header,
+      duration: 2000,
+      description: <div className='notify-body'>{text}</div>
+    })
   }
 
   handleAdGroupSync = () => {
@@ -440,6 +504,17 @@ class Wrapper extends React.Component {
         }
       })
       .catch(err => console.error(err))
+    fetch(`${protocol}//${host}/api/managers`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.managerEntries) {
+          this.setState({
+            managerRowData: data.managerEntries
+          })
+          // window.gridApi && window.gridApi.refreshCells()
+        }
+      })
+      .catch(err => console.error(err))
   }
 
   handleSyncModalClose = () => {
@@ -467,6 +542,11 @@ class Wrapper extends React.Component {
     this.allGridApi = params.api
   }
 
+  handleManagerGridReady = params => {
+    params.api.sizeColumnsToFit()
+    this.managerGridApi = params.api
+  }
+
   handlePersonalGridExport = () => {
     if (this.personalGridApi) {
       const email = this.state.userSelection.value
@@ -481,7 +561,6 @@ class Wrapper extends React.Component {
   }
 
   handlePersonalSelectChange = (data) => {
-    console.log(data)
     const host = window.location.host
     const protocol = window.location.protocol
     fetch(`${protocol}//${host}/api/user/entries?user=${data}`)
@@ -508,6 +587,168 @@ class Wrapper extends React.Component {
     }
   }
 
+  toggleManagerEditModal = (manager) => {
+    if (!this.state.openManagerEditModal) {
+      const host = window.location.host
+      const protocol = window.location.protocol
+      fetch(`${protocol}//${host}/api/team`)
+        .then(res => res.json())
+        .then(data => {
+          const teamsSelect = []
+          data.teamInfos.forEach(team => {
+            teamsSelect.push({ value: team.id, label: team.name })
+          })
+          const activeId = data.teamInfos.filter(team => team.name === manager.team)
+          this.setState({
+            teamSelectData: teamsSelect,
+            openManagerEditModal: !this.state.openManagerEditModal,
+            activeManager: {
+              id: manager.id,
+              name: manager.name,
+              team: activeId[0].id,
+              email: manager.email
+            }
+          })
+        })
+        .catch(err => console.error(err))
+    } else {
+      this.setState({
+        openManagerEditModal: !this.state.openManagerEditModal
+      })
+    }
+  }
+
+  toggleManagerAddModal = () => {
+    if (!this.state.openManagerAddModal) {
+      const host = window.location.host
+      const protocol = window.location.protocol
+      fetch(`${protocol}//${host}/api/team`)
+        .then(res => res.json())
+        .then(data => {
+          const teamsSelect = []
+          data.teamInfos.forEach(team => {
+            teamsSelect.push({ value: team.id, label: team.name })
+          })
+          this.setState({
+            teamSelectData: teamsSelect,
+            openManagerAddModal: !this.state.openManagerAddModal
+          })
+        })
+        .catch(err => console.error(err))
+    } else {
+      this.setState({
+        openManagerAddModal: !this.state.openManagerAddModal
+      })
+    }
+  }
+
+  handleManagerDelete = (id) => {
+    const host = window.location.host
+    const protocol = window.location.protocol
+    fetch(`${protocol}//${host}/api/managers/delete?id=${id}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.managerDelete && data.managerDelete.affectedRows === 1) {
+          const managers = this.state.managerRowData.filter(man => man.id !== id)
+          this.setState({
+            managerRowData: managers
+          })
+          this.notifyInfo('Manager Removed')
+        }
+      })
+      .catch(err => console.error(err))
+  }
+
+  handleManagerNameChange = (value) => {
+    this.setState({
+      activeManager: {
+        ...this.state.activeManager,
+        name: value
+      }
+    })
+  }
+
+  handleManagerTeamChange = (value) => {
+    console.log(value)
+    this.setState({
+      activeManager: {
+        ...this.state.activeManager,
+        team: value
+      }
+    })
+  }
+
+  handleManagerEmailChange = (value) => {
+    this.setState({
+      activeManager: {
+        ...this.state.activeManager,
+        email: value
+      }
+    })
+  }
+
+  handleConfirmManagerSave = () => {
+    const host = window.location.host
+    const protocol = window.location.protocol
+    const {
+      id,
+      name,
+      email,
+      team
+    } = this.state.activeManager
+
+    fetch(`${protocol}//${host}/api/managers/edit?id=${id}&name=${name}&email=${email}&team=${team}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.managerEdit && data.managerEdit.affectedRows === 1) {
+          const managers = this.state.managerRowData
+          // const edittedManager = managers.filter(manager => manager.id === id)
+          const activeId = managers.findIndex(man => man.id === id)
+          managers[activeId].name = name
+          managers[activeId].email = email
+          const teamLabel = this.state.teamSelectData.filter(t => t.value === team)
+          managers[activeId].team = teamLabel[0].label
+          this.setState({
+            openManagerEditModal: !this.state.openManagerEditModal,
+            managerRowData: managers
+          })
+          this.notifyInfo('Manager Info Saved')
+        }
+      })
+      .catch(err => console.error(err))
+  }
+
+  handleConfirmAddManager = (manager) => {
+    const host = window.location.host
+    const protocol = window.location.protocol
+    const {
+      name,
+      email,
+      team
+    } = this.state.activeManager
+
+    fetch(`${protocol}//${host}/api/managers/add?name=${name}&email=${email}&team=${team}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.managerAdd && data.managerAdd.affectedRows === 1) {
+          const managers = this.state.managerRowData
+          const teamLabel = this.state.teamSelectData.filter(t => t.value === team)
+          managers.push({
+            id: data.managerAdd.insertId,
+            name: name,
+            email: email,
+            team: teamLabel[0].label
+          })
+          this.setState({
+            openManagerAddModal: !this.state.openManagerAddModal,
+            managerRowData: managers
+          })
+          this.notifyInfo('Manager Added')
+        }
+      })
+      .catch(err => console.error(err))
+  }
+
   render () {
     const {
       gridOptions,
@@ -519,107 +760,144 @@ class Wrapper extends React.Component {
       personalRowData,
       allUsers,
       allGridOptions,
-      allRowData
+      allRowData,
+      managerRowData,
+      openManagerEditModal,
+      openManagerAddModal,
+      activeManager,
+      teamSelectData
     } = this.state
 
     if (this.props.session.user && this.props.admin) {
       return (
         <Layout user={this.props.session.user.email} token={this.props.session.csrfToken}>
           <Container className='settings-admin-container'>
-            {/* <Panel bordered> */}
-            <Accordion
-              allowZeroExpanded
-              preExpanded='3'
-            >
-              <AccordionItem uuid='1'>
-                <AccordionItemHeading>
-                  <AccordionItemButton>
-                    <Header className='user-content-header'>
-                      <span className='section-header'>
-                        User List
-                      </span>
-                      <Button appearance='ghost' onClick={this.handleAdGroupSync}>Sync AD Groups</Button>
-                    </Header>
-                  </AccordionItemButton>
-                </AccordionItemHeading>
-                <AccordionItemPanel>
-                  <Panel bordered>
-                    <Content className='user-grid-wrapper'>
-                      <div className='ag-theme-material user-grid'>
-                        <AgGridReact
-                          gridOptions={gridOptions}
-                          rowData={rowData}
-                          onGridReady={this.handleGridReady}
-                          animateRows
-                          pagination
-                        />
-                      </div>
-                    </Content>
-                  </Panel>
-                </AccordionItemPanel>
-              </AccordionItem>
-              <AccordionItem uuid='2'>
-                <AccordionItemHeading>
-                  <AccordionItemButton>
-                    <Header className='user-content-header'>
-                      <span className='section-header'>
-                        Per Person
-                      </span>
-                      <Button appearance='ghost' onClick={this.handlePersonalGridExport}>Export</Button>
-                    </Header>
-                  </AccordionItemButton>
-                </AccordionItemHeading>
-                <AccordionItemPanel>
-                  <Panel bordered>
-                    <Content className='user-grid-wrapper'>
-                      <SelectPicker
-                        onChange={this.handlePersonalSelectChange}
-                        data={allUsers}
-                        placeholder='Please Select a User'
-                        style={{ width: '300px' }}
+            <Row className='settings-admin-row'>
+              <Col className='settings-admin-col-2'>
+                <Panel
+                  bordered
+                  style={{
+                    width: '100%',
+                    display: 'inline-block'
+                  }}
+                >
+                  <Header className='user-content-header'>
+                    <h4>Managers</h4>
+                    <Button appearance='ghost' onClick={this.toggleManagerAddModal}>Add</Button>
+                  </Header>
+                  <Table
+                    height={400}
+                    loading={!managerRowData}
+                    data={managerRowData}
+                    style={{
+                      width: '100%'
+                    }}
+                  >
+                    <Column width={200}>
+                      <HeaderCell>Name</HeaderCell>
+                      <Cell dataKey='name' />
+                    </Column>
+                    <Column width={200}>
+                      <HeaderCell>Email</HeaderCell>
+                      <Cell dataKey='email' />
+                    </Column>
+                    <Column width={200}>
+                      <HeaderCell>Team</HeaderCell>
+                      <Cell dataKey='team' />
+                    </Column>
+                    <Column width={120} fixed='right'>
+                      <HeaderCell>Action</HeaderCell>
+                      <Cell>
+                        {rowData => {
+                          const handleEdit = () => {
+                            this.toggleManagerEditModal(rowData)
+                          }
+                          const handleDelete = () => {
+                            this.handleManagerDelete(rowData.id)
+                          }
+                          return (
+                            <span>
+                              <a onClick={handleEdit}> Edit </a> |{' '}
+                              <a onClick={handleDelete}> Delete </a>
+                            </span>
+                          )
+                        }}
+                      </Cell>
+                    </Column>
+                  </Table>
+                </Panel>
+              </Col>
+              <Col className='settings-admin-col-2'>
+                <Panel
+                  bordered
+                  style={{
+                    width: '100%',
+                    display: 'inline-block'
+                  }}
+                >
+                  <Header className='user-content-header'>
+                    <h4>Users</h4>
+                    <Button appearance='ghost' onClick={this.handleAdGroupSync}>Sync AD Groups</Button>
+                  </Header>
+                  <Content className='user-grid-wrapper'>
+                    <div className='ag-theme-material user-grid manager-user-wrapper'>
+                      <AgGridReact
+                        gridOptions={gridOptions}
+                        rowData={rowData}
+                        onGridReady={this.handleGridReady}
+                        animateRows
+                        pagination
+                        style={{ width: '100%' }}
                       />
-                      <div className='ag-theme-material user-grid'>
-                        <AgGridReact
-                          gridOptions={personalGridOptions}
-                          rowData={personalRowData}
-                          onGridReady={this.handlePersonalGridReady}
-                          animateRows
-                          pagination
-                        />
-                      </div>
-                    </Content>
-                  </Panel>
-                </AccordionItemPanel>
-              </AccordionItem>
-              <AccordionItem uuid='3'>
-                <AccordionItemHeading>
-                  <AccordionItemButton>
-                    <Header className='user-content-header'>
-                      <span className='section-header'>
+                    </div>
+                  </Content>
+                </Panel>
+              </Col>
+            </Row>
+            <Panel bordered>
+              <Header className='user-content-header'>
+                <span className='section-header'>
+                  Per Person
+                </span>
+                <Button appearance='ghost' onClick={this.handlePersonalGridExport}>Export</Button>
+              </Header>
+              <Content className='user-grid-wrapper'>
+                <SelectPicker
+                  onChange={this.handlePersonalSelectChange}
+                  data={allUsers}
+                  placeholder='Please Select a User'
+                  style={{ width: '300px' }}
+                />
+                <div className='ag-theme-material user-grid'>
+                  <AgGridReact
+                    gridOptions={personalGridOptions}
+                    rowData={personalRowData}
+                    onGridReady={this.handlePersonalGridReady}
+                    animateRows
+                    pagination
+                  />
+                </div>
+              </Content>
+            </Panel>
+            <Panel bordered>
+              <Header className='user-content-header'>
+                <span className='section-header'>
                         All Colleagues
-                      </span>
-                      <Button appearance='ghost' onClick={this.handleAllGridExport}>Export</Button>
-                    </Header>
-                  </AccordionItemButton>
-                </AccordionItemHeading>
-                <AccordionItemPanel>
-                  <Panel bordered>
-                    <Content className='user-grid-wrapper'>
-                      <div className='ag-theme-material user-grid'>
-                        <AgGridReact
-                          gridOptions={allGridOptions}
-                          rowData={allRowData}
-                          onGridReady={this.handleAllGridReady}
-                          animateRows
-                          pagination
-                        />
-                      </div>
-                    </Content>
-                  </Panel>
-                </AccordionItemPanel>
-              </AccordionItem>
-            </Accordion>
-            {/* </Panel> */}
+                </span>
+                <Button appearance='ghost' onClick={this.handleAllGridExport}>Export</Button>
+              </Header>
+              <Content className='user-grid-wrapper'>
+                <div className='ag-theme-material user-grid'>
+                  <AgGridReact
+                    gridOptions={allGridOptions}
+                    rowData={allRowData}
+                    onGridReady={this.handleAllGridReady}
+                    animateRows
+                    pagination
+                  />
+                </div>
+              </Content>
+            </Panel>
           </Container>
           <Modal show={showSyncModal} onHide={this.handleSyncModalClose}>
             <Modal.Header>
@@ -642,9 +920,111 @@ class Wrapper extends React.Component {
               </Button>
             </Modal.Footer>
           </Modal>
+          <Modal
+            show={openManagerEditModal}
+            onHide={this.toggleManagerEditModal}
+            style={{
+              width: '350px'
+            }}
+          >
+            <Modal.Header>
+              <Modal.Title>Edit Manager</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form>
+                <FormGroup>
+                  <ControlLabel>Name</ControlLabel>
+                  <FormControl onChange={this.handleManagerNameChange} name='name' value={activeManager.name} />
+                </FormGroup>
+                <FormGroup>
+                  <ControlLabel>Email</ControlLabel>
+                  <FormControl onChange={this.handleManagerEmailChange} name='email' type='email' value={activeManager.email} />
+                </FormGroup>
+                <FormGroup>
+                  <ControlLabel>Team</ControlLabel>
+                  {/* <FormControl onChange={this.handleManagerTeamChange} name='team' value={activeManager.team} /> */}
+                  <SelectPicker
+                    onChange={this.handleManagerTeamChange}
+                    value={activeManager.team}
+                    style={{ width: '100%' }}
+                    searchable={false}
+                    data={teamSelectData}
+                  />
+                </FormGroup>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button onClick={this.handleConfirmManagerSave} appearance='primary'>
+                Save
+              </Button>
+              <Button onClick={this.toggleManagerEditModal} appearance='subtle'>
+                Cancel
+              </Button>
+            </Modal.Footer>
+          </Modal>
+          <Modal
+            show={openManagerAddModal}
+            onHide={this.toggleManagerAddModal}
+            style={{
+              width: '350px'
+            }}
+          >
+            <Modal.Header>
+              <Modal.Title>Add Manager</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form>
+                <FormGroup>
+                  <ControlLabel>Name</ControlLabel>
+                  <FormControl onChange={this.handleManagerNameChange} name='name' value={activeManager.name} />
+                </FormGroup>
+                <FormGroup>
+                  <ControlLabel>Email</ControlLabel>
+                  <FormControl onChange={this.handleManagerEmailChange} name='email' type='email' value={activeManager.email} />
+                </FormGroup>
+                <FormGroup>
+                  <ControlLabel>Team</ControlLabel>
+                  {/* <FormControl onChange={this.handleManagerTeamChange} name='team' value={activeManager.team} /> */}
+                  <SelectPicker
+                    onChange={this.handleManagerTeamChange}
+                    value={activeManager.team}
+                    style={{ width: '100%' }}
+                    searchable={false}
+                    data={teamSelectData}
+                  />
+                </FormGroup>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button onClick={this.handleConfirmAddManager} appearance='primary'>
+                Save
+              </Button>
+              <Button onClick={this.toggleManagerAddModal} appearance='subtle'>
+                Cancel
+              </Button>
+            </Modal.Footer>
+          </Modal>
           <style jsx>{`
             :global(.settings-admin-container > .rs-panel) {
               margin: 10px;
+            }
+            :global(.settings-admin-row) {
+              display: flex;
+              align-items: flex-start;
+              justify-content: space-around;
+            }
+            :global(.settings-admin-col-2) {
+               display: inline;
+               width: 50%;
+               margin: 10px;
+               padding: 10px;
+            }
+            :global(.manager-user-wrapper > div) {
+              width: 100%; 
+            }
+            :global(.manager-user-wrapper) {
+              display: flex;
+              flex-wrap: nowrap;
             }
             :global(.accordion__heading) {
               background-color: #ececec;
@@ -677,6 +1057,9 @@ class Wrapper extends React.Component {
             }
             :global(.section-header) {
               font-size: 1.3rem;
+            }
+            :global(.rs-table) {
+              max-width: 100%;
             }
           `}
           </style>
