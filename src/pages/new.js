@@ -5,6 +5,7 @@ import Router from 'next/router'
 import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../components/requiredLogin'
 import File from '../components/fileIcon'
+import moment from 'moment'
 import Dropzone from 'react-dropzone'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -26,7 +27,8 @@ import {
   ButtonToolbar,
   ButtonGroup,
   Schema,
-  SelectPicker
+  SelectPicker,
+  Modal
 } from 'rsuite'
 
 class Wrapper extends React.Component {
@@ -65,6 +67,8 @@ class Wrapper extends React.Component {
     this.state = {
       files: [],
       model: absenceModel,
+      openConfirmModal: false,
+      confirmText: '',
       vaca: {
         name: props.session.user.name,
         email: props.session.user.email,
@@ -207,11 +211,49 @@ class Wrapper extends React.Component {
     })
   }
 
+  handleClear = () => {
+    this.setState({
+      vaca: {
+        name: this.props.session.user.name,
+        email: this.props.session.user.email,
+        lastYear: '',
+        thisYear: '',
+        total: '',
+        requested: '',
+        remaining: '',
+        type: '',
+        dateFrom: '',
+        dateTo: '',
+        manager: ''
+      }
+    })
+  }
+
+  toggleSubmitModal = () => {
+    if (!this.state.openConfirmModal) {
+      const { vaca } = this.state
+      const confirmText = `Are you sure you want to submit the vacation from <b>${moment(vaca.dateFrom).format('DD.MM.YYYY')}</b> to <b>${moment(vaca.dateTo).format('DD.MM.YYYY')}</b> by requesting <b>${vaca.requested}</b> days off?`
+      this.setState({
+        openConfirmModal: !this.state.openConfirmModal,
+        confirmText: confirmText
+      })
+    } else {
+      this.setState({
+        openConfirmModal: !this.state.openConfirmModal
+      })
+    }
+  }
+
+  handleSubmit = () => {
+
+  }
+
   render () {
     const {
       files,
       vaca,
-      availableManagers
+      availableManagers,
+      openConfirmModal
     } = this.state
 
     if (this.props.session.user) {
@@ -301,8 +343,8 @@ class Wrapper extends React.Component {
                       <FormGroup>
                         <ButtonToolbar style={{ paddingLeft: '0px' }}>
                           <ButtonGroup style={{ width: '320px' }}>
-                            <Button style={{ width: '50%' }} appearance='default'>Cancel</Button>
-                            <Button style={{ width: '50%' }} appearance='primary'>Submit</Button>
+                            <Button style={{ width: '50%' }} onClick={this.handleClear} appearance='default'>Clear</Button>
+                            <Button style={{ width: '50%' }} onClick={this.toggleSubmitModal} appearance='primary'>Submit</Button>
                           </ButtonGroup>
                         </ButtonToolbar>
                       </FormGroup>
@@ -312,6 +354,24 @@ class Wrapper extends React.Component {
               </Panel>
             </Content>
           </Container>
+          <Modal enforceFocus size='xs' backdrop show={openConfirmModal} onHide={this.toggleSubmitModal}>
+            <Modal.Header>
+              <Modal.Title>Confirm Submit</Modal.Title>
+            </Modal.Header>
+            <Modal.Body dangerouslySetInnerHTML={{ __html: this.state.confirmText }} />
+            <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
+              <ButtonToolbar style={{ width: '100%' }}>
+                <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+                  <Button onClick={this.handleSubmit} style={{ width: '33%' }} appearance='primary'>
+                  Ok
+                  </Button>
+                  <Button onClick={this.toggleSubmitModal} style={{ width: '33%' }} appearance='default'>
+                  Cancel
+                  </Button>
+                </ButtonGroup>
+              </ButtonToolbar>
+            </Modal.Footer>
+          </Modal>
           <style jsx>{`
             :global(.new-request-header) {
               width: 100%;

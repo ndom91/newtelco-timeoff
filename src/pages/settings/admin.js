@@ -356,9 +356,11 @@ class Wrapper extends React.Component {
           }, {
             headerName: 'Date Joined',
             field: 'datejoined',
+            editable: true,
             cellRenderer: 'dateShort'
           }, {
-            headerName: 'Days Remaining',
+            headerName: 'Days Available',
+            editable: true,
             field: 'daysremaining'
           }
         ],
@@ -725,6 +727,29 @@ class Wrapper extends React.Component {
       .catch(err => console.error(err))
   }
 
+  handleCellEdit = (params) => {
+    console.log('p', params)
+    const id = params.data.id
+    const daysRemaining = params.data.daysremaining
+    const dateJoined = params.data.datejoined
+    const host = window.location.host
+    const protocol = window.location.protocol
+
+    fetch(`${protocol}//${host}/api/settings/user/edit?id=${id}&daysRemaining=${encodeURIComponent(daysRemaining)}&dateJoined=${encodeURIComponent(moment(dateJoined).format('YYYY-MM-DD'))}`, {
+      method: 'get'
+    })
+      .then(resp => resp.json())
+      .then(data => {
+        console.log(data)
+        if (data.userUpdate.affectedRows === 1) {
+          this.notifyInfo('User Info Saved')
+        } else {
+          this.notifyWarn('Error Saving User Info')
+        }
+      })
+      .catch(err => console.error(err))
+  }
+
   render () {
     const {
       gridOptions,
@@ -830,6 +855,12 @@ class Wrapper extends React.Component {
                         rowData={rowData}
                         onGridReady={this.handleGridReady}
                         animateRows
+                        onCellEditingStopped={this.handleCellEdit}
+                        stopEditingWhenGridLosesFocus
+                        deltaRowDataMode
+                        getRowNodeId={(data) => {
+                          return data.id
+                        }}
                         pagination
                         style={{ width: '100%' }}
                       />
