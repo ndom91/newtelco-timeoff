@@ -355,13 +355,25 @@ class Wrapper extends React.Component {
             width: 140
           }, {
             headerName: 'Date Joined',
-            field: 'datejoined',
+            field: 'dateJoined',
             editable: true,
-            cellRenderer: 'dateShort'
+            cellRenderer: 'dateShort',
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            }
           }, {
             headerName: 'Days Available',
             editable: true,
-            field: 'daysremaining'
+            field: 'daysAvailable',
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            }
           }
         ],
         context: { componentParent: this },
@@ -730,12 +742,12 @@ class Wrapper extends React.Component {
   handleCellEdit = (params) => {
     console.log('p', params)
     const id = params.data.id
-    const daysRemaining = params.data.daysremaining
-    const dateJoined = params.data.datejoined
+    const daysRemaining = params.data.daysAvailable
+    const dateJoined = params.data.dateJoined
     const host = window.location.host
     const protocol = window.location.protocol
 
-    fetch(`${protocol}//${host}/api/settings/user/edit?id=${id}&daysRemaining=${encodeURIComponent(daysRemaining)}&dateJoined=${encodeURIComponent(moment(dateJoined).format('YYYY-MM-DD'))}`, {
+    fetch(`${protocol}//${host}/api/settings/user/edit?id=${id}&daysRemaining=${encodeURIComponent(daysRemaining)}&dateJoined=${encodeURIComponent(moment(new Date(dateJoined)).format('YYYY-MM-DD'))}`, {
       method: 'get'
     })
       .then(resp => resp.json())
