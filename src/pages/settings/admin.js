@@ -832,10 +832,10 @@ class Wrapper extends React.Component {
                             <span>
                               <ButtonToolbar>
                                 <ButtonGroup>
-                                  <Button size='sm' appearance='primary' onClick={handleEdit}>
+                                  <Button size='sm' appearance='ghost' onClick={handleEdit}>
                                     <FontAwesomeIcon icon={faPencilAlt} width='0.8rem' />
                                   </Button>
-                                  <Button size='sm' onClick={handleDelete}>
+                                  <Button size='sm' appearance='ghost' onClick={handleDelete}>
                                     <FontAwesomeIcon icon={faTrashAlt} width='0.7rem' />
                                   </Button>
                                 </ButtonGroup>
@@ -858,7 +858,7 @@ class Wrapper extends React.Component {
                 >
                   <Header className='user-content-header'>
                     <h4>Users</h4>
-                    <Button appearance='ghost' onClick={this.handleAdGroupSync}>Sync AD Groups</Button>
+                    <Button appearance='ghost' onClick={this.handleAdGroupSync}>Sync Domain Users</Button>
                   </Header>
                   <Content className='user-grid-wrapper'>
                     <div className='ag-theme-material user-grid manager-user-wrapper'>
@@ -884,7 +884,7 @@ class Wrapper extends React.Component {
             <Panel bordered>
               <Header className='user-content-header'>
                 <span className='section-header'>
-                  Per Person
+                  <h4>Per Person</h4>
                 </span>
                 <Button appearance='ghost' onClick={this.handlePersonalGridExport}>Export</Button>
               </Header>
@@ -909,7 +909,7 @@ class Wrapper extends React.Component {
             <Panel bordered>
               <Header className='user-content-header'>
                 <span className='section-header'>
-                        All Colleagues
+                  <h4>All Colleagues</h4>
                 </span>
                 <Button appearance='ghost' onClick={this.handleAllGridExport}>Export</Button>
               </Header>

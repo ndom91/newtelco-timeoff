@@ -41,7 +41,6 @@ class Wrapper extends React.Component {
           <Container>
             <Panel bordered>
               <Content>
-                {/* <Calendar bordered renderCell={renderCell} /> */}
                 <Calendar />
               </Content>
             </Panel>

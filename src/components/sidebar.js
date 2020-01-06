@@ -133,14 +133,14 @@ class SidebarNT extends React.Component {
                       Dashboard
                 </Nav.Item>
               </Link>
+              <Link passHref href='/new'>
+                <Nav.Item eventKey='3' active={typeof window !== 'undefined' && Router.pathname === '/new'} icon={<Icon icon='plus-square' />}>
+                      New Request
+                </Nav.Item>
+              </Link>
               <Link passHref href='/user'>
                 <Nav.Item eventKey='2' active={typeof window !== 'undefined' && Router.pathname === '/user'} icon={<Icon icon='user' />}>
                   {this.props.user.substr(0, this.props.user.indexOf('@'))}
-                </Nav.Item>
-              </Link>
-              <Link passHref href='/new'>
-                <Nav.Item eventKey='3' active={typeof window !== 'undefined' && Router.pathname === '/new'} icon={<Icon icon='plus-square' />}>
-                      New
                 </Nav.Item>
               </Link>
               <Dropdown
@@ -176,14 +176,14 @@ class SidebarNT extends React.Component {
                 placement='rightStart'
                 active={typeof window !== 'undefined' && Router.pathname.includes('settings')}
               >
-                <Link passHref href='/settings/general'>
+                {/* <Link passHref href='/settings/general'>
                   <Dropdown.Item
                     eventKey='5-1'
                     active={typeof window !== 'undefined' && Router.pathname === '/settings/general'}
                   >
                         General
                   </Dropdown.Item>
-                </Link>
+                </Link> */}
                 {this.props.admin
                   ? (
                     <Link

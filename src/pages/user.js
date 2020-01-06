@@ -12,7 +12,6 @@ import ApprovedField from '../components/aggrid/approved'
 import { AgGridReact } from 'ag-grid-react'
 import 'ag-grid-community/dist/styles/ag-grid.css'
 import 'ag-grid-community/dist/styles/ag-theme-material.css'
-// import CalendarHeatmap from 'reactjs-calendar-heatmap'
 import { extendMoment } from 'moment-range'
 import {
   Container,
@@ -195,33 +194,33 @@ class Wrapper extends React.Component {
   }
 
   componentDidMount () {
-    // const host = window.location.host
-    // const protocol = window.location.protocol
-    // const user = this.props.session.user.email
-    // fetch(`${protocol}//${host}/api/user/entries?user=${user}`)
-    //   .then(res => res.json())
-    //   .then(data => {
-    //     if (data.userEntries) {
-    //       const heatmap = []
-    //       this.setState({
-    //         rowData: data.userEntries
-    //       })
-    //       data.userEntries.forEach(entry => {
-    //         const from = moment(entry.from)
-    //         const to = moment(entry.to)
-    //         const range = moment.range(from, to)
-    //         for (const day of range.by('day')) {
-    //           heatmap.push({ date: day, value: 1 })
-    //         }
-    //         // https://www.npmjs.com/package/reactjs-calendar-heatmap
-    //       })
-    //       this.setState({
-    //         heatmapData: heatmap
-    //       })
-    //     window.gridApi && window.gridApi.refreshCells()
-    //   }
-    // })
-    // .catch(err => console.error(err))
+    const host = window.location.host
+    const protocol = window.location.protocol
+    const user = this.props.session.user.email
+    fetch(`${protocol}//${host}/api/user/entries?user=${user}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.userEntries) {
+          const heatmap = []
+          this.setState({
+            rowData: data.userEntries
+          })
+          data.userEntries.forEach(entry => {
+            const from = moment(entry.from)
+            const to = moment(entry.to)
+            const range = moment.range(from, to)
+            for (const day of range.by('day')) {
+              heatmap.push({ date: day, value: 1 })
+            }
+            // https://www.npmjs.com/package/reactjs-calendar-heatmap
+          })
+          this.setState({
+            heatmapData: heatmap
+          })
+          window.gridApi && window.gridApi.refreshCells()
+        }
+      })
+      .catch(err => console.error(err))
   }
 
   handleGridReady = params => {
@@ -279,9 +278,9 @@ class Wrapper extends React.Component {
               </Content>
             </Panel>
             <Panel bordered>
-              <CalendarHeatmap
+              {/* <CalendarHeatmap
                 user={this.props.session.user.email}
-              />
+              /> */}
             </Panel>
           </Container>
           <style jsx>{`

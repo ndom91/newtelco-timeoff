@@ -36,7 +36,8 @@ class Wrapper extends React.Component {
     super(props)
 
     this.state = {
-      teamName: ''
+      teamName: '',
+      teamVacations: []
     }
   }
 
@@ -58,6 +59,27 @@ class Wrapper extends React.Component {
             this.setState({
               team: teamMembers
             })
+            const teamMembersList = []
+            teamMembers.forEach(member => {
+              teamMembersList.push(member.email)
+            })
+            fetch(`${protocol}//${host}/api/settings/team/vacations?members=${encodeURIComponent(JSON.stringify(teamMembersList))}`)
+              .then(res => res.json())
+              .then(data => {
+                const finalTeamVacations = data.teamVacations.map(vacation => {
+                  var o = Object.assign({}, vacation)
+                  o.start = vacation.fromDate
+                  o.end = vacation.toDate
+                  o.category = 'allday'
+                  o.title = vacation.name
+                  o.calendarId = '069'
+                  return o
+                })
+                this.setState({
+                  teamVacations: finalTeamVacations
+                })
+              })
+              .catch(err => console.error(err))
           }
         })
         .catch(err => console.error(err))
@@ -70,7 +92,8 @@ class Wrapper extends React.Component {
 
   render () {
     const {
-      teamName
+      teamName,
+      teamVacations
     } = this.state
 
     if (this.props.session.user) {
@@ -78,7 +101,7 @@ class Wrapper extends React.Component {
         <Layout user={this.props.session.user.email} token={this.props.session.csrfToken}>
           <Container>
             <Content>
-              {typeof window !== 'undefined' && <TuiCalendar teamName={teamName} />}
+              {typeof window !== 'undefined' && <TuiCalendar teamName={teamName} vacations={teamVacations} />}
             </Content>
           </Container>
         </Layout>

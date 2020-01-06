@@ -34,6 +34,22 @@ class TuiCalendar extends React.Component {
         }
       })
       .catch(err => console.error(err))
+    const calendarInstance = this.calendarRef.current.getInstance()
+    const monthHeader = this.getMonthHeader(calendarInstance.getDateRangeStart(), calendarInstance.getDateRangeEnd())
+    this.setState({
+      currentDateView: calendarInstance.getDate(),
+      monthHeader
+    })
+  }
+
+  getMonthHeader = (dateA, dateB) => {
+    const monthA = new Date(dateA._date).toLocaleString('default', { month: 'long' })
+    const monthB = new Date(dateB._date).toLocaleString('default', { month: 'long' })
+    if (monthA === monthB) {
+      return monthA
+    } else {
+      return `${monthA} - ${monthB}`
+    }
   }
 
   handleToggleView = () => {
@@ -41,7 +57,6 @@ class TuiCalendar extends React.Component {
       currentView
     } = this.state
 
-    console.log(this.calendarRef)
     const calendarInstance = this.calendarRef.current.getInstance()
     if (currentView === 'month') {
       calendarInstance.changeView('week', true)
@@ -56,9 +71,35 @@ class TuiCalendar extends React.Component {
     }
   }
 
+  handleMoveToToday = () => {
+    const calendarInstance = this.calendarRef.current.getInstance()
+    calendarInstance.today()
+  }
+
+  handleCalendarNext = () => {
+    const calendarInstance = this.calendarRef.current.getInstance()
+    calendarInstance.next()
+    const monthHeader = this.getMonthHeader(calendarInstance.getDateRangeStart(), calendarInstance.getDateRangeEnd())
+    this.setState({
+      currentDateView: calendarInstance.getDate(),
+      monthHeader
+    })
+  }
+
+  handleCalendarPrev = () => {
+    const calendarInstance = this.calendarRef.current.getInstance()
+    const monthHeader = this.getMonthHeader(calendarInstance.getDateRangeStart(), calendarInstance.getDateRangeEnd())
+    calendarInstance.prev()
+    this.setState({
+      currentDateView: calendarInstance.getDate(),
+      monthHeader
+    })
+  }
+
   render () {
     const {
-      currentView
+      currentView,
+      monthHeader
     } = this.state
 
     return (
@@ -69,25 +110,59 @@ class TuiCalendar extends React.Component {
               fontSize: '24px'
             }}
           >
-            {this.props.teamName} Calendar
+            {this.props.teamName} Absences
           </span>
-          <ButtonGroup>
-            <IconButton
-              icon={<Icon icon='calendar' />}
-              onClick={this.handleToggleView}
-              appearance='primary'
-            >
-              Toggle View
-            </IconButton>
-          </ButtonGroup>
+          <span
+            style={{
+              fontSize: '24px'
+            }}
+          >
+            {monthHeader}
+          </span>
+          <span>
+            <ButtonGroup style={{ marginRight: '10px' }}>
+              <IconButton
+                icon={<Icon size='4x' icon='calendar' />}
+                onClick={this.handleMoveToToday}
+                appearance='ghost'
+                size='lg'
+              >
+                Today
+              </IconButton>
+            </ButtonGroup>
+            <ButtonGroup style={{ marginRight: '10px' }}>
+              <IconButton
+                icon={<Icon size='4x' icon='calendar' />}
+                onClick={this.handleToggleView}
+                appearance='ghost'
+                size='lg'
+              >
+                Toggle View
+              </IconButton>
+            </ButtonGroup>
+            <ButtonGroup>
+              <IconButton
+                icon={<Icon icon='chevron-left' />}
+                onClick={this.handleCalendarPrev}
+                appearance='primary'
+                size='lg'
+              />
+              <IconButton
+                icon={<Icon size='4x' icon='chevron-right' />}
+                onClick={this.handleCalendarNext}
+                appearance='primary'
+                size='lg'
+              />
+            </ButtonGroup>
+          </span>
         </Header>
         <Calendar
           ref={this.calendarRef}
           calendars={[
             {
-              id: '0',
+              id: '069',
               name: 'Private',
-              bgColor: '#9e5fff',
+              bgColor: '#67B246',
               borderColor: '#9e5fff'
             }
           ]}
@@ -110,46 +185,7 @@ class TuiCalendar extends React.Component {
               tooltip: 'Berlin'
             }
           ]}
-          schedules={[
-            {
-              id: '1',
-              calendarId: '0',
-              title: 'TOAST UI Calendar Study',
-              category: 'time',
-              dueDateClass: '',
-              start: '2020-01-05T14:48:00.000Z',
-              end: '2020-01-06T14:48:00.000Z'
-            },
-            {
-              id: '2',
-              calendarId: '0',
-              title: 'Practice',
-              category: 'milestone',
-              dueDateClass: '',
-              start: '2020-01-05T09:48:00.000Z',
-              end: '2020-01-06T10:48:00.000Z',
-              isReadOnly: true
-            },
-            {
-              id: '3',
-              calendarId: '0',
-              title: 'FE Workshop',
-              category: 'allday',
-              dueDateClass: '',
-              start: '2020-01-07T09:48:00.000Z',
-              end: '2020-01-08T10:48:00.000Z',
-              isReadOnly: true
-            },
-            {
-              id: '4',
-              calendarId: '0',
-              title: 'Report',
-              category: 'time',
-              dueDateClass: '',
-              start: '2020-01-08T09:48:00.000Z',
-              end: '2020-01-09T10:48:00.000Z'
-            }
-          ]}
+          schedules={this.props.vacations}
         />
         <style jsx global>{`
             .calendar-header {
