@@ -740,7 +740,6 @@ class Wrapper extends React.Component {
   }
 
   handleCellEdit = (params) => {
-    console.log('p', params)
     const id = params.data.id
     const daysRemaining = params.data.daysAvailable
     const dateJoined = params.data.dateJoined
