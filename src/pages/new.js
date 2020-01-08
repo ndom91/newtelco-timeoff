@@ -28,7 +28,8 @@ import {
   ButtonGroup,
   Schema,
   SelectPicker,
-  Modal
+  Modal,
+  Notification
 } from 'rsuite'
 
 class Wrapper extends React.Component {
@@ -86,6 +87,22 @@ class Wrapper extends React.Component {
         manager: ''
       }
     }
+  }
+
+  notifyInfo = (header, text) => {
+    Notification.info({
+      title: header,
+      duration: 2000,
+      description: <div className='notify-body'>{text}</div>
+    })
+  }
+
+  notifyWarn = (header, text) => {
+    Notification.warning({
+      title: header,
+      duration: 2000,
+      description: <div className='notify-body'>{text}</div>
+    })
   }
 
   componentDidMount () {
@@ -261,19 +278,32 @@ class Wrapper extends React.Component {
     const {
       dateFrom,
       dateTo,
-      requested,
       manager,
       type,
       name
     } = this.state.vaca
 
-    fetch(`${protocol}//${host}/api/mail/send?manager=${manager}&from=${dateFrom}&to=${dateTo}&days=${requested}&type=${type}&name=${name}`)
+    // uuid ApprovalHash
+    const approvalHash = 'abc123'
+
+    fetch(`${protocol}//${host}/api/mail/insert?vaca=${encodeURIComponent(JSON.stringify(this.state.vaca))}&ah=${approvalHash}`)
       .then(resp => resp.json())
       .then(data => {
         console.log(data)
-        this.setState({
-          openConfirmModal: !this.state.openConfirmModal
-        })
+        fetch(`${protocol}//${host}/api/mail/send?manager=${manager}&from=${dateFrom}&to=${dateTo}&type=${type}&name=${name}&ah=${approvalHash}`)
+          .then(resp => resp.json())
+          .then(data => {
+            console.log(data)
+            this.setState({
+              openConfirmModal: !this.state.openConfirmModal
+            })
+            if (data.code === 200) {
+              this.notifyInfo('Message Sent')
+            } else if (data.code === 500) {
+              this.notifyWarn(`Error sending message - ${data.msg}`)
+            }
+          })
+          .catch(err => console.error(err))
       })
       .catch(err => console.error(err))
   }
