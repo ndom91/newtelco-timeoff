@@ -20,7 +20,7 @@ const nextAuthFunctions = require('./next-auth.functions')
 // If we want to pass a custom session store then we also need to pass an
 // instance of Express Session along with it.
 const expressSession = require('express-session')
-const MongoStore = require('connect-mongo')(expressSession)
+// const MongoStore = require('connect-mongo')(expressSession)
 
 // If no store set, NextAuth defaults to using Express Sessions in-memory
 // session store (the fallback is intended as fallback for testing only).
