@@ -56,9 +56,10 @@ class Wrapper extends React.Component {
         Router.push('/auth')
       }
     }
-    const host = req ? req.headers['x-forwarded-host'] : window.location.host
-    const protocol = typeof window !== 'undefined' ? window.location.protocol : 'https:'
-    const pageRequest = `${protocol}//${host}/api/user/list`
+    const host = req ? req.headers['x-forwarded-host'] : location.host
+    console.log(host)
+    const protocol = typeof window !== 'undefined' ? 'http:' : window.location.protocol
+    const pageRequest = `${protocol}//${host || 'localhost:3000'}/api/user/list`
     const userRequest = await fetch(pageRequest)
     const userJson = await userRequest.json()
     return {
@@ -886,7 +887,7 @@ class Wrapper extends React.Component {
             <Panel bordered>
               <Header className='user-content-header'>
                 <span className='section-header'>
-                  <h4>Per Person</h4>
+                  <h4>Person</h4>
                 </span>
                 <Button appearance='ghost' onClick={this.handlePersonalGridExport}>Export</Button>
               </Header>

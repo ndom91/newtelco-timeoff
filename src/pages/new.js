@@ -80,7 +80,7 @@ class Wrapper extends React.Component {
         total: '',
         requested: '',
         remaining: '',
-        type: '',
+        type: 'vacation',
         dateFrom: '',
         dateTo: '',
         manager: ''
@@ -94,7 +94,6 @@ class Wrapper extends React.Component {
     fetch(`${protocol}//${host}/api/managers`)
       .then(res => res.json())
       .then(data => {
-        console.log(data)
         const managerData = []
         data.managerEntries.forEach(m => {
           managerData.push({ label: m.name, value: m.email })
@@ -214,6 +213,15 @@ class Wrapper extends React.Component {
     })
   }
 
+  handleManagerChange = (manager) => {
+    this.setState({
+      vaca: {
+        ...this.state.vaca,
+        manager: manager
+      }
+    })
+  }
+
   handleClear = () => {
     this.setState({
       vaca: {
@@ -248,7 +256,26 @@ class Wrapper extends React.Component {
   }
 
   handleSubmit = () => {
+    const host = window.location.host
+    const protocol = window.location.protocol
+    const {
+      dateFrom,
+      dateTo,
+      requested,
+      manager,
+      type,
+      name
+    } = this.state.vaca
 
+    fetch(`${protocol}//${host}/api/mail/send?manager=${manager}&from=${dateFrom}&to=${dateTo}&days=${requested}&type=${type}&name=${name}`)
+      .then(resp => resp.json())
+      .then(data => {
+        console.log(data)
+        this.setState({
+          openConfirmModal: !this.state.openConfirmModal
+        })
+      })
+      .catch(err => console.error(err))
   }
 
   render () {
@@ -320,7 +347,7 @@ class Wrapper extends React.Component {
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Manager</ControlLabel>
-                        <SelectPicker data={availableManagers} style={{ width: '320px' }} />
+                        <SelectPicker data={availableManagers} onChange={this.handleManagerChange} style={{ width: '320px' }} />
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel className='filedrop-label'>Documents</ControlLabel>

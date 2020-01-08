@@ -1,10 +1,9 @@
 {
-  "name": "TimeOffReact",
-  "version": "0.0.2",
+  "name": "company-timeoff",
+  "version": "0.1.0",
   "description": "Time-off Management Application",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "NODE_ENV=development node index.js",
     "dev:inspect": "NODE_OPTIONS='--inspect' NODE_ENV=development node index.js",
     "build": "next build",
