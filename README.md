@@ -1,16 +1,14 @@
-# Time Off Management
+# ⏰ Time Off Management
 
-Internal Time-Off Management Application
+Company Time-Off Management Application
 
-### Built With
+### 🏗️ Built With
 
-<img src="https://www.import.io/wp-content/uploads/2017/10/React-logo-1.png" height="128" alt="React" />
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Nextjs-logo.svg/1280px-Nextjs-logo.svg.png" height="128" alt="next.js" />
-<img src="https://avatars3.githubusercontent.com/u/19635045?s=400&v=4" height="128" alt="RSuite" />
+<img src="https://www.import.io/wp-content/uploads/2017/10/React-logo-1.png" height="64" alt="React" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Nextjs-logo.svg/1280px-Nextjs-logo.svg.png" height="64" alt="next.js" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://miro.medium.com/max/1476/0*9jVgGEBsOxAb0Dna." height="64" alt="RSuite" />
 
-## Features
+## ⚛️ Features
 
-- Management Confirmation via Email for each Request
+- Management Confirmation via Email for each request
 - Export Lists / Reports to Excel 
 - Active Directory User Sync
 - Multiple Absence types (Sick, Vacation, Maternity, etc.)
@@ -18,23 +16,23 @@ Internal Time-Off Management Application
 - Company Overview / Team Overview
 - Team Chat
 
-## Setup
+## ⚙️ Setup
 
 1. Clone the repo `git clone https://github.com/ndom91/timeoff`
 2. Install dependencies `npm i`
 3. Run! `npm start`
 
-## Contributing
+## 👷 Contributing
 
 1. Clone the repo `git clone https://github.com/ndom91/timeoff`
 2. Install dependencies `npm i`
 3. Start Dev Environment `npm run dev`
 
-### Contributors
+### 🤝 Contributors
 
-![Nico Domino](https://avatars1.githubusercontent.com/u/7415984?s=160&v=4)  
-ndom91 <yo@ndo.dev>
+![Nico Domino](https://avatars1.githubusercontent.com/u/7415984?s=128&v=1)  
+ndom91 \<yo@ndo.dev\>
 
-### License
+### 📝 License
 
 MIT
