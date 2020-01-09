@@ -34,7 +34,15 @@ class Wrapper extends React.Component {
       }
     }
     return {
-      session: await NextAuth.init({ req })
+      session: await NextAuth.init({ req }),
+      returnTo: req.session.returnTo
+    }
+  }
+
+  constructor (props) {
+    super(props)
+    this.state = {
+      returnTo: props.returnTo
     }
   }
 
@@ -56,10 +64,24 @@ class Wrapper extends React.Component {
 
   componentDidMount () {
     if (typeof window !== 'undefined') {
-      const windowUrl = window.location.search
-      const params = new URLSearchParams(windowUrl)
+      let params
+      console.log(this.props.returnTo)
+      if (this.props.returnTo) {
+        console.log('returnTo path')
+        const searchParams = `?${this.props.returnTo}`
+
+        // get search params, then hit response.js jwith them to get code and action
+        console.log(searchParams)
+        params = new URLSearchParams(searchParams)
+        console.log(params)
+      } else {
+        const windowUrl = window.location.search
+        params = new URLSearchParams(windowUrl)
+      }
+      console.log(params)
       const action = params.get('a')
       const code = params.get('code')
+
       if (code === '200' && action === 'a') {
         this.notifyInfo('Absence Successfully Approved')
       } else if (code === '200' && action === 'd') {

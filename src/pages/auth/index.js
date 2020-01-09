@@ -118,7 +118,7 @@ export default class App extends React.Component {
                       <FormGroup>
                         <ButtonToolbar>
                           <SignInButtons providers={this.props.providers} />
-                          <Button appearance='primary' id='submitButton' type='submit' style={{ width: '50%' }} className='btn btn-outline-success'>Sign In</Button>
+                          <Button appearance='subtle' id='submitButton' type='submit' style={{ width: '50%' }} className='btn btn-outline-success'>Sign In</Button>
                         </ButtonToolbar>
                       </FormGroup>
                     </Form>
@@ -235,7 +235,7 @@ export class SignInButtons extends React.Component {
           Object.keys(this.props.providers).map((provider, i) => {
             return (
               <a key={i} className='btn btn-block btn-outline-secondary' href={this.props.providers[provider].signin}>
-                <Button style={{ width: '48%', display: 'inline-flex', alignItems: 'center', justifyContent: 'space-around' }} className='google-signin-btn' appearance='default'>
+                <Button style={{ width: '48%', display: 'inline-flex', alignItems: 'center', justifyContent: 'space-around' }} className='google-signin-btn' appearance='primary'>
                   <FontAwesomeIcon icon={faGoogle} width='1em' style={{ float: 'left', color: 'secondary' }} />
                   Sign in with {provider}
                 </Button>

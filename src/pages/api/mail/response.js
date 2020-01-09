@@ -8,6 +8,24 @@ module.exports = async (req, res) => {
   const approvalHash = req.query.h
   const action = req.query.a
 
+  // const approvalDetails = {
+  //   ah: approvalHash,
+  //   a: action
+  // }
+
+  if (!req.session.user) {
+    // window.localStorage.setItem('approval', JSON.stringify(approvalDetails))
+    // req.session.returnTo = req._parsedUrl.query
+    console.log(req.session)
+    req.session.save((err) => {
+      if (err) console.error(err)
+      req.session.returnTo = req._parsedUrl.query
+      console.log('Session Before Redirect: ', req.session)
+      res.redirect('/auth')
+    })
+    return
+  }
+
   const nodemailer = require('nodemailer')
   const nodemailerSmtpTransport = require('nodemailer-smtp-transport')
   const nodemailerDirectTransport = require('nodemailer-direct-transport')
