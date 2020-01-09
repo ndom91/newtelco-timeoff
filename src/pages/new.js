@@ -8,6 +8,7 @@ import File from '../components/fileIcon'
 import moment from 'moment'
 import Dropzone from 'react-dropzone'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import uuid from 'v4-uuid'
 import {
   faCalendarAlt
 } from '@fortawesome/free-solid-svg-icons'
@@ -19,6 +20,7 @@ import {
   ControlLabel,
   FormControl,
   DateRangePicker,
+  Input,
   Button,
   Radio,
   RadioGroup,
@@ -29,7 +31,8 @@ import {
   Schema,
   SelectPicker,
   Modal,
-  Notification
+  Notification,
+  HelpBlock
 } from 'rsuite'
 
 class Wrapper extends React.Component {
@@ -84,7 +87,8 @@ class Wrapper extends React.Component {
         type: 'vacation',
         dateFrom: '',
         dateTo: '',
-        manager: ''
+        manager: '',
+        notes: ''
       }
     }
   }
@@ -239,6 +243,16 @@ class Wrapper extends React.Component {
     })
   }
 
+  handleNotesChange = (value) => {
+    console.log(value)
+    this.setState({
+      vaca: {
+        ...this.state.vaca,
+        notes: value
+      }
+    })
+  }
+
   handleClear = () => {
     this.setState({
       vaca: {
@@ -284,21 +298,19 @@ class Wrapper extends React.Component {
     } = this.state.vaca
 
     // uuid ApprovalHash
-    const approvalHash = 'abc123'
+    const approvalHash = uuid()
 
     fetch(`${protocol}//${host}/api/mail/insert?vaca=${encodeURIComponent(JSON.stringify(this.state.vaca))}&ah=${approvalHash}`)
       .then(resp => resp.json())
       .then(data => {
-        console.log(data)
         fetch(`${protocol}//${host}/api/mail/send?manager=${manager}&from=${dateFrom}&to=${dateTo}&type=${type}&name=${name}&ah=${approvalHash}`)
           .then(resp => resp.json())
           .then(data => {
-            console.log(data)
             this.setState({
               openConfirmModal: !this.state.openConfirmModal
             })
             if (data.code === 200) {
-              this.notifyInfo('Message Sent')
+              this.notifyInfo('Request Sent')
             } else if (data.code === 500) {
               this.notifyWarn(`Error sending message - ${data.msg}`)
             }
@@ -338,22 +350,27 @@ class Wrapper extends React.Component {
                       <FormGroup>
                         <ControlLabel>Days from Last Year</ControlLabel>
                         <FormControl name='daysLastYear' type='text' onChange={this.handleLastYearChange} value={vaca.lastYear} />
+                        <HelpBlock tooltip>Days which you have transfered with you from last year</HelpBlock>
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Days from this Year</ControlLabel>
                         <FormControl name='daysThisYear' type='text' onChange={this.handleThisYearChange} value={vaca.thisYear} />
+                        <HelpBlock tooltip>Days which you have earned this year</HelpBlock>
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Total Days Available</ControlLabel>
                         <FormControl name='totalDaysAvailable' type='text' onChange={this.handleTotalAvailableChange} value={vaca.total} />
+                        <HelpBlock tooltip>The sum of the last two fields</HelpBlock>
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Requested Days</ControlLabel>
                         <FormControl name='requestedDays' type='text' onChange={this.handleRequestedChange} value={vaca.requested} />
+                        <HelpBlock tooltip>Number of days you need off, remember weekends and holidays do not require vacation days!</HelpBlock>
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Days Remaining this Year</ControlLabel>
                         <FormControl name='remainingDays' type='text' onChange={this.handleRemainingChange} value={vaca.remaining} />
+                        <HelpBlock tooltip>Number of remaining days after subtracting requested from total available</HelpBlock>
                       </FormGroup>
                     </Panel>
                     <Panel bordered header={<><hr className='section-header-hr' /><h4 className='form-section-heading' style={{ position: 'relative' }}>Dates<FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} /></h4><hr className='section-header-hr end' /></>}>
@@ -378,6 +395,10 @@ class Wrapper extends React.Component {
                       <FormGroup>
                         <ControlLabel>Manager</ControlLabel>
                         <SelectPicker data={availableManagers} onChange={this.handleManagerChange} style={{ width: '320px' }} />
+                      </FormGroup>
+                      <FormGroup>
+                        <ControlLabel>Note</ControlLabel>
+                        <Input componentClass='textarea' rows={3} placeholder='Optional Note' onChange={this.handleNotesChange} style={{ width: '320px' }} />
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel className='filedrop-label'>Documents</ControlLabel>
@@ -464,6 +485,9 @@ class Wrapper extends React.Component {
             :global(.filedrop-section:hover) {
               cursor: pointer;
             }
+            :global(.rs-tooltip) {
+              max-width: 150px;
+            }
             :global(.filedrop-target) {
               min-height: 50px;
               width: 100%;
@@ -474,7 +498,7 @@ class Wrapper extends React.Component {
               border-radius: 10px;
             }
             :global(.rs-form-control-wrapper > .rs-input-number, .rs-form-control-wrapper > .rs-input) {
-              width: 320px;
+              width: 300px;
             }
             :global(.rs-panel-heading) {
               text-align: center;

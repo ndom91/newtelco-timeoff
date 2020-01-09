@@ -58,7 +58,7 @@ class Wrapper extends React.Component {
     }
     const host = req ? req.headers['x-forwarded-host'] : location.host
     console.log(host)
-    const protocol = typeof window !== 'undefined' ? 'http:' : window.location.protocol
+    const protocol = typeof window === 'undefined' ? 'http:' : window.location.protocol
     const pageRequest = `${protocol}//${host || 'localhost:3000'}/api/user/list`
     const userRequest = await fetch(pageRequest)
     const userJson = await userRequest.json()

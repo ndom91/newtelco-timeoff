@@ -34,7 +34,7 @@ module.exports = async (req, res) => {
     .sendMail({
       to: manager,
       from: 'device@newtelco.de',
-      subject: `New Absence Request - ${name}`,
+      subject: `[NT] New Absence Request - ${name}`,
       html: mailBody
     }, (err, info) => {
       if (err) {

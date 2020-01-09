@@ -3,27 +3,29 @@ const escape = require('sql-template-strings')
 
 module.exports = async (req, res) => {
   const vaca = JSON.parse(decodeURIComponent(req.query.vaca))
-  console.log(vaca)
-  const name = this.vaca.name
-  const email = this.vaca.email
-  const lastYear = this.vaca.lastYear
-  const thisYear = this.vaca.thisYear
-  const total = this.vaca.total
-  const requested = this.vaca.requested
-  const remaining = this.vaca.remaining
-  const type = this.vaca.type
-  const dateFrom = this.vaca.dateFrom
-  const dateTo = this.vaca.dateTo
-  const manager = this.vaca.manager
-
-  const note = ''
-  const approvalHash = ''
-
-  // submittedBy is just username, not email
+  const name = vaca.name
+  const email = vaca.email
+  const lastYear = vaca.lastYear
+  const thisYear = vaca.thisYear
+  const total = vaca.total
+  const requested = vaca.requested
+  const remaining = vaca.remaining
+  const type = vaca.type
+  const dateFromISO = new Date(vaca.dateFrom)
+  const dateFrom = new Date(dateFromISO.getTime() - (dateFromISO.getTimezoneOffset() * 60000)).toISOString().split('T')[0]
+  const dateToISO = new Date(vaca.dateTo)
+  const dateTo = new Date(dateToISO.getTime() - (dateToISO.getTimezoneOffset() * 60000)).toISOString().split('T')[0]
+  const manager = vaca.manager
+  const submittedBy = email.substring(0, email.lastIndexOf('@'))
+  const note = vaca.notes
+  const approvalHash = req.query.ah
 
   const insertAbsence = await db.query(escape`
-      INSERT INTO vacations (name, email, resturlaubVorjahr, jahresurlaubInsgesamt, restjahresurlaubInsgesamt, beantragt, resturlaubJAHR, type, fromDate, toDate, manager, note, submitted_datetime, submitted_by, approval_hash) VALUES (${name}, ${email}, ${lastYear}, ${thisYear}, ${total}, ${requested}, ${remaining}, ${type}, ${dateFrom}, ${dateTo}, ${manager}, ${note}, ${new Date().toISOString()}, ${email}, ${approvalHash} ) 
+      INSERT INTO vacations (name, email, resturlaubVorjahr, jahresurlaubInsgesamt, restjahresurlaubInsgesamt, beantragt, resturlaubJAHR, type, fromDate, toDate, manager, note, submitted_datetime, submitted_by, approval_hash) VALUES (${name}, ${email}, ${lastYear}, ${thisYear}, ${total}, ${requested}, ${remaining}, ${type}, ${dateFrom}, ${dateTo}, ${manager}, ${note}, ${new Date().toISOString().slice(0, 19).replace('T', ' ')}, ${submittedBy}, ${approvalHash} ) 
   `)
-  console.log(insertAbsence)
-  res.status(200).json({ msg: 'Success!', req: vaca })
+  if (insertAbsence.affectedRows === 1) {
+    res.status(200).json({ code: 200, id: insertAbsence.insertId })
+  } else {
+    res.status(500).json({ code: 500, err: insertAbsence })
+  }
 }
