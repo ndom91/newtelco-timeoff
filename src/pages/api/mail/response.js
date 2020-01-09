@@ -1,4 +1,5 @@
 import response from './responseMessages'
+import Router from 'next/router'
 const db = require('../../../lib/db')
 const escape = require('sql-template-strings')
 require('dotenv').config({ path: './.env' })
@@ -18,6 +19,7 @@ module.exports = async (req, res) => {
   if (checkApprovalHash[0].id) {
     let mailBody
     let actionLabel
+    let approvalValue
     const name = checkApprovalHash[0].name
     const toDate = new Date(checkApprovalHash[0].toDate).toLocaleDateString('de-DE')
     const fromDate = new Date(checkApprovalHash[0].fromDate).toLocaleDateString('de-DE')
@@ -26,9 +28,11 @@ module.exports = async (req, res) => {
     if (action === 'a') {
       mailBody = response.approval_body
       actionLabel = 'Approved'
+      approvalValue = '2'
     } else if (action === 'd') {
       mailBody = response.denied_body
       actionLabel = 'Denied'
+      approvalValue = '1'
     }
 
     mailBody = mailBody.replace('[USERNAME]', name)
@@ -49,6 +53,10 @@ module.exports = async (req, res) => {
       })
     }
 
+    const updateApproval = await db.query(escape`
+      UPDATE vacations SET approved = ${approvalValue}, approval_datetime = ${new Date().toISOString().slice(0, 19).replace('T', ' ')} WHERE approval_hash LIKE ${approvalHash}
+    `)
+
     nodemailer
       .createTransport(nodemailerTransport)
       .sendMail({
@@ -59,9 +67,9 @@ module.exports = async (req, res) => {
       }, (err, info) => {
         if (err) {
           console.error('Error sending email to ' + name, err)
-          res.status(500).json({ code: 500, msg: err })
+          res.status(500).json({ code: 500, msg: info }).redirect(`/?a=${action}&code=500`)
         }
-        res.status(200).json({ code: 200, msg: info })
+        res.redirect(`/?a=${action}&code=200`)
       })
   } else {
     res.status(501).json({ code: 501, msg: 'Invalid Approval Hash' })

@@ -132,9 +132,6 @@ class Layout extends React.Component {
           <Container className='wrapper'>
             <Header>
               <div className='header-wrapper'>
-                <h4 className='header-section-title'>
-                  {/* {typeof window !== 'undefined' && this.capitalizeFirstLetter(Router.pathname.split('/').slice(1)[Router.pathname.split('/').slice(1).length - 1].substr(0, Router.pathname.length))} */}
-                </h4>
                 <span>
                   <Breadcrumb separator='>' style={{ marginBottom: '0px' }}>
                     <Breadcrumb.Item>Home</Breadcrumb.Item>
@@ -156,7 +153,7 @@ class Layout extends React.Component {
               {this.props.children}
             </Content>
             <Footer className='footer-wrapper'>
-              {`${this.state.settings.companyName} ${new Date().getFullYear()}`}
+              {`${this.state.settings.companyName}© ${new Date().getFullYear()}`}
             </Footer>
           </Container>
         </Container>
@@ -165,7 +162,7 @@ class Layout extends React.Component {
           }
           :global(.header-wrapper) {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: center;
             padding: 10px;
           }

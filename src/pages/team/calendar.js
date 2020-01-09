@@ -71,8 +71,12 @@ class Wrapper extends React.Component {
               .then(data => {
                 const finalTeamVacations = data.teamVacations.map(vacation => {
                   var o = Object.assign({}, vacation)
-                  o.start = vacation.fromDate
-                  o.end = vacation.toDate
+                  const dateFromISO = new Date(vacation.fromDate)
+                  const dateFrom = new Date(dateFromISO.getTime() - (dateFromISO.getTimezoneOffset() * 60000)).toISOString().split('T')[0]
+                  o.start = dateFrom
+                  const dateToISO = new Date(vacation.toDate)
+                  const dateTo = new Date(dateToISO.getTime() - (dateToISO.getTimezoneOffset() * 60000)).toISOString().split('T')[0]
+                  o.end = dateTo
                   o.category = 'allday'
                   o.title = vacation.name
                   o.calendarId = '069'

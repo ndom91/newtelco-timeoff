@@ -297,7 +297,6 @@ class Wrapper extends React.Component {
       name
     } = this.state.vaca
 
-    // uuid ApprovalHash
     const approvalHash = uuid()
 
     fetch(`${protocol}//${host}/api/mail/insert?vaca=${encodeURIComponent(JSON.stringify(this.state.vaca))}&ah=${approvalHash}`)
@@ -306,9 +305,11 @@ class Wrapper extends React.Component {
         fetch(`${protocol}//${host}/api/mail/send?manager=${manager}&from=${dateFrom}&to=${dateTo}&type=${type}&name=${name}&ah=${approvalHash}`)
           .then(resp => resp.json())
           .then(data => {
-            this.setState({
-              openConfirmModal: !this.state.openConfirmModal
-            })
+            if (this.state.openConfirmModal) {
+              this.setState({
+                openConfirmModal: !this.state.openConfirmModal
+              })
+            }
             if (data.code === 200) {
               this.notifyInfo('Request Sent')
             } else if (data.code === 500) {

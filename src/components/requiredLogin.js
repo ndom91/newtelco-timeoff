@@ -17,6 +17,25 @@ import {
 } from 'rsuite'
 
 export default class RequireLogin extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      companyInfo: {
+        companyName: '',
+        address: ''
+      }
+    }
+  }
+
+  componentDidMount () {
+    if (typeof window !== 'undefined') {
+      const companyInfo = JSON.parse(window.localStorage.getItem('company'))
+      this.setState({
+        companyInfo
+      })
+    }
+  }
+
   render () {
     return (
       <div className='show-fake-browser login-page'>
@@ -24,11 +43,11 @@ export default class RequireLogin extends React.Component {
           <Header>
             <Navbar appearance='inverse'>
               <Navbar.Header>
-                <a className='navbar-brand logo'>Brand</a>
+                <p className='navbar-brand logo'>{this.state.companyInfo.companyName}</p>
               </Navbar.Header>
             </Navbar>
           </Header>
-          <Content>
+          <Content style={{ marginTop: '20px' }}>
             <FlexboxGrid justify='center'>
               <FlexboxGrid.Item colspan={12}>
                 <Panel header={<h3>Login</h3>} bordered>
@@ -48,7 +67,7 @@ export default class RequireLogin extends React.Component {
               </FlexboxGrid.Item>
             </FlexboxGrid>
           </Content>
-          <Footer>Footer</Footer>
+          <Footer>{this.state.companyInfo.address}</Footer>
         </Container>
         <style jsx>{`
           .card-outline {
@@ -62,6 +81,27 @@ export default class RequireLogin extends React.Component {
           .require-login-wrapper > div {
             margin-top: 20px;
             font-family: Lato, Helvetica;
+          }
+          .navbar-brand {
+            display: flex;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            align-items: center;
+            height: 100%;
+          }
+          :global(.rs-navbar-header) {
+            width: 100%;
+          }
+          :global(.rs-footer) {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
           }
           #signin-btn {
             margin-bottom: 20px;

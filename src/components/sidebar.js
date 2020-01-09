@@ -116,9 +116,9 @@ class SidebarNT extends React.Component {
         <Sidenav.Header>
           <div className='sidenav-header'>
             <img src={NTLogo} alt='Logo' style={{ height: '32px', width: '32px', marginTop: '-5px', marginLeft: '-5px' }} />
-            <h3 style={{ display: 'inline', fontWeight: '200', marginLeft: 12 }}>
+            {/* <h3 style={{ display: 'inline', fontWeight: '200', marginLeft: 12 }}>
               {this.state.settings.companyName}
-            </h3>
+            </h3> */}
           </div>
         </Sidenav.Header>
         <Sidenav
