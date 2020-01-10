@@ -118,7 +118,7 @@ export default class App extends React.Component {
                       <FormGroup>
                         <ButtonToolbar>
                           <SignInButtons providers={this.props.providers} />
-                          <Button appearance='subtle' id='submitButton' type='submit' style={{ width: '50%' }} className='btn btn-outline-success'>Sign In</Button>
+                          <Button appearance='subtle' id='submitButton' type='submit' style={{ width: '50%' }} className='btn btn-outline-success' disabled>Sign In</Button>
                         </ButtonToolbar>
                       </FormGroup>
                     </Form>

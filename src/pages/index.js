@@ -1,5 +1,6 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
+import fetch from 'isomorphic-unfetch'
 import Layout from '../components/layout/index'
 import Router from 'next/router'
 import { NextAuth } from 'next-auth/client'
@@ -33,9 +34,15 @@ class Wrapper extends React.Component {
         Router.push('/auth')
       }
     }
-    return {
-      session: await NextAuth.init({ req }),
-      returnTo: req.session.returnTo
+    if (req) {
+      return {
+        session: await NextAuth.init({ req }),
+        returnTo: req.session.returnTo
+      }
+    } else {
+      return {
+        session: await NextAuth.init({ req })
+      }
     }
   }
 
@@ -65,29 +72,41 @@ class Wrapper extends React.Component {
   componentDidMount () {
     if (typeof window !== 'undefined') {
       let params
-      console.log(this.props.returnTo)
-      if (this.props.returnTo) {
-        console.log('returnTo path')
+      if (this.props.returnTo && !window.location.search) {
         const searchParams = `?${this.props.returnTo}`
-
-        // get search params, then hit response.js jwith them to get code and action
-        console.log(searchParams)
         params = new URLSearchParams(searchParams)
-        console.log(params)
+        const approvalHash = params.get('h')
+        const actionCode = params.get('a')
+        const host = window.location.host
+        const protocol = window.location.protocol
+
+        fetch(`${protocol}//${host}/api/mail/response?h=${approvalHash}&a=${actionCode}&b=0`)
+          .then(resp => resp.json())
+          .then(data => {
+            const code = data.code
+            const action = data.a
+            if (code === 200 && action === 'a') {
+              this.notifyInfo('Absence Successfully Approved')
+            } else if (code === 200 && action === 'd') {
+              this.notifyInfo('Absence Successfully Denied')
+            } else if (code === 500) {
+              this.notifyWarn('Error Responding to Request')
+            }
+          })
+          .catch(err => console.error(err))
       } else {
         const windowUrl = window.location.search
         params = new URLSearchParams(windowUrl)
-      }
-      console.log(params)
-      const action = params.get('a')
-      const code = params.get('code')
+        const action = params.get('a')
+        const code = params.get('code')
 
-      if (code === '200' && action === 'a') {
-        this.notifyInfo('Absence Successfully Approved')
-      } else if (code === '200' && action === 'd') {
-        this.notifyInfo('Absence Successfully Denied')
-      } else if (code === '500') {
-        this.notifyWarn('Error Responding to Request')
+        if (code === '200' && action === 'a') {
+          this.notifyInfo('Absence Successfully Approved')
+        } else if (code === '200' && action === 'd') {
+          this.notifyInfo('Absence Successfully Denied')
+        } else if (code === '500') {
+          this.notifyWarn('Error Responding to Request')
+        }
       }
     }
   }

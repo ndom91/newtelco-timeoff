@@ -1,5 +1,4 @@
 import response from './responseMessages'
-import Router from 'next/router'
 const db = require('../../../lib/db')
 const escape = require('sql-template-strings')
 require('dotenv').config({ path: './.env' })
@@ -7,21 +6,14 @@ require('dotenv').config({ path: './.env' })
 module.exports = async (req, res) => {
   const approvalHash = req.query.h
   const action = req.query.a
+  const forward = req.query.b
 
-  // const approvalDetails = {
-  //   ah: approvalHash,
-  //   a: action
-  // }
-
-  if (!req.session.user) {
-    // window.localStorage.setItem('approval', JSON.stringify(approvalDetails))
-    // req.session.returnTo = req._parsedUrl.query
-    console.log(req.session)
+  if (!req.session.google) {
     req.session.save((err) => {
       if (err) console.error(err)
       req.session.returnTo = req._parsedUrl.query
-      console.log('Session Before Redirect: ', req.session)
-      res.redirect('/auth')
+      // console.log('Session Before Redirect: ', req.session)
+      res.redirect('/')
     })
     return
   }
@@ -85,9 +77,17 @@ module.exports = async (req, res) => {
       }, (err, info) => {
         if (err) {
           console.error('Error sending email to ' + name, err)
-          res.status(500).json({ code: 500, msg: info }).redirect(`/?a=${action}&code=500`)
+          if (forward != 0) {
+            res.status(500).redirect(`/?a=${action}&code=500`)
+          } else {
+            res.status(500).json({ code: 500, msg: info })
+          }
         }
-        res.redirect(`/?a=${action}&code=200`)
+        if (forward != 0) {
+          res.redirect(`/?a=${action}&code=200`)
+        } else {
+          res.status(200).json({ code: 200, a: action })
+        }
       })
   } else {
     res.status(501).json({ code: 501, msg: 'Invalid Approval Hash' })

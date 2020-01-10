@@ -32,8 +32,11 @@ import {
   SelectPicker,
   Modal,
   Notification,
-  HelpBlock
+  HelpBlock,
+  Table
 } from 'rsuite'
+
+const { Column, HeaderCell, Cell } = Table
 
 class Wrapper extends React.Component {
   static async getInitialProps ({ res, req, query }) {
@@ -273,12 +276,54 @@ class Wrapper extends React.Component {
 
   toggleSubmitModal = () => {
     if (!this.state.openConfirmModal) {
-      const { vaca } = this.state
-      const confirmText = `Are you sure you want to submit the vacation from <b>${moment(vaca.dateFrom).format('DD.MM.YYYY')}</b> to <b>${moment(vaca.dateTo).format('DD.MM.YYYY')}</b> by requesting <b>${vaca.requested}</b> days off?`
-      this.setState({
-        openConfirmModal: !this.state.openConfirmModal,
-        confirmText: confirmText
-      })
+      if (this.state.vaca.dateFrom && this.state.vaca.dateTo && this.state.vaca.manager) {
+        const { vaca } = this.state
+        const tableData = [
+          {
+            title: 'From',
+            value: moment(vaca.dateFrom).format('DD.MM.YYYY')
+          },
+          {
+            title: 'To',
+            value: moment(vaca.dateTo).format('DD.MM.YYYY')
+          },
+          {
+            title: 'Manager',
+            value: vaca.manager
+          },
+          {
+            title: 'Type',
+            value: vaca.type
+          },
+          {
+            title: 'Requested Days',
+            value: vaca.requested
+          },
+          {
+            title: 'Remaining Days',
+            value: vaca.remaining
+          }
+        ]
+        // const confirmText = `
+        //   <p style='line-height: 30px; font-size: 18px'>Are you sure you want to submit the following absence request?<br />
+        //   <Table height={250} data=${tableData}>
+        //     <Column width={100} align='center'>
+        //       <HeaderCell>Field: </HeaderCell>
+        //       <Cell dataKey='title'>
+        //     </Column>
+        //     <Column width={100} align='center'>
+        //       <HeaderCell>Value: </HeaderCell>
+        //       <Cell dataKey='value'>
+        //     </Column>
+        //   </Table>
+        // `
+        this.setState({
+          openConfirmModal: !this.state.openConfirmModal,
+          confirmTableData: tableData
+        })
+      } else {
+        this.notifyInfo('Please complete the form')
+      }
     } else {
       this.setState({
         openConfirmModal: !this.state.openConfirmModal
@@ -326,7 +371,8 @@ class Wrapper extends React.Component {
       files,
       vaca,
       availableManagers,
-      openConfirmModal
+      openConfirmModal,
+      confirmTableData
     } = this.state
 
     if (this.props.session.user) {
@@ -366,7 +412,7 @@ class Wrapper extends React.Component {
                       <FormGroup>
                         <ControlLabel>Requested Days</ControlLabel>
                         <FormControl name='requestedDays' type='text' onChange={this.handleRequestedChange} value={vaca.requested} />
-                        <HelpBlock tooltip>Number of days you need off, remember weekends and holidays do not require vacation days!</HelpBlock>
+                        <HelpBlock tooltip>Number of day(s) you need off. <br /> Half days = '0.5'</HelpBlock>
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Days Remaining this Year</ControlLabel>
@@ -436,18 +482,30 @@ class Wrapper extends React.Component {
               </Panel>
             </Content>
           </Container>
-          <Modal enforceFocus size='xs' backdrop show={openConfirmModal} onHide={this.toggleSubmitModal}>
+          <Modal enforceFocus size='sm' backdrop show={openConfirmModal} onHide={this.toggleSubmitModal} style={{ marginTop: '150px' }}>
             <Modal.Header>
-              <Modal.Title>Confirm Submit</Modal.Title>
+              <Modal.Title style={{ fontSize: '24px' }}>Confirm Submit</Modal.Title>
             </Modal.Header>
-            <Modal.Body dangerouslySetInnerHTML={{ __html: this.state.confirmText }} />
+            <Modal.Body>
+              Are you sure you want to submit the following absence request?
+              <Table showHeader={false} autoHeight bordered={false} data={confirmTableData} style={{ margin: '20px 50px' }}>
+                <Column width={200} align='left'>
+                  <HeaderCell>Field: </HeaderCell>
+                  <Cell dataKey='title' />
+                </Column>
+                <Column width={250} align='left'>
+                  <HeaderCell>Value: </HeaderCell>
+                  <Cell dataKey='value' />
+                </Column>
+              </Table>
+            </Modal.Body>
             <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
               <ButtonToolbar style={{ width: '100%' }}>
                 <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-                  <Button onClick={this.handleSubmit} style={{ width: '33%' }} appearance='primary'>
-                  Ok
+                  <Button onClick={this.handleSubmit} style={{ width: '33%', fontSize: '16px' }} appearance='primary'>
+                  Confirm
                   </Button>
-                  <Button onClick={this.toggleSubmitModal} style={{ width: '33%' }} appearance='default'>
+                  <Button onClick={this.toggleSubmitModal} style={{ width: '33%', fontSize: '16px' }} appearance='default'>
                   Cancel
                   </Button>
                 </ButtonGroup>
@@ -507,6 +565,9 @@ class Wrapper extends React.Component {
             :global(.rs-form-horizontal .rs-form-group .rs-control-label) {
               width: 100%;
               text-align: center;
+            }
+            :global(.rs-modal-backdrop.in) {
+              opacity: 0.8;
             }
           `}
           </style>

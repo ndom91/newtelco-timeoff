@@ -34,7 +34,7 @@ const NavToggle = ({ expand, onChange, token, handleSignOut }) => {
                   <button
                     className='logout-btn'
                     type='submit'
-                    onClick={(ev) => ev.preventDefault()}
+                    onClick={handleSignOut}
                   >
                     Sign out
                   </button>
