@@ -85,29 +85,6 @@ class Layout extends React.Component {
         })
         .catch(err => console.error(err))
     }
-    // if (typeof userAdmin !== 'boolean') {
-    //   fetch(`${protocol}//${host}/api/ad/groups?m=${this.props.user}`)
-    //     .then(res => res.json())
-    //     .then(data => {
-    //       if (data.memberAdmin) {
-    //         window.localStorage.setItem('mA', data.memberAdmin)
-    //       }
-    //       this.setState({
-    //         settings: {
-    //           ...this.state.settings,
-    //           admin: data.memberAdmin
-    //         }
-    //       })
-    //     })
-    //     .catch(err => console.error(err))
-    // } else {
-    //   this.setState({
-    //     settings: {
-    //       ...this.state.settings,
-    //       admin: userAdmin
-    //     }
-    //   })
-    // }
   }
 
   onToggle = () => {

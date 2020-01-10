@@ -21,9 +21,6 @@ const Calendar = dynamic(
 
 class Wrapper extends React.Component {
   static async getInitialProps ({ res, req, query }) {
-    // if (process.browser) {
-    //   return __NEXT_DATA__.props.pageProps
-    // }
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {

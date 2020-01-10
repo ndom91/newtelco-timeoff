@@ -60,11 +60,6 @@ export default class extends React.Component {
                               This is to prevent people from signing up to another service using your email address
                               to try and access your account.
                             </p>
-                            {/* <h4 className='mb-2'>How do I fix this?</h4>
-                            <p className='mb-0'>
-                              First sign in using your email address then link your account to the service you want
-                              to use to sign in with in future. You only need to do this once.
-                            </p> */}
                           </div>
                         </div>
                       </div>

@@ -7,7 +7,6 @@ import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../../components/requiredLogin'
 import {
   Container,
-  Header,
   Content
 } from 'rsuite'
 
@@ -17,9 +16,6 @@ const TuiCalendar = dynamic(
 )
 class Wrapper extends React.Component {
   static async getInitialProps ({ res, req, query }) {
-    // if (process.browser) {
-    //   return __NEXT_DATA__.props.pageProps
-    // }
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {

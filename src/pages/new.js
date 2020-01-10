@@ -40,9 +40,6 @@ const { Column, HeaderCell, Cell } = Table
 
 class Wrapper extends React.Component {
   static async getInitialProps ({ res, req, query }) {
-    // if (process.browser) {
-    //   return __NEXT_DATA__.props.pageProps
-    // }
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -304,19 +301,6 @@ class Wrapper extends React.Component {
             value: vaca.remaining
           }
         ]
-        // const confirmText = `
-        //   <p style='line-height: 30px; font-size: 18px'>Are you sure you want to submit the following absence request?<br />
-        //   <Table height={250} data=${tableData}>
-        //     <Column width={100} align='center'>
-        //       <HeaderCell>Field: </HeaderCell>
-        //       <Cell dataKey='title'>
-        //     </Column>
-        //     <Column width={100} align='center'>
-        //       <HeaderCell>Value: </HeaderCell>
-        //       <Cell dataKey='value'>
-        //     </Column>
-        //   </Table>
-        // `
         this.setState({
           openConfirmModal: !this.state.openConfirmModal,
           confirmTableData: tableData

@@ -9,11 +9,13 @@ import {
   Dropdown,
   Sidenav,
   Sidebar,
-  Icon
+  Icon,
+  Modal
 } from 'rsuite'
 import NTLogo from '../../public/static/img/newtelco_letters.svg'
+import NTLogoFull from '../../public/static/img/newtelco_full.png'
 
-const NavToggle = ({ expand, onChange, token, handleSignOut }) => {
+const NavToggle = ({ expand, onChange, token, handleSignOut, toggleHelpModal }) => {
   return (
     <Navbar appearance='subtle' className='nav-toggle'>
       <Navbar.Body>
@@ -25,8 +27,7 @@ const NavToggle = ({ expand, onChange, token, handleSignOut }) => {
               return <Icon className='icon-style' icon='cog' />
             }}
           >
-            <Dropdown.Item>Help</Dropdown.Item>
-            <Dropdown.Item>Settings</Dropdown.Item>
+            <Dropdown.Item onClick={toggleHelpModal}>About</Dropdown.Item>
             <Dropdown.Item>
               <form id='signout' method='post' action='/auth/signout' onSubmit={handleSignOut}>
                 <input name='_csrf' type='hidden' value={token} />
@@ -58,9 +59,9 @@ class SidebarNT extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      // expand: props.expand,
       settings: {
-        companyName: ''
+        companyName: '',
+        openHelpModal: false
       }
     }
   }
@@ -69,10 +70,8 @@ class SidebarNT extends React.Component {
     const protocol = window.location.protocol
     const host = window.location.host
     const companyInfo = JSON.parse(window.localStorage.getItem('company'))
-    // const expandStorage = window.localStorage.getItem('layout-expand')
     if (companyInfo) {
       this.setState({
-        // expand: expandStorage === 'true',
         settings: {
           companyName: companyInfo.companyName
         }
@@ -94,6 +93,12 @@ class SidebarNT extends React.Component {
     }
   }
 
+  handleHelpModal = () => {
+    this.setState({
+      openHelpModal: !this.state.openHelpModal
+    })
+  }
+
   onSignOutSubmit = (event) => {
     event.preventDefault()
     NextAuth.signout()
@@ -107,6 +112,10 @@ class SidebarNT extends React.Component {
   }
 
   render () {
+    const {
+      openHelpModal
+    } = this.state
+
     return (
       <Sidebar
         style={{ display: 'flex', flexDirection: 'column' }}
@@ -115,10 +124,7 @@ class SidebarNT extends React.Component {
       >
         <Sidenav.Header>
           <div className='sidenav-header'>
-            <img src={NTLogo} alt='Logo' style={{ height: '32px', width: '32px', marginTop: '-5px', marginLeft: '-5px' }} />
-            {/* <h3 style={{ display: 'inline', fontWeight: '200', marginLeft: 12 }}>
-              {this.state.settings.companyName}
-            </h3> */}
+            <img src={this.props.expand ? NTLogoFull : NTLogo} alt='Logo' className='header-img' style={{ height: '32px', width: '32px', marginTop: '-5px', marginLeft: '-5px' }} />
           </div>
         </Sidenav.Header>
         <Sidenav
@@ -168,24 +174,16 @@ class SidebarNT extends React.Component {
                   </Dropdown.Item>
                 </Link>
               </Dropdown>
-              <Dropdown
-                eventKey='5'
-                trigger='hover'
-                title='Settings'
-                icon={<Icon icon='cog' />}
-                placement='rightStart'
-                active={typeof window !== 'undefined' && Router.pathname.includes('settings')}
-              >
-                {/* <Link passHref href='/settings/general'>
-                  <Dropdown.Item
-                    eventKey='5-1'
-                    active={typeof window !== 'undefined' && Router.pathname === '/settings/general'}
+              {this.props.admin
+                ? (
+                  <Dropdown
+                    eventKey='5'
+                    trigger='hover'
+                    title='Settings'
+                    icon={<Icon icon='cog' />}
+                    placement='rightStart'
+                    active={typeof window !== 'undefined' && Router.pathname.includes('settings')}
                   >
-                        General
-                  </Dropdown.Item>
-                </Link> */}
-                {this.props.admin
-                  ? (
                     <Link
                       href={{
                         pathname: '/settings/admin',
@@ -203,17 +201,41 @@ class SidebarNT extends React.Component {
                             Admin
                       </Dropdown.Item>
                     </Link>
-                  ) : (
-                    null
-                  )}
-              </Dropdown>
+                  </Dropdown>
+                ) : (
+                  null
+                )}
             </Nav>
           </Sidenav.Body>
         </Sidenav>
-        <NavToggle expand={this.props.expand} handleSignOut={this.onSignOutSubmit} token={this.props.token} onChange={this.props.handleToggle} />
+        <NavToggle expand={this.props.expand} handleSignOut={this.onSignOutSubmit} token={this.props.token} onChange={this.props.handleToggle} toggleHelpModal={this.handleHelpModal} />
+        <Modal enforceFocus size='xs' backdrop show={openHelpModal} onHide={this.handleHelpModal} style={{ marginTop: '150px' }}>
+          <Modal.Header>
+            <Modal.Title style={{ fontSize: '24px' }}>About</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>
+              {'Created by Nico Domino <yo@ndo.dev> 2019 - 2020'}
+            </p>
+          </Modal.Body>
+          <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
+            {this.state.companyName}
+          </Modal.Footer>
+        </Modal>
         <style jsx>{`
           :global(.sidebar-wrapper) {
             width: ${this.props.expand ? '260px' : '56px'};
+          }
+          :global(.header-img) {
+            width: ${this.props.expand ? '200px' : '32px'} !important;
+            height: ${this.props.expand ? '25px' : '32px'} !important;
+          }
+          :global(.sidenav-header) {
+            justify-content: ${this.props.expand ? 'center' : 'flex-start'} !important;
+            align-items: center;
+          }
+          :global(.rs-modal-backdrop.in) {
+            opacity: 0.8;
           }
         `}
         </style>

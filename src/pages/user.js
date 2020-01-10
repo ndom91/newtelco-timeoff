@@ -31,9 +31,6 @@ const CalendarHeatmap = dynamic((
 
 class Wrapper extends React.Component {
   static async getInitialProps ({ res, req, query }) {
-    // if (process.browser) {
-    //   return __NEXT_DATA__.props.pageProps
-    // }
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -51,26 +48,7 @@ class Wrapper extends React.Component {
 
   constructor (props) {
     super(props)
-    const lastYear = new Date().getFullYear() - 1
     const thisYear = new Date().getFullYear()
-
-    // approval_datetime: null
-    // approval_hash: null
-    // approved: 2
-    // beantragt: 1
-    // email: "ndomino@newtelco.de"
-    // fromDate: "2018-11-14T23:00:00.000Z"
-    // id: 14
-    // jahresurlaubInsgesamt: 17.5
-    // manager: "nhartmann@newtelco.de"
-    // name: "Nico Domino"
-    // note: null
-    // restjahresurlaubInsgesamt: 17.5
-    // resturlaubJAHR: 16.5
-    // resturlaubVorjahr: 0
-    // submitted_by: "ndomino"
-    // submitted_datetime: "2018-10-24T11:32:17.000Z"
-    // toDate: "2018-11-14T23:00:00.000Z"
 
     this.state = {
       rowData: [],

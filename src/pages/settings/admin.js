@@ -43,9 +43,6 @@ const { Column, HeaderCell, Cell } = Table
 
 class Wrapper extends React.Component {
   static async getInitialProps ({ res, req, query }) {
-    // if (process.browser) {
-    //   return __NEXT_DATA__.props.pageProps
-    // }
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -71,7 +68,6 @@ class Wrapper extends React.Component {
 
   constructor (props) {
     super(props)
-    const lastYear = new Date().getFullYear() - 1
     const thisYear = new Date().getFullYear()
     this.state = {
       addCount: 0,
