@@ -67,6 +67,11 @@ class Wrapper extends React.Component {
             hide: true,
             sort: { direction: 'asc', priority: 0 }
           }, {
+            headerName: 'Submitted',
+            cellRenderer: 'dateTimeShort',
+            field: 'submitted_datetime',
+            width: 160
+          }, {
             headerName: 'From',
             field: 'fromDate',
             tooltipField: 'fromDate',
@@ -128,11 +133,6 @@ class Wrapper extends React.Component {
               height: '100%'
             },
             width: 180
-          }, {
-            headerName: 'Submitted',
-            cellRenderer: 'dateTimeShort',
-            field: 'submitted_datetime',
-            width: 160
           }, {
             headerName: 'Approval Date/Time',
             field: 'approval_datetime',
@@ -258,11 +258,11 @@ class Wrapper extends React.Component {
                 </div>
               </Content>
             </Panel>
-            <Panel bordered>
-              {/* <CalendarHeatmap
+            {/* <Panel bordered>
+              <CalendarHeatmap
                 user={this.props.session.user.email}
-              /> */}
-            </Panel>
+              />
+            </Panel> */}
           </Container>
           <style jsx>{`
             :global(.user-content-header) {
@@ -271,13 +271,16 @@ class Wrapper extends React.Component {
               justify-content: space-between;
             }
             :global(.user-grid-wrapper) {
-              height: 50vh;
+              height: 100%;
             }
             :global(.user-grid) {
-              height: 50vh;
+              height: 100%;
             }
             :global(.row-awaitingResponse) {
               background-color: transparent;
+            }
+            :global(.rs-container, .rs-panel-default, .rs-panel-body) {
+              height: 100%;
             }
             :global(.section-header) {
               font-size: 1.3rem;

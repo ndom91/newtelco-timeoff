@@ -6,7 +6,11 @@ import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../components/requiredLogin'
 import File from '../components/fileIcon'
 import moment from 'moment'
-import Dropzone from 'react-dropzone'
+
+// import Dropzone from 'react-dropzone'
+import 'react-dropzone-uploader/dist/styles.css'
+import Dropzone from 'react-dropzone-uploader'
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import uuid from 'v4-uuid'
 import {
@@ -328,22 +332,36 @@ class Wrapper extends React.Component {
 
     const approvalHash = uuid()
 
+    // Insert into DB new Request
     fetch(`${protocol}//${host}/api/mail/insert?vaca=${encodeURIComponent(JSON.stringify(this.state.vaca))}&ah=${approvalHash}`)
       .then(resp => resp.json())
       .then(data => {
-        fetch(`${protocol}//${host}/api/mail/send?manager=${manager}&from=${dateFrom}&to=${dateTo}&type=${type}&name=${name}&ah=${approvalHash}`)
+        // If success, upload attachments to GDrive
+        // https://www.npmjs.com/package/googleapis#media-uploads
+        // https://developers.google.com/drive/api/v3/manage-uploads
+        // https://developers.google.com/drive/api/v3/manage-uploads#send_a_simple_upload_request
+
+        // Alternative: https://www.npmjs.com/package/react-google-picker
+        // https://stackoverflow.com/questions/54016733/how-to-make-http-request-to-upload-file-from-reactjs-to-google-drive
+        fetch(`${protocol}//${host}/api/mail/upload?file=${file}`)
           .then(resp => resp.json())
           .then(data => {
-            if (this.state.openConfirmModal) {
-              this.setState({
-                openConfirmModal: !this.state.openConfirmModal
+            // If success, send mail to inform User
+            fetch(`${protocol}//${host}/api/mail/send?manager=${manager}&from=${dateFrom}&to=${dateTo}&type=${type}&name=${name}&ah=${approvalHash}`)
+              .then(resp => resp.json())
+              .then(data => {
+                if (this.state.openConfirmModal) {
+                  this.setState({
+                    openConfirmModal: !this.state.openConfirmModal
+                  })
+                }
+                if (data.code === 200) {
+                  this.notifyInfo('Request Sent')
+                } else if (data.code === 500) {
+                  this.notifyWarn(`Error sending message - ${data.msg}`)
+                }
               })
-            }
-            if (data.code === 200) {
-              this.notifyInfo('Request Sent')
-            } else if (data.code === 500) {
-              this.notifyWarn(`Error sending message - ${data.msg}`)
-            }
+              .catch(err => console.error(err))
           })
           .catch(err => console.error(err))
       })
@@ -351,6 +369,27 @@ class Wrapper extends React.Component {
   }
 
   render () {
+    const getUploadParams = (data) => {
+      console.log('params', data)
+      return {
+        url: 'https://www.googleapis.com/upload/drive/v3/files?uploadType=media',
+        headers: {
+          'Content-Type': data.file.type,
+          'Content-Length': data.file.size * 1024,
+          Authorization: `Bearer ${process.env.GOOGLE_ACCESS_TOKEN}`
+        }
+      }
+    }
+
+    const handleChangeStatus = ({ meta }, status) => {
+      console.log(status, meta)
+    }
+
+    const handleSubmit = (files, allFiles) => {
+      console.log(files.map(f => f.meta))
+      allFiles.forEach(f => f.remove())
+    }
+
     const {
       files,
       vaca,
@@ -370,37 +409,37 @@ class Wrapper extends React.Component {
                     <Panel bordered style={{ position: 'relative' }} header={<><hr className='section-header-hr' /><h4 className='form-section-heading' style={{ position: 'relative' }}>User<FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} /></h4><hr className='section-header-hr end' /></>}>
                       <FormGroup>
                         <ControlLabel>Name</ControlLabel>
-                        <FormControl name='name' onChange={this.handleNameChange} value={vaca.name} />
+                        <FormControl name='name' onChange={this.handleNameChange} value={vaca.name} style={{ width: '320px' }} />
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Email</ControlLabel>
-                        <FormControl name='email' type='email' onChange={this.handleEmailChange} value={vaca.email} />
+                        <FormControl name='email' type='email' onChange={this.handleEmailChange} value={vaca.email} style={{ width: '320px' }} />
                       </FormGroup>
                     </Panel>
                     <Panel bordered header={<><hr className='section-header-hr' /><h4 className='form-section-heading' style={{ position: 'relative' }}>History<FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} /></h4><hr className='section-header-hr end' /></>}>
                       <FormGroup>
                         <ControlLabel>Days from Last Year</ControlLabel>
-                        <FormControl name='daysLastYear' type='text' onChange={this.handleLastYearChange} value={vaca.lastYear} />
+                        <FormControl name='daysLastYear' type='number' onChange={this.handleLastYearChange} value={vaca.lastYear} />
                         <HelpBlock tooltip>Days which you have transfered with you from last year</HelpBlock>
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Days from this Year</ControlLabel>
-                        <FormControl name='daysThisYear' type='text' onChange={this.handleThisYearChange} value={vaca.thisYear} />
+                        <FormControl name='daysThisYear' type='number' onChange={this.handleThisYearChange} value={vaca.thisYear} />
                         <HelpBlock tooltip>Days which you have earned this year</HelpBlock>
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Total Days Available</ControlLabel>
-                        <FormControl name='totalDaysAvailable' type='text' onChange={this.handleTotalAvailableChange} value={vaca.total} />
+                        <FormControl name='totalDaysAvailable' type='number' onChange={this.handleTotalAvailableChange} value={vaca.total} />
                         <HelpBlock tooltip>The sum of the last two fields</HelpBlock>
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Requested Days</ControlLabel>
-                        <FormControl name='requestedDays' type='text' onChange={this.handleRequestedChange} value={vaca.requested} />
+                        <FormControl name='requestedDays' type='number' onChange={this.handleRequestedChange} value={vaca.requested} />
                         <HelpBlock tooltip>Number of day(s) you need off. <br /> Half days = '0.5'</HelpBlock>
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Days Remaining this Year</ControlLabel>
-                        <FormControl name='remainingDays' type='text' onChange={this.handleRemainingChange} value={vaca.remaining} />
+                        <FormControl name='remainingDays' type='number' onChange={this.handleRemainingChange} value={vaca.remaining} />
                         <HelpBlock tooltip>Number of remaining days after subtracting requested from total available</HelpBlock>
                       </FormGroup>
                     </Panel>
@@ -433,12 +472,12 @@ class Wrapper extends React.Component {
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel className='filedrop-label'>Documents</ControlLabel>
-                        <Dropzone onDrop={acceptedFiles => this.handleFileDrop(acceptedFiles)}>
+                        {/* <Dropzone onDrop={acceptedFiles => this.handleFileDrop(acceptedFiles)}>
                           {({ getRootProps, getInputProps }) => (
                             <section className='filedrop-section'>
                               <div {...getRootProps()}>
                                 <input {...getInputProps()} />
-                                <p className='filedrop-target'>Click here or drop file to upload optional documentation</p>
+                                <p className='filedrop-target'>Click here or drop file to upload optional documentation (Doctors Note, etc.)</p>
                               </div>
                               {files.length > 0
                                 ? (
@@ -450,7 +489,13 @@ class Wrapper extends React.Component {
                                 )}
                             </section>
                           )}
-                        </Dropzone>
+                        </Dropzone> */}
+                        <Dropzone
+                          getUploadParams={getUploadParams}
+                          onChangeStatus={handleChangeStatus}
+                          onSubmit={handleSubmit}
+                          styles={{ dropzone: { minHeight: 200, maxHeight: 250 } }}
+                        />
                       </FormGroup>
                       <FormGroup>
                         <ButtonToolbar style={{ paddingLeft: '0px' }}>

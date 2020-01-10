@@ -234,6 +234,9 @@ class SidebarNT extends React.Component {
             justify-content: ${this.props.expand ? 'center' : 'flex-start'} !important;
             align-items: center;
           }
+          :global(.nav-toggle) {
+            background-color: #f3f3f3 !important;
+          }
           :global(.rs-modal-backdrop.in) {
             opacity: 0.8;
           }

@@ -142,6 +142,7 @@ class Layout extends React.Component {
             justify-content: flex-end;
             align-items: center;
             padding: 10px;
+            background-color: #f3f3f3;
           }
           :global(.content-wrapper) {
             padding: 20px;
@@ -153,6 +154,7 @@ class Layout extends React.Component {
             align-items: center;
             justify-content: flex-end;
             padding: 10px 20px;
+            background-color: #f3f3f3;
           }
           :global(.logout-btn) {
             background-color: transparent;
