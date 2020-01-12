@@ -7,7 +7,6 @@ import RequireLogin from '../components/requiredLogin'
 import File from '../components/fileIcon'
 import moment from 'moment'
 
-// import Dropzone from 'react-dropzone'
 import 'react-dropzone-uploader/dist/styles.css'
 import Dropzone from 'react-dropzone-uploader'
 
@@ -42,6 +41,15 @@ import {
 
 const { Column, HeaderCell, Cell } = Table
 
+const Preview = ({ meta }) => {
+  const { name, percent, status } = meta
+  return (
+    <span style={{ alignSelf: 'flex-start', margin: '10px 3%', fontFamily: 'Helvetica' }}>
+      {name} {/* {name} , {Math.round(percent)}%, {status} */}
+    </span>
+  )
+}
+
 class Wrapper extends React.Component {
   static async getInitialProps ({ res, req, query }) {
     if (req && !req.user) {
@@ -61,6 +69,8 @@ class Wrapper extends React.Component {
 
   constructor (props) {
     super(props)
+
+    this.uploadRef = React.createRef()
 
     const { StringType, NumberType, DateType } = Schema.Types
     const absenceModel = Schema.Model({
@@ -343,51 +353,59 @@ class Wrapper extends React.Component {
 
         // Alternative: https://www.npmjs.com/package/react-google-picker
         // https://stackoverflow.com/questions/54016733/how-to-make-http-request-to-upload-file-from-reactjs-to-google-drive
-        fetch(`${protocol}//${host}/api/mail/upload?file=${file}`)
+        // fetch(`${protocol}//${host}/api/mail/upload?file=${file}`)
+        //   .then(resp => resp.json())
+        //   .then(data => {
+        //     // If success, send mail to inform User
+        fetch(`${protocol}//${host}/api/mail/send?manager=${manager}&from=${dateFrom}&to=${dateTo}&type=${type}&name=${name}&ah=${approvalHash}&fn=${this.state.fileName}`) // &fu=${this.state.file.url}&fn=${this.state.file.name}`)
           .then(resp => resp.json())
           .then(data => {
-            // If success, send mail to inform User
-            fetch(`${protocol}//${host}/api/mail/send?manager=${manager}&from=${dateFrom}&to=${dateTo}&type=${type}&name=${name}&ah=${approvalHash}`)
-              .then(resp => resp.json())
-              .then(data => {
-                if (this.state.openConfirmModal) {
-                  this.setState({
-                    openConfirmModal: !this.state.openConfirmModal
-                  })
-                }
-                if (data.code === 200) {
-                  this.notifyInfo('Request Sent')
-                } else if (data.code === 500) {
-                  this.notifyWarn(`Error sending message - ${data.msg}`)
-                }
+            if (this.state.openConfirmModal) {
+              this.setState({
+                openConfirmModal: !this.state.openConfirmModal
               })
-              .catch(err => console.error(err))
+            }
+            if (data.code === 200) {
+              this.notifyInfo('Request Sent')
+              this.uploadRef.current.files[0].remove()
+            } else if (data.code === 500) {
+              this.notifyWarn(`Error sending message - ${data.msg}`)
+            }
           })
           .catch(err => console.error(err))
+          // })
+          // .catch(err => console.error(err))
       })
       .catch(err => console.error(err))
   }
 
-  render () {
-    const getUploadParams = (data) => {
-      console.log('params', data)
-      return {
-        url: 'https://www.googleapis.com/upload/drive/v3/files?uploadType=media',
-        headers: {
-          'Content-Type': data.file.type,
-          'Content-Length': data.file.size * 1024,
-          Authorization: `Bearer ${process.env.GOOGLE_ACCESS_TOKEN}`
-        }
+  getUploadParams = (data) => {
+    console.log('params', data)
+    const host = window.location.host
+    const protocol = window.location.protocol
+    this.setState({
+      fileName: data.meta.name
+      // file: {
+      //   url: data.meta.previewUrl,
+      //   name: data.meta.name
+      // }
+    })
+    return {
+      url: `${protocol}//${host}/api/mail/upload?fn=${data.meta.name}`,
+      headers: {
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+        // 'Content-Type': data.file.type,
+        // 'Content-Length': data.file.size * 1024,
+        'X-CSRF-TOKEN': this.props.session.csrfToken,
+        'X-XSRF-TOKEN': this.props.session.csrfToken
+        // credentials: 'same-origin'
       }
     }
+  }
 
+  render () {
     const handleChangeStatus = ({ meta }, status) => {
       console.log(status, meta)
-    }
-
-    const handleSubmit = (files, allFiles) => {
-      console.log(files.map(f => f.meta))
-      allFiles.forEach(f => f.remove())
     }
 
     const {
@@ -413,33 +431,33 @@ class Wrapper extends React.Component {
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Email</ControlLabel>
-                        <FormControl name='email' type='email' onChange={this.handleEmailChange} value={vaca.email} style={{ width: '320px' }} />
+                        <FormControl name='email' inputmode='email' autocomplete='email' onChange={this.handleEmailChange} value={vaca.email} style={{ width: '320px' }} />
                       </FormGroup>
                     </Panel>
                     <Panel bordered header={<><hr className='section-header-hr' /><h4 className='form-section-heading' style={{ position: 'relative' }}>History<FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} /></h4><hr className='section-header-hr end' /></>}>
                       <FormGroup>
                         <ControlLabel>Days from Last Year</ControlLabel>
-                        <FormControl name='daysLastYear' type='number' onChange={this.handleLastYearChange} value={vaca.lastYear} />
+                        <FormControl name='daysLastYear' inputmode='numeric' onChange={this.handleLastYearChange} value={vaca.lastYear} />
                         <HelpBlock tooltip>Days which you have transfered with you from last year</HelpBlock>
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Days from this Year</ControlLabel>
-                        <FormControl name='daysThisYear' type='number' onChange={this.handleThisYearChange} value={vaca.thisYear} />
+                        <FormControl name='daysThisYear' inputmode='numeric' onChange={this.handleThisYearChange} value={vaca.thisYear} />
                         <HelpBlock tooltip>Days which you have earned this year</HelpBlock>
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Total Days Available</ControlLabel>
-                        <FormControl name='totalDaysAvailable' type='number' onChange={this.handleTotalAvailableChange} value={vaca.total} />
+                        <FormControl name='totalDaysAvailable' inputmode='numeric' onChange={this.handleTotalAvailableChange} value={vaca.total} />
                         <HelpBlock tooltip>The sum of the last two fields</HelpBlock>
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Requested Days</ControlLabel>
-                        <FormControl name='requestedDays' type='number' onChange={this.handleRequestedChange} value={vaca.requested} />
+                        <FormControl name='requestedDays' inputmode='numeric' onChange={this.handleRequestedChange} value={vaca.requested} />
                         <HelpBlock tooltip>Number of day(s) you need off. <br /> Half days = '0.5'</HelpBlock>
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Days Remaining this Year</ControlLabel>
-                        <FormControl name='remainingDays' type='number' onChange={this.handleRemainingChange} value={vaca.remaining} />
+                        <FormControl name='remainingDays' inputmode='numeric' onChange={this.handleRemainingChange} value={vaca.remaining} />
                         <HelpBlock tooltip>Number of remaining days after subtracting requested from total available</HelpBlock>
                       </FormGroup>
                     </Panel>
@@ -472,29 +490,22 @@ class Wrapper extends React.Component {
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel className='filedrop-label'>Documents</ControlLabel>
-                        {/* <Dropzone onDrop={acceptedFiles => this.handleFileDrop(acceptedFiles)}>
-                          {({ getRootProps, getInputProps }) => (
-                            <section className='filedrop-section'>
-                              <div {...getRootProps()}>
-                                <input {...getInputProps()} />
-                                <p className='filedrop-target'>Click here or drop file to upload optional documentation (Doctors Note, etc.)</p>
-                              </div>
-                              {files.length > 0
-                                ? (
-                                  files.map(file => {
-                                    return <File onDelete={this.handleFileDelete} file={file} key={file.id} />
-                                  })
-                                ) : (
-                                  null
-                                )}
-                            </section>
-                          )}
-                        </Dropzone> */}
                         <Dropzone
-                          getUploadParams={getUploadParams}
+                          ref={this.uploadRef}
+                          getUploadParams={this.getUploadParams}
                           onChangeStatus={handleChangeStatus}
-                          onSubmit={handleSubmit}
-                          styles={{ dropzone: { minHeight: 200, maxHeight: 250 } }}
+                          PreviewComponent={Preview}
+                          maxFiles={1}
+                          multiple={false}
+                          canCancel={false}
+                          inputContent='Click to select or drop an optional file (i.e. Doctors Note, etc.)'
+                          inputWithFilesContent='Add Files'
+                          submitButtonDisabled
+                          styles={{
+                            dropzone: { minHeight: 150, maxHeight: 200, border: '2px dashed #e5e5ea', borderRadius: '15px', padding: '10px', color: '#67B246', textAlign: 'center', fontWeight: '100' },
+                            dropzoneActive: { borderColor: '#67B246', borderWidth: '3px' },
+                            inputLabel: { color: '#67B246', fontSize: '14px' }
+                          }}
                         />
                       </FormGroup>
                       <FormGroup>
@@ -516,7 +527,7 @@ class Wrapper extends React.Component {
               <Modal.Title style={{ fontSize: '24px' }}>Confirm Submit</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              Are you sure you want to submit the following absence request?
+            Are you sure you want to submit the following absence request?
               <Table showHeader={false} autoHeight bordered={false} data={confirmTableData} style={{ margin: '20px 50px' }}>
                 <Column width={200} align='left'>
                   <HeaderCell>Field: </HeaderCell>
@@ -532,73 +543,73 @@ class Wrapper extends React.Component {
               <ButtonToolbar style={{ width: '100%' }}>
                 <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
                   <Button onClick={this.handleSubmit} style={{ width: '33%', fontSize: '16px' }} appearance='primary'>
-                  Confirm
+                Confirm
                   </Button>
                   <Button onClick={this.toggleSubmitModal} style={{ width: '33%', fontSize: '16px' }} appearance='default'>
-                  Cancel
+                Cancel
                   </Button>
                 </ButtonGroup>
               </ButtonToolbar>
             </Modal.Footer>
           </Modal>
           <style jsx>{`
-            :global(.new-request-header) {
-              width: 100%;
-              text-align: center;
-            }
-            :global(.section-header-hr) {
-              width: 30%;
-              position: absolute;
-            }
-            :global(.section-header-hr.end) {
-              right: 0;
-              top: 20px;
-            }
-            :global(.new-request-form) {
-              display: flex;
-              justify-content: center;
-            }
-            :global(.rs-panel-group .rs-panel + .rs-panel::before) {
-              border: none;
-            }
-            :global(.filedrop-label) {
-              display: flex !important;
-              align-items: center;
-              justify-content: center;
-            }
-            :global(.filedrop-section) {
-              width: 320px;
-              float: left;
-            }
-            :global(.filedrop-section:hover) {
-              cursor: pointer;
-            }
-            :global(.rs-tooltip) {
-              max-width: 150px;
-            }
-            :global(.filedrop-target) {
-              min-height: 50px;
-              width: 100%;
-              border: 2px dashed #e5e5ea;
-              text-align: center;
-              color: #c0c0c3;
-              padding: 20px;
-              border-radius: 10px;
-            }
-            :global(.rs-form-control-wrapper > .rs-input-number, .rs-form-control-wrapper > .rs-input) {
-              width: 300px;
-            }
-            :global(.rs-panel-heading) {
-              text-align: center;
-            }
-            :global(.rs-form-horizontal .rs-form-group .rs-control-label) {
-              width: 100%;
-              text-align: center;
-            }
-            :global(.rs-modal-backdrop.in) {
-              opacity: 0.8;
-            }
-          `}
+          :global(.new-request-header) {
+            width: 100%;
+            text-align: center;
+          }
+          :global(.section-header-hr) {
+            width: 30%;
+            position: absolute;
+          }
+          :global(.section-header-hr.end) {
+            right: 0;
+            top: 20px;
+          }
+          :global(.new-request-form) {
+            display: flex;
+            justify-content: center;
+          }
+          :global(.rs-panel-group .rs-panel + .rs-panel::before) {
+            border: none;
+          }
+          :global(.filedrop-label) {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+          }
+          :global(.filedrop-section) {
+            width: 320px;
+            float: left;
+          }
+          :global(.filedrop-section:hover) {
+            cursor: pointer;
+          }
+          :global(.rs-tooltip) {
+            max-width: 150px;
+          }
+          :global(.filedrop-target) {
+            min-height: 50px;
+            width: 100%;
+            border: 2px dashed #e5e5ea;
+            text-align: center;
+            color: #c0c0c3;
+            padding: 20px;
+            border-radius: 10px;
+          }
+          :global(.rs-form-control-wrapper > .rs-input-number, .rs-form-control-wrapper > .rs-input) {
+            width: 300px;
+          }
+          :global(.rs-panel-heading) {
+            text-align: center;
+          }
+          :global(.rs-form-horizontal .rs-form-group .rs-control-label) {
+            width: 100%;
+            text-align: center;
+          }
+          :global(.rs-modal-backdrop.in) {
+            opacity: 0.8;
+          }
+        `}
           </style>
         </Layout>
       )

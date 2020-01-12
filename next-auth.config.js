@@ -44,7 +44,7 @@ module.exports = () => {
       return new Promise((resolve, reject) => {
       // This is the config block we return, ready to be passed to NextAuth
         resolve({
-        // Define a port (if none passed, will not start Express)
+          // Define a port (if none passed, will not start Express)
           port: process.env.PORT || 3000,
           // Secret used to encrypt session data on the server.
           sessionSecret: '*&TvZRT*2qwQPs8!jd49dfE!ygmUbkCX2Drkxv8zT^YXV9PACJd#wwkTfbzkbkJG',

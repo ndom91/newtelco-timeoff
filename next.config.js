@@ -10,9 +10,9 @@ const Dotenv = require('dotenv-webpack')
 
 // eslint-disable-next-line
 function HACK_removeMinimizeOptionFromCssLoaders (config) {
-  console.warn(
-    'HACK: Removing `minimize` option from `css-loader` entries in Webpack config'
-  )
+  // console.warn(
+  //   'HACK: Removing `minimize` option from `css-loader` entries in Webpack config'
+  // )
   config.module.rules.forEach(rule => {
     if (Array.isArray(rule.use)) {
       rule.use.forEach(u => {
@@ -29,6 +29,9 @@ const nextConfig = {
   compress: false,
   lessLoaderOptions: {
     javascriptEnabled: true
+  },
+  api: {
+    bodyParser: false
   },
   exportPathMap: function () {
     return {

@@ -39,6 +39,7 @@
     "dotenv": "^8.2.0",
     "dotenv-webpack": "^1.7.0",
     "express-session": "^1.17.0",
+    "formidable": "^1.2.1",
     "googleapis": "^45.0.0",
     "isomorphic-unfetch": "^3.0.0",
     "less": "^3.10.3",

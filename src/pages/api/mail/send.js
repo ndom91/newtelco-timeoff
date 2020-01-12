@@ -1,3 +1,4 @@
+import { createWriteStream } from 'fs'
 require('dotenv').config({ path: './.env' })
 
 module.exports = async (req, res) => {
@@ -7,8 +8,12 @@ module.exports = async (req, res) => {
   const type = req.query.type.charAt(0).toUpperCase() + req.query.type.slice(1)
   const name = req.query.name
   const approvalHash = req.query.ah
+  // const fileUrl = req.query.fu
+  const fileName = req.query.fn
   const dateToday = new Date().toLocaleDateString('de', { year: 'numeric', day: '2-digit', month: '2-digit' })
   const note = ''
+
+  // req.pipe(createWriteStream(`./${fileName}`))
 
   const nodemailer = require('nodemailer')
   const nodemailerSmtpTransport = require('nodemailer-smtp-transport')
@@ -36,6 +41,12 @@ module.exports = async (req, res) => {
       from: 'device@newtelco.de',
       subject: `[NT] New Absence Request - ${name}`,
       html: mailBody
+      // attachments: [
+      //   {
+      //     name: fileName,
+      //     path: `./tmp/${fileName}`
+      //   }
+      // ]
     }, (err, info) => {
       if (err) {
         console.error('Error sending email to ' + name, err)

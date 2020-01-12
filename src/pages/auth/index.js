@@ -105,7 +105,7 @@ export default class App extends React.Component {
             </Header>
             <Content className='login-content-wrapper'>
               <FlexboxGrid style={{ marginTop: '2rem' }} justify='center'>
-                <FlexboxGrid.Item componentClass={Col} colspan={20} md={8} lg={6}>
+                <FlexboxGrid.Item componentClass={Col} colspan={26} md={6} lg={8}>
                   <Panel header={<h3 className='login-text-header'>Login</h3>} bordered>
                     <Form fluid id='signin' method='post' action='/auth/email/signin' onSubmit={this.handleSignInSubmit}>
                       <input name='_csrf' type='hidden' value={this.state.session.csrfToken} />
