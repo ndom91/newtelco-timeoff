@@ -15,7 +15,7 @@ class Layout extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      expand: '',
+      expand: true,
       settings: {
         companyName: ''
       }
