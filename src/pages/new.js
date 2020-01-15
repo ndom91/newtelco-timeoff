@@ -283,6 +283,7 @@ class Wrapper extends React.Component {
         manager: ''
       }
     })
+    this.uploadRef.current.files[0].remove()
   }
 
   toggleSubmitModal = () => {
@@ -391,7 +392,7 @@ class Wrapper extends React.Component {
       // }
     })
     return {
-      url: `${protocol}//${host}/api/mail/upload?fn=${data.meta.name}`,
+      url: `${protocol}//${host}/api/mail/upload`, // ?fn=${data.meta.name}`,
       headers: {
         // 'Content-Type': 'application/x-www-form-urlencoded',
         // 'Content-Type': data.file.type,
@@ -431,33 +432,33 @@ class Wrapper extends React.Component {
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Email</ControlLabel>
-                        <FormControl name='email' inputmode='email' autocomplete='email' onChange={this.handleEmailChange} value={vaca.email} style={{ width: '320px' }} />
+                        <FormControl name='email' inputMode='email' autoComplete='email' onChange={this.handleEmailChange} value={vaca.email} style={{ width: '320px' }} />
                       </FormGroup>
                     </Panel>
                     <Panel bordered header={<><hr className='section-header-hr' /><h4 className='form-section-heading' style={{ position: 'relative' }}>History<FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} /></h4><hr className='section-header-hr end' /></>}>
                       <FormGroup>
                         <ControlLabel>Days from Last Year</ControlLabel>
-                        <FormControl name='daysLastYear' inputmode='numeric' onChange={this.handleLastYearChange} value={vaca.lastYear} />
+                        <FormControl name='daysLastYear' inputMode='numeric' onChange={this.handleLastYearChange} value={vaca.lastYear} />
                         <HelpBlock tooltip>Days which you have transfered with you from last year</HelpBlock>
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Days from this Year</ControlLabel>
-                        <FormControl name='daysThisYear' inputmode='numeric' onChange={this.handleThisYearChange} value={vaca.thisYear} />
+                        <FormControl name='daysThisYear' inputMode='numeric' onChange={this.handleThisYearChange} value={vaca.thisYear} />
                         <HelpBlock tooltip>Days which you have earned this year</HelpBlock>
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Total Days Available</ControlLabel>
-                        <FormControl name='totalDaysAvailable' inputmode='numeric' onChange={this.handleTotalAvailableChange} value={vaca.total} />
+                        <FormControl name='totalDaysAvailable' inputMode='numeric' onChange={this.handleTotalAvailableChange} value={vaca.total} />
                         <HelpBlock tooltip>The sum of the last two fields</HelpBlock>
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Requested Days</ControlLabel>
-                        <FormControl name='requestedDays' inputmode='numeric' onChange={this.handleRequestedChange} value={vaca.requested} />
+                        <FormControl name='requestedDays' inputMode='numeric' onChange={this.handleRequestedChange} value={vaca.requested} />
                         <HelpBlock tooltip>Number of day(s) you need off. <br /> Half days = '0.5'</HelpBlock>
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Days Remaining this Year</ControlLabel>
-                        <FormControl name='remainingDays' inputmode='numeric' onChange={this.handleRemainingChange} value={vaca.remaining} />
+                        <FormControl name='remainingDays' inputMode='numeric' onChange={this.handleRemainingChange} value={vaca.remaining} />
                         <HelpBlock tooltip>Number of remaining days after subtracting requested from total available</HelpBlock>
                       </FormGroup>
                     </Panel>

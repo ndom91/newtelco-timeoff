@@ -30,9 +30,6 @@ const nextConfig = {
   lessLoaderOptions: {
     javascriptEnabled: true
   },
-  api: {
-    bodyParser: false
-  },
   exportPathMap: function () {
     return {
       '/': { page: '/' }

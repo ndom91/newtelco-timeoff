@@ -143,6 +143,11 @@ class Layout extends React.Component {
             align-items: center;
             padding: 10px;
             background-color: #f3f3f3;
+            box-shadow: 0 4px 12px -2px rgba(0,0,0,0.2);
+          }
+          :global(.rs-sidenav-header) {
+            box-shadow: 0 5px 15px -5px rgba(0,0,0,0.5);
+            z-index: 10;
           }
           :global(.content-wrapper) {
             padding: 20px;
@@ -155,6 +160,7 @@ class Layout extends React.Component {
             justify-content: flex-end;
             padding: 10px 20px;
             background-color: #f3f3f3;
+            box-shadow: 0 -7px 8px -7px rgba(0,0,0,0.5);
           }
           :global(.logout-btn) {
             background-color: transparent;

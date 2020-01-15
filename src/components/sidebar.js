@@ -139,16 +139,19 @@ class SidebarNT extends React.Component {
                       Dashboard
                 </Nav.Item>
               </Link>
+              <hr className='menu-hr' />
               <Link passHref href='/new'>
                 <Nav.Item eventKey='3' active={typeof window !== 'undefined' && Router.pathname === '/new'} icon={<Icon icon='plus-square' />}>
                       New Request
                 </Nav.Item>
               </Link>
+              <hr className='menu-hr' />
               <Link passHref href='/user'>
                 <Nav.Item eventKey='2' active={typeof window !== 'undefined' && Router.pathname === '/user'} icon={<Icon icon='user' />}>
                   {this.props.user.substr(0, this.props.user.indexOf('@'))}
                 </Nav.Item>
               </Link>
+              <hr className='menu-hr' />
               <Dropdown
                 eventKey='4'
                 trigger='hover'
@@ -176,32 +179,35 @@ class SidebarNT extends React.Component {
               </Dropdown>
               {this.props.admin
                 ? (
-                  <Dropdown
-                    eventKey='5'
-                    trigger='hover'
-                    title='Settings'
-                    icon={<Icon icon='cog' />}
-                    placement='rightStart'
-                    active={typeof window !== 'undefined' && Router.pathname.includes('settings')}
-                  >
-                    <Link
-                      href={{
-                        pathname: '/settings/admin',
-                        query: {
-                          admin: this.props.admin
-                        }
-                      }}
-                      as='/settings/admin'
-                      passHref
+                  <>
+                    <hr className='menu-hr' />
+                    <Dropdown
+                      eventKey='5'
+                      trigger='hover'
+                      title='Settings'
+                      icon={<Icon icon='cog' />}
+                      placement='rightStart'
+                      active={typeof window !== 'undefined' && Router.pathname.includes('settings')}
                     >
-                      <Dropdown.Item
-                        eventKey='5-2'
-                        active={typeof window !== 'undefined' && Router.pathname === '/settings/admin'}
+                      <Link
+                        href={{
+                          pathname: '/settings/admin',
+                          query: {
+                            admin: this.props.admin
+                          }
+                        }}
+                        as='/settings/admin'
+                        passHref
                       >
+                        <Dropdown.Item
+                          eventKey='5-2'
+                          active={typeof window !== 'undefined' && Router.pathname === '/settings/admin'}
+                        >
                             Admin
-                      </Dropdown.Item>
-                    </Link>
-                  </Dropdown>
+                        </Dropdown.Item>
+                      </Link>
+                    </Dropdown>
+                  </>
                 ) : (
                   null
                 )}
@@ -234,11 +240,19 @@ class SidebarNT extends React.Component {
             justify-content: ${this.props.expand ? 'center' : 'flex-start'} !important;
             align-items: center;
           }
+          :global(.rs-sidenav-header) {
+            height: 56px !important;
+          }
           :global(.nav-toggle) {
             background-color: #f3f3f3 !important;
           }
           :global(.rs-modal-backdrop.in) {
             opacity: 0.8;
+          }
+          :global(.menu-hr) {
+            border-top: 1px solid rgba(237, 237, 230, 0.9);
+            width: 80%;
+            margin: 0 auto;
           }
         `}
         </style>
