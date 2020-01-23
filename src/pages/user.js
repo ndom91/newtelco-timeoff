@@ -18,7 +18,11 @@ import {
   Header,
   Content,
   Button,
-  Panel
+  ButtonToolbar,
+  IconButton,
+  ButtonGroup,
+  Panel,
+  Icon
 } from 'rsuite'
 
 const moment = extendMoment(Moment)
@@ -245,12 +249,21 @@ class Wrapper extends React.Component {
                 <span className='section-header'>
                   My Vacations
                 </span>
-                <Button onClick={this.handleDeleteRequest}>
-                  Delete
-                </Button>
-                <Button onClick={this.handleGridExport}>
-                  Export
-                </Button>
+                <span>
+                  <ButtonToolbar>
+                    <ButtonGroup>
+                      <IconButton icon={<Icon icon='star' />} appearance='primary' onClick={this.handleDeleteRequest}>
+                        Edit
+                      </IconButton>
+                      <Button appearance='ghost' onClick={this.handleDeleteRequest}>
+                        Delete
+                      </Button>
+                      <Button appearance='ghost' onClick={this.handleGridExport}>
+                        Export
+                      </Button>
+                    </ButtonGroup>
+                  </ButtonToolbar>
+                </span>
               </Header>
               <Content className='user-grid-wrapper'>
                 <div className='ag-theme-material user-grid'>
@@ -276,6 +289,7 @@ class Wrapper extends React.Component {
               display: flex;
               width: 100%;
               justify-content: space-between;
+              margin-bottom: 20px;
             }
             :global(.user-grid-wrapper) {
               height: 100%;
