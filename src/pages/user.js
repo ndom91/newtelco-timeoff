@@ -9,6 +9,7 @@ import dynamic from 'next/dynamic'
 import DateTimeField from '../components/aggrid/datetime'
 import DateField from '../components/aggrid/date'
 import ApprovedField from '../components/aggrid/approved'
+import TypeField from '../components/aggrid/type'
 import { AgGridReact } from 'ag-grid-react'
 import 'ag-grid-community/dist/styles/ag-grid.css'
 import 'ag-grid-community/dist/styles/ag-theme-material.css'
@@ -22,8 +23,17 @@ import {
   IconButton,
   ButtonGroup,
   Panel,
-  Icon
+  Icon,
+  Modal,
+  Table,
+  Form,
+  FormGroup,
+  ControlLabel,
+  FormControl,
+  Notification
 } from 'rsuite'
+
+const { Column, HeaderCell, Cell } = Table
 
 const moment = extendMoment(Moment)
 
@@ -56,6 +66,8 @@ class Wrapper extends React.Component {
 
     this.state = {
       rowData: [],
+      openConfirmDeleteModal: false,
+      openEditModal: false,
       gridOptions: {
         defaultColDef: {
           resizable: true,
@@ -75,6 +87,10 @@ class Wrapper extends React.Component {
             cellRenderer: 'dateTimeShort',
             field: 'submitted_datetime',
             width: 160
+          }, {
+            headerName: 'Type',
+            field: 'type',
+            width: 100
           }, {
             headerName: 'From',
             field: 'fromDate',
@@ -160,7 +176,8 @@ class Wrapper extends React.Component {
         frameworkComponents: {
           dateTimeShort: DateTimeField,
           dateShort: DateField,
-          approved: ApprovedField
+          approved: ApprovedField,
+          type: TypeField
         },
         rowSelection: 'multiple',
         paginationPageSize: 10,
@@ -176,6 +193,22 @@ class Wrapper extends React.Component {
         }
       }
     }
+  }
+
+  notifyInfo = (header, text) => {
+    Notification.info({
+      title: header,
+      duration: 2000,
+      description: <div className='notify-body'>{text}</div>
+    })
+  }
+
+  notifyWarn = (header, text) => {
+    Notification.warning({
+      title: header,
+      duration: 2000,
+      description: <div className='notify-body'>{text}</div>
+    })
   }
 
   componentDidMount () {
@@ -230,14 +263,97 @@ class Wrapper extends React.Component {
     }
   }
 
-  handleDeleteRequest = () => {
+  toggleConfirmDeleteModal = () => {
+    if (this.gridApi) {
+      const selectedRow = this.gridApi.getSelectedRows()
+      const request = selectedRow[0]
+      console.log(request)
+      const tableData = [
+        {
+          title: 'From',
+          value: moment(request.fromDate).format('DD.MM.YYYY')
+        },
+        {
+          title: 'To',
+          value: moment(request.toDate).format('DD.MM.YYYY')
+        },
+        {
+          title: 'Manager',
+          value: request.manager
+        },
+        {
+          title: 'Type',
+          value: request.type.charAt(0).toUpperCase() + request.type.slice(1)
+        },
+        {
+          title: 'Requested Days',
+          value: request.beantragt
+        },
+        {
+          title: 'Remaining Days',
+          value: request.resturlaubJAHR
+        }
+      ]
+      this.setState({
+        openConfirmDeleteModal: !this.state.openConfirmDeleteModal,
+        confirmDeleteData: tableData,
+        toDelete: request.id || 0
+      })
+    }
+  }
 
+  handleSubmitDelete = () => {
+    const deleteId = this.state.toDelete
+    const host = window.location.host
+    const protocol = window.location.protocol
+    fetch(`${protocol}//${host}/api/user/entries/delete?id=${deleteId}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log(data)
+        if (data.deleteQuery.affectedRows > 0) {
+          this.notifyInfo('Request Deleted')
+        } else {
+          this.notifyWarn('Error Deleting Request')
+        }
+        const newRowData = this.state.rowData.filter(row => row.id !== deleteId)
+        this.setState({
+          rowData: newRowData,
+          openConfirmDeleteModal: !this.state.openConfirmDeleteModal
+        })
+        this.gridApi.refreshCells()
+      })
+      .catch(err => console.error(err))
+  }
+
+  toggleEditModal = () => {
+    if (this.gridApi) {
+      const selectedRow = this.gridApi.getSelectedRows()
+      const request = selectedRow[0]
+      const tableData = {
+        from: moment(request.fromDate).format('DD.MM.YYYY'),
+        to: moment(request.toDate).format('DD.MM.YYYY'),
+        lastYear: request.resturlaubVorjahr,
+        thisYear: request.jahresurlaubInsgesamt,
+        total: request.restjahresurlaubInsgesamt,
+        requested: request.beantragt,
+        remaining: request.resturlaubJAHR,
+        id: request.id
+      }
+      this.setState({
+        openEditModal: !this.state.openEditModal,
+        editData: tableData
+      })
+    }
   }
 
   render () {
     const {
       gridOptions,
-      rowData
+      rowData,
+      openConfirmDeleteModal,
+      confirmDeleteData,
+      openEditModal,
+      editData
     } = this.state
 
     if (this.props.session.user) {
@@ -252,10 +368,10 @@ class Wrapper extends React.Component {
                 <span>
                   <ButtonToolbar>
                     <ButtonGroup>
-                      <IconButton icon={<Icon icon='edit' />} appearance='primary' onClick={this.handleDeleteRequest}>
+                      <IconButton icon={<Icon icon='edit' />} appearance='primary' onClick={this.toggleEditModal}>
                         Edit
                       </IconButton>
-                      <IconButton icon={<Icon icon='trash' />} appearance='ghost' onClick={this.handleDeleteRequest}>
+                      <IconButton icon={<Icon icon='trash' />} appearance='ghost' onClick={this.toggleConfirmDeleteModal}>
                         Delete
                       </IconButton>
                       <IconButton icon={<Icon icon='export' />} appearance='ghost' onClick={this.handleGridExport}>
@@ -283,6 +399,89 @@ class Wrapper extends React.Component {
                 user={this.props.session.user.email}
               />
             </Panel> */}
+            {openConfirmDeleteModal && (
+              <Modal enforceFocus size='sm' backdrop show={openConfirmDeleteModal} onHide={this.toggleConfirmDeleteModal} style={{ marginTop: '150px' }}>
+                <Modal.Header>
+                  <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>Confirm Submit</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <span style={{ textAlign: 'center', display: 'block', fontWeight: '600' }}>Are you sure you want to delete this request?</span>
+                  <Table showHeader={false} autoHeight bordered={false} data={confirmDeleteData} style={{ margin: '20px 50px' }}>
+                    <Column width={200} align='left'>
+                      <HeaderCell>Field: </HeaderCell>
+                      <Cell dataKey='title' />
+                    </Column>
+                    <Column width={250} align='left'>
+                      <HeaderCell>Value: </HeaderCell>
+                      <Cell dataKey='value' />
+                    </Column>
+                  </Table>
+                </Modal.Body>
+                <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
+                  <ButtonToolbar style={{ width: '100%' }}>
+                    <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+                      <Button onClick={this.handleSubmitDelete} style={{ width: '33%', fontSize: '16px' }} appearance='primary'>
+                        Confirm
+                      </Button>
+                      <Button onClick={this.toggleConfirmDeleteModal} style={{ width: '33%', fontSize: '16px' }} appearance='default'>
+                        Cancel
+                      </Button>
+                    </ButtonGroup>
+                  </ButtonToolbar>
+                </Modal.Footer>
+              </Modal>
+            )}
+            {openEditModal && (
+              <Modal enforceFocus size='sm' backdrop show={openEditModal} onHide={this.toggleEditModal} style={{ marginTop: '150px' }}>
+                <Modal.Header>
+                  <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>Edit Request</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <Form layout='horizontal'>
+                    <FormGroup>
+                      <ControlLabel>Days from Last Year</ControlLabel>
+                      <FormControl name='daysLastYear' inputMode='numeric' onChange={this.handleLastYearChange} value={editData.lastYear} />
+                    </FormGroup>
+                    <FormGroup>
+                      <ControlLabel>Days from this Year</ControlLabel>
+                      <FormControl name='daysThisYear' inputMode='numeric' onChange={this.handleThisYearChange} value={editData.thisYear} />
+                    </FormGroup>
+                    <FormGroup>
+                      <ControlLabel>Total Days Available</ControlLabel>
+                      <FormControl name='totalDaysAvailable' inputMode='numeric' onChange={this.handleTotalAvailableChange} value={editData.total} />
+                    </FormGroup>
+                    <FormGroup>
+                      <ControlLabel>Requested Days</ControlLabel>
+                      <FormControl name='requestedDays' inputMode='numeric' onChange={this.handleRequestedChange} value={editData.requested} />
+                    </FormGroup>
+                    <FormGroup>
+                      <ControlLabel>Days Remaining this Year</ControlLabel>
+                      <FormControl name='remainingDays' inputMode='numeric' onChange={this.handleRemainingChange} value={editData.remaining} />
+                    </FormGroup>
+                    <FormGroup>
+                      <ControlLabel>From</ControlLabel>
+                      <FormControl name='from' type='date' onChange={this.handleRemainingChange} value={editData.from} />
+                    </FormGroup>
+                    <FormGroup>
+                      <ControlLabel>To</ControlLabel>
+                      <FormControl name='to' type='date' onChange={this.handleRemainingChange} value={editData.to} />
+                    </FormGroup>
+                  </Form>
+                </Modal.Body>
+                <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
+                  <ButtonToolbar style={{ width: '100%' }}>
+                    <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+                      <Button onClick={this.handleSubmitEdit} style={{ width: '33%', fontSize: '16px' }} appearance='primary'>
+                  Confirm
+                      </Button>
+                      <Button onClick={this.toggleEditModal} style={{ width: '33%', fontSize: '16px' }} appearance='default'>
+                  Cancel
+                      </Button>
+                    </ButtonGroup>
+                  </ButtonToolbar>
+                </Modal.Footer>
+              </Modal>
+            )}
           </Container>
           <style jsx>{`
             :global(.user-content-header) {

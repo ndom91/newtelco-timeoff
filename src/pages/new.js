@@ -524,36 +524,38 @@ class Wrapper extends React.Component {
               </Panel>
             </Content>
           </Container>
-          <Modal enforceFocus size='sm' backdrop show={openConfirmModal} onHide={this.toggleSubmitModal} style={{ marginTop: '150px' }}>
-            <Modal.Header>
-              <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>Confirm Submit</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <span style={{ textAlign: 'center', display: 'block', fontWeight: '600' }}>Are you sure you want to submit the following absence request?</span>
-              <Table showHeader={false} autoHeight bordered={false} data={confirmTableData} style={{ margin: '20px 50px' }}>
-                <Column width={200} align='left'>
-                  <HeaderCell>Field: </HeaderCell>
-                  <Cell dataKey='title' />
-                </Column>
-                <Column width={250} align='left'>
-                  <HeaderCell>Value: </HeaderCell>
-                  <Cell dataKey='value' />
-                </Column>
-              </Table>
-            </Modal.Body>
-            <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
-              <ButtonToolbar style={{ width: '100%' }}>
-                <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-                  <Button onClick={this.handleSubmit} style={{ width: '33%', fontSize: '16px' }} appearance='primary'>
-                Confirm
-                  </Button>
-                  <Button onClick={this.toggleSubmitModal} style={{ width: '33%', fontSize: '16px' }} appearance='default'>
-                Cancel
-                  </Button>
-                </ButtonGroup>
-              </ButtonToolbar>
-            </Modal.Footer>
-          </Modal>
+          {openConfirmModal && (
+            <Modal enforceFocus size='sm' backdrop show={openConfirmModal} onHide={this.toggleSubmitModal} style={{ marginTop: '150px' }}>
+              <Modal.Header>
+                <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>Confirm Submit</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <span style={{ textAlign: 'center', display: 'block', fontWeight: '600' }}>Are you sure you want to submit the following absence request?</span>
+                <Table showHeader={false} autoHeight bordered={false} data={confirmTableData} style={{ margin: '20px 50px' }}>
+                  <Column width={200} align='left'>
+                    <HeaderCell>Field: </HeaderCell>
+                    <Cell dataKey='title' />
+                  </Column>
+                  <Column width={250} align='left'>
+                    <HeaderCell>Value: </HeaderCell>
+                    <Cell dataKey='value' />
+                  </Column>
+                </Table>
+              </Modal.Body>
+              <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
+                <ButtonToolbar style={{ width: '100%' }}>
+                  <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+                    <Button onClick={this.handleSubmit} style={{ width: '33%', fontSize: '16px' }} appearance='primary'>
+                  Confirm
+                    </Button>
+                    <Button onClick={this.toggleSubmitModal} style={{ width: '33%', fontSize: '16px' }} appearance='default'>
+                  Cancel
+                    </Button>
+                  </ButtonGroup>
+                </ButtonToolbar>
+              </Modal.Footer>
+            </Modal>
+          )}
           <style jsx>{`
           :global(.new-request-header) {
             width: 100%;
