@@ -226,6 +226,10 @@ class Wrapper extends React.Component {
     }
   }
 
+  handleDeleteRequest = () => {
+
+  }
+
   render () {
     const {
       gridOptions,
@@ -241,6 +245,9 @@ class Wrapper extends React.Component {
                 <span className='section-header'>
                   My Vacations
                 </span>
+                <Button onClick={this.handleDeleteRequest}>
+                  Delete
+                </Button>
                 <Button onClick={this.handleGridExport}>
                   Export
                 </Button>
