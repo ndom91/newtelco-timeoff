@@ -368,7 +368,9 @@ class Wrapper extends React.Component {
             }
             if (data.code === 200) {
               this.notifyInfo('Request Sent')
-              this.uploadRef.current.files[0].remove()
+              if (this.uploadRef.current.files.length) {
+                this.uploadRef.current.files[0].remove()
+              }
             } else if (data.code === 500) {
               this.notifyWarn(`Error sending message - ${data.msg}`)
             }
