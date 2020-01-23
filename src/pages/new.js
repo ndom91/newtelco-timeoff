@@ -467,13 +467,12 @@ class Wrapper extends React.Component {
                     <Panel bordered header={<><hr className='section-header-hr' /><h4 className='form-section-heading' style={{ position: 'relative' }}>Dates<FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} /></h4><hr className='section-header-hr end' /></>}>
                       <FormGroup>
                         <ControlLabel>Type of Absence</ControlLabel>
-                        <RadioGroup onChange={this.handleTypeChange} name='radioList' inline appearance='picker' defaultValue='vacation'>
+                        <RadioGroup onChange={this.handleTypeChange} name='radioList' inline appearance='picker' defaultValue='vacation' style={{ width: '320px' }}>
                           <Radio value='vacation'>Vacation</Radio>
                           <Radio value='sick'>Illness</Radio>
                           <Radio value='moving'>Moving</Radio>
                           <Radio value='other'>Other</Radio>
                         </RadioGroup>
-                        {/* <HelpBlock tooltip>Required</HelpBlock> */}
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>When do you need off?</ControlLabel>

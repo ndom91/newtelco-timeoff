@@ -29,7 +29,7 @@ const Comment = (props) => {
             null
           )}
         {props.data.datetime
-          ? <Tag color='green' className='comment-user-datetag'>{isValid(new Date(props.data.datetime)) && format(new Date(props.data.datetime), 'dd.MM.yyyy HH:mm:ss')}</Tag>
+          ? <Tag color='green' className='comment-user-datetag'>{isValid(new Date(props.data.datetime)) && format(new Date(props.data.datetime), 'dd.MM.yyyy HH:mm')}</Tag>
           : ''}
       </div>
       <div className='comment-body'>

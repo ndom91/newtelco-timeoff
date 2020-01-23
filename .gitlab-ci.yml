@@ -1,0 +1,42 @@
+image: docker:latest
+services:
+  - docker:dind
+
+stages:
+  - build
+  - deploy
+
+variables:
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+  CI_REGISTRY: pkg.newtelco.dev
+  CI_REGISTRY_IMAGE: pkg.newtelco.dev/newtelco/timeoff
+
+build:
+  stage: build
+  before_script:
+    - docker info
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:latest || true
+    - echo "$ENV_FILE" > .env
+    - echo "$SERVICE_ACCT" > serviceacct.json
+    - docker build --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA --tag $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+
+deploy:
+  stage: deploy
+  image: alpine
+  environment:
+    name: production
+    url: https://vacations.newtelco.de
+  script:
+    - apk add --no-cache rsync openssh
+    - mkdir -p ~/.ssh
+    - echo "$DEPLOY_NDO_KEY" >> ~/.ssh/id_nt
+    - chmod 600 ~/.ssh/id_nt
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+    - ssh -i ~/.ssh/id_nt -p 2424 root@207.154.192.38 "docker kill nt-vaca || true"
+    - ssh -i ~/.ssh/id_nt -p 2424 root@207.154.192.38 "docker rm nt-vaca || true"
+    - ssh -i ~/.ssh/id_nt -p 2424 root@207.154.192.38 "docker run -d -p 7000:7666 --restart on-failure:3 --name nt-vaca pkg.newtelco.dev/newtelco/timeoff:$CI_COMMIT_SHORT_SHA"
