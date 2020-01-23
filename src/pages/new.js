@@ -305,7 +305,7 @@ class Wrapper extends React.Component {
           },
           {
             title: 'Type',
-            value: vaca.type
+            value: vaca.type.charAt(0).toUpperCase() + vaca.type.slice(1)
           },
           {
             title: 'Requested Days',
@@ -470,8 +470,8 @@ class Wrapper extends React.Component {
                         <RadioGroup onChange={this.handleTypeChange} name='radioList' inline appearance='picker' defaultValue='vacation'>
                           <Radio value='vacation'>Vacation</Radio>
                           <Radio value='sick'>Illness</Radio>
-                          <Radio value='newborn'>Newborn</Radio>
                           <Radio value='moving'>Moving</Radio>
+                          <Radio value='other'>Other</Radio>
                         </RadioGroup>
                         {/* <HelpBlock tooltip>Required</HelpBlock> */}
                       </FormGroup>
@@ -527,10 +527,10 @@ class Wrapper extends React.Component {
           </Container>
           <Modal enforceFocus size='sm' backdrop show={openConfirmModal} onHide={this.toggleSubmitModal} style={{ marginTop: '150px' }}>
             <Modal.Header>
-              <Modal.Title style={{ fontSize: '24px' }}>Confirm Submit</Modal.Title>
+              <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>Confirm Submit</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-            Are you sure you want to submit the following absence request?
+              <span style={{ textAlign: 'center', display: 'block', fontWeight: '600' }}>Are you sure you want to submit the following absence request?</span>
               <Table showHeader={false} autoHeight bordered={false} data={confirmTableData} style={{ margin: '20px 50px' }}>
                 <Column width={200} align='left'>
                   <HeaderCell>Field: </HeaderCell>
