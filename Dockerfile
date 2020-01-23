@@ -1,5 +1,8 @@
 FROM node:12-alpine
 
+# Make node-gyp install
+RUN apk add g++ make python
+
 ENV PORT 7000
 
 # Create app directory

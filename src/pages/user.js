@@ -252,15 +252,15 @@ class Wrapper extends React.Component {
                 <span>
                   <ButtonToolbar>
                     <ButtonGroup>
-                      <IconButton icon={<Icon icon='star' />} appearance='primary' onClick={this.handleDeleteRequest}>
+                      <IconButton icon={<Icon icon='edit' />} appearance='primary' onClick={this.handleDeleteRequest}>
                         Edit
                       </IconButton>
-                      <Button appearance='ghost' onClick={this.handleDeleteRequest}>
+                      <IconButton icon={<Icon icon='trash' />} appearance='ghost' onClick={this.handleDeleteRequest}>
                         Delete
-                      </Button>
-                      <Button appearance='ghost' onClick={this.handleGridExport}>
+                      </IconButton>
+                      <IconButton icon={<Icon icon='export' />} appearance='ghost' onClick={this.handleGridExport}>
                         Export
-                      </Button>
+                      </IconButton>
                     </ButtonGroup>
                   </ButtonToolbar>
                 </span>
@@ -308,6 +308,9 @@ class Wrapper extends React.Component {
             }
             :global(.ag-cell-label-container) {
               width: 110%;
+            }
+            :global(div.ag-cell.ag-cell-first-right-pinned > div.ag-react-container) {
+              margin-top: 15px;
             }
           `}
           </style>
