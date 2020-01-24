@@ -1,11 +1,11 @@
 version: '3.1'
 
 services:
-  next-vacation:
+  web:
     ports:
-      - 7000:7666
-    build:
-      context: .
-      dockerfile: Dockerfile
+      - 7000:3000
+    build: .
     volumes:
-      - ./:/usr/src/app
+      - ./src:/usr/src/app/src
+      - ./.env:/usr/src/app/.env
+      - ./serviceacct.json:/usr/src/app/serviceacct.json

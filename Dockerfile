@@ -3,28 +3,27 @@ FROM node:12-alpine
 # Make node-gyp install
 RUN apk add g++ make python
 
-ENV PORT 7000
-
 # Create app directory
-RUN mkdir -p /usr/src/app
+RUN mkdir -p /usr/src/app && chown node:node /usr/src/app
+
 WORKDIR /usr/src/app
 
-# Install app dependencies
-COPY package*.json /usr/src/app/
-
-RUN npm install
-
 # Bundle app source
+COPY --chown=node:node package*.json /usr/src/app/
+COPY --chown=node:node src/ ./src
+COPY --chown=node:node public/ ./public
+COPY --chown=node:node next.config.js ./
+COPY --chown=node:node next-auth.config.js ./
+COPY --chown=node:node next-auth.functions.js ./
+COPY --chown=node:node next-auth.providers.js ./
+COPY --chown=node:node .env ./
+COPY --chown=node:node index.js ./
+COPY --chown=node:node serviceacct.json ./
 
-COPY src/ ./src
-COPY public/ ./public
-COPY next.config.js ./
-COPY next-auth.config.js ./
-COPY next-auth.functions.js ./
-COPY next-auth.providers.js ./
+USER node
 
+# Install and build
+RUN npm install 
 RUN npm run build
 
-EXPOSE 7000
-
-CMD [ "npm", "start" ]
+CMD ["node", "index.js"]
