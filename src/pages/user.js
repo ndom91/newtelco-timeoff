@@ -267,7 +267,6 @@ class Wrapper extends React.Component {
     if (this.gridApi) {
       const selectedRow = this.gridApi.getSelectedRows()
       const request = selectedRow[0]
-      console.log(request)
       const tableData = [
         {
           title: 'From',
@@ -309,7 +308,6 @@ class Wrapper extends React.Component {
     fetch(`${protocol}//${host}/api/user/entries/delete?id=${deleteId}`)
       .then(res => res.json())
       .then(data => {
-        console.log(data)
         if (data.deleteQuery.affectedRows > 0) {
           this.notifyInfo('Request Deleted')
         } else {
