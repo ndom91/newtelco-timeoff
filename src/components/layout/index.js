@@ -135,19 +135,28 @@ class Layout extends React.Component {
           </Container>
         </Container>
         <style jsx>{`
-          :global(.wrapper) {
+          :global(.rs-panel) {
+            box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
+          }
+          :global(.content-wrapper) {
+            background-color: #ebedef;
+          }
+          :global(.rs-panel-default) {
+            background-color: #fff;
           }
           :global(.header-wrapper) {
             display: flex;
             justify-content: flex-end;
             align-items: center;
             padding: 10px;
-            background-color: #f3f3f3;
-            box-shadow: 0 4px 12px -2px rgba(0,0,0,0.2);
+            background-color: #fff;
+            box-shadow: 0 0.125rem 0.625rem rgba(90,97,105,.12);
           }
           :global(.rs-sidenav-header) {
-            box-shadow: 0 5px 15px -5px rgba(0,0,0,0.5);
             z-index: 10;
+          }
+          :global(.rs-sidenav) {
+            box-shadow: 0 0.125rem 9.375rem rgba(90,97,105,.1), 0 0.25rem 0.5rem rgba(90,97,105,.12), 0 0.9375rem 1.375rem rgba(90,97,105,.1), 0 0.4375rem 2.1875rem rgba(165,182,201,.1);
           }
           :global(.content-wrapper) {
             padding: 20px;
@@ -160,7 +169,7 @@ class Layout extends React.Component {
             justify-content: flex-end;
             padding: 10px 20px;
             background-color: #f3f3f3;
-            box-shadow: 0 -7px 8px -7px rgba(0,0,0,0.5);
+            border-top: 1px solid #e1e5eb!important;
           }
           :global(.logout-btn) {
             background-color: transparent;

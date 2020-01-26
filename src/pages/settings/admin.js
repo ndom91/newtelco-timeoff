@@ -13,6 +13,7 @@ import DateTimeField from '../../components/aggrid/datetime'
 import DateTimeFieldApproval from '../../components/aggrid/datetimeapproval'
 import ApprovedBtn from '../../components/aggrid/approvedbtn'
 import ApprovedField from '../../components/aggrid/approved'
+import Subheader from '../../components/content-subheader'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   Container,
@@ -784,6 +785,7 @@ class Wrapper extends React.Component {
       return (
         <Layout user={this.props.session.user.email} token={this.props.session.csrfToken}>
           <Container className='settings-admin-container'>
+            <Subheader header='Administration' subheader='Manage Company' />
             <Row className='settings-admin-row'>
               <Col className='settings-admin-col-2'>
                 <Panel

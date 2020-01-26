@@ -5,7 +5,7 @@ import fetch from 'isomorphic-unfetch'
 import Moment from 'moment-timezone'
 import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../components/requiredLogin'
-import dynamic from 'next/dynamic'
+import Subheader from '../components/content-subheader'
 import DateTimeField from '../components/aggrid/datetime'
 import DateField from '../components/aggrid/date'
 import ApprovedField from '../components/aggrid/approved'
@@ -36,12 +36,6 @@ import {
 const { Column, HeaderCell, Cell } = Table
 
 const moment = extendMoment(Moment)
-
-const CalendarHeatmap = dynamic((
-  () => import('../components/calendarHeatmap'), {
-    ssr: false
-  })
-)
 
 class Wrapper extends React.Component {
   static async getInitialProps ({ res, req, query }) {
@@ -358,6 +352,7 @@ class Wrapper extends React.Component {
       return (
         <Layout user={this.props.session.user.email} token={this.props.session.csrfToken}>
           <Container>
+            <Subheader header='User' subheader='Dashboard' />
             <Panel bordered>
               <Header className='user-content-header'>
                 <span className='section-header'>

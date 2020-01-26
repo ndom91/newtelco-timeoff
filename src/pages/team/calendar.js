@@ -5,9 +5,11 @@ import fetch from 'isomorphic-unfetch'
 import dynamic from 'next/dynamic'
 import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../../components/requiredLogin'
+import Subheader from '../../components/content-subheader'
 import {
   Container,
-  Content
+  Content,
+  Panel
 } from 'rsuite'
 
 const TuiCalendar = dynamic(
@@ -103,10 +105,26 @@ class Wrapper extends React.Component {
       return (
         <Layout user={this.props.session.user.email} token={this.props.session.csrfToken}>
           <Container>
-            <Content>
-              {typeof window !== 'undefined' && <TuiCalendar teamName={teamName} vacations={teamVacations} />}
-            </Content>
+            <Subheader header='Team' subheader='Calendar' />
+            <Panel
+              bordered
+              style={{
+                width: '100%',
+                display: 'inline-block'
+              }}
+            >
+              <Content className='team-content'>
+                {typeof window !== 'undefined' && <TuiCalendar teamName={teamName} vacations={teamVacations} />}
+              </Content>
+            </Panel>
           </Container>
+          <style jsx>{`
+            :global(.team-content) {
+              padding: 15px;
+              background-color: #fff;
+            }
+          `}
+          </style>
         </Layout>
       )
     } else {

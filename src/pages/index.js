@@ -5,6 +5,7 @@ import Layout from '../components/layout/index'
 import Router from 'next/router'
 import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../components/requiredLogin'
+import Subheader from '../components/content-subheader'
 import {
   Container,
   Content,
@@ -113,6 +114,7 @@ class Wrapper extends React.Component {
       return (
         <Layout user={this.props.session.user.email} token={this.props.session.csrfToken}>
           <Container>
+            <Subheader header='Absence Management' subheader='Current Vacations' />
             <Panel bordered>
               <Content>
                 <Calendar />

@@ -240,6 +240,9 @@ class SidebarNT extends React.Component {
             justify-content: ${this.props.expand ? 'center' : 'flex-start'} !important;
             align-items: center;
           }
+          :global(.rs-sidenav-default) {
+            background-color: #fff;
+          }
           :global(.rs-sidenav-header) {
             height: 56px !important;
           }

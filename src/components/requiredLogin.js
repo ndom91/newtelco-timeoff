@@ -40,25 +40,18 @@ export default class RequireLogin extends React.Component {
     return (
       <div className='show-fake-browser login-page'>
         <Container>
-          <Header>
-            <Navbar appearance='inverse'>
-              <Navbar.Header>
-                <p className='navbar-brand logo'>{this.state.companyInfo.companyName}</p>
-              </Navbar.Header>
-            </Navbar>
-          </Header>
-          <Content style={{ marginTop: '20px' }}>
+          <Content style={{ marginTop: '50px' }}>
             <FlexboxGrid justify='center'>
               <FlexboxGrid.Item colspan={12}>
-                <Panel header={<h3>Login</h3>} bordered>
+                <Panel header={<h3 className='login-text-header'>Login</h3>} bordered>
                   <Form fluid>
                     <FormGroup>
-                      <ControlLabel>You must be signed in to view this content</ControlLabel>
+                      <ControlLabel style={{ fontSize: '18px', marginTop: '10px', marginBottom: '10px' }}>You must be signed in to view this content. <br /><br />Please click below to continue.</ControlLabel>
                     </FormGroup>
                     <FormGroup>
                       <ButtonToolbar>
                         <Link href='/auth'>
-                          <Button appearance='primary'>Sign in</Button>
+                          <Button block appearance='ghost'>Sign in</Button>
                         </Link>
                       </ButtonToolbar>
                     </FormGroup>
@@ -67,12 +60,28 @@ export default class RequireLogin extends React.Component {
               </FlexboxGrid.Item>
             </FlexboxGrid>
           </Content>
-          <Footer>{this.state.companyInfo.address}</Footer>
+          <Footer>{this.state.companyInfo.companyName} - {this.state.companyInfo.address}</Footer>
         </Container>
         <style jsx>{`
+          :global(body) {
+            background-color: #efefef;
+          }
           .card-outline {
             border: 3px solid rgba(244,10,10,0.3);
             box-shadow: 0 0 10px 1px rgba(244,10,10,0.3);
+          }
+          :global(.login-header-text) {
+            text-align: center;
+          }
+          :global(.rs-panel) {
+            box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
+          }
+          :global(.rs-panel-body) {
+            background-color: #fff;
+          }
+          :global(.rs-panel-heading) {
+            background-color: #67b246;
+            color: #fff;
           }
           .require-login-wrapper {
             display: flex;

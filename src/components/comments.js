@@ -132,7 +132,7 @@ class Comments extends React.Component {
     } = this.state
 
     return (
-      <div id='scrollablediv'>
+      <div id='scrollablediv' className='comments-wrapper'>
         <InfiniteScroll
           dataLength={this.state.items.length}
           next={this.fetchData}
@@ -153,7 +153,6 @@ class Comments extends React.Component {
             })}
           </div>
         </InfiniteScroll>
-        <hr />
         <div className='comment-input-wrapper'>
           <Input
             componentClass='textarea'
@@ -172,6 +171,12 @@ class Comments extends React.Component {
           </Button>
         </div>
         <style jsx>{`
+          :global(.comments-wrapper) {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            height: 100%;
+          }
           :global(.infinite-scroll-item-wrapper) {
             display: flex;
             flex-wrap: wrap;
@@ -182,6 +187,7 @@ class Comments extends React.Component {
             justify-content: space-between;
             align-items: center;
             overflow-y: scroll;
+            margin-top: 25px;
           }
           :global(.comment-submit-btn) {
             height: 56px;

@@ -96,13 +96,13 @@ export default class App extends React.Component {
       return (
         <div className='show-fake-browser login-page'>
           <Container className='login-wrapper'>
-            <Header className='login-header-wrapper'>
+            {/* <Header className='login-header-wrapper'>
               <Navbar appearance='inverse'>
                 <Navbar.Header>
                   <a className='navbar-brand logo' />
                 </Navbar.Header>
               </Navbar>
-            </Header>
+            </Header> */}
             <Content className='login-content-wrapper'>
               <FlexboxGrid style={{ marginTop: '2rem' }} justify='center'>
                 <FlexboxGrid.Item componentClass={Col} colspan={26} md={6} lg={8}>
@@ -140,10 +140,15 @@ export default class App extends React.Component {
               margin: 100px 0 50px 0;
             } 
             :global(.rs-panel-heading) {
-              background-color: #e4e4e4;
+              background-color: #67b246;
+              color: #fff;
             }
-            :global(.login-text-header) {
-              background-color: #e4e4e4;
+            :global(.rs-panel-body) {
+              background-color: #fff;
+            }
+            :global(.rs-panel-bordered) {
+              margin-top: 50px;
+              box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
             }
             :global(.login-page) {
               display: flex;
@@ -156,6 +161,7 @@ export default class App extends React.Component {
 
             }
             :global(.login-content-wrapper) {
+              background-color: #f5f6f8;
               flex-grow: 1;
             }
             :global(.login-footer-wrapper) {

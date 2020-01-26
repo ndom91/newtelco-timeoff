@@ -4,8 +4,10 @@ import fetch from 'isomorphic-unfetch'
 import Router from 'next/router'
 import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../components/requiredLogin'
+import Subheader from '../components/content-subheader'
 import File from '../components/fileIcon'
 import moment from 'moment'
+import { CSSTransition } from 'react-transition-group'
 
 import 'react-dropzone-uploader/dist/styles.css'
 import Dropzone from 'react-dropzone-uploader'
@@ -90,6 +92,7 @@ class Wrapper extends React.Component {
       model: absenceModel,
       openConfirmModal: false,
       confirmText: '',
+      successfullySent: false,
       vaca: {
         name: props.session.user.name,
         email: props.session.user.email,
@@ -371,6 +374,9 @@ class Wrapper extends React.Component {
               if (this.uploadRef.current.files.length) {
                 this.uploadRef.current.files[0].remove()
               }
+              this.setState({
+                successfullySent: true
+              })
             } else if (data.code === 500) {
               this.notifyWarn(`Error sending message - ${data.msg}`)
             }
@@ -416,18 +422,27 @@ class Wrapper extends React.Component {
       vaca,
       availableManagers,
       openConfirmModal,
-      confirmTableData
+      confirmTableData,
+      successfullySent
     } = this.state
 
     if (this.props.session.user) {
       return (
         <Layout user={this.props.session.user.email} token={this.props.session.csrfToken}>
           <Container style={{ alignItems: 'center' }}>
+            <Subheader header='New Request' subheader='Create New' />
             <Content style={{ width: '410px' }}>
-              <Panel bordered>
-                <Form className='new-request-form' layout='horizontal'>
+              <Form className='new-request-form' layout='horizontal' style={{ flexDirection: 'column' }}>
+                <Panel bordered>
                   <PanelGroup style={{ maxWidth: '700px' }}>
-                    <Panel bordered style={{ position: 'relative' }} header={<><hr className='section-header-hr' /><h4 className='form-section-heading' style={{ position: 'relative' }}>User<FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} /></h4><hr className='section-header-hr end' /></>}>
+                    <Panel
+                      bordered style={{ position: 'relative' }} header={
+                        <h4 className='form-section-heading' style={{ position: 'relative' }}>
+                            User
+                          <FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
+                        </h4>
+                      }
+                    >
                       <FormGroup>
                         <ControlLabel>Name</ControlLabel>
                         <FormControl name='name' onChange={this.handleNameChange} value={vaca.name} style={{ width: '320px' }} />
@@ -436,35 +451,6 @@ class Wrapper extends React.Component {
                         <ControlLabel>Email</ControlLabel>
                         <FormControl name='email' inputMode='email' autoComplete='email' onChange={this.handleEmailChange} value={vaca.email} style={{ width: '320px' }} />
                       </FormGroup>
-                    </Panel>
-                    <Panel bordered header={<><hr className='section-header-hr' /><h4 className='form-section-heading' style={{ position: 'relative' }}>History<FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} /></h4><hr className='section-header-hr end' /></>}>
-                      <FormGroup>
-                        <ControlLabel>Days from Last Year</ControlLabel>
-                        <FormControl name='daysLastYear' inputMode='numeric' onChange={this.handleLastYearChange} value={vaca.lastYear} />
-                        <HelpBlock tooltip>Days which you have transfered with you from last year</HelpBlock>
-                      </FormGroup>
-                      <FormGroup>
-                        <ControlLabel>Days from this Year</ControlLabel>
-                        <FormControl name='daysThisYear' inputMode='numeric' onChange={this.handleThisYearChange} value={vaca.thisYear} />
-                        <HelpBlock tooltip>Days which you have earned this year</HelpBlock>
-                      </FormGroup>
-                      <FormGroup>
-                        <ControlLabel>Total Days Available</ControlLabel>
-                        <FormControl name='totalDaysAvailable' inputMode='numeric' onChange={this.handleTotalAvailableChange} value={vaca.total} />
-                        <HelpBlock tooltip>The sum of the last two fields</HelpBlock>
-                      </FormGroup>
-                      <FormGroup>
-                        <ControlLabel>Requested Days</ControlLabel>
-                        <FormControl name='requestedDays' inputMode='numeric' onChange={this.handleRequestedChange} value={vaca.requested} />
-                        <HelpBlock tooltip>Number of day(s) you need off. <br /> Half days = '0.5'</HelpBlock>
-                      </FormGroup>
-                      <FormGroup>
-                        <ControlLabel>Days Remaining this Year</ControlLabel>
-                        <FormControl name='remainingDays' inputMode='numeric' onChange={this.handleRemainingChange} value={vaca.remaining} />
-                        <HelpBlock tooltip>Number of remaining days after subtracting requested from total available</HelpBlock>
-                      </FormGroup>
-                    </Panel>
-                    <Panel bordered header={<><hr className='section-header-hr' /><h4 className='form-section-heading' style={{ position: 'relative' }}>Dates<FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} /></h4><hr className='section-header-hr end' /></>}>
                       <FormGroup>
                         <ControlLabel>Type of Absence</ControlLabel>
                         <RadioGroup onChange={this.handleTypeChange} name='radioList' inline appearance='picker' defaultValue='vacation' style={{ width: '320px' }}>
@@ -474,8 +460,67 @@ class Wrapper extends React.Component {
                           <Radio value='other'>Other</Radio>
                         </RadioGroup>
                       </FormGroup>
+                    </Panel>
+                  </PanelGroup>
+                </Panel>
+                <CSSTransition
+                  in={vaca.type !== 'sick'}
+                  timeout={1000}
+                  classNames='panel'
+                  unmountOnExit
+                >
+
+                  <Panel bordered>
+                    <PanelGroup>
+                      <Panel
+                        bordered header={
+                          <h4 className='form-section-heading' style={{ position: 'relative' }}>
+                            History
+                            <FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
+                          </h4>
+                        }
+                      >
+                        <FormGroup>
+                          <ControlLabel>Days from Last Year</ControlLabel>
+                          <FormControl name='daysLastYear' inputMode='numeric' onChange={this.handleLastYearChange} value={vaca.lastYear} />
+                          <HelpBlock tooltip>Days which you have transfered with you from last year</HelpBlock>
+                        </FormGroup>
+                        <FormGroup>
+                          <ControlLabel>Days from this Year</ControlLabel>
+                          <FormControl name='daysThisYear' inputMode='numeric' onChange={this.handleThisYearChange} value={vaca.thisYear} />
+                          <HelpBlock tooltip>Days which you have earned this year</HelpBlock>
+                        </FormGroup>
+                        <FormGroup>
+                          <ControlLabel>Total Days Available</ControlLabel>
+                          <FormControl name='totalDaysAvailable' inputMode='numeric' onChange={this.handleTotalAvailableChange} value={vaca.total} />
+                          <HelpBlock tooltip>The sum of the last two fields</HelpBlock>
+                        </FormGroup>
+                        <FormGroup>
+                          <ControlLabel>Requested Days</ControlLabel>
+                          <FormControl name='requestedDays' inputMode='numeric' onChange={this.handleRequestedChange} value={vaca.requested} />
+                          <HelpBlock tooltip>Number of day(s) you need off. <br /> Half days = '0.5'</HelpBlock>
+                        </FormGroup>
+                        <FormGroup>
+                          <ControlLabel>Days Remaining this Year</ControlLabel>
+                          <FormControl name='remainingDays' inputMode='numeric' onChange={this.handleRemainingChange} value={vaca.remaining} />
+                          <HelpBlock tooltip>Number of remaining days after subtracting requested from total available</HelpBlock>
+                        </FormGroup>
+                      </Panel>
+                    </PanelGroup>
+                  </Panel>
+                </CSSTransition>
+                <Panel bordered>
+                  <PanelGroup>
+                    <Panel
+                      bordered header={
+                        <h4 className='form-section-heading' style={{ position: 'relative' }}>
+                            Dates
+                          <FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
+                        </h4>
+                      }
+                    >
                       <FormGroup>
-                        <ControlLabel>When do you need off?</ControlLabel>
+                        <ControlLabel>On which days?</ControlLabel>
                         <DateRangePicker
                           placement='top'
                           style={{ width: 320 }}
@@ -514,14 +559,14 @@ class Wrapper extends React.Component {
                         <ButtonToolbar style={{ paddingLeft: '0px' }}>
                           <ButtonGroup style={{ width: '320px' }}>
                             <Button style={{ width: '50%' }} onClick={this.handleClear} appearance='default'>Clear</Button>
-                            <Button style={{ width: '50%' }} onClick={this.toggleSubmitModal} appearance='primary'>Submit</Button>
+                            <Button style={{ width: '50%' }} onClick={this.toggleSubmitModal} disabled={successfullySent} appearance='primary'>Submit</Button>
                           </ButtonGroup>
                         </ButtonToolbar>
                       </FormGroup>
                     </Panel>
                   </PanelGroup>
-                </Form>
-              </Panel>
+                </Panel>
+              </Form>
             </Content>
           </Container>
           {openConfirmModal && (
@@ -565,6 +610,24 @@ class Wrapper extends React.Component {
             width: 30%;
             position: absolute;
           }
+          :global(.panel-enter) {
+            opacity: 0;
+            height: 0;
+          }
+          :global(.panel-enter-active) {
+            opacity: 1;
+            height: 622px;
+            transition: all 500ms;
+          }
+          :global(.panel-exit) {
+            opacity: 1;
+            height: 622px;
+          }
+          :global(.panel-exit-active) {
+            opacity: 0;
+            height: 0px;
+            transition: all 500ms;
+          }
           :global(.section-header-hr.end) {
             right: 0;
             top: 20px;
@@ -572,6 +635,9 @@ class Wrapper extends React.Component {
           :global(.new-request-form) {
             display: flex;
             justify-content: center;
+          }
+          :global(.rs-form > .rs-panel-default) {
+            margin-bottom: 20px;
           }
           :global(.rs-panel-group .rs-panel + .rs-panel::before) {
             border: none;

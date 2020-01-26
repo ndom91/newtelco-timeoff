@@ -5,11 +5,10 @@ import fetch from 'isomorphic-unfetch'
 import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../../components/requiredLogin'
 import Comments from '../../components/comments'
+import Subheader from '../../components/content-subheader'
 import {
   Container,
   Content,
-  Popover,
-  Badge,
   Panel,
   Header,
   Table
@@ -79,8 +78,9 @@ class Wrapper extends React.Component {
     if (this.props.session.user) {
       return (
         <Layout user={this.props.session.user.email} token={this.props.session.csrfToken}>
-          <Container className='container-wrapper' style={{}}>
-            <Panel className='user-panel'>
+          <Subheader header='Team' subheader='Dashboard' />
+          <Container className='container-wrapper'>
+            <Panel className='user-panel' style={{ height: '100%' }}>
               {teamName
                 ? <Comments user={this.props.session.user} length={2} team={this.state.teamName} />
                 : <h4>Loading...</h4>}
@@ -124,11 +124,11 @@ class Wrapper extends React.Component {
               font-size: 13px;
             }
             :global(.user-panel) {
-              max-width: 500px;
+              width: 48%;
               margin-right: 20px;
             }
             :global(.team-panel) {
-              width: 500px;
+              width: 48%;
             }
             :global(.content-wrapper) {
               overflow-y:hidden;
@@ -137,8 +137,9 @@ class Wrapper extends React.Component {
               flex-direction: row;
               justify-content: space-around;
               padding: 10px;
-              border: 1px solid #f6f6f6;
-              border-radius: 10px;
+            }
+            :global(.comment-panel:hover) {
+              transform: translateY(-3px);
             }
           `}
           </style>
