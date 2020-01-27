@@ -4,7 +4,7 @@ import 'tui-calendar/dist/tui-calendar.css'
 import 'tui-date-picker/dist/tui-date-picker.css'
 import 'tui-time-picker/dist/tui-time-picker.css'
 import fetch from 'isomorphic-unfetch'
-import { Container, Header, Button, IconButton, ButtonGroup, Icon, ButtonToolbar } from 'rsuite'
+import { Container, Header, IconButton, ButtonGroup, Icon } from 'rsuite'
 
 // https://github.com/nhn/toast-ui.react-calendar
 // https://nhn.github.io/tui.calendar/latest/tutorial-example00-basic
@@ -16,15 +16,15 @@ class TuiCalendar extends React.Component {
 
     this.state = {
       teamSchedules: [],
-      currentView: 'month'
+      currentView: 'month',
+      schedules: []
     }
   }
 
   componentDidMount () {
     const host = window.location.host
     const protocol = window.location.protocol
-    const team = 'Technik'
-    fetch(`${protocol}//${host}/api/team/cal?t=${team}`)
+    fetch(`${protocol}//${host}/api/team/oncall`)
       .then(res => res.json())
       .then(data => {
         if (data.userEntries) {
@@ -79,6 +79,7 @@ class TuiCalendar extends React.Component {
 
   handleCalendarNext = () => {
     const calendarInstance = this.calendarRef.current.getInstance()
+    console.log(calendarInstance)
     calendarInstance.next()
     const monthHeader = this.getMonthHeader(calendarInstance.getDateRangeStart(), calendarInstance.getDateRangeEnd())
     this.setState({
@@ -95,6 +96,30 @@ class TuiCalendar extends React.Component {
       currentDateView: calendarInstance.getDate(),
       monthHeader
     })
+  }
+
+  handleScheduleClick = (data) => {
+    console.log(data)
+  }
+
+  handleScheduleAdd = (data) => {
+    console.log(data)
+    const startTime = data.start
+    const endTime = data.end
+    const isAllDay = data.isAllDay
+    const guide = data.guide
+    const triggerEventName = data.triggerEventName
+    const schedule = {
+      calendarId: data.calendarId,
+      title: data.title,
+      category: 'On Call',
+      start: startTime,
+      end: endTime,
+      isAllDay: isAllDay
+    }
+
+    const calendarInstance = this.calendarRef.current.getInstance()
+    calendarInstance.createSchedules([schedule])
   }
 
   render () {
@@ -114,6 +139,16 @@ class TuiCalendar extends React.Component {
             {monthHeader}
           </span>
           <span>
+            <ButtonGroup style={{ marginRight: '10px' }}>
+              <IconButton
+                icon={<Icon size='4x' icon='calendar' />}
+                onClick={this.handleCreateNewSchedule}
+                appearance='ghost'
+                size='lg'
+              >
+                Create New
+              </IconButton>
+            </ButtonGroup>
             <ButtonGroup style={{ marginRight: '10px' }}>
               <IconButton
                 icon={<Icon size='4x' icon='calendar' />}
@@ -151,24 +186,34 @@ class TuiCalendar extends React.Component {
           </span>
         </Header>
         <Calendar
+          style={{
+            zIndex: '9999'
+          }}
           ref={this.calendarRef}
           calendars={[
             {
               id: '069',
-              name: 'Private',
+              name: 'Driving',
               bgColor: '#67B246',
+              borderColor: '#9e5fff'
+            },
+            {
+              id: '070',
+              name: 'On-Call',
+              bgColor: '#efefef',
               borderColor: '#9e5fff'
             }
           ]}
-          isReadOnly
           height='100%'
           month={{
             startDayOfWeek: 0,
             narrowWeekend: true,
             visibleWeeksCount: 3
           }}
-          taskView
-          scheduleView='allday'
+          taskView={false}
+          // scheduleView={['allday']}
+          useCreationPopup
+          useDetailPopup
           timezones={[
             {
               timezoneOffset: 60,
@@ -176,6 +221,27 @@ class TuiCalendar extends React.Component {
               tooltip: 'Berlin'
             }
           ]}
+          onBeforeCreateSchedule={this.handleScheduleAdd}
+          onBeforeUpdateSchedule={this.handleScheduleAdd}
+          // onClickDay={this.handleScheduleClick}
+          // onClickDayname={this.handleScheduleClick}
+          // template={{
+          //   milestone (schedule) {
+          //     return `<span style="color:#fff;background-color: ${schedule.bgColor};">${
+          //       schedule.title
+          //     }</span>`
+          //   },
+          //   milestoneTitle () {
+          //     return 'Milestone'
+          //   },
+          //   allday (schedule) {
+          //     return `${schedule.title}<i class="fa fa-refresh"></i>`
+          //   },
+          //   alldayTitle () {
+          //     return 'All Day'
+          //   }
+          // }}
+          // schedules={this.state.schedules}
         />
         <style jsx global>{`
             .calendar-header {
@@ -184,6 +250,9 @@ class TuiCalendar extends React.Component {
               justify-content: space-between;
               align-items: center;
               margin-bottom: 10px;
+            }
+            :global(.rs-panel) {
+              overflow: visible;
             }
           `}
         </style>
