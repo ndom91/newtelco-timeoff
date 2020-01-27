@@ -12,8 +12,8 @@ import {
   Icon,
   Modal
 } from 'rsuite'
-import NTLogo from '../../public/static/img/newtelco_letters.svg'
-import NTLogoFull from '../../public/static/img/newtelco_full.png'
+import NTLogo from '../../../public/static/img/newtelco_letters.svg'
+import NTLogoFull from '../../../public/static/img/newtelco_full.png'
 
 const NavToggle = ({ expand, onChange, token, handleSignOut, toggleHelpModal }) => {
   return (
@@ -62,7 +62,8 @@ class SidebarNT extends React.Component {
       settings: {
         companyName: '',
         openHelpModal: false
-      }
+      },
+      team: ''
     }
   }
 
@@ -70,11 +71,13 @@ class SidebarNT extends React.Component {
     const protocol = window.location.protocol
     const host = window.location.host
     const companyInfo = JSON.parse(window.localStorage.getItem('company'))
+    const userTeam = JSON.parse(window.localStorage.getItem('userTeam'))
     if (companyInfo) {
       this.setState({
         settings: {
           companyName: companyInfo.companyName
-        }
+        },
+        team: userTeam.team
       })
     } else {
       fetch(`${protocol}//${host}/api/settings/company/info`)
@@ -113,7 +116,8 @@ class SidebarNT extends React.Component {
 
   render () {
     const {
-      openHelpModal
+      openHelpModal,
+      team
     } = this.state
 
     return (
@@ -139,19 +143,16 @@ class SidebarNT extends React.Component {
                       Dashboard
                 </Nav.Item>
               </Link>
-              <hr className='menu-hr' />
               <Link passHref href='/new'>
                 <Nav.Item eventKey='3' active={typeof window !== 'undefined' && Router.pathname === '/new'} icon={<Icon icon='plus-square' />}>
                       New Request
                 </Nav.Item>
               </Link>
-              <hr className='menu-hr' />
               <Link passHref href='/user'>
                 <Nav.Item eventKey='2' active={typeof window !== 'undefined' && Router.pathname === '/user'} icon={<Icon icon='user' />}>
                   {this.props.user.substr(0, this.props.user.indexOf('@'))}
                 </Nav.Item>
               </Link>
-              <hr className='menu-hr' />
               <Dropdown
                 eventKey='4'
                 trigger='hover'
@@ -176,11 +177,20 @@ class SidebarNT extends React.Component {
                         Calendar
                   </Dropdown.Item>
                 </Link>
+                {team === 'Technik' && (
+                  <Link passHref href='/team/oncall'>
+                    <Dropdown.Item
+                      eventKey='4-3'
+                      active={typeof window !== 'undefined' && Router.pathname === '/team/oncall'}
+                    >
+                          On Call
+                    </Dropdown.Item>
+                  </Link>
+                )}
               </Dropdown>
               {this.props.admin
                 ? (
                   <>
-                    <hr className='menu-hr' />
                     <Dropdown
                       eventKey='5'
                       trigger='hover'
@@ -231,6 +241,8 @@ class SidebarNT extends React.Component {
         <style jsx>{`
           :global(.sidebar-wrapper) {
             width: ${this.props.expand ? '260px' : '56px'};
+            box-shadow: 10px 0 10px 1px rgba(0,0,0,0.1);
+            z-index: 999;
           }
           :global(.header-img) {
             width: ${this.props.expand ? '200px' : '32px'} !important;

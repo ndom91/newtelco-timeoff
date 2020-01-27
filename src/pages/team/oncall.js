@@ -1,13 +1,20 @@
 import React from 'react'
 import Layout from '../../components/layout/index'
 import Router from 'next/router'
+import dynamic from 'next/dynamic'
 import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../../components/requiredLogin'
+import Subheader from '../../components/content-subheader'
 import {
   Container,
-  Header,
+  Panel,
   Content
 } from 'rsuite'
+
+const TuiCalendar = dynamic(
+  () => import('../../components/tuioncall'),
+  { ssr: false }
+)
 
 class Wrapper extends React.Component {
   static async getInitialProps ({ res, req, query }) {
@@ -31,12 +38,12 @@ class Wrapper extends React.Component {
       return (
         <Layout user={this.props.session.user.email} token={this.props.session.csrfToken}>
           <Container>
-            <Header>
-              Lorem Ipsum
-            </Header>
-            <Content>
-              [GENERAL]
-            </Content>
+            <Subheader header='Technik' subheader='On-Call Management' />
+            <Panel bordered>
+              <Content>
+                <TuiCalendar />
+              </Content>
+            </Panel>
           </Container>
         </Layout>
       )

@@ -1,14 +1,10 @@
 import React from 'react'
-import Router from 'next/router'
 import fetch from 'isomorphic-unfetch'
-import SidebarNT from '../sidebar'
+import SidebarNT from './sidebar'
 import '../../style/newtelco-rsuite.less'
 import {
   Container,
-  Header,
-  Content,
-  Footer,
-  Breadcrumb
+  Content
 } from 'rsuite'
 
 class Layout extends React.Component {
@@ -107,7 +103,7 @@ class Layout extends React.Component {
         <Container>
           <SidebarNT user={this.props.user} admin={this.state.settings.admin} token={this.props.token} expand={this.state.expand} handleToggle={this.onToggle} />
           <Container className='wrapper'>
-            <Header>
+            {/* <Header>
               <div className='header-wrapper'>
                 <span>
                   <Breadcrumb separator='>' style={{ marginBottom: '0px' }}>
@@ -125,13 +121,13 @@ class Layout extends React.Component {
                   </Breadcrumb>
                 </span>
               </div>
-            </Header>
+            </Header> */}
             <Content className='content-wrapper'>
               {this.props.children}
             </Content>
-            <Footer className='footer-wrapper'>
+            {/* <Footer className='footer-wrapper'>
               {`${this.state.settings.companyName}© ${new Date().getFullYear()}`}
-            </Footer>
+            </Footer> */}
           </Container>
         </Container>
         <style jsx>{`
