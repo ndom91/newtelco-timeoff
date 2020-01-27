@@ -322,8 +322,8 @@ class Wrapper extends React.Component {
       const selectedRow = this.gridApi.getSelectedRows()
       const request = selectedRow[0]
       const tableData = {
-        from: moment(request.fromDate).format('DD.MM.YYYY'),
-        to: moment(request.toDate).format('DD.MM.YYYY'),
+        from: moment(request.fromDate).format('MM/DD/YYYY'),
+        to: moment(request.toDate).format('MM/DD/YYYY'),
         lastYear: request.resturlaubVorjahr,
         thisYear: request.jahresurlaubInsgesamt,
         total: request.restjahresurlaubInsgesamt,
@@ -433,31 +433,31 @@ class Wrapper extends React.Component {
                   <Form layout='horizontal'>
                     <FormGroup>
                       <ControlLabel>Days from Last Year</ControlLabel>
-                      <FormControl name='daysLastYear' inputMode='numeric' onChange={this.handleLastYearChange} value={editData.lastYear} />
+                      <FormControl name='daysLastYear' inputMode='numeric' disabled onChange={this.handleLastYearChange} value={editData.lastYear} />
                     </FormGroup>
                     <FormGroup>
                       <ControlLabel>Days from this Year</ControlLabel>
-                      <FormControl name='daysThisYear' inputMode='numeric' onChange={this.handleThisYearChange} value={editData.thisYear} />
+                      <FormControl name='daysThisYear' inputMode='numeric' disabled onChange={this.handleThisYearChange} value={editData.thisYear} />
                     </FormGroup>
                     <FormGroup>
                       <ControlLabel>Total Days Available</ControlLabel>
-                      <FormControl name='totalDaysAvailable' inputMode='numeric' onChange={this.handleTotalAvailableChange} value={editData.total} />
+                      <FormControl name='totalDaysAvailable' inputMode='numeric' disabled onChange={this.handleTotalAvailableChange} value={editData.total} />
                     </FormGroup>
                     <FormGroup>
                       <ControlLabel>Requested Days</ControlLabel>
-                      <FormControl name='requestedDays' inputMode='numeric' onChange={this.handleRequestedChange} value={editData.requested} />
+                      <FormControl name='requestedDays' inputMode='numeric' disabled onChange={this.handleRequestedChange} value={editData.requested} />
                     </FormGroup>
                     <FormGroup>
                       <ControlLabel>Days Remaining this Year</ControlLabel>
-                      <FormControl name='remainingDays' inputMode='numeric' onChange={this.handleRemainingChange} value={editData.remaining} />
+                      <FormControl name='remainingDays' inputMode='numeric' disabled onChange={this.handleRemainingChange} value={editData.remaining} />
                     </FormGroup>
                     <FormGroup>
                       <ControlLabel>From</ControlLabel>
-                      <FormControl name='from' type='date' onChange={this.handleRemainingChange} value={editData.from} />
+                      <FormControl name='from' type='date' onChange={this.handleFromDateChange} value={editData.from} />
                     </FormGroup>
                     <FormGroup>
                       <ControlLabel>To</ControlLabel>
-                      <FormControl name='to' type='date' onChange={this.handleRemainingChange} value={editData.to} />
+                      <FormControl name='to' type='date' onChange={this.handleToDateChange} value={editData.to} />
                     </FormGroup>
                   </Form>
                 </Modal.Body>

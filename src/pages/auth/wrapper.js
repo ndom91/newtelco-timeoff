@@ -1,10 +1,7 @@
 
 import React from 'react'
 import {
-  Navbar,
   Container,
-  Panel,
-  Header,
   Content,
   Footer,
   FlexboxGrid,
@@ -17,19 +14,10 @@ class Wrapper extends React.Component {
     return (
       <div className='show-fake-browser login-page'>
         <Container className='login-wrapper'>
-          <Header className='login-header-wrapper'>
-            <Navbar appearance='inverse'>
-              <Navbar.Header>
-                <a className='navbar-brand logo' />
-              </Navbar.Header>
-            </Navbar>
-          </Header>
           <Content className='login-content-wrapper'>
             <FlexboxGrid style={{ marginTop: '2rem' }} justify='center'>
               <FlexboxGrid.Item componentClass={Col} colspan={26} md={10} lg={10}>
-                <Panel bordered>
-                  {this.props.children}
-                </Panel>
+                {this.props.children}
               </FlexboxGrid.Item>
             </FlexboxGrid>
           </Content>
@@ -40,10 +28,15 @@ class Wrapper extends React.Component {
               margin: 100px 0 50px 0;
             } 
             :global(.rs-panel-heading) {
-              background-color: #e4e4e4;
+              background-color: #67b246;
+              color: #fff;
             }
-            :global(.login-text-header) {
-              background-color: #e4e4e4;
+            :global(.rs-panel-body) {
+              background-color: #fff;
+            }
+            :global(.rs-panel-bordered) {
+              margin-top: 50px;
+              box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
             }
             :global(.login-page) {
               display: flex;
@@ -52,10 +45,14 @@ class Wrapper extends React.Component {
             :global(.login-wrapper) {
               height: 100vh;
             }
+            :global(.login-text-header) {
+              font-weight: 100;
+            }
             :global(.login-header-wrapper) {
 
             }
             :global(.login-content-wrapper) {
+              background-color: #f5f6f8;
               flex-grow: 1;
             }
             :global(.login-footer-wrapper) {
@@ -70,11 +67,6 @@ class Wrapper extends React.Component {
             }
             #email::placeholder {
               opacity: 0.4;
-            }
-            :global(.center) {
-              display: flex;
-              justify-content: center;
-              margin: 20px 0;
             }
           `}
         </style>

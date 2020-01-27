@@ -128,7 +128,20 @@ class SidebarNT extends React.Component {
       >
         <Sidenav.Header>
           <div className='sidenav-header'>
-            <img src={this.props.expand ? NTLogoFull : NTLogo} alt='Logo' className='header-img' style={{ height: '32px', width: '32px', marginTop: '-5px', marginLeft: '-5px' }} />
+            {!this.props.expand && (
+              <img src={this.props.expand ? NTLogoFull : NTLogo} alt='Logo' className='header-img' style={{ height: '32px', width: '32px', marginTop: '-5px', marginLeft: '-5px' }} />
+            )}
+            {this.props.expand && (
+              <span
+                style={{
+                  fontSize: '32px',
+                  fontWeight: '100',
+                  fontFamily: 'Roboto'
+                }}
+              >
+                Newtelco
+              </span>
+            )}
           </div>
         </Sidenav.Header>
         <Sidenav
@@ -257,6 +270,14 @@ class SidebarNT extends React.Component {
           }
           :global(.rs-sidenav-header) {
             height: 56px !important;
+          }
+          :global(.rs-nav-item.rs-nav-item-active::before) {
+            border-left: 3px solid #67B246;
+            box-shadow: -2px 0px 16px 2px #67B246;
+            position: absolute;
+            content: '';
+            height: 100%;
+            width: 3px;
           }
           :global(.nav-toggle) {
             background-color: #f3f3f3 !important;

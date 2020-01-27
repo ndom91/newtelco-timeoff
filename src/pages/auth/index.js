@@ -9,13 +9,11 @@ import {
 } from '@fortawesome/free-brands-svg-icons'
 import '../../style/newtelco-rsuite.less'
 import {
-  Navbar,
   Divider,
   ControlLabel,
   FormControl,
   HelpBlock,
   Container,
-  Header,
   Content,
   Footer,
   FlexboxGrid,
@@ -96,13 +94,6 @@ export default class App extends React.Component {
       return (
         <div className='show-fake-browser login-page'>
           <Container className='login-wrapper'>
-            {/* <Header className='login-header-wrapper'>
-              <Navbar appearance='inverse'>
-                <Navbar.Header>
-                  <a className='navbar-brand logo' />
-                </Navbar.Header>
-              </Navbar>
-            </Header> */}
             <Content className='login-content-wrapper'>
               <FlexboxGrid style={{ marginTop: '2rem' }} justify='center'>
                 <FlexboxGrid.Item componentClass={Col} md={8} lg={6}>
@@ -191,24 +182,21 @@ export default class App extends React.Component {
 export class LinkAccounts extends React.Component {
   render () {
     return (
-      <div className='card mt-4 mb-3'>
-        <h4 className='card-header'>Link Accounts</h4>
-        <div className='card-body pt-1 pb-0'>
-          <p style={{ marginTop: '5px', marginBottom: '10px' }}>You are signed in as <span className='font-weight-bold'>{this.props.session.user.email}</span>.</p>
-          <div style={{ display: 'inline', marginTop: '10px' }}>
-            <Link href='/'>
-              <Button appearance='primary' type='submit'>
+      <Panel header={<h3 className='login-text-header'>Link Accounts</h3>} bordered>
+        <p style={{ marginTop: '20px', marginBottom: '20px', fontSize: '1.1rem' }}>You are signed in as <span className='font-weight-bold'>{this.props.session.user.email}</span>.</p>
+        <div style={{ display: 'inline', marginTop: '10px' }}>
+          <Link href='/'>
+            <Button appearance='primary' type='submit' style={{ width: '48%' }}>
                     Back
-              </Button>
-            </Link>
-            {
-              Object.keys(this.props.linkedAccounts).map((provider, i) => {
-                return <LinkAccount key={i} provider={provider} session={this.props.session} linked={this.props.linkedAccounts[provider]} />
-              })
-            }
-          </div>
+            </Button>
+          </Link>
+          {
+            Object.keys(this.props.linkedAccounts).map((provider, i) => {
+              return <LinkAccount key={i} provider={provider} session={this.props.session} linked={this.props.linkedAccounts[provider]} />
+            })
+          }
         </div>
-      </div>
+      </Panel>
     )
   }
 }
@@ -219,7 +207,7 @@ export class LinkAccount extends React.Component {
       return (
         <form style={{ display: 'inline', marginLeft: '10px' }} method='post' action={`/auth/oauth/${this.props.provider.toLowerCase()}/unlink`}>
           <input name='_csrf' type='hidden' value={this.props.session.csrfToken} />
-          <Button appearance='secondary' type='submit'>
+          <Button appearance='secondary' type='submit' style={{ width: '48%' }}>
               Unlink from {this.props.provider}
           </Button>
         </form>
