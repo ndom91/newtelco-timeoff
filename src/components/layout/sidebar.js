@@ -130,16 +130,22 @@ class SidebarNT extends React.Component {
         <Sidenav.Header>
           <div className='sidenav-header'>
             {!this.props.expand && (
-              <img src={this.props.expand ? NTLogoFull : NTLogo} alt='Logo' className='header-img' style={{ height: '32px', width: '32px', marginTop: '-5px', marginLeft: '-5px' }} />
+              <img src={NTLogo} alt='Logo' className='header-img' style={{ height: '32px', width: '32px', marginTop: '-10px', marginLeft: '-10px' }} />
             )}
             {this.props.expand && (
               <span
                 style={{
                   fontSize: '32px',
                   fontWeight: '100',
-                  fontFamily: 'Roboto'
+                  fontFamily: 'Roboto',
+                  textAlign: 'left',
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'space-around',
+                  alignItems: 'center'
                 }}
               >
+                <img src={NTLogo} alt='Logo' className='header-img' style={{ height: '48px', width: '48px', marginTop: '0px', marginLeft: '-5px', marginRight: '10px' }} />
                 Newtelco
               </span>
             )}
@@ -259,8 +265,8 @@ class SidebarNT extends React.Component {
             z-index: 999;
           }
           :global(.header-img) {
-            width: ${this.props.expand ? '200px' : '32px'} !important;
-            height: ${this.props.expand ? '25px' : '32px'} !important;
+            width: 40px !important;
+            height: 40px !important;
           }
           :global(.sidenav-header) {
             justify-content: ${this.props.expand ? 'center' : 'flex-start'} !important;

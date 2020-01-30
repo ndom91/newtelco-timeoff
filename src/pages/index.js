@@ -3,25 +3,17 @@ import dynamic from 'next/dynamic'
 import fetch from 'isomorphic-unfetch'
 import Layout from '../components/layout/index'
 import Router from 'next/router'
-import { NextAuth } from 'next-auth/client'
+import {NextAuth} from 'next-auth/client'
 import RequireLogin from '../components/requiredLogin'
 import Subheader from '../components/content-subheader'
-import {
-  Container,
-  Content,
-  Panel,
-  Notification
-} from 'rsuite'
+import {Container, Content, Panel, Notification} from 'rsuite'
 
-const Calendar = dynamic(
-  () => import('../components/calendar'),
-  {
-    ssr: false
-  }
-)
+const Calendar = dynamic(() => import('../components/calendar'), {
+  ssr: false
+})
 
 class Wrapper extends React.Component {
-  static async getInitialProps ({ res, req, query }) {
+  static async getInitialProps({res, req, query}) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -34,12 +26,12 @@ class Wrapper extends React.Component {
     }
     if (req) {
       return {
-        session: await NextAuth.init({ req }),
+        session: await NextAuth.init({req}),
         returnTo: req.session.returnTo
       }
     } else {
       return {
-        session: await NextAuth.init({ req })
+        session: await NextAuth.init({req})
       }
     }
   }
@@ -55,7 +47,7 @@ class Wrapper extends React.Component {
     Notification.info({
       title: header,
       duration: 5000,
-      description: <div className='notify-body'>{text}</div>
+      description: <div className="notify-body">{text}</div>
     })
   }
 
@@ -63,7 +55,7 @@ class Wrapper extends React.Component {
     Notification.warning({
       title: header,
       duration: 5000,
-      description: <div className='notify-body'>{text}</div>
+      description: <div className="notify-body">{text}</div>
     })
   }
 
@@ -78,9 +70,11 @@ class Wrapper extends React.Component {
         const host = window.location.host
         const protocol = window.location.protocol
 
-        fetch(`${protocol}//${host}/api/mail/response?h=${approvalHash}&a=${actionCode}&b=0`)
-          .then(resp => resp.json())
-          .then(data => {
+        fetch(
+          `${protocol}//${host}/api/mail/response?h=${approvalHash}&a=${actionCode}&b=0`
+        )
+          .then((resp) => resp.json())
+          .then((data) => {
             const code = data.code
             const action = data.a
             if (code === 200 && action === 'a') {
@@ -91,7 +85,7 @@ class Wrapper extends React.Component {
               this.notifyWarn('Error Responding to Request')
             }
           })
-          .catch(err => console.error(err))
+          .catch((err) => console.error(err))
       } else {
         const windowUrl = window.location.search
         params = new URLSearchParams(windowUrl)
@@ -112,18 +106,21 @@ class Wrapper extends React.Component {
   render () {
     if (this.props.session.user) {
       return (
-        <Layout user={this.props.session.user.email} token={this.props.session.csrfToken}>
+        <Layout
+          user={this.props.session.user.email}
+          token={this.props.session.csrfToken}>
           <Container>
-            <Subheader header='Absence Management' subheader='Current Vacations' />
+            <Subheader
+              header='Absence Management'
+              subheader='Current Vacations'
+            />
             <Panel bordered>
               <Content>
                 <Calendar />
               </Content>
             </Panel>
           </Container>
-          <style jsx>{`
-          `}
-          </style>
+          <style jsx>{``}</style>
         </Layout>
       )
     } else {

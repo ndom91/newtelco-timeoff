@@ -103,31 +103,9 @@ class Layout extends React.Component {
         <Container>
           <SidebarNT user={this.props.user} admin={this.state.settings.admin} token={this.props.token} expand={this.state.expand} handleToggle={this.onToggle} />
           <Container className='wrapper'>
-            {/* <Header>
-              <div className='header-wrapper'>
-                <span>
-                  <Breadcrumb separator='>' style={{ marginBottom: '0px' }}>
-                    <Breadcrumb.Item>Home</Breadcrumb.Item>
-                    {typeof window !== 'undefined' &&
-                      Router.pathname.split('/').slice(1).map((level, index) => {
-                        if (level !== '') {
-                          return (
-                            <Breadcrumb.Item active={index === Router.pathname.split('/').slice(1).length - 1} key={`${index}${level}`}>
-                              {this.capitalizeFirstLetter(level)}
-                            </Breadcrumb.Item>
-                          )
-                        }
-                      })}
-                  </Breadcrumb>
-                </span>
-              </div>
-            </Header> */}
             <Content className='content-wrapper'>
               {this.props.children}
             </Content>
-            {/* <Footer className='footer-wrapper'>
-              {`${this.state.settings.companyName}© ${new Date().getFullYear()}`}
-            </Footer> */}
           </Container>
         </Container>
         <style jsx>{`

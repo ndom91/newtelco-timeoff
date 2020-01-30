@@ -42,11 +42,11 @@ export default class RequireLogin extends React.Component {
         <Container>
           <Content style={{ marginTop: '50px' }}>
             <FlexboxGrid justify='center'>
-              <FlexboxGrid.Item colspan={12}>
+              <FlexboxGrid.Item md={8} lg={6}>
                 <Panel header={<h3 className='login-text-header'>Login</h3>} bordered>
                   <Form fluid>
                     <FormGroup>
-                      <ControlLabel style={{ fontSize: '18px', marginTop: '10px', marginBottom: '10px' }}>You must be signed in to view this content. <br /><br />Please click below to continue.</ControlLabel>
+                      <ControlLabel style={{ fontSize: '14px', marginTop: '10px', marginBottom: '10px' }}>You must be signed in to view this content. <br /><br />Please click below to continue.</ControlLabel>
                     </FormGroup>
                     <FormGroup>
                       <ButtonToolbar>
@@ -70,8 +70,8 @@ export default class RequireLogin extends React.Component {
             border: 3px solid rgba(244,10,10,0.3);
             box-shadow: 0 0 10px 1px rgba(244,10,10,0.3);
           }
-          :global(.login-header-text) {
-            text-align: center;
+          :global(.login-text-header) {
+            font-weight: 100;
           }
           :global(.rs-panel) {
             box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);

@@ -37,7 +37,8 @@ class Wrapper extends React.Component {
     super(props)
     this.state = {
       team: [],
-      teamName: ''
+      teamName: '',
+      teamLoading: true
     }
   }
 
@@ -57,6 +58,7 @@ class Wrapper extends React.Component {
               }
             })
             this.setState({
+              teamLoading: false,
               team: teamMembers
             })
           }
@@ -72,7 +74,8 @@ class Wrapper extends React.Component {
   render () {
     const {
       team,
-      teamName
+      teamName,
+      teamLoading
     } = this.state
 
     if (this.props.session.user) {
@@ -86,11 +89,12 @@ class Wrapper extends React.Component {
                 : <h4>Loading...</h4>}
             </Panel>
             <Panel className='team-panel' bordered>
-              <Header>
+              <Header className='team-header-text'>
                 Team Members
               </Header>
               <Content>
-                <Table autoHeight data={team}>
+                <Table autoHeight data={team} loading={teamLoading}>
+                {/* <Table autoHeight height={team.length * 46} data={team} loading={teamLoading}> */}
                   <Column width={50} align='center'>
                     <HeaderCell>Id</HeaderCell>
                     <Cell dataKey='id' />
@@ -129,6 +133,10 @@ class Wrapper extends React.Component {
             }
             :global(.team-panel) {
               width: 48%;
+            }
+            :global(.team-header-text) {
+              font-size: 1.2rem;
+              margin-bottom: 5px;
             }
             :global(.content-wrapper) {
               overflow-y:hidden;

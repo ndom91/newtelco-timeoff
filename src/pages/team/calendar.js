@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic'
 import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../../components/requiredLogin'
 import Subheader from '../../components/content-subheader'
+import BarLoader from 'react-spinners/ClipLoader'
 import {
   Container,
   Content,
@@ -38,7 +39,8 @@ class Wrapper extends React.Component {
 
     this.state = {
       teamName: '',
-      teamVacations: []
+      teamVacations: [],
+      loading: true
     }
   }
 
@@ -81,7 +83,8 @@ class Wrapper extends React.Component {
                   return o
                 })
                 this.setState({
-                  teamVacations: finalTeamVacations
+                  teamVacations: finalTeamVacations,
+                  loading: false
                 })
               })
               .catch(err => console.error(err))
@@ -98,7 +101,8 @@ class Wrapper extends React.Component {
   render () {
     const {
       teamName,
-      teamVacations
+      teamVacations,
+      loading
     } = this.state
 
     if (this.props.session.user) {
@@ -114,7 +118,20 @@ class Wrapper extends React.Component {
               }}
             >
               <Content className='team-content'>
-                {typeof window !== 'undefined' && <TuiCalendar teamName={teamName} vacations={teamVacations} />}
+                {!loading && typeof window !== 'undefined' && <TuiCalendar teamName={teamName} vacations={teamVacations} />}
+                {loading &&
+                  <div
+                    style={{
+                      width: '100%',
+                      height: loading ? '100px' : '0px',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <BarLoader width={80} height={3} color='#575757' loading={loading} />
+                  </div>
+                }
               </Content>
             </Panel>
           </Container>

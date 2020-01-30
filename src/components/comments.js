@@ -2,14 +2,12 @@ import React from 'react'
 import fetch from 'isomorphic-unfetch'
 import Comment from './comment'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import BarLoader from 'react-spinners/ClipLoader'
 import {
   Input,
   Button,
-  Alert,
-  Notification,
-  Placeholder
+  Notification
 } from 'rsuite'
-const { Paragraph } = Placeholder
 
 class Comments extends React.Component {
   constructor (props) {
@@ -18,7 +16,8 @@ class Comments extends React.Component {
       hasMore: true,
       items: [],
       count: 15,
-      commentText: ''
+      commentText: '',
+      commentsLoading: true
     }
     // Roll your own: https://www.taniarascia.com/add-comments-to-static-site/
   }
@@ -107,7 +106,7 @@ class Comments extends React.Component {
 
   fetchData = () => {
     if (this.state.items.length >= this.props.length) {
-      this.setState({ hasMore: false })
+      this.setState({ hasMore: false, commentsLoading: true })
       return
     }
     const protocol = window.location.protocol
@@ -119,7 +118,8 @@ class Comments extends React.Component {
       .then(data => {
         this.setState({
           items: data.resp,
-          count: this.state.count + 15
+          count: this.state.count + 15,
+          commentsLoading: false
         })
       })
       .catch(err => console.error(err))
@@ -128,7 +128,8 @@ class Comments extends React.Component {
   render () {
     const {
       hasMore,
-      items
+      items,
+      commentsLoading
     } = this.state
 
     return (
@@ -141,6 +142,19 @@ class Comments extends React.Component {
           // scrollThreshold='900px'
           // initialScrollY='0.8'
           // loader={<h4 style={{ textAlign: 'center' }}>Loading..</h4>}
+          loader={
+            <div
+              style={{
+                width: '100%',
+                height: commentsLoading ? '100px' : '0px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+            >
+              <BarLoader width={80} height={3} color='#575757' loading={commentsLoading} />
+            </div>
+          }
           endMessage={
             <p style={{ textAlign: 'center' }}>
               <b>No More Comments...</b>
@@ -148,9 +162,24 @@ class Comments extends React.Component {
           }
         >
           <div className='infinite-scroll-item-wrapper'>
-            {items.map(comment => {
-              return <Comment user={this.props.user.email} onDelete={this.handleDeleteComment} data={comment} key={comment.id} />
-            })}
+            {items.length > 0 && (
+              items.map(comment => {
+                return <Comment user={this.props.user.email} onDelete={this.handleDeleteComment} data={comment} key={comment.id} />
+              })
+            )}
+            {!commentsLoading && items.length === 0 && (
+              <span
+                style={{
+                  width: '100%',
+                  height: '60px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                You could be the first to post here!
+              </span>
+            )}
           </div>
         </InfiniteScroll>
         <div className='comment-input-wrapper'>
@@ -190,8 +219,10 @@ class Comments extends React.Component {
             margin-top: 25px;
           }
           :global(.comment-submit-btn) {
-            height: 56px;
-            margin: 10px;
+            height: 45px;
+            margin: 5px;
+            margin-right: 15px;
+            box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 7px rgba(90,97,105,.22), 0 10px 10px rgba(90,7,105,.26), 0 7px 70px rgba(90,97,105,.1);
           }
           :global(.scrollable-div) {
             overflow-y: scroll;

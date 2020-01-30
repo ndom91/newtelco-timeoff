@@ -81,7 +81,7 @@ module.exports = async (req, res) => {
         mailBody = mailBody.replace('[HEADER_TEXT]', headerText)
 
         mailBody = mailBody.replace('[SICKBODY]', sickBody)
-        mailBody = mailBody.replace('[APPROVAL_BUTTONS]', '')
+        mailBody = mailBody.replace('[APPROVAL_BUTTONS]', '</td><td align="center" style="border-top: 5px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">')
         const sentTo = `${manager}; yo@ndo.dev`
         // TODO: Change to - const sentTo = `${manager}; service@newtelco.de`
         sendMail(sentTo, mailBody, name)
@@ -89,8 +89,9 @@ module.exports = async (req, res) => {
       .catch(err => console.error(err))
   } else {
     const headerText = 'Please approve or deny this request below. This user will be notified via email of your decision.'
-    const approvalButtons = `<table cellpadding="10" cellmargin="0" border="0" height="60" width="178" style="border-collapse: collapse; border:5px solid #ff3232"> <tr><td bgcolor="#ff3232" valign="middle" align="center" width="174"> <div style="font-size: 24px; color: #ffffff; line-height: 1; font-weight: 700; margin: 0; padding: 0; mso-table-lspace:0; mso-table-rspace:0;"><a href="${process.env.SERVER_URL}/api/mail/response?h=${approvalHash}&a=d" style="text-decoration: none; color: #ffffff; border: 0; font-family: Arial, arial, sans-serif; mso-table-lspace:0; mso-table-rspace:0;" border="0">Deny</a> </div></td></tr></table></td><td align="center" style="border-top: 5px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;"> <table cellpadding="10" cellmargin="0" border="0" height="60" width="178" style="border-collapse: collapse; border:5px solid #67B246"> <tr><td bgcolor="#67B246" valign="middle" align="center" width="174"> <div style="font-size: 24px; color: #ffffff; line-height: 1; font-weight: 700; margin: 0; padding: 0; mso-table-lspace:0; mso-table-rspace:0;"><a href="${process.env.SERVER_URL}/api/mail/response?h=${approvalHash}&a=a" style="text-decoration: none; color: #ffffff; border: 0; font-family: Arial, arial, sans-serif; mso-table-lspace:0; mso-table-rspace:0;" border="0">Approve</a> </div></td></tr></table>`
+    const approvalButtons = `<table cellpadding="10" cellmargin="0" border="0" height="60" width="178" style="border-collapse: collapse; border:5px solid #ff3232"> <tr><td bgcolor="#ff3232" valign="middle" align="center" width="174"> <div style="font-size: 24px; color: #ffffff; line-height: 1; font-weight: 700; margin: 0; padding: 0; mso-table-lspace:0; mso-table-rspace:0;"><a href="${process.env.SERVER_URL}/api/mail/response?h=${approvalHash}&a=d" style="text-decoration: none; color: #ffffff; border: 0; font-family: Arial, arial, sans-serif; mso-table-lspace:0; mso-table-rspace:0;" border="0">Deny</a> </div></td></tr></table></td><td align="center" style="border-top: 5px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;"><table cellpadding="10" cellmargin="0" border="0" height="60" width="178" style="border-collapse: collapse; border:5px solid #67B246"> <tr><td bgcolor="#67B246" valign="middle" align="center" width="174"> <div style="font-size: 24px; color: #ffffff; line-height: 1; font-weight: 700; margin: 0; padding: 0; mso-table-lspace:0; mso-table-rspace:0;"><a href="${process.env.SERVER_URL}/api/mail/response?h=${approvalHash}&a=a" style="text-decoration: none; color: #ffffff; border: 0; font-family: Arial, arial, sans-serif; mso-table-lspace:0; mso-table-rspace:0;" border="0">Approve</a> </div></td></tr></table>`
     mailBody = mailBody.replace('[APPROVAL_BUTTONS]', approvalButtons)
+    mailBody = mailBody.replace('[SICKBODY]', '')
     mailBody = mailBody.replace('[HEADER_TEXT]', headerText)
     sendMail(manager, mailBody, name)
   }

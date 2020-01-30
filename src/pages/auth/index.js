@@ -183,7 +183,7 @@ export class LinkAccounts extends React.Component {
   render () {
     return (
       <Panel header={<h3 className='login-text-header'>Link Accounts</h3>} bordered>
-        <p style={{ marginTop: '20px', marginBottom: '20px', fontSize: '1.1rem' }}>You are signed in as <span className='font-weight-bold'>{this.props.session.user.email}</span>.</p>
+        <p style={{ marginTop: '20px', marginBottom: '20px' }}>You are signed in as <span style={{ fontWeight: '600' }}>{this.props.session.user.email}</span>.</p>
         <div style={{ display: 'inline', marginTop: '10px' }}>
           <Link href='/'>
             <Button appearance='primary' type='submit' style={{ width: '48%' }}>

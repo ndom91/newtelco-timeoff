@@ -16,7 +16,7 @@ class Wrapper extends React.Component {
         <Container className='login-wrapper'>
           <Content className='login-content-wrapper'>
             <FlexboxGrid style={{ marginTop: '2rem' }} justify='center'>
-              <FlexboxGrid.Item componentClass={Col} colspan={26} md={10} lg={10}>
+              <FlexboxGrid.Item componentClass={Col} colspan={26} md={8} lg={8}>
                 {this.props.children}
               </FlexboxGrid.Item>
             </FlexboxGrid>
