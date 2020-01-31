@@ -1,6 +1,5 @@
 import React from 'react'
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
-import { Form, FormGroup, ControlLabel, FormControl } from 'rsuite'
+import { Form, Radio, RadioGroup, Panel, Toggle, FormGroup, InputNumber } from 'rsuite'
 import 'react-tabs/style/react-tabs.css'
 
 export default class Calculator extends React.Component {
@@ -9,7 +8,8 @@ export default class Calculator extends React.Component {
     this.state = {
       curYears: 0,
       curMonths: 0,
-      daysAvailable: 0
+      daysAvailable: 0,
+      displayCalc: ''
     }
   }
 
@@ -18,7 +18,7 @@ export default class Calculator extends React.Component {
     if (value < 13) {
       daysAvailable = (value / 12) * 26
     } else if (value > 12) {
-      daysAvailable = 'Invalid'
+      daysAvailable = 26
     } else {
       daysAvailable = 0
     }
@@ -37,73 +37,92 @@ export default class Calculator extends React.Component {
     } else {
       daysAvailable = 0
     }
-    console.log(value, daysAvailable)
     this.setState({
       curYears: value,
       daysAvailable
     })
   }
 
+  handleLengthChange = (value) => {
+    console.log(value)
+    if (value === 'years') {
+      this.setState({
+        displayCalc: 'years'
+      })
+    } else if (value === 'months') {
+      this.setState({
+        displayCalc: 'months'
+      })
+    }
+  }
+
   render () {
     const {
       curMonths,
       curYears,
-      daysAvailable
+      daysAvailable,
+      displayCalc
     } = this.state
 
     return (
       <div className='calc-wrapper'>
-        <span style={{ fontSize: '1.2rem' }}>How long have you been at Newtelco?</span>
-        <Tabs style={{ marginTop: '15px' }}>
-          <TabList>
-            <Tab>Less than 1 Year</Tab>
-            <Tab>More than 1 Year</Tab>
-          </TabList>
-          <TabPanel>
-            <Form>
+        <span style={{ fontSize: '1.2rem' }}>How long have you been at <font style={{ color: '#67B246' }}>Newtelco</font>?</span>
+        <Panel className='calc-panel-body' style={{ boxShadow: 'none', marginTop: '15px', marginBottom: '20px', width: '100%', padding: '0' }}>
+          <RadioGroup onChange={this.handleLengthChange} name='radioList' inline appearance='picker' defaultValue='years' style={{ width: '170px' }}>
+            <Radio className='calc-radio-item' value='years'>1 Year+</Radio>
+            <Radio className='calc-radio-item' value='months'>1-12 Months</Radio>
+          </RadioGroup>
+          <Form>
+            {displayCalc === 'months' ? (
               <FormGroup>
-                <ControlLabel>How many Months?</ControlLabel>
-                <FormControl name='months' inputMode='numeric' className='calc-input' onChange={this.handleMonthsChange} value={curMonths} />
+                <InputNumber name='months' inputMode='numeric' className='calc-input' onChange={this.handleMonthsChange} value={curMonths} min={0} max={12} postfix='months' />
                 {curMonths !== 0 && (
                   <span className='days-available'>
                     {`${parseInt(daysAvailable)} days earned`}
                   </span>
                 )}
               </FormGroup>
-            </Form>
-          </TabPanel>
-          <TabPanel>
-            <Form>
+            ) : (
               <FormGroup>
-                <ControlLabel>How many Years?</ControlLabel>
-                <FormControl name='years' inputMode='numeric' className='calc-input' onChange={this.handleYearsChange} value={curYears} />
+                <InputNumber name='years' inputMode='numeric' className='calc-input' onChange={this.handleYearsChange} value={curYears} min={0} postfix='years' />
                 {curYears !== 0 && (
                   <span className='days-available'>
                     {`${daysAvailable} days earned`}
                   </span>
                 )}
               </FormGroup>
-            </Form>
-          </TabPanel>
-        </Tabs>
+            ) }
+          </Form>
+        </Panel>
         <style jsx>{`
           .calc-wrapper {
-            position: absolute;
-            height: 200px;
-            width: 400px;
-            right: 10px;
-            top: 50%;
             background-color: #fff;
             border-radius: 10px;
             padding: 20px;
-            box-shadow: 0 2px 0 rgba(90,97,105,.25), 0 4px 8px rgba(90,97,105,.52), 0 10px 10px rgba(90,97,105,.16), 0 7px 70px rgba(90,97,105,.2);
+            margin-left: 30px;
+          }
+          :global(.calc-radio-item) {
+            padding: 5px;
           }
           :global(.calc-input) {
-            max-width: 100px !important;
+            width: 140px !important;
+            margin-top: 15px;
+          }
+          :global(.calc-panel-body  .rs-panel-body) {
+            padding: 0 !important;
+          }
+          :global(.rs-radio-group-picker .rs-radio-checker > label) {
+            padding: 4px !important;
+          }
+          :global(.rs-radio-group-picker .rs-radio-inline) {
+            margin-left: 0 !important;
           }
           .days-available {
-            margin-left: 65px;
-            font-size: 1.2rem;
+            position: absolute;
+            right: 80px;
+            top: 190px;
+            margin-left: 15px;
+            font-size: 1.1rem;
           }
         `}
         </style>

@@ -9,9 +9,7 @@ import File from '../components/fileIcon'
 import moment from 'moment'
 import { CSSTransition } from 'react-transition-group'
 import Calculator from '../components/newcalculator'
-import {
-  Tooltip,
-} from 'react-tippy'
+import { Tooltip } from 'react-tippy'
 import 'react-tippy/dist/tippy.css'
 
 import 'react-dropzone-uploader/dist/styles.css'
@@ -21,7 +19,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import uuid from 'v4-uuid'
 import {
   faCalendarAlt,
-  faCalculator
+  faUser,
+  faHistory,
+  faAngleRight,
+  faAngleLeft
 } from '@fortawesome/free-solid-svg-icons'
 import {
   Container,
@@ -99,7 +100,8 @@ class Wrapper extends React.Component {
       openConfirmModal: false,
       confirmText: '',
       successfullySent: false,
-      showCalc: false,
+      sideBar: 60,
+      calcSideBar: -200,
       vaca: {
         name: props.session.user.name,
         email: props.session.user.email,
@@ -113,6 +115,13 @@ class Wrapper extends React.Component {
         dateTo: '',
         manager: '',
         notes: ''
+      },
+      lastRequest: {
+        lastYear: 0,
+        thisYear: 0,
+        total: 0,
+        requested: 0,
+        remaining: 0
       }
     }
   }
@@ -145,6 +154,25 @@ class Wrapper extends React.Component {
         })
         this.setState({
           availableManagers: managerData
+        })
+      })
+      .catch(err => console.error(err))
+
+    const email = this.props.session.user.email
+    fetch(`${protocol}//${host}/api/user/entries/last?u=${email}`)
+      .then(res => res.json())
+      .then(data => {
+        const newRequest = {
+          lastYear: data.lastRequest[0].resturlaubVorjahr,
+          thisYear: data.lastRequest[0].jahresurlaubInsgesamt,
+          total: data.lastRequest[0].restjahresurlaubInsgesamt,
+          requested: data.lastRequest[0].beantragt,
+          remaining: data.lastRequest[0].resturlaubJAHR,
+          from: moment(data.lastRequest[0].fromDate).format('DD.MM.YYYY'),
+          to: moment(data.lastRequest[0].toDate).format('DD.MM.YYYY')
+        }
+        this.setState({
+          lastRequest: newRequest
         })
       })
       .catch(err => console.error(err))
@@ -420,9 +448,35 @@ class Wrapper extends React.Component {
   }
 
   showTimeCalculator = () => {
-    this.setState({
-      showCalc: !this.state.showCalc
-    })
+    const {
+      calcSideBar
+    } = this.state
+
+    if (calcSideBar === -200) {
+      this.setState({
+        calcSideBar: -10
+      })
+    } else {
+      this.setState({
+        calcSideBar: -200
+      })
+    }
+  }
+
+  showLastRequestSidebar = () => {
+    const {
+      sideBar
+    } = this.state
+
+    if (sideBar === 60) {
+      this.setState({
+        sideBar: 230
+      })
+    } else {
+      this.setState({
+        sideBar: 60
+      })
+    }
   }
 
   render () {
@@ -437,7 +491,9 @@ class Wrapper extends React.Component {
       openConfirmModal,
       confirmTableData,
       successfullySent,
-      showCalc
+      sideBar,
+      calcSideBar,
+      lastRequest
     } = this.state
 
     if (this.props.session.user) {
@@ -453,7 +509,7 @@ class Wrapper extends React.Component {
                       bordered style={{ position: 'relative' }} header={
                         <h4 className='form-section-heading' style={{ position: 'relative' }}>
                             User
-                          <FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
+                          <FontAwesomeIcon icon={faUser} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
                         </h4>
                       }
                     >
@@ -483,14 +539,13 @@ class Wrapper extends React.Component {
                   classNames='panel'
                   unmountOnExit
                 >
-
                   <Panel bordered>
                     <PanelGroup>
                       <Panel
                         bordered header={
                           <h4 className='form-section-heading' style={{ position: 'relative' }}>
                             History
-                            <FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
+                            <FontAwesomeIcon icon={faHistory} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
                           </h4>
                         }
                       >
@@ -583,23 +638,68 @@ class Wrapper extends React.Component {
               </Form>
             </Content>
           </Container>
-          <div onClick={this.showTimeCalculator} className='calc-button'>
-            <Tooltip
-              title='Calculator for Days Available'
-              position='left'
-              trigger='mouseenter'
-            >
-                <FontAwesomeIcon icon={faCalculator} width='2em' style={{ marginLeft: '10px', right: '12px', top: '12px', position: 'absolute', color: 'secondary' }} />
-            </Tooltip>
+          <div className='last-request-sidebar'>
+            <Panel className='last-request-panel' header='Last Request' style={{ boxShadow: 'none' }}>
+              <FormGroup>
+                <ControlLabel>Days from Last Year</ControlLabel>
+                <Input disabled value={lastRequest.lastYear} />
+              </FormGroup>
+              <FormGroup>
+                <ControlLabel>Days from This Year</ControlLabel>
+                <Input disabled value={lastRequest.thisYear} />
+              </FormGroup>
+              <FormGroup>
+                <ControlLabel>Total Days Available</ControlLabel>
+                <Input disabled value={lastRequest.total} />
+              </FormGroup>
+              <FormGroup>
+                <ControlLabel>Requested Days</ControlLabel>
+                <Input disabled value={lastRequest.requested} />
+              </FormGroup>
+              <FormGroup>
+                <ControlLabel>Days Remaining</ControlLabel>
+                <Input disabled value={lastRequest.remaining} />
+              </FormGroup>
+              <FormGroup>
+                <ControlLabel>From</ControlLabel>
+                <Input disabled value={lastRequest.from} />
+              </FormGroup>
+              <FormGroup>
+                <ControlLabel>To</ControlLabel>
+                <Input disabled value={lastRequest.to} />
+              </FormGroup>
+            </Panel>
+            <div className='sidebar-button' onClick={this.showLastRequestSidebar}>
+              <div style={{ marginLeft: '10px', right: '10px', top: '285px', position: 'absolute', color: 'secondary' }}>
+                <Tooltip
+                  title='View Last Request Details'
+                  trigger='mouseenter'
+                  distance='15'
+                  offset='-23'
+                  position='right'
+                  sticky
+                >
+                  <FontAwesomeIcon icon={sideBar === 60 ? faAngleRight : faAngleLeft} width='2em' />
+                </Tooltip>
+              </div>
+            </div>
           </div>
-          <CSSTransition
-            in={showCalc}
-            timeout={1000}
-            classNames='panel'
-            unmountOnExit
-          >
+          <div className='calc-sidebar'>
             <Calculator />
-          </CSSTransition>
+            <div className='sidebar-button' onClick={this.showTimeCalculator}>
+              <div style={{ marginLeft: '10px', right: '210px', top: '90px', position: 'absolute', color: 'secondary' }}>
+                <Tooltip
+                  title='Calculator for Days Available'
+                  position='left'
+                  trigger='mouseenter'
+                  distance='20'
+                  offset='-23'
+                >
+                  <FontAwesomeIcon icon={calcSideBar === -10 ? faAngleRight : faAngleLeft} width='2em' />
+                </Tooltip>
+              </div>
+            </div>
+          </div>
           {openConfirmModal && (
             <Modal enforceFocus size='sm' backdrop show={openConfirmModal} onHide={this.toggleSubmitModal} style={{ marginTop: '150px' }}>
               <Modal.Header>
@@ -644,6 +744,41 @@ class Wrapper extends React.Component {
             border-radius: 10px;
             box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
           }
+          .last-request-sidebar {
+            position: absolute;
+            left: ${this.state.sideBar}px;
+            top: 200px;
+            height: 660px;
+            width: 250px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
+            transition: all 250ms ease-in-out;
+          }
+          .calc-sidebar {
+            position: absolute;
+            right: ${this.state.calcSideBar}px;
+            top: 200px;
+            height: 240px;
+            width: 250px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
+            transition: all 250ms ease-in-out;
+          }
+          :global(.last-request-panel .rs-control-label) {
+            margin-left: 40px;
+          }
+          :global(.last-request-panel .rs-form-group) {
+            margin-bottom: 20px;
+          }
+          :global(.last-request-panel input) {
+            width: 60%;
+            right: 0;
+            margin-left: 40px;
+            margin-top: 5px;
+            color: #575757 !important;
+          }
           :global(.calc-button:hover) {
             cursor: pointer;
            }
@@ -659,6 +794,9 @@ class Wrapper extends React.Component {
             opacity: 0;
             height: 0;
           }
+          :global(.sidebar-button:hover) {
+            cursor: pointer;
+          }
           :global(.panel-enter-active) {
             opacity: 1;
             height: 622px;
@@ -671,6 +809,25 @@ class Wrapper extends React.Component {
           :global(.panel-exit-active) {
             opacity: 0;
             height: 0px;
+            transition: all 500ms;
+          }
+          :global(.calc-enter) {
+            opacity: 0;
+            width: 0;
+            height: 0;
+          }
+          :global(.calc-enter-active) {
+            opacity: 1;
+            width: 400px;
+            transition: all 500ms;
+          }
+          :global(.calc-exit) {
+            opacity: 1;
+            width: 400px;
+          }
+          :global(.calc-exit-active) {
+            opacity: 0;
+            width: 0;
             transition: all 500ms;
           }
           :global(.section-header-hr.end) {
@@ -719,7 +876,8 @@ class Wrapper extends React.Component {
           }
           :global(.rs-form-horizontal .rs-form-group .rs-control-label) {
             width: 100%;
-            text-align: center;
+            text-align: left;
+            font-weight: 600;
           }
           :global(.rs-modal-backdrop.in) {
             opacity: 0.8;
