@@ -94,7 +94,6 @@ class Wrapper extends React.Component {
               </Header>
               <Content>
                 <Table autoHeight data={team} loading={teamLoading}>
-                {/* <Table autoHeight height={team.length * 46} data={team} loading={teamLoading}> */}
                   <Column width={50} align='center'>
                     <HeaderCell>Id</HeaderCell>
                     <Cell dataKey='id' />

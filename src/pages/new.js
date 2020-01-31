@@ -8,6 +8,11 @@ import Subheader from '../components/content-subheader'
 import File from '../components/fileIcon'
 import moment from 'moment'
 import { CSSTransition } from 'react-transition-group'
+import Calculator from '../components/newcalculator'
+import {
+  Tooltip,
+} from 'react-tippy'
+import 'react-tippy/dist/tippy.css'
 
 import 'react-dropzone-uploader/dist/styles.css'
 import Dropzone from 'react-dropzone-uploader'
@@ -15,7 +20,8 @@ import Dropzone from 'react-dropzone-uploader'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import uuid from 'v4-uuid'
 import {
-  faCalendarAlt
+  faCalendarAlt,
+  faCalculator
 } from '@fortawesome/free-solid-svg-icons'
 import {
   Container,
@@ -93,6 +99,7 @@ class Wrapper extends React.Component {
       openConfirmModal: false,
       confirmText: '',
       successfullySent: false,
+      showCalc: false,
       vaca: {
         name: props.session.user.name,
         email: props.session.user.email,
@@ -412,6 +419,12 @@ class Wrapper extends React.Component {
     }
   }
 
+  showTimeCalculator = () => {
+    this.setState({
+      showCalc: !this.state.showCalc
+    })
+  }
+
   render () {
     const handleChangeStatus = ({ meta }, status) => {
       console.log(status, meta)
@@ -423,7 +436,8 @@ class Wrapper extends React.Component {
       availableManagers,
       openConfirmModal,
       confirmTableData,
-      successfullySent
+      successfullySent,
+      showCalc
     } = this.state
 
     if (this.props.session.user) {
@@ -569,6 +583,23 @@ class Wrapper extends React.Component {
               </Form>
             </Content>
           </Container>
+          <div onClick={this.showTimeCalculator} className='calc-button'>
+            <Tooltip
+              title='Calculator for Days Available'
+              position='left'
+              trigger='mouseenter'
+            >
+                <FontAwesomeIcon icon={faCalculator} width='2em' style={{ marginLeft: '10px', right: '12px', top: '12px', position: 'absolute', color: 'secondary' }} />
+            </Tooltip>
+          </div>
+          <CSSTransition
+            in={showCalc}
+            timeout={1000}
+            classNames='panel'
+            unmountOnExit
+          >
+            <Calculator />
+          </CSSTransition>
           {openConfirmModal && (
             <Modal enforceFocus size='sm' backdrop show={openConfirmModal} onHide={this.toggleSubmitModal} style={{ marginTop: '150px' }}>
               <Modal.Header>
@@ -602,6 +633,20 @@ class Wrapper extends React.Component {
             </Modal>
           )}
           <style jsx>{`
+          :global(.calc-button) {
+            position: absolute;
+            right:10px;
+            top: 45%;
+            height: 55px;
+            width: 55px;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
+          }
+          :global(.calc-button:hover) {
+            cursor: pointer;
+           }
           :global(.new-request-header) {
             width: 100%;
             text-align: center;
