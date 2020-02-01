@@ -5,15 +5,13 @@ import Router from 'next/router'
 import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../components/requiredLogin'
 import Subheader from '../components/content-subheader'
-import File from '../components/fileIcon'
 import moment from 'moment'
 import { CSSTransition } from 'react-transition-group'
 import Calculator from '../components/newcalculator'
 import { Tooltip } from 'react-tippy'
 import 'react-tippy/dist/tippy.css'
-
-import 'react-dropzone-uploader/dist/styles.css'
-import Dropzone from 'react-dropzone-uploader'
+import axios from 'axios'
+import UploadFile from '../components/uploadfile'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import uuid from 'v4-uuid'
@@ -49,15 +47,6 @@ import {
 } from 'rsuite'
 
 const { Column, HeaderCell, Cell } = Table
-
-const Preview = ({ meta }) => {
-  const { name, percent, status } = meta
-  return (
-    <span style={{ alignSelf: 'flex-start', margin: '10px 3%', fontFamily: 'Helvetica' }}>
-      {name} {/* {name} , {Math.round(percent)}%, {status} */}
-    </span>
-  )
-}
 
 class Wrapper extends React.Component {
   static async getInitialProps ({ res, req, query }) {
@@ -95,13 +84,15 @@ class Wrapper extends React.Component {
     })
 
     this.state = {
-      files: [],
       model: absenceModel,
       openConfirmModal: false,
       confirmText: '',
       successfullySent: false,
       sideBar: 60,
       calcSideBar: -30,
+      uploading: false,
+      loaded: 0,
+      message: 'Please click or drop file',
       vaca: {
         name: props.session.user.name,
         email: props.session.user.email,
@@ -381,22 +372,10 @@ class Wrapper extends React.Component {
 
     const approvalHash = uuid()
 
-    // Insert into DB new Request
     fetch(`${protocol}//${host}/api/mail/insert?vaca=${encodeURIComponent(JSON.stringify(this.state.vaca))}&ah=${approvalHash}`)
       .then(resp => resp.json())
       .then(data => {
-        // If success, upload attachments to GDrive
-        // https://www.npmjs.com/package/googleapis#media-uploads
-        // https://developers.google.com/drive/api/v3/manage-uploads
-        // https://developers.google.com/drive/api/v3/manage-uploads#send_a_simple_upload_request
-
-        // Alternative: https://www.npmjs.com/package/react-google-picker
-        // https://stackoverflow.com/questions/54016733/how-to-make-http-request-to-upload-file-from-reactjs-to-google-drive
-        // fetch(`${protocol}//${host}/api/mail/upload?file=${file}`)
-        //   .then(resp => resp.json())
-        //   .then(data => {
-        //     // If success, send mail to inform User
-        fetch(`${protocol}//${host}/api/mail/send?manager=${manager}&from=${dateFrom}&to=${dateTo}&type=${type}&name=${name}&ah=${approvalHash}&fn=${this.state.fileName}`) // &fu=${this.state.file.url}&fn=${this.state.file.name}`)
+        fetch(`${protocol}//${host}/api/mail/send?manager=${manager}&from=${dateFrom}&to=${dateTo}&type=${type}&name=${name}&ah=${approvalHash}`)
           .then(resp => resp.json())
           .then(data => {
             if (this.state.openConfirmModal) {
@@ -406,9 +385,6 @@ class Wrapper extends React.Component {
             }
             if (data.code === 200) {
               this.notifyInfo('Request Sent')
-              if (this.uploadRef.current.files.length) {
-                this.uploadRef.current.files[0].remove()
-              }
               this.setState({
                 successfullySent: true
               })
@@ -417,34 +393,8 @@ class Wrapper extends React.Component {
             }
           })
           .catch(err => console.error(err))
-          // })
-          // .catch(err => console.error(err))
       })
       .catch(err => console.error(err))
-  }
-
-  getUploadParams = (data) => {
-    console.log('params', data)
-    const host = window.location.host
-    const protocol = window.location.protocol
-    this.setState({
-      fileName: data.meta.name
-      // file: {
-      //   url: data.meta.previewUrl,
-      //   name: data.meta.name
-      // }
-    })
-    return {
-      url: `${protocol}//${host}/api/mail/upload`, // ?fn=${data.meta.name}`,
-      headers: {
-        // 'Content-Type': 'application/x-www-form-urlencoded',
-        // 'Content-Type': data.file.type,
-        // 'Content-Length': data.file.size * 1024,
-        'X-CSRF-TOKEN': this.props.session.csrfToken,
-        'X-XSRF-TOKEN': this.props.session.csrfToken
-        // credentials: 'same-origin'
-      }
-    }
   }
 
   showTimeCalculator = () => {
@@ -480,12 +430,7 @@ class Wrapper extends React.Component {
   }
 
   render () {
-    const handleChangeStatus = ({ meta }, status) => {
-      console.log(status, meta)
-    }
-
     const {
-      files,
       vaca,
       availableManagers,
       openConfirmModal,
@@ -508,7 +453,7 @@ class Wrapper extends React.Component {
                     <Panel
                       bordered style={{ position: 'relative' }} header={
                         <h4 className='form-section-heading' style={{ position: 'relative' }}>
-                            User
+                          User
                           <FontAwesomeIcon icon={faUser} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
                         </h4>
                       }
@@ -606,7 +551,7 @@ class Wrapper extends React.Component {
                     <Panel
                       bordered header={
                         <h4 className='form-section-heading' style={{ position: 'relative' }}>
-                            Dates
+                          Dates
                           <FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
                         </h4>
                       }
@@ -628,24 +573,16 @@ class Wrapper extends React.Component {
                         <Input componentClass='textarea' rows={3} placeholder='Optional Note' onChange={this.handleNotesChange} style={{ width: '320px' }} />
                       </FormGroup>
                       <FormGroup>
-                        <ControlLabel className='filedrop-label'>Documents</ControlLabel>
-                        <Dropzone
-                          ref={this.uploadRef}
-                          getUploadParams={this.getUploadParams}
-                          onChangeStatus={handleChangeStatus}
-                          PreviewComponent={Preview}
-                          maxFiles={1}
-                          multiple={false}
-                          canCancel={false}
-                          inputContent='Click to select or drop an optional file (i.e. Doctors Note, etc.)'
-                          inputWithFilesContent='Add Files'
-                          submitButtonDisabled
-                          styles={{
-                            dropzone: { minHeight: 150, maxHeight: 200, border: '2px dashed #e5e5ea', borderRadius: '15px', padding: '10px', color: '#67B246', textAlign: 'center', fontWeight: '100' },
-                            dropzoneActive: { borderColor: '#67B246', borderWidth: '3px' },
-                            inputLabel: { color: '#67B246', fontSize: '14px' }
-                          }}
-                        />
+                        <ControlLabel className='filedrop-label'>
+                          Documents
+                        </ControlLabel>
+                        <div
+                          className='upload-file'
+                        >
+                          <UploadFile
+                            csrfToken={this.props.session.csrfToken}
+                          />
+                        </div>
                       </FormGroup>
                       <FormGroup>
                         <ButtonToolbar style={{ paddingLeft: '0px' }}>
@@ -707,22 +644,6 @@ class Wrapper extends React.Component {
               </div>
             </div>
           </div>
-          {/* <div className='calc-sidebar'>
-            <Calculator />
-            <div className='sidebar-button' onClick={this.showTimeCalculator}>
-              <div style={{ marginLeft: '10px', right: '210px', top: '90px', position: 'absolute', color: 'secondary' }}>
-                <Tooltip
-                  title='Calculator for Days Available'
-                  position='left'
-                  trigger='mouseenter'
-                  distance='20'
-                  offset='-23'
-                >
-                  <FontAwesomeIcon icon={calcSideBar === -10 ? faAngleRight : faAngleLeft} width='2em' />
-                </Tooltip>
-              </div>
-            </div>
-          </div> */}
           {openConfirmModal && (
             <Modal enforceFocus size='sm' backdrop show={openConfirmModal} onHide={this.toggleSubmitModal} style={{ marginTop: '150px' }}>
               <Modal.Header>
@@ -745,10 +666,10 @@ class Wrapper extends React.Component {
                 <ButtonToolbar style={{ width: '100%' }}>
                   <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
                     <Button onClick={this.handleSubmit} style={{ width: '33%', fontSize: '16px' }} appearance='primary'>
-                  Confirm
+                      Confirm
                     </Button>
                     <Button onClick={this.toggleSubmitModal} style={{ width: '33%', fontSize: '16px' }} appearance='default'>
-                  Cancel
+                      Cancel
                     </Button>
                   </ButtonGroup>
                 </ButtonToolbar>
@@ -789,6 +710,10 @@ class Wrapper extends React.Component {
             box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
             transition: all 250ms ease-in-out;
             z-index: -1;
+          }
+          :global(.upload-file) {
+            display: inline-block;
+            width: 100%;
           }
           :global(.last-request-panel .rs-control-label) {
             margin-left: 40px;

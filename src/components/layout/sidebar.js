@@ -118,7 +118,6 @@ class SidebarNT extends React.Component {
   pageActive = (path) => {
     if (typeof window !== 'undefined') {
       if (window.location !== 'undefined') {
-        console.log(path, Router.pathname)
         if (path === Router.pathname) return true
       }
     }
