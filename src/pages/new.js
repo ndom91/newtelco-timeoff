@@ -10,7 +10,6 @@ import { CSSTransition } from 'react-transition-group'
 import Calculator from '../components/newcalculator'
 import { Tooltip } from 'react-tippy'
 import 'react-tippy/dist/tippy.css'
-import axios from 'axios'
 import UploadFile from '../components/uploadfile'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -580,6 +579,7 @@ class Wrapper extends React.Component {
                           className='upload-file'
                         >
                           <UploadFile
+                            email={this.props.session.user.email}
                             csrfToken={this.props.session.csrfToken}
                           />
                         </div>

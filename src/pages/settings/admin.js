@@ -882,7 +882,7 @@ class Wrapper extends React.Component {
                 </Panel>
               </Col>
             </Row>
-            <Panel bordered>
+            <Panel bordered className='person-panel-body'>
               <Header className='user-content-header'>
                 <span className='section-header'>
                   <h4>Person</h4>
@@ -896,7 +896,7 @@ class Wrapper extends React.Component {
                   placeholder='Please Select a User'
                   style={{ width: '300px' }}
                 />
-                <div className='ag-theme-material user-grid'>
+                <div className='ag-theme-material user-grid person-grid'>
                   <AgGridReact
                     gridOptions={personalGridOptions}
                     rowData={personalRowData}
@@ -1079,6 +1079,12 @@ class Wrapper extends React.Component {
             }
             :global(.user-grid) {
               height: 50vh;
+            }
+            :global(.person-grid) { 
+              margin-bottom: 20px;
+            }
+            :global(.person-panel-body .rs-panel-body) {
+              padding: 40px;
             }
             :global(.row-awaitingResponse) {
               background-color: transparent;

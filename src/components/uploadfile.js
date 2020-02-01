@@ -1,9 +1,9 @@
 import React from 'react'
 import Dropzone from './dropzone'
-import ProgressBar from './progress'
+import { Progress } from 'rsuite'
+const { Line } = Progress
 
 export default class UploadFile extends React.Component {
-
   constructor (props) {
     super(props)
     this.state = {
@@ -19,16 +19,12 @@ export default class UploadFile extends React.Component {
     this.renderActions = this.renderActions.bind(this)
   }
 
-  componentDidMount () {
-
-  }
-
   renderProgress (file) {
     const uploadProgress = this.state.uploadProgress[file.name]
     if (this.state.uploading || this.state.successfullUploaded) {
       return (
         <div className='ProgressWrapper'>
-          <ProgressBar progress={uploadProgress ? uploadProgress.percentage : 0} />
+          <Line percent={uploadProgress ? uploadProgress.percentage : 0} />
         </div>
       )
     }
@@ -42,10 +38,8 @@ export default class UploadFile extends React.Component {
     })
     try {
       await Promise.all(promises)
-
       this.setState({ successfullUploaded: true, uploading: false })
     } catch (e) {
-      // Not Production ready! Do some error handling here instead...
       this.setState({ successfullUploaded: true, uploading: false })
     }
   }
@@ -80,12 +74,15 @@ export default class UploadFile extends React.Component {
       })
 
       const formData = new FormData()
-      formData.append('file', file, file.name)
+      formData.append('file', file)
+      formData.append('name', file.name)
+      formData.append('tags', 'vacation')
+      formData.append('tags', this.props.email)
+      // formData.append('description', 'File Description')
+      formData.append('upload_preset', 'kvulbpzi')
 
-      const host = window.location.host
-      const protocol = window.location.protocol
-      req.open('POST', `${protocol}//${host}/api/mail/upload`)
-      req.setRequestHeader('X-CSRF-TOKEN', this.props.csrfToken)
+      req.open('POST', process.env.CLOUDINARY_UPLOAD)
+      req.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
       req.send(formData)
     })
   }
@@ -161,7 +158,7 @@ export default class UploadFile extends React.Component {
             align-items: flex-start;
             justify-items: center;
             flex: 1;
-            overflow-y: auto;
+            overflow-y: visible;
           }
           .Actions {
             display: flex;
@@ -221,12 +218,12 @@ export default class UploadFile extends React.Component {
             justify-content: space-between;
             height: 50px;
             padding: 8px;
-            overflow: hidden;
+            overflow: visible;
             box-sizing: border-box;
           }
         `}
         </style>
       </div>
-    );
+    )
   }
 }
