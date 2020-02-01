@@ -101,7 +101,7 @@ class Wrapper extends React.Component {
       confirmText: '',
       successfullySent: false,
       sideBar: 60,
-      calcSideBar: -200,
+      calcSideBar: -30,
       vaca: {
         name: props.session.user.name,
         email: props.session.user.email,
@@ -452,13 +452,13 @@ class Wrapper extends React.Component {
       calcSideBar
     } = this.state
 
-    if (calcSideBar === -200) {
+    if (calcSideBar === -30) {
       this.setState({
-        calcSideBar: -10
+        calcSideBar: -240
       })
     } else {
       this.setState({
-        calcSideBar: -200
+        calcSideBar: -30
       })
     }
   }
@@ -539,44 +539,67 @@ class Wrapper extends React.Component {
                   classNames='panel'
                   unmountOnExit
                 >
-                  <Panel bordered>
-                    <PanelGroup>
-                      <Panel
-                        bordered header={
-                          <h4 className='form-section-heading' style={{ position: 'relative' }}>
-                            History
-                            <FontAwesomeIcon icon={faHistory} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
-                          </h4>
-                        }
-                      >
-                        <FormGroup>
-                          <ControlLabel>Days from Last Year</ControlLabel>
-                          <FormControl name='daysLastYear' inputMode='numeric' onChange={this.handleLastYearChange} value={vaca.lastYear} />
-                          <HelpBlock tooltip>Days which you have transfered with you from last year</HelpBlock>
-                        </FormGroup>
-                        <FormGroup>
-                          <ControlLabel>Days from this Year</ControlLabel>
-                          <FormControl name='daysThisYear' inputMode='numeric' onChange={this.handleThisYearChange} value={vaca.thisYear} />
-                          <HelpBlock tooltip>Days which you have earned this year</HelpBlock>
-                        </FormGroup>
-                        <FormGroup>
-                          <ControlLabel>Total Days Available</ControlLabel>
-                          <FormControl name='totalDaysAvailable' inputMode='numeric' onChange={this.handleTotalAvailableChange} value={vaca.total} />
-                          <HelpBlock tooltip>The sum of the last two fields</HelpBlock>
-                        </FormGroup>
-                        <FormGroup>
-                          <ControlLabel>Requested Days</ControlLabel>
-                          <FormControl name='requestedDays' inputMode='numeric' onChange={this.handleRequestedChange} value={vaca.requested} />
-                          <HelpBlock tooltip>Number of day(s) you need off. <br /> Half days = '0.5'</HelpBlock>
-                        </FormGroup>
-                        <FormGroup>
-                          <ControlLabel>Days Remaining this Year</ControlLabel>
-                          <FormControl name='remainingDays' inputMode='numeric' onChange={this.handleRemainingChange} value={vaca.remaining} />
-                          <HelpBlock tooltip>Number of remaining days after subtracting requested from total available</HelpBlock>
-                        </FormGroup>
-                      </Panel>
-                    </PanelGroup>
-                  </Panel>
+                  <div
+                    style={{ position: 'relative', overflow: 'visible', zIndex: '3', marginBottom: '20px' }}
+                  >
+                    <Panel
+                      style={{ position: 'relative', overflow: 'visible', zIndex: '3' }}
+                      bordered
+                    >
+                      <PanelGroup>
+                        <Panel
+                          bordered header={
+                            <h4 className='form-section-heading' style={{ position: 'relative' }}>
+                              History
+                              <FontAwesomeIcon icon={faHistory} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
+                            </h4>
+                          }
+                        >
+                          <FormGroup>
+                            <ControlLabel>Days from Last Year</ControlLabel>
+                            <FormControl name='daysLastYear' inputMode='numeric' onChange={this.handleLastYearChange} value={vaca.lastYear} />
+                            <HelpBlock tooltip>Days which you have transfered with you from last year</HelpBlock>
+                          </FormGroup>
+                          <FormGroup>
+                            <ControlLabel>Days from this Year</ControlLabel>
+                            <FormControl name='daysThisYear' inputMode='numeric' onChange={this.handleThisYearChange} value={vaca.thisYear} />
+                            <HelpBlock tooltip>Days which you have earned this year</HelpBlock>
+                          </FormGroup>
+                          <FormGroup>
+                            <ControlLabel>Total Days Available</ControlLabel>
+                            <FormControl name='totalDaysAvailable' inputMode='numeric' onChange={this.handleTotalAvailableChange} value={vaca.total} />
+                            <HelpBlock tooltip>The sum of the last two fields</HelpBlock>
+                          </FormGroup>
+                          <FormGroup>
+                            <ControlLabel>Requested Days</ControlLabel>
+                            <FormControl name='requestedDays' inputMode='numeric' onChange={this.handleRequestedChange} value={vaca.requested} />
+                            <HelpBlock tooltip>Number of day(s) you need off. <br /> Half days = '0.5'</HelpBlock>
+                          </FormGroup>
+                          <FormGroup>
+                            <ControlLabel>Days Remaining this Year</ControlLabel>
+                            <FormControl name='remainingDays' inputMode='numeric' onChange={this.handleRemainingChange} value={vaca.remaining} />
+                            <HelpBlock tooltip>Number of remaining days after subtracting requested from total available</HelpBlock>
+                          </FormGroup>
+                        </Panel>
+                      </PanelGroup>
+                    </Panel>
+                    <div className='calc-sidebar'>
+                      <Calculator />
+                      <div className='sidebar-button' onClick={this.showTimeCalculator}>
+                        <div style={{ marginLeft: '10px', right: '2px', top: '90px', position: 'absolute', color: 'secondary' }}>
+                          <Tooltip
+                            title='Calculator for Days Available'
+                            position='right'
+                            trigger='mouseenter'
+                            distance='20'
+                            offset='-23'
+                          >
+                            <FontAwesomeIcon icon={calcSideBar === -30 ? faAngleRight : faAngleLeft} width='2em' />
+                          </Tooltip>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </CSSTransition>
                 <Panel bordered>
                   <PanelGroup>
@@ -684,7 +707,7 @@ class Wrapper extends React.Component {
               </div>
             </div>
           </div>
-          <div className='calc-sidebar'>
+          {/* <div className='calc-sidebar'>
             <Calculator />
             <div className='sidebar-button' onClick={this.showTimeCalculator}>
               <div style={{ marginLeft: '10px', right: '210px', top: '90px', position: 'absolute', color: 'secondary' }}>
@@ -699,7 +722,7 @@ class Wrapper extends React.Component {
                 </Tooltip>
               </div>
             </div>
-          </div>
+          </div> */}
           {openConfirmModal && (
             <Modal enforceFocus size='sm' backdrop show={openConfirmModal} onHide={this.toggleSubmitModal} style={{ marginTop: '150px' }}>
               <Modal.Header>
@@ -765,6 +788,7 @@ class Wrapper extends React.Component {
             background-color: #fff;
             box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
             transition: all 250ms ease-in-out;
+            z-index: -1;
           }
           :global(.last-request-panel .rs-control-label) {
             margin-left: 40px;

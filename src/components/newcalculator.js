@@ -1,6 +1,5 @@
 import React from 'react'
-import { Form, Radio, RadioGroup, Panel, Toggle, FormGroup, InputNumber } from 'rsuite'
-import 'react-tabs/style/react-tabs.css'
+import { Form, Radio, RadioGroup, Panel, FormGroup, InputNumber } from 'rsuite'
 
 export default class Calculator extends React.Component {
   constructor (props) {
@@ -91,7 +90,7 @@ export default class Calculator extends React.Component {
                   </span>
                 )}
               </FormGroup>
-            ) }
+            )}
           </Form>
         </Panel>
         <style jsx>{`
@@ -99,22 +98,23 @@ export default class Calculator extends React.Component {
             background-color: #fff;
             border-radius: 10px;
             padding: 20px;
-            margin-left: 30px;
+            margin-left: 10px;
+            margin-right: 10px;
           }
           :global(.calc-radio-item) {
             padding: 5px;
           }
           :global(.calc-input) {
-            width: 140px !important;
+            width: 170px !important;
             margin-top: 15px;
           }
           :global(.calc-panel-body  .rs-panel-body) {
             padding: 0 !important;
           }
-          :global(.rs-radio-group-picker .rs-radio-checker > label) {
+          :global(.calc-wrapper .rs-radio-group-picker .rs-radio-checker > label) {
             padding: 4px !important;
           }
-          :global(.rs-radio-group-picker .rs-radio-inline) {
+          :global(.calc-wrapper .rs-radio-group-picker .rs-radio-inline) {
             margin-left: 0 !important;
           }
           .days-available {

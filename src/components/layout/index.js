@@ -189,16 +189,19 @@ class Layout extends React.Component {
             -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0);
             border-radius: 10px;
             background-color: rgba(0,0,0,0);
+            z-index: 100;
           }
           :global(::-webkit-scrollbar) {
             width: 8px;
             height: 8px;
             background-color: transparent;
+            z-index: 100;
           }
           :global(::-webkit-scrollbar-thumb) {
             border-radius: 10px;
             -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.2);
             background-color: rgba(0,0,0,0.4);
+            z-index: 100;
           }
           :global(.rs-notification-content) {
             display: flex;

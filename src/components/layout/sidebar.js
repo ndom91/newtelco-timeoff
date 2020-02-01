@@ -115,6 +115,15 @@ class SidebarNT extends React.Component {
       })
   }
 
+  pageActive = (path) => {
+    if (typeof window !== 'undefined') {
+      if (window.location !== 'undefined') {
+        console.log(path, Router.pathname)
+        if (path === Router.pathname) return true
+      }
+    }
+  }
+
   render () {
     const {
       openHelpModal,
@@ -159,17 +168,17 @@ class SidebarNT extends React.Component {
           <Sidenav.Body>
             <Nav>
               <Link passHref href='/'>
-                <Nav.Item eventKey='1' active={typeof window !== 'undefined' && Router.pathname === '/'} icon={<Icon icon='area-chart' />}>
+                <Nav.Item eventKey='1' active={this.pageActive('/')} icon={<Icon icon='area-chart' />}>
                       Dashboard
                 </Nav.Item>
               </Link>
               <Link passHref href='/new'>
-                <Nav.Item eventKey='3' active={typeof window !== 'undefined' && Router.pathname === '/new'} icon={<Icon icon='plus-square' />}>
+                <Nav.Item eventKey='3' active={this.pageActive('/new')} icon={<Icon icon='plus-square' />}>
                       New Request
                 </Nav.Item>
               </Link>
               <Link passHref href='/user'>
-                <Nav.Item eventKey='2' active={typeof window !== 'undefined' && Router.pathname === '/user'} icon={<Icon icon='user' />}>
+                <Nav.Item eventKey='2' active={this.pageActive('/user')} icon={<Icon icon='user' />}>
                   {this.props.user.substr(0, this.props.user.indexOf('@'))}
                 </Nav.Item>
               </Link>
@@ -184,7 +193,7 @@ class SidebarNT extends React.Component {
                 <Link passHref href='/team/dashboard'>
                   <Dropdown.Item
                     eventKey='4-1'
-                    active={typeof window !== 'undefined' && Router.pathname === '/team/dashboard'}
+                    active={this.pageActive('/team/dashboard')}
                   >
                         Dashboard
                   </Dropdown.Item>
