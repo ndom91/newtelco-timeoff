@@ -11,11 +11,9 @@ import Calculator from '../components/newcalculator'
 import { Tooltip } from 'react-tippy'
 import 'react-tippy/dist/tippy.css'
 import UploadFile from '../components/uploadfile'
-
 import { InView } from 'react-intersection-observer'
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import uuid from 'v4-uuid'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCalendarAlt,
   faUser,
@@ -32,6 +30,7 @@ import {
   FormControl,
   DateRangePicker,
   Input,
+  InputNumber,
   Button,
   Radio,
   RadioGroup,
@@ -90,7 +89,7 @@ class Wrapper extends React.Component {
       openConfirmModal: false,
       confirmText: '',
       successfullySent: false,
-      sideBar: 60,
+      sideBar: 20,
       calcSideBar: -30,
       uploading: false,
       loaded: 0,
@@ -164,7 +163,8 @@ class Wrapper extends React.Component {
           requested: data.lastRequest[0].beantragt,
           remaining: data.lastRequest[0].resturlaubJAHR,
           from: moment(data.lastRequest[0].fromDate).format('DD.MM.YYYY'),
-          to: moment(data.lastRequest[0].toDate).format('DD.MM.YYYY')
+          to: moment(data.lastRequest[0].toDate).format('DD.MM.YYYY'),
+          submitted: moment(data.lastRequest[0].submitted_datetime).format('DD.MM.YYYY HH:mm')
         }
         this.setState({
           lastRequest: newRequest
@@ -437,13 +437,13 @@ class Wrapper extends React.Component {
       sideBar
     } = this.state
 
-    if (sideBar === 60) {
+    if (sideBar === 20) {
       this.setState({
-        sideBar: 230
+        sideBar: 260
       })
     } else {
       this.setState({
-        sideBar: 60
+        sideBar: 20
       })
     }
   }
@@ -503,8 +503,7 @@ class Wrapper extends React.Component {
               <CSSTransition
                 in={vaca.type !== 'sick'}
                 timeout={1000}
-                classNames='panel'
-                unmountOnExit
+                classNames='step'
               >
                 <Steps.Item title='History' description='Requests' />
               </CSSTransition>
@@ -570,29 +569,29 @@ class Wrapper extends React.Component {
                               </h4>
                             }
                           >
-                            <FormGroup>
+                            <FormGroup className='history-input-wrapper'>
                               <ControlLabel>Days from Last Year</ControlLabel>
-                              <FormControl name='daysLastYear' inputMode='numeric' onChange={this.handleLastYearChange} value={vaca.lastYear} />
+                              <InputNumber min={0} size='lg' postfix='days' value={vaca.lastYear} onChange={this.handleLastYearChange} />
                               <HelpBlock tooltip>Days which you have transfered with you from last year</HelpBlock>
                             </FormGroup>
-                            <FormGroup>
+                            <FormGroup className='history-input-wrapper'>
                               <ControlLabel>Days from this Year</ControlLabel>
-                              <FormControl name='daysThisYear' inputMode='numeric' onChange={this.handleThisYearChange} value={vaca.thisYear} />
+                              <InputNumber min={0} size='lg' postfix='days' name='daysThisYear' onChange={this.handleThisYearChange} value={vaca.thisYear} />
                               <HelpBlock tooltip>Days which you have earned this year</HelpBlock>
                             </FormGroup>
-                            <FormGroup>
+                            <FormGroup className='history-input-wrapper'>
                               <ControlLabel>Total Days Available</ControlLabel>
-                              <FormControl name='totalDaysAvailable' inputMode='numeric' onChange={this.handleTotalAvailableChange} value={vaca.total} />
+                              <InputNumber min={0} size='lg' postfix='days' name='totalDaysAvailable' onChange={this.handleTotalAvailableChange} value={vaca.total} />
                               <HelpBlock tooltip>The sum of the last two fields</HelpBlock>
                             </FormGroup>
-                            <FormGroup>
+                            <FormGroup className='history-input-wrapper'>
                               <ControlLabel>Requested Days</ControlLabel>
-                              <FormControl name='requestedDays' inputMode='numeric' onChange={this.handleRequestedChange} value={vaca.requested} />
+                              <InputNumber min={0} size='lg' postfix='days' name='requestedDays' onChange={this.handleRequestedChange} value={vaca.requested} />
                               <HelpBlock tooltip>Number of day(s) you need off. <br /> Half days = '0.5'</HelpBlock>
                             </FormGroup>
-                            <FormGroup>
-                              <ControlLabel>Days Remaining this Year</ControlLabel>
-                              <FormControl name='remainingDays' inputMode='numeric' onChange={this.handleRemainingChange} value={vaca.remaining} />
+                            <FormGroup className='history-input-wrapper'>
+                              <ControlLabel>Days Remaining</ControlLabel>
+                              <InputNumber min={0} size='lg' postfix='days' name='remainingDays' onChange={this.handleRemainingChange} value={vaca.remaining} />
                               <HelpBlock tooltip>Number of remaining days after subtracting requested from total available</HelpBlock>
                             </FormGroup>
                           </Panel>
@@ -677,6 +676,10 @@ class Wrapper extends React.Component {
           <div className='last-request-sidebar'>
             <Panel className='last-request-panel' header='Last Request' style={{ boxShadow: 'none' }}>
               <FormGroup>
+                <ControlLabel>Submitted</ControlLabel>
+                <Input disabled value={lastRequest.submitted} />
+              </FormGroup>
+              <FormGroup>
                 <ControlLabel>Days from Last Year</ControlLabel>
                 <Input disabled value={lastRequest.lastYear} />
               </FormGroup>
@@ -701,12 +704,12 @@ class Wrapper extends React.Component {
                 <Input disabled value={lastRequest.from} />
               </FormGroup>
               <FormGroup>
-                <ControlLabel>To</ControlLabel>
+                <ControlLabel style={{ marginRight: '20px' }}>To</ControlLabel>
                 <Input disabled value={lastRequest.to} />
               </FormGroup>
             </Panel>
             <div className='sidebar-button' onClick={this.showLastRequestSidebar}>
-              <div style={{ marginLeft: '10px', right: '10px', top: '285px', position: 'absolute', color: 'secondary' }}>
+              <div style={{ marginLeft: '10px', right: '10px', top: '325px', position: 'absolute', color: 'secondary' }}>
                 <Tooltip
                   title='View Last Request Details'
                   trigger='mouseenter'
@@ -715,7 +718,7 @@ class Wrapper extends React.Component {
                   position='right'
                   sticky
                 >
-                  <FontAwesomeIcon icon={sideBar === 60 ? faAngleRight : faAngleLeft} width='2em' />
+                  <FontAwesomeIcon icon={sideBar === 20 ? faAngleRight : faAngleLeft} width='2em' />
                 </Tooltip>
               </div>
             </div>
@@ -768,8 +771,8 @@ class Wrapper extends React.Component {
             position: absolute;
             left: ${this.state.sideBar}px;
             top: 200px;
-            height: 660px;
-            width: 250px;
+            height: 740px;
+            width: 300px;
             border-radius: 10px;
             background-color: #fff;
             box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
@@ -778,7 +781,7 @@ class Wrapper extends React.Component {
           .calc-sidebar {
             position: absolute;
             right: ${this.state.calcSideBar}px;
-            top: 200px;
+            top: 100px;
             height: 280px;
             width: 250px;
             border-radius: 10px;
@@ -786,6 +789,9 @@ class Wrapper extends React.Component {
             box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
             transition: all 250ms ease-in-out;
             z-index: -1;
+          }
+          :global(.history-input-wrapper) {
+            display: flex;
           }
           :global(.steps-wrapper) {
             position: absolute;
@@ -820,17 +826,17 @@ class Wrapper extends React.Component {
             width: 30%;
             position: absolute;
           }
+          :global(.sidebar-button:hover) {
+            cursor: pointer;
+          }
           :global(.panel-enter) {
             opacity: 0;
             height: 0;
           }
-          :global(.sidebar-button:hover) {
-            cursor: pointer;
-          }
           :global(.panel-enter-active) {
             opacity: 1;
             height: 622px;
-            transition: all 500ms;
+            transition: opacity 500ms, height 500ms;
           }
           :global(.panel-exit) {
             opacity: 1;
@@ -839,7 +845,21 @@ class Wrapper extends React.Component {
           :global(.panel-exit-active) {
             opacity: 0;
             height: 0px;
-            transition: all 500ms;
+            transition: opacity 500ms, height 500ms;
+          }
+          :global(.step-enter) {
+            opacity: 0;
+          }
+          :global(.step-enter-active) {
+            opacity: 1;
+            transition: opacity 500ms;
+          }
+          :global(.step-exit) {
+            opacity: 1;
+          }
+          :global(.step-exit-active) {
+            opacity: 0;
+            transition: opacity 500ms;
           }
           :global(.calc-enter) {
             opacity: 0;
@@ -849,7 +869,7 @@ class Wrapper extends React.Component {
           :global(.calc-enter-active) {
             opacity: 1;
             width: 400px;
-            transition: all 500ms;
+            transition: opacity 500ms, width 500ms;
           }
           :global(.calc-exit) {
             opacity: 1;
@@ -858,7 +878,7 @@ class Wrapper extends React.Component {
           :global(.calc-exit-active) {
             opacity: 0;
             width: 0;
-            transition: all 500ms;
+            transition: opacity 500ms, width 500ms;
           }
           :global(.section-header-hr.end) {
             right: 0;

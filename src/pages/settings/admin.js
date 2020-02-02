@@ -10,6 +10,7 @@ import 'ag-grid-community/dist/styles/ag-grid.css'
 import 'ag-grid-community/dist/styles/ag-theme-material.css'
 import DateField from '../../components/aggrid/date'
 import DateTimeField from '../../components/aggrid/datetime'
+import Uppercase from '../../components/aggrid/uppercase'
 import DateTimeFieldApproval from '../../components/aggrid/datetimeapproval'
 import ApprovedBtn from '../../components/aggrid/approvedbtn'
 import ApprovedField from '../../components/aggrid/approved'
@@ -20,6 +21,8 @@ import {
   Header,
   Content,
   Button,
+  IconButton,
+  Icon,
   ButtonGroup,
   ButtonToolbar,
   Notification,
@@ -55,7 +58,6 @@ class Wrapper extends React.Component {
       }
     }
     const host = req ? req.headers['x-forwarded-host'] : location.host
-    console.log(host)
     const protocol = typeof window === 'undefined' ? 'http:' : window.location.protocol
     const pageRequest = `${protocol}//${host || 'localhost:3000'}/api/user/list`
     const userRequest = await fetch(pageRequest)
@@ -77,6 +79,7 @@ class Wrapper extends React.Component {
       rowData: props.users.userList,
       openManagerEditModal: false,
       openManagerAddModal: false,
+      admin: props.admin,
       allUsers: [],
       allRowData: [],
       managerRowData: [],
@@ -171,6 +174,7 @@ class Wrapper extends React.Component {
           }, {
             headerName: 'Type',
             field: 'type',
+            cellRenderer: 'uppercase',
             width: 130
           }, {
             headerName: 'Submitted',
@@ -181,6 +185,10 @@ class Wrapper extends React.Component {
             headerName: 'Approval Date/Time',
             field: 'approval_datetime',
             cellRenderer: 'dateTimeShortApproval',
+            width: 160
+          }, {
+            headerName: 'Manager',
+            field: 'manager',
             width: 160
           }, {
             headerName: 'Approved',
@@ -201,7 +209,8 @@ class Wrapper extends React.Component {
           dateTimeShort: DateTimeField,
           dateTimeShortApproval: DateTimeFieldApproval,
           dateShort: DateField,
-          approvedbtn: ApprovedBtn
+          approvedbtn: ApprovedBtn,
+          uppercase: Uppercase
         },
         rowSelection: 'multiple',
         paginationPageSize: 10,
@@ -286,6 +295,7 @@ class Wrapper extends React.Component {
             width: 200
           }, {
             headerName: 'Type',
+            cellRenderer: 'uppercase',
             field: 'type',
             width: 130
           }, {
@@ -298,6 +308,10 @@ class Wrapper extends React.Component {
             headerName: 'Approval Date/Time',
             field: 'approval_datetime',
             cellRenderer: 'dateTimeShort',
+            width: 160
+          }, {
+            headerName: 'Manager',
+            field: 'manager',
             width: 160
           }, {
             headerName: 'Approved',
@@ -317,6 +331,7 @@ class Wrapper extends React.Component {
         frameworkComponents: {
           dateTimeShort: DateTimeField,
           dateShort: DateField,
+          uppercase: Uppercase,
           approved: ApprovedField
         },
         rowSelection: 'multiple',
@@ -388,98 +403,15 @@ class Wrapper extends React.Component {
     }
   }
 
-  notifyInfo = (header, text) => {
-    Notification.info({
-      title: header,
-      duration: 2000,
-      description: <div className='notify-body'>{text}</div>
-    })
-  }
-
-  notifyWarn = (header, text) => {
-    Notification.warning({
-      title: header,
-      duration: 2000,
-      description: <div className='notify-body'>{text}</div>
-    })
-  }
-
-  handleAdGroupSync = () => {
-    const host = window.location.host
-    const protocol = window.location.protocol
-    const adRequestUrl = `${protocol}//${host}/api/ad`
-    fetch(adRequestUrl)
-      .then(res => res.json())
-      .then(data => {
-        const adUsers = []
-        data.users.map((user, index) => {
-          const group = user.dn.split(',')[1]
-          const groupName = group.substr(3, group.length)
-          adUsers.push({ id: index, fname: user.givenName, lname: user.sn, email: user.mail, team: groupName })
-        })
-        const dbUsers = this.state.rowData
-        let updateCount = 0
-        let addCount = 0
-        if (dbUsers > 0 && dbUsers.length !== adUsers.length) {
-          dbUsers.forEach(user => {
-            const dbUser = dbUsers.filter(duser => duser.email === user.email)
-            if (user.fname !== dbUser.fname) user.update = 1 && updateCount++
-            if (user.lname !== dbUser.lname) user.update = 1 && updateCount++
-          })
-        } else {
-          addCount = adUsers.length - dbUsers.length
-        }
-        if (addCount > 0 || updateCount > 0) {
-          this.setState({
-            addCount: addCount,
-            updateCount: updateCount,
-            adUsers: adUsers,
-            showSyncModal: true,
-            rowData: adUsers
-          })
-        } else {
-          Alert.success('User DB is up-to-date with your LDAP Users')
-        }
-      })
-      .catch(err => console.error(err))
-  }
-
-  handleConfirmAdSync = () => {
-    const {
-      adUsers
-    } = this.state
-
-    if (adUsers.length > 0) {
-      const host = window.location.host
-      const protocol = window.location.protocol
-      const adRequestUrl = `${protocol}//${host}/api/user/add?u=${JSON.stringify(adUsers)}`
-      fetch(adRequestUrl)
-        .then(res => res.json())
-        .then(data => {
-          console.log(data)
-          if (data.status === 200) {
-            this.setState({
-              showSyncModal: false
-            })
-            Alert.success(`Successfully added ${adUsers.length} users`, 5000)
-          } else {
-            this.setState({
-              showSyncModal: false
-            })
-            Alert.warn(`Error adding ${adUsers.length} - ${data.error}`)
-          }
-        })
-        .catch(err => console.error(err))
-    }
-  }
-
   componentDidMount () {
     const selectUserList = []
+    const userAdmin = JSON.parse(window.localStorage.getItem('mA'))
     this.props.users.userList.forEach(user => {
       selectUserList.push({ value: user.email, label: `${user.fname} ${user.lname}` })
     })
     this.setState({
-      allUsers: selectUserList
+      allUsers: selectUserList,
+      admin: userAdmin
     })
     const host = window.location.host
     const protocol = window.location.protocol
@@ -505,6 +437,114 @@ class Wrapper extends React.Component {
         }
       })
       .catch(err => console.error(err))
+  }
+
+  notifyInfo = (header, text) => {
+    Notification.info({
+      title: header,
+      duration: 2000,
+      description: <div className='notify-body'>{text}</div>
+    })
+  }
+
+  notifyWarn = (header, text) => {
+    Notification.warning({
+      title: header,
+      duration: 2000,
+      description: <div className='notify-body'>{text}</div>
+    })
+  }
+
+  handleAdGroupSync = () => {
+    const host = window.location.host
+    const protocol = window.location.protocol
+    fetch(`${protocol}//${host}/api/ad`)
+      .then(res => res.json())
+      .then(data => {
+        const adUsers = []
+        data.users.map((user, index) => {
+          const group = user.dn.split(',')[1]
+          const groupName = group.substr(3, group.length)
+          adUsers.push({ id: index, fname: user.givenName, lname: user.sn, email: user.mail, team: groupName })
+        })
+        const dbUsers = this.state.rowData
+        let updateCount = 0
+        let addCount = 0
+        let newUsers = []
+        // check for updates to users (fname, lname)
+        if (dbUsers.length > 0) {
+          dbUsers.forEach(user => {
+            let updateUser = 0
+            const adUser = adUsers.filter(aduser => aduser.email === user.email)
+            if (adUser.length > 0) {
+              if (user.fname !== adUser[0].fname) user.update = 1 && updateUser++
+              if (user.lname !== adUser[0].lname) user.update = 1 && updateUser++
+              if (updateUser !== 0) updateCount++
+            }
+          })
+        }
+        // check if there are new users in AD not in DB
+        if (dbUsers.length !== adUsers.length) {
+          // filter out users without email
+          const usersWithEmail = adUsers.filter(user => user.email !== undefined)
+          newUsers = usersWithEmail.filter(({ email: id1 }) => !dbUsers.some(({ email: id2 }) => id2 === id1))
+          addCount = newUsers.length
+        }
+        if (addCount > 0 || updateCount > 0) {
+          this.setState({
+            addCount: addCount,
+            updateCount: updateCount,
+            newUsersToDb: newUsers,
+            adUsers: adUsers,
+            showSyncModal: true
+            // rowData: adUsers
+          })
+        } else {
+          Alert.success('User DB is up-to-date with your LDAP Users')
+        }
+      })
+      .catch(err => console.error(err))
+  }
+
+  handleConfirmAdSync = () => {
+    const {
+      newUsersToDb
+    } = this.state
+
+    if (newUsersToDb.length > 0) {
+      const host = window.location.host
+      const protocol = window.location.protocol
+      fetch(`${protocol}//${host}/api/user/add`, {
+        method: 'POST',
+        body: JSON.stringify({
+          users: newUsersToDb
+        }),
+        headers: {
+          'X-CSRF-TOKEN': this.props.session.csrfToken
+        }
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 200) {
+            const users = this.state.rowData
+            newUsersToDb.forEach(user => {
+              users.push(user)
+            })
+            this.setState({
+              rowData: users,
+              showSyncModal: false
+            })
+            if (this.gridApi) { this.gridApi.refreshCells() }
+            Alert.success(`Successfully added ${newUsersToDb.length} users`, 5000)
+          } else {
+            this.setState({
+              showSyncModal: false
+            })
+            Alert.warn(`Error adding ${newUsersToDb.length} - ${data.error}`)
+          }
+        })
+        .catch(err => console.error(err))
+    }
   }
 
   handleSyncModalClose = () => {
@@ -660,7 +700,6 @@ class Wrapper extends React.Component {
   }
 
   handleManagerTeamChange = (value) => {
-    console.log(value)
     this.setState({
       activeManager: {
         ...this.state.activeManager,
@@ -752,7 +791,6 @@ class Wrapper extends React.Component {
     })
       .then(resp => resp.json())
       .then(data => {
-        console.log(data)
         if (data.userUpdate.affectedRows === 1) {
           this.notifyInfo('User Info Saved')
         } else {
@@ -781,7 +819,7 @@ class Wrapper extends React.Component {
       teamSelectData
     } = this.state
 
-    if (this.props.session.user && this.props.admin) {
+    if (this.props.session.user && this.state.admin) {
       return (
         <Layout user={this.props.session.user.email} token={this.props.session.csrfToken}>
           <Container className='settings-admin-container'>
@@ -797,7 +835,9 @@ class Wrapper extends React.Component {
                 >
                   <Header className='user-content-header'>
                     <h4>Managers</h4>
-                    <Button appearance='ghost' onClick={this.toggleManagerAddModal}>Add</Button>
+                    <IconButton icon={<Icon icon='plus' />} appearance='ghost' onClick={this.toggleManagerAddModal}>
+                      Add
+                    </IconButton>
                   </Header>
                   <Table
                     height={400}
@@ -859,7 +899,9 @@ class Wrapper extends React.Component {
                 >
                   <Header className='user-content-header'>
                     <h4>Users</h4>
-                    <Button appearance='ghost' onClick={this.handleAdGroupSync}>Sync Domain Users</Button>
+                    <IconButton icon={<Icon icon='refresh' />} appearance='ghost' onClick={this.handleAdGroupSync}>
+                      Sync Domain Users
+                    </IconButton>
                   </Header>
                   <Content className='user-grid-wrapper'>
                     <div className='ag-theme-material user-grid manager-user-wrapper'>
@@ -886,16 +928,18 @@ class Wrapper extends React.Component {
               <Header className='user-content-header'>
                 <span className='section-header'>
                   <h4>Person</h4>
+                  <SelectPicker
+                    onChange={this.handlePersonalSelectChange}
+                    data={allUsers}
+                    placeholder='Please Select a User'
+                    style={{ width: '300px', marginLeft: '20px' }}
+                  />
                 </span>
-                <Button appearance='ghost' onClick={this.handlePersonalGridExport}>Export</Button>
+                <IconButton icon={<Icon icon='export' />} appearance='ghost' onClick={this.handlePersonalGridExport}>
+                  Export
+                </IconButton>
               </Header>
               <Content className='user-grid-wrapper'>
-                <SelectPicker
-                  onChange={this.handlePersonalSelectChange}
-                  data={allUsers}
-                  placeholder='Please Select a User'
-                  style={{ width: '300px' }}
-                />
                 <div className='ag-theme-material user-grid person-grid'>
                   <AgGridReact
                     gridOptions={personalGridOptions}
@@ -912,7 +956,9 @@ class Wrapper extends React.Component {
                 <span className='section-header'>
                   <h4>All Colleagues</h4>
                 </span>
-                <Button appearance='ghost' onClick={this.handleAllGridExport}>Export</Button>
+                <IconButton icon={<Icon icon='export' />} appearance='ghost' onClick={this.handleAllGridExport}>
+                  Export
+                </IconButton>
               </Header>
               <Content className='user-grid-wrapper'>
                 <div className='ag-theme-material user-grid'>
@@ -927,111 +973,117 @@ class Wrapper extends React.Component {
               </Content>
             </Panel>
           </Container>
-          <Modal show={showSyncModal} onHide={this.handleSyncModalClose}>
-            <Modal.Header>
-              <Modal.Title>LDAP User Sync</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <p>
-                You have <b>{updateCount}</b> Users which need to be updated and <b>{addCount}</b> users which need to be added.
-              </p>
-              <p>
-                Would you like to proceed?
-              </p>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button onClick={this.handleConfirmAdSync} appearance='primary'>
-                Submit
-              </Button>
-              <Button onClick={this.handleSyncModalClose} appearance='subtle'>
-                Cancel
-              </Button>
-            </Modal.Footer>
-          </Modal>
-          <Modal
-            show={openManagerEditModal}
-            onHide={this.toggleManagerEditModal}
-            style={{
-              width: '350px'
-            }}
-          >
-            <Modal.Header>
-              <Modal.Title>Edit Manager</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Form>
-                <FormGroup>
-                  <ControlLabel>Name</ControlLabel>
-                  <FormControl onChange={this.handleManagerNameChange} name='name' value={activeManager.name} />
-                </FormGroup>
-                <FormGroup>
-                  <ControlLabel>Email</ControlLabel>
-                  <FormControl onChange={this.handleManagerEmailChange} name='email' type='email' value={activeManager.email} />
-                </FormGroup>
-                <FormGroup>
-                  <ControlLabel>Team</ControlLabel>
-                  {/* <FormControl onChange={this.handleManagerTeamChange} name='team' value={activeManager.team} /> */}
-                  <SelectPicker
-                    onChange={this.handleManagerTeamChange}
-                    value={activeManager.team}
-                    style={{ width: '100%' }}
-                    searchable={false}
-                    data={teamSelectData}
-                  />
-                </FormGroup>
-              </Form>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button onClick={this.handleConfirmManagerSave} appearance='primary'>
-                Save
-              </Button>
-              <Button onClick={this.toggleManagerEditModal} appearance='subtle'>
-                Cancel
-              </Button>
-            </Modal.Footer>
-          </Modal>
-          <Modal
-            show={openManagerAddModal}
-            onHide={this.toggleManagerAddModal}
-            style={{
-              width: '350px'
-            }}
-          >
-            <Modal.Header>
-              <Modal.Title>Add Manager</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Form>
-                <FormGroup>
-                  <ControlLabel>Name</ControlLabel>
-                  <FormControl onChange={this.handleManagerNameChange} name='name' value={activeManager.name} />
-                </FormGroup>
-                <FormGroup>
-                  <ControlLabel>Email</ControlLabel>
-                  <FormControl onChange={this.handleManagerEmailChange} name='email' type='email' value={activeManager.email} />
-                </FormGroup>
-                <FormGroup>
-                  <ControlLabel>Team</ControlLabel>
-                  {/* <FormControl onChange={this.handleManagerTeamChange} name='team' value={activeManager.team} /> */}
-                  <SelectPicker
-                    onChange={this.handleManagerTeamChange}
-                    value={activeManager.team}
-                    style={{ width: '100%' }}
-                    searchable={false}
-                    data={teamSelectData}
-                  />
-                </FormGroup>
-              </Form>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button onClick={this.handleConfirmAddManager} appearance='primary'>
-                Save
-              </Button>
-              <Button onClick={this.toggleManagerAddModal} appearance='subtle'>
-                Cancel
-              </Button>
-            </Modal.Footer>
-          </Modal>
+          {showSyncModal && (
+            <Modal show={showSyncModal} onHide={this.handleSyncModalClose}>
+              <Modal.Header>
+                <Modal.Title>LDAP User Sync</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <p>
+                  You have <b>{updateCount}</b> Users which need to be updated and <b>{addCount}</b> users which need to be added.
+                </p>
+                <p>
+                  Would you like to proceed?
+                </p>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button onClick={this.handleConfirmAdSync} appearance='primary'>
+                  Submit
+                </Button>
+                <Button onClick={this.handleSyncModalClose} appearance='subtle'>
+                  Cancel
+                </Button>
+              </Modal.Footer>
+            </Modal>
+          )}
+          {openManagerEditModal && (
+            <Modal
+              show={openManagerEditModal}
+              onHide={this.toggleManagerEditModal}
+              style={{
+                width: '350px'
+              }}
+            >
+              <Modal.Header>
+                <Modal.Title>Edit Manager</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Form>
+                  <FormGroup>
+                    <ControlLabel>Name</ControlLabel>
+                    <FormControl onChange={this.handleManagerNameChange} name='name' value={activeManager.name} />
+                  </FormGroup>
+                  <FormGroup>
+                    <ControlLabel>Email</ControlLabel>
+                    <FormControl onChange={this.handleManagerEmailChange} name='email' type='email' value={activeManager.email} />
+                  </FormGroup>
+                  <FormGroup>
+                    <ControlLabel>Team</ControlLabel>
+                    {/* <FormControl onChange={this.handleManagerTeamChange} name='team' value={activeManager.team} /> */}
+                    <SelectPicker
+                      onChange={this.handleManagerTeamChange}
+                      value={activeManager.team}
+                      style={{ width: '100%' }}
+                      searchable={false}
+                      data={teamSelectData}
+                    />
+                  </FormGroup>
+                </Form>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button onClick={this.handleConfirmManagerSave} appearance='primary'>
+                  Save
+                </Button>
+                <Button onClick={this.toggleManagerEditModal} appearance='subtle'>
+                  Cancel
+                </Button>
+              </Modal.Footer>
+            </Modal>
+          )}
+          {openManagerAddModal && (
+            <Modal
+              show={openManagerAddModal}
+              onHide={this.toggleManagerAddModal}
+              style={{
+                width: '350px'
+              }}
+            >
+              <Modal.Header>
+                <Modal.Title>Add Manager</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Form>
+                  <FormGroup>
+                    <ControlLabel>Name</ControlLabel>
+                    <FormControl onChange={this.handleManagerNameChange} name='name' value={activeManager.name} />
+                  </FormGroup>
+                  <FormGroup>
+                    <ControlLabel>Email</ControlLabel>
+                    <FormControl onChange={this.handleManagerEmailChange} name='email' type='email' value={activeManager.email} />
+                  </FormGroup>
+                  <FormGroup>
+                    <ControlLabel>Team</ControlLabel>
+                    {/* <FormControl onChange={this.handleManagerTeamChange} name='team' value={activeManager.team} /> */}
+                    <SelectPicker
+                      onChange={this.handleManagerTeamChange}
+                      value={activeManager.team}
+                      style={{ width: '100%' }}
+                      searchable={false}
+                      data={teamSelectData}
+                    />
+                  </FormGroup>
+                </Form>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button onClick={this.handleConfirmAddManager} appearance='primary'>
+                  Save
+                </Button>
+                <Button onClick={this.toggleManagerAddModal} appearance='subtle'>
+                  Cancel
+                </Button>
+              </Modal.Footer>
+            </Modal>
+          )}
           <style jsx>{`
             :global(.settings-admin-container > .rs-panel) {
               margin: 10px;
@@ -1091,6 +1143,8 @@ class Wrapper extends React.Component {
             }
             :global(.section-header) {
               font-size: 1.3rem;
+              display: flex;
+              margin-bottom: 20px;
             }
             :global(.rs-table) {
               max-width: 100%;

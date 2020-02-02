@@ -69,7 +69,6 @@ class SidebarNT extends React.Component {
   componentDidMount () {
     const protocol = window.location.protocol
     const host = window.location.host
-    console.log(Router.pathname)
     const companyInfo = JSON.parse(window.localStorage.getItem('company'))
     const userTeam = JSON.parse(window.localStorage.getItem('userTeam'))
     if (companyInfo) {

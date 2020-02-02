@@ -2,15 +2,16 @@ const db = require('../../../../lib/db')
 const escape = require('sql-template-strings')
 
 module.exports = async (req, res) => {
-  const users = JSON.parse(decodeURIComponent(req.query.u))
+  const body = JSON.parse(req.body)
+  const users = body.users
   const userCount = users.length
   let userSuccessCount = 0
   let attemptCount = 0
   let lastError = ''
   users.forEach(async user => {
     const insertQuery = await db.query(escape`
-      INSERT INTO users (fname, lname, email, team) VALUES (${user.fname}, ${user.lname}, ${user.email}, ${user.team})
-    `)
+        INSERT INTO users (fname, lname, email, team) VALUES (${user.fname}, ${user.lname}, ${user.email}, ${user.team})
+      `)
     if (insertQuery.affectedRows === 1) {
       attemptCount++
       userSuccessCount++
