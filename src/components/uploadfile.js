@@ -1,5 +1,6 @@
 import React from 'react'
 import Dropzone from './dropzone'
+import fetch from 'isomorphic-unfetch'
 import { Progress } from 'rsuite'
 const { Line } = Progress
 
@@ -63,6 +64,8 @@ export default class UploadFile extends React.Component {
         const copy = { ...this.state.uploadProgress }
         copy[file.name] = { state: 'done', percentage: 100 }
         this.setState({ uploadProgress: copy })
+        console.log('rR', req.response)
+        console.log('e', event)
         resolve(req.response)
       })
 
@@ -72,6 +75,29 @@ export default class UploadFile extends React.Component {
         this.setState({ uploadProgress: copy })
         reject(req.response)
       })
+
+      req.onreadystatechange = function (e) {
+        if (req.readyState === 4 && req.status === 200) {
+        // File uploaded successfully
+          var response = JSON.parse(req.responseText)
+          console.log(response)
+          fetch('/api/mail/file', {
+            Method: 'POST',
+            body: {
+              filename: response.original_filename,
+              url: response.url
+            },
+            headers: {
+              'X-CSRF-TOKEN': this.props.csrfToken
+            }
+          })
+            .then(resp => resp.json())
+            .then(data => {
+              console.log(data)
+            })
+            .catch(err => console.error(err))
+        }
+      }
 
       const formData = new FormData()
       formData.append('file', file)
@@ -90,7 +116,9 @@ export default class UploadFile extends React.Component {
   onFilesAdded = (files) => {
     this.setState(prevState => ({
       files: prevState.files.concat(files)
-    }))
+    }), () => {
+      this.uploadFiles()
+    })
   }
 
   renderActions = () => {
@@ -135,7 +163,7 @@ export default class UploadFile extends React.Component {
             })}
           </div>
         </div>
-        <div className='Actions'>{this.renderActions()}</div>
+        {/* <div className='Actions'>{this.renderActions()}</div> */}
         <style jsx>{`
           .Upload {
             display: flex;
@@ -216,7 +244,7 @@ export default class UploadFile extends React.Component {
             flex: 1;
             flex-direction: column;
             justify-content: space-between;
-            height: 50px;
+            height: 80px;
             padding: 8px;
             overflow: visible;
             box-sizing: border-box;

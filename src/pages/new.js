@@ -311,7 +311,6 @@ class Wrapper extends React.Component {
         manager: ''
       }
     })
-    this.uploadRef.current.files[0].remove()
   }
 
   toggleSubmitModal = () => {
