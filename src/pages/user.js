@@ -162,6 +162,10 @@ class Wrapper extends React.Component {
             field: 'note',
             width: 160
           }, {
+            headerName: 'Manager',
+            field: 'manager',
+            width: 160
+          }, {
             headerName: 'Approval Date/Time',
             field: 'approval_datetime',
             cellRenderer: 'dateTimeShort',

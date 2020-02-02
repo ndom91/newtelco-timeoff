@@ -36,7 +36,7 @@ const Comment = (props) => {
         {props.data.body}
       </div>
       <div className='comment-actions'>
-        {props.user === props.data.userDetails.email
+        {props.data.userDetails && props.user === props.data.userDetails.email
           ? (
             <Button onClick={() => props.onDelete(props.data.id)} className='comment-del-btn'>
               <FontAwesomeIcon icon={faTrashAlt} />
