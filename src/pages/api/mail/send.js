@@ -3,15 +3,17 @@ import mail from './requestMessage'
 require('dotenv').config({ path: './.env' })
 
 module.exports = async (req, res) => {
-  const to = new Date(req.query.to).toLocaleDateString('de-DE')
-  const from = new Date(req.query.from).toLocaleDateString('de-DE')
-  const manager = req.query.manager
-  const type = req.query.type.charAt(0).toUpperCase() + req.query.type.slice(1)
-  const name = req.query.name
-  const approvalHash = req.query.ah
+  const body = JSON.parse(req.body)
+  const to = new Date(body.to).toLocaleDateString('de-DE')
+  const from = new Date(body.from).toLocaleDateString('de-DE')
+  const manager = body.manager
+  const type = body.type.charAt(0).toUpperCase() + body.type.slice(1)
+  const name = body.name
+  const approvalHash = body.ah
   const dateToday = new Date().toLocaleDateString('de', { year: 'numeric', day: '2-digit', month: '2-digit' })
-  const note = ''
+  const note = body.note
   let mailBody = mail
+  const files = body.files
 
   const sendMail = (manager, mailBody, name) => {
     const nodemailer = require('nodemailer')
@@ -58,11 +60,20 @@ module.exports = async (req, res) => {
 
   mailBody = mailBody.replace('[TYPE]', type)
   mailBody = mailBody.replace('[NAME]', name)
-  mailBody = mailBody.replace('[NOTE]', note)
+  mailBody = mailBody.replace('[NOTE]', `<br><h3>Note:</h3>${note}`)
   mailBody = mailBody.replace('[FROM]', from)
   mailBody = mailBody.replace('[TO]', to)
   mailBody = mailBody.replace('[DATE_TODAY]', dateToday)
   mailBody = mailBody.replace(/SERVER_URL/g, process.env.SERVER_URL)
+  if (files) {
+    let filesHtml = '<h3>Uploaded Files</h3>'
+    files.forEach(file => {
+      filesHtml += `<a target="_blank" href="${file.url}">${file.name}</a><br />`
+    })
+    mailBody = mailBody.replace('[FILES]', filesHtml)
+  } else {
+    mailBody = mailBody.replace('[FILES]', '')
+  }
 
   if (type === 'Sick') {
     fetch(`https://api.crm.newtelco.de/absence/sick?user=${encodeURIComponent(name)}`)
@@ -79,7 +90,6 @@ module.exports = async (req, res) => {
         sickBody = sickBody + '</table>'
         const headerText = 'Please be advised, your colleague has notified you of the following sick days.'
         mailBody = mailBody.replace('[HEADER_TEXT]', headerText)
-
         mailBody = mailBody.replace('[SICKBODY]', sickBody)
         mailBody = mailBody.replace('[APPROVAL_BUTTONS]', '</td><td align="center" style="border-top: 5px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">')
         const sentTo = `${manager}; yo@ndo.dev`

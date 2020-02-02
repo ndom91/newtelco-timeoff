@@ -14,6 +14,8 @@ import { AgGridReact } from 'ag-grid-react'
 import 'ag-grid-community/dist/styles/ag-grid.css'
 import 'ag-grid-community/dist/styles/ag-theme-material.css'
 import { extendMoment } from 'moment-range'
+import UploadFile from '../components/uploadfile'
+import BarLoader from 'react-spinners/ClipLoader'
 import {
   Container,
   Header,
@@ -30,7 +32,9 @@ import {
   FormGroup,
   ControlLabel,
   FormControl,
-  Notification
+  Notification,
+  DatePicker,
+  InputNumber
 } from 'rsuite'
 
 const { Column, HeaderCell, Cell } = Table
@@ -60,8 +64,12 @@ class Wrapper extends React.Component {
 
     this.state = {
       rowData: [],
+      files: [],
+      uploadedFiles: [],
+      loadingFiles: false,
       openConfirmDeleteModal: false,
       openEditModal: false,
+      editAvailable: false,
       gridOptions: {
         defaultColDef: {
           resizable: true,
@@ -147,6 +155,10 @@ class Wrapper extends React.Component {
               height: '100%'
             },
             width: 180
+          }, {
+            headerName: 'Notes',
+            field: 'note',
+            width: 160
           }, {
             headerName: 'Approval Date/Time',
             field: 'approval_datetime',
@@ -257,6 +269,70 @@ class Wrapper extends React.Component {
     }
   }
 
+  handleLastYearChange = (value) => {
+    const editData = this.state.editData
+    editData.lastYear = value
+    this.setState({
+      editData
+    })
+  }
+
+  handleThisYearChange = (value) => {
+    const editData = this.state.editData
+    editData.thisYear = value
+    this.setState({
+      editData
+    })
+  }
+
+  handleTotalAvailableChange = (value) => {
+    const editData = this.state.editData
+    editData.total = value
+    this.setState({
+      editData
+    })
+  }
+
+  handleRequestedChange = (value) => {
+    const editData = this.state.editData
+    editData.requested = value
+    this.setState({
+      editData
+    })
+  }
+
+  handleRemainingChange = (value) => {
+    const editData = this.state.editData
+    editData.remaining = value
+    this.setState({
+      editData
+    })
+  }
+
+  handleNoteChange = (value) => {
+    const editData = this.state.editData
+    editData.note = value
+    this.setState({
+      editData
+    })
+  }
+
+  handleFromDateChange = (value) => {
+    const editData = this.state.editData
+    editData.from = value
+    this.setState({
+      editData
+    })
+  }
+
+  handleToDateChange = (value) => {
+    const editData = this.state.editData
+    editData.to = value
+    this.setState({
+      editData
+    })
+  }
+
   toggleConfirmDeleteModal = () => {
     if (this.gridApi) {
       const selectedRow = this.gridApi.getSelectedRows()
@@ -319,23 +395,109 @@ class Wrapper extends React.Component {
 
   toggleEditModal = () => {
     if (this.gridApi) {
+      const host = window.location.host
+      const protocol = window.location.protocol
       const selectedRow = this.gridApi.getSelectedRows()
+      if (!selectedRow[0]) {
+        this.notifyInfo('Please select a row to edit')
+        return
+      }
       const request = selectedRow[0]
+      this.setState({
+        loadingFiles: true,
+        openEditModal: !this.state.openEditModal,
+        editAvailable: !request.approved == 0
+      })
+      console.log(request)
       const tableData = {
-        from: moment(request.fromDate).format('MM/DD/YYYY'),
-        to: moment(request.toDate).format('MM/DD/YYYY'),
+        from: request.fromDate,
+        to: request.toDate,
         lastYear: request.resturlaubVorjahr,
         thisYear: request.jahresurlaubInsgesamt,
         total: request.restjahresurlaubInsgesamt,
         requested: request.beantragt,
         remaining: request.resturlaubJAHR,
-        id: request.id
+        id: request.id,
+        note: request.note,
+        approved: request.approved
       }
-      this.setState({
-        openEditModal: !this.state.openEditModal,
-        editData: tableData
-      })
+      fetch(`${protocol}//${host}/api/mail/file?id=${request.id}`)
+        .then(data => data.json())
+        .then(data => {
+          let files = []
+          if (data.files[0].files.length !== 0) {
+            files = JSON.parse(data.files[0].files)
+          }
+          this.setState({
+            editData: tableData,
+            files: files,
+            loadingFiles: false
+          })
+        })
+        .catch(err => console.error(err))
     }
+  }
+
+  onFileUploadSuccess = (files) => {
+    const uploadedFiles = [...this.state.uploadedFiles]
+    const existingFiles = [...this.state.files]
+
+    if (Array.isArray(files)) {
+      files.forEach(file => {
+        const newFile = {
+          id: file.public_id,
+          url: file.url,
+          name: file.original_filename
+        }
+        uploadedFiles.push(newFile)
+        existingFiles.push(newFile)
+      })
+    } else {
+      const newFile = {
+        id: files.public_id,
+        url: files.url,
+        name: files.original_filename
+      }
+      uploadedFiles.push(newFile)
+      existingFiles.push(newFile)
+    }
+
+    this.setState({
+      uploadedFiles,
+      files: existingFiles
+    })
+  }
+
+  handleSubmitEdit = () => {
+    const editData = this.state.editData
+    const host = window.location.host
+    const protocol = window.location.protocol
+
+    const to = moment(editData.to)
+    const from = moment(editData.from)
+    const requestedDays = to.diff(from, 'days')
+    console.log(requestedDays)
+
+    if (requestedDays !== editData.requested) {
+      this.notifyWarn('Warning - Daterange no longer equals approved number of days')
+      return
+    }
+
+    fetch(`${protocol}//${host}/api/entires/update`, {
+      method: 'POST',
+      body: JSON.stringify({
+        editData: editData,
+        files: this.state.files
+      }),
+      headers: {
+        'X-CSRF-TOKEN': this.props.session.csrfToken
+      }
+    })
+      .then(data => data.json())
+      .then(data => {
+        console.log(data)
+      })
+      .catch(err => console.error(err))
   }
 
   render () {
@@ -345,7 +507,9 @@ class Wrapper extends React.Component {
       openConfirmDeleteModal,
       confirmDeleteData,
       openEditModal,
-      editData
+      editData,
+      loadingFiles,
+      editAvailable
     } = this.state
 
     if (this.props.session.user) {
@@ -413,11 +577,11 @@ class Wrapper extends React.Component {
                 <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
                   <ButtonToolbar style={{ width: '100%' }}>
                     <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-                      <Button onClick={this.handleSubmitDelete} style={{ width: '33%', fontSize: '16px' }} appearance='primary'>
-                        Confirm
-                      </Button>
                       <Button onClick={this.toggleConfirmDeleteModal} style={{ width: '33%', fontSize: '16px' }} appearance='default'>
                         Cancel
+                      </Button>
+                      <Button onClick={this.handleSubmitDelete} style={{ width: '33%', fontSize: '16px' }} appearance='primary'>
+                        Confirm
                       </Button>
                     </ButtonGroup>
                   </ButtonToolbar>
@@ -425,50 +589,81 @@ class Wrapper extends React.Component {
               </Modal>
             )}
             {openEditModal && (
-              <Modal enforceFocus size='sm' backdrop show={openEditModal} onHide={this.toggleEditModal} style={{ marginTop: '150px' }}>
+              <Modal enforceFocus size='sm' backdrop show={openEditModal} onHide={this.toggleEditModal} style={{ marginTop: '100px' }}>
                 <Modal.Header>
                   <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>Edit Request</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                  <Form layout='horizontal'>
-                    <FormGroup>
-                      <ControlLabel>Days from Last Year</ControlLabel>
-                      <FormControl name='daysLastYear' inputMode='numeric' disabled onChange={this.handleLastYearChange} value={editData.lastYear} />
-                    </FormGroup>
-                    <FormGroup>
-                      <ControlLabel>Days from this Year</ControlLabel>
-                      <FormControl name='daysThisYear' inputMode='numeric' disabled onChange={this.handleThisYearChange} value={editData.thisYear} />
-                    </FormGroup>
-                    <FormGroup>
-                      <ControlLabel>Total Days Available</ControlLabel>
-                      <FormControl name='totalDaysAvailable' inputMode='numeric' disabled onChange={this.handleTotalAvailableChange} value={editData.total} />
-                    </FormGroup>
-                    <FormGroup>
-                      <ControlLabel>Requested Days</ControlLabel>
-                      <FormControl name='requestedDays' inputMode='numeric' disabled onChange={this.handleRequestedChange} value={editData.requested} />
-                    </FormGroup>
-                    <FormGroup>
-                      <ControlLabel>Days Remaining this Year</ControlLabel>
-                      <FormControl name='remainingDays' inputMode='numeric' disabled onChange={this.handleRemainingChange} value={editData.remaining} />
-                    </FormGroup>
-                    <FormGroup>
-                      <ControlLabel>From</ControlLabel>
-                      <FormControl name='from' type='date' onChange={this.handleFromDateChange} value={editData.from} />
-                    </FormGroup>
-                    <FormGroup>
-                      <ControlLabel>To</ControlLabel>
-                      <FormControl name='to' type='date' onChange={this.handleToDateChange} value={editData.to} />
-                    </FormGroup>
-                  </Form>
+                  {loadingFiles ? (
+                    <div className='edit-loader-wrapper'>
+                      <BarLoader width={80} height={3} color='#575757' loading={loadingFiles} />
+                    </div>
+                  ) : (
+                    <Form layout='horizontal'>
+                      <FormGroup>
+                        <ControlLabel>Days from Last Year</ControlLabel>
+                        <InputNumber postfix='days' min={0} name='daysLastYear' inputMode='numeric' disabled={editAvailable} onChange={this.handleLastYearChange} value={editData.lastYear} />
+                      </FormGroup>
+                      <FormGroup>
+                        <ControlLabel>Days from this Year</ControlLabel>
+                        <InputNumber postfix='days' min={0} name='daysThisYear' inputMode='numeric' disabled={editAvailable} onChange={this.handleThisYearChange} value={editData.thisYear} />
+                      </FormGroup>
+                      <FormGroup>
+                        <ControlLabel>Total Days Available</ControlLabel>
+                        <InputNumber postfix='days' min={0} name='totalDaysAvailable' inputMode='numeric' disabled={editAvailable} onChange={this.handleTotalAvailableChange} value={editData.total} />
+                      </FormGroup>
+                      <FormGroup>
+                        <ControlLabel>Requested Days</ControlLabel>
+                        <InputNumber postfix='days' min={0} name='requestedDays' inputMode='numeric' disabled={editAvailable} onChange={this.handleRequestedChange} value={editData.requested} />
+                      </FormGroup>
+                      <FormGroup>
+                        <ControlLabel>Days Remaining this Year</ControlLabel>
+                        <InputNumber postfix='days' min={0} name='remainingDays' inputMode='numeric' disabled={editAvailable} onChange={this.handleRemainingChange} value={editData.remaining} />
+                      </FormGroup>
+                      <FormGroup>
+                        <ControlLabel>From</ControlLabel>
+                        <DatePicker showWeekNumbers oneTap name='from' type='date' onChange={this.handleFromDateChange} value={editData.from} disabled={editAvailable} />
+                      </FormGroup>
+                      <FormGroup>
+                        <ControlLabel>To</ControlLabel>
+                        <DatePicker showWeekNumbers oneTap name='to' type='date' onChange={this.handleToDateChange} value={editData.to} disabled={editAvailable} />
+                      </FormGroup>
+                      <FormGroup>
+                        <ControlLabel>Note</ControlLabel>
+                        <FormControl name='note' type='text' onChange={this.handleNoteChange} value={editData.note} />
+                      </FormGroup>
+                      <FormGroup>
+                        <ControlLabel>Files</ControlLabel>
+                        <Panel bordered className='edit-file-wrapper'>
+                          {this.state.files.map(file => {
+                            return (
+                              <a key={file.name} className='edit-file-item' href={file.url}>{file.name}</a>
+                            )
+                          })}
+                        </Panel>
+                      </FormGroup>
+                      <FormGroup>
+                        <ControlLabel>Add File</ControlLabel>
+                        <Panel bordered style={{ maxWidth: '300px', boxShadow: 'none' }}>
+                          {/* <span style={{ fontSize: '1.1rem', textAlign: 'center' }}>Add new files</span> */}
+                          <UploadFile
+                            email={this.props.session.user.email}
+                            csrfToken={this.props.session.csrfToken}
+                            handleFileUploadSuccess={this.onFileUploadSuccess}
+                          />
+                        </Panel>
+                      </FormGroup>
+                    </Form>
+                  )}
                 </Modal.Body>
                 <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
                   <ButtonToolbar style={{ width: '100%' }}>
                     <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-                      <Button onClick={this.handleSubmitEdit} style={{ width: '33%', fontSize: '16px' }} appearance='primary'>
-                  Confirm
-                      </Button>
                       <Button onClick={this.toggleEditModal} style={{ width: '33%', fontSize: '16px' }} appearance='default'>
-                  Cancel
+                        Cancel
+                      </Button>
+                      <Button onClick={this.handleSubmitEdit} style={{ width: '33%', fontSize: '16px' }} appearance='primary'>
+                        Confirm
                       </Button>
                     </ButtonGroup>
                   </ButtonToolbar>
@@ -494,6 +689,43 @@ class Wrapper extends React.Component {
             }
             :global(.rs-container, .rs-panel-default, .rs-panel-body) {
               height: 100%;
+            }
+            :global(.rs-input-group.rs-input-number) {
+              max-width: 300px;
+            }
+            .edit-loader-wrapper {
+              width: 100%;
+              height: 100px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            }
+            :global(.edit-file-wrapper) {
+              max-width: 300px;
+              min-height: 50px;
+              box-shadow: none;
+              display: flex;
+              justify-content: flex-start;
+              align-items: center;
+              flex-wrap: wrap;
+            }
+            :global(.edit-file-wrapper .rs-panel-body) {
+              padding: 10px;
+              display: flex;
+              flex-wrap: wrap;
+            }
+            .edit-file-item {
+              padding: 10px;
+              border: 1px solid #d6d6d6;
+              border-radius: 5px;
+              box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.02), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
+              margin: 5px 10px;
+            }
+            .edit-file-item:hover {
+              text-decoration: none;
+              cursor: pointer;
+              transition: all 250ms ease-in-out;
+              box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.16), 0 7px 70px rgba(90,97,105,.1);
             }
             :global(.section-header) {
               font-size: 1.3rem;

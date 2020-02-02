@@ -92,6 +92,7 @@ class Wrapper extends React.Component {
       uploading: false,
       loaded: 0,
       message: 'Please click or drop file',
+      uploadedFiles: [],
       vaca: {
         name: props.session.user.name,
         email: props.session.user.email,
@@ -168,25 +169,24 @@ class Wrapper extends React.Component {
       .catch(err => console.error(err))
   }
 
-  handleFileDrop = (file) => {
-    console.log(file)
-    const newFiles = this.state.files
-    file.forEach(f => newFiles.push(f))
-    this.setState({
-      files: newFiles
-    })
-  }
+  // handleFileDrop = (file) => {
+  //   console.log(file)
+  //   const newFiles = this.state.files
+  //   file.forEach(f => newFiles.push(f))
+  //   this.setState({
+  //     files: newFiles
+  //   })
+  // }
 
-  handleFileDelete = (file) => {
-    const files = this.state.files
-    const newFiles = files.filter(f => f.name !== file)
-    this.setState({
-      files: newFiles
-    })
-  }
+  // handleFileDelete = (file) => {
+  //   const files = this.state.files
+  //   const newFiles = files.filter(f => f.name !== file)
+  //   this.setState({
+  //     files: newFiles
+  //   })
+  // }
 
   handleNameChange = (value) => {
-    console.log(value)
     this.setState({
       vaca: {
         ...this.state.vaca,
@@ -196,7 +196,6 @@ class Wrapper extends React.Component {
   }
 
   handleEmailChange = (value) => {
-    console.log(value)
     this.setState({
       vaca: {
         ...this.state.vaca,
@@ -206,7 +205,6 @@ class Wrapper extends React.Component {
   }
 
   handleLastYearChange = (value) => {
-    console.log(value)
     this.setState({
       vaca: {
         ...this.state.vaca,
@@ -216,7 +214,6 @@ class Wrapper extends React.Component {
   }
 
   handleThisYearChange = (value) => {
-    console.log(value)
     this.setState({
       vaca: {
         ...this.state.vaca,
@@ -226,7 +223,6 @@ class Wrapper extends React.Component {
   }
 
   handleTotalAvailableChange = (value) => {
-    console.log(value)
     this.setState({
       vaca: {
         ...this.state.vaca,
@@ -236,7 +232,6 @@ class Wrapper extends React.Component {
   }
 
   handleRequestedChange = (value) => {
-    console.log(value)
     this.setState({
       vaca: {
         ...this.state.vaca,
@@ -246,7 +241,6 @@ class Wrapper extends React.Component {
   }
 
   handleRemainingChange = (value) => {
-    console.log(value)
     this.setState({
       vaca: {
         ...this.state.vaca,
@@ -256,7 +250,6 @@ class Wrapper extends React.Component {
   }
 
   handleTypeChange = (value) => {
-    console.log(value)
     this.setState({
       vaca: {
         ...this.state.vaca,
@@ -266,7 +259,6 @@ class Wrapper extends React.Component {
   }
 
   handleDateChange = (value) => {
-    console.log(value)
     this.setState({
       vaca: {
         ...this.state.vaca,
@@ -286,7 +278,6 @@ class Wrapper extends React.Component {
   }
 
   handleNotesChange = (value) => {
-    console.log(value)
     this.setState({
       vaca: {
         ...this.state.vaca,
@@ -365,15 +356,41 @@ class Wrapper extends React.Component {
       dateTo,
       manager,
       type,
-      name
+      name,
+      notes
     } = this.state.vaca
 
     const approvalHash = uuid()
 
-    fetch(`${protocol}//${host}/api/mail/insert?vaca=${encodeURIComponent(JSON.stringify(this.state.vaca))}&ah=${approvalHash}`)
+    fetch(`${protocol}//${host}/api/mail/insert`, {
+      method: 'POST',
+      body: JSON.stringify({
+        vaca: this.state.vaca,
+        ah: approvalHash,
+        files: this.state.uploadedFiles
+      }),
+      headers: {
+        'X-CSRF-TOKEN': this.props.session.csrfToken
+      }
+    })
       .then(resp => resp.json())
       .then(data => {
-        fetch(`${protocol}//${host}/api/mail/send?manager=${manager}&from=${dateFrom}&to=${dateTo}&type=${type}&name=${name}&ah=${approvalHash}`)
+        fetch(`${protocol}//${host}/api/mail/send`, {
+          method: 'POST',
+          body: JSON.stringify({
+            manager: manager,
+            from: dateFrom,
+            to: dateTo,
+            type: type,
+            name: name,
+            note: notes,
+            ah: approvalHash,
+            files: this.state.uploadedFiles
+          }),
+          headers: {
+            'X-CSRF-TOKEN': this.props.session.csrfToken
+          }
+        })
           .then(resp => resp.json())
           .then(data => {
             if (this.state.openConfirmModal) {
@@ -425,6 +442,22 @@ class Wrapper extends React.Component {
         sideBar: 60
       })
     }
+  }
+
+  onFileUploadSuccess = (files) => {
+    const uploadedFiles = [...this.state.uploadedFiles]
+
+    if (Array.isArray(files)) {
+      files.forEach(file => {
+        uploadedFiles.push({ id: file.public_id, url: file.url, name: file.original_filename })
+      })
+    } else {
+      uploadedFiles.push({ id: files.public_id, url: files.url, name: files.original_filename })
+    }
+
+    this.setState({
+      uploadedFiles
+    })
   }
 
   render () {
@@ -559,6 +592,7 @@ class Wrapper extends React.Component {
                         <DateRangePicker
                           placement='top'
                           style={{ width: 320 }}
+                          showWeekNumbers
                           onChange={this.handleDateChange}
                         />
                       </FormGroup>
@@ -580,6 +614,7 @@ class Wrapper extends React.Component {
                           <UploadFile
                             email={this.props.session.user.email}
                             csrfToken={this.props.session.csrfToken}
+                            handleFileUploadSuccess={this.onFileUploadSuccess}
                           />
                         </div>
                       </FormGroup>

@@ -13,7 +13,6 @@ import {
   Modal
 } from 'rsuite'
 import NTLogo from '../../../public/static/img/newtelco_letters.svg'
-import NTLogoFull from '../../../public/static/img/newtelco_full.png'
 
 const NavToggle = ({ expand, onChange, token, handleSignOut, toggleHelpModal }) => {
   return (

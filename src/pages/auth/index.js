@@ -7,6 +7,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faGoogle
 } from '@fortawesome/free-brands-svg-icons'
+import NewtelcoGray from '../../../public/static/img/newtelco_gray.png'
+// import NewtelcoSvg from '../../../public/static/img/newtelco.svg'
+import NewtelcoSvg from '../../components/newtelcosvg'
+import anime from 'animejs'
 import '../../style/newtelco-rsuite.less'
 import {
   Divider,
@@ -45,7 +49,26 @@ export default class App extends React.Component {
     this.handleSignInSubmit = this.handleSignInSubmit.bind(this)
   }
 
+  animateText = () => {
+    anime({
+      // targets: '.path0, .path1',
+      // strokeDashoffset: [anime.setDashoffset, 0],
+      // easing: 'cubicBezier(.5, .05, .1, .3)',
+      // duration: 2000,
+      // delay: function (el, i) { return i * 250 }
+
+      targets: '.path0, .path1',
+      strokeDashoffset: [anime.setDashoffset, 2],
+      easing: 'easeInOutSine',
+      duration: 5500,
+      delay: function (el, i) { return i * 250 },
+      direction: 'alternate',
+      loop: false
+    })
+  }
+
   componentDidMount () {
+    this.animateText()
     const host = window.location.host
     const protocol = window.location.protocol
     fetch(`${protocol}//${host}/api/settings/company/info`)
@@ -95,9 +118,10 @@ export default class App extends React.Component {
         <div className='show-fake-browser login-page'>
           <Container className='login-wrapper'>
             <Content className='login-content-wrapper'>
-              <FlexboxGrid style={{ marginTop: '2rem' }} justify='center'>
-                <FlexboxGrid.Item componentClass={Col} md={8} lg={6}>
-                  <Panel header={<h3 className='login-text-header'>Login</h3>} bordered>
+              <FlexboxGrid justify='center' className='login-grid-wrapper'>
+                <NewtelcoSvg />
+                <FlexboxGrid.Item componentClass={Col} md={8} lg={8}>
+                  <Panel header={<h3 className='login-text-header'>Vacation Login</h3>} bordered>
                     <Form fluid id='signin' method='post' action='/auth/email/signin' onSubmit={this.handleSignInSubmit}>
                       <input name='_csrf' type='hidden' value={this.state.session.csrfToken} />
                       <FormGroup>
@@ -108,8 +132,8 @@ export default class App extends React.Component {
                       <Divider />
                       <FormGroup>
                         <ButtonToolbar>
-                          <SignInButtons providers={this.props.providers} />
                           <Button appearance='subtle' id='submitButton' type='submit' style={{ width: '50%' }} className='btn btn-outline-success' disabled>Sign In</Button>
+                          <SignInButtons providers={this.props.providers} />
                         </ButtonToolbar>
                       </FormGroup>
                     </Form>
@@ -140,6 +164,18 @@ export default class App extends React.Component {
             :global(.rs-panel-bordered) {
               margin-top: 50px;
               box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
+            }
+            :global(.login-grid-wrapper) {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              margin-top: 200px;
+            }
+            :global(#signin) {
+              margin-top: 10px;
+            }
+            :global(.newtelco-svg) {
+              margin: 30px 0;
             }
             :global(.login-page) {
               display: flex;

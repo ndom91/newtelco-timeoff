@@ -64,8 +64,6 @@ export default class UploadFile extends React.Component {
         const copy = { ...this.state.uploadProgress }
         copy[file.name] = { state: 'done', percentage: 100 }
         this.setState({ uploadProgress: copy })
-        console.log('rR', req.response)
-        console.log('e', event)
         resolve(req.response)
       })
 
@@ -76,26 +74,12 @@ export default class UploadFile extends React.Component {
         reject(req.response)
       })
 
-      req.onreadystatechange = function (e) {
+      req.onreadystatechange = (e) => {
         if (req.readyState === 4 && req.status === 200) {
         // File uploaded successfully
           var response = JSON.parse(req.responseText)
           console.log(response)
-          fetch('/api/mail/file', {
-            Method: 'POST',
-            body: {
-              filename: response.original_filename,
-              url: response.url
-            },
-            headers: {
-              'X-CSRF-TOKEN': this.props.csrfToken
-            }
-          })
-            .then(resp => resp.json())
-            .then(data => {
-              console.log(data)
-            })
-            .catch(err => console.error(err))
+          this.props.handleFileUploadSuccess(response)
         }
       }
 
