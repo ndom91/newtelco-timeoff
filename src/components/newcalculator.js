@@ -75,20 +75,24 @@ export default class Calculator extends React.Component {
             {displayCalc === 'months' ? (
               <FormGroup>
                 <InputNumber name='months' inputMode='numeric' className='calc-input' onChange={this.handleMonthsChange} value={curMonths} min={0} max={12} postfix='months' />
-                {curMonths !== 0 && (
-                  <span className='days-available'>
-                    {`${parseInt(daysAvailable)} days earned`}
-                  </span>
-                )}
+                <Panel bordered style={{ boxShadow: 'none', height: '40px', marginTop: '15px', width: '170px' }}>
+                  {curMonths !== 0 && (
+                    <span className='days-available'>
+                      {`${parseInt(daysAvailable)} days earned`}
+                    </span>
+                  )}
+                </Panel>
               </FormGroup>
             ) : (
               <FormGroup>
                 <InputNumber name='years' inputMode='numeric' className='calc-input' onChange={this.handleYearsChange} value={curYears} min={0} postfix='years' />
-                {curYears !== 0 && (
-                  <span className='days-available'>
-                    {`${daysAvailable} days earned`}
-                  </span>
-                )}
+                <Panel bordered style={{ boxShadow: 'none', height: '40px', marginTop: '15px', width: '170px' }}>
+                  {curYears !== 0 && (
+                    <span className='days-available'>
+                      {`${daysAvailable} days earned`}
+                    </span>
+                  )}
+                </Panel>
               </FormGroup>
             )}
           </Form>
@@ -120,7 +124,7 @@ export default class Calculator extends React.Component {
           .days-available {
             position: absolute;
             right: 80px;
-            top: 190px;
+            top: 202px;
             margin-left: 15px;
             font-size: 1.1rem;
           }

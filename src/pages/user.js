@@ -8,6 +8,7 @@ import RequireLogin from '../components/requiredLogin'
 import Subheader from '../components/content-subheader'
 import DateTimeField from '../components/aggrid/datetime'
 import DateField from '../components/aggrid/date'
+import Uppercase from '../components/aggrid/uppercase'
 import ApprovedField from '../components/aggrid/approved'
 import TypeField from '../components/aggrid/type'
 import { AgGridReact } from 'ag-grid-react'
@@ -29,9 +30,9 @@ import {
   Modal,
   Table,
   Form,
+  Input,
   FormGroup,
   ControlLabel,
-  FormControl,
   Notification,
   DatePicker,
   InputNumber
@@ -92,6 +93,7 @@ class Wrapper extends React.Component {
           }, {
             headerName: 'Type',
             field: 'type',
+            cellRenderer: 'uppercase',
             width: 100
           }, {
             headerName: 'From',
@@ -183,6 +185,7 @@ class Wrapper extends React.Component {
           dateTimeShort: DateTimeField,
           dateShort: DateField,
           approved: ApprovedField,
+          uppercase: Uppercase,
           type: TypeField
         },
         rowSelection: 'multiple',
@@ -419,7 +422,8 @@ class Wrapper extends React.Component {
         remaining: request.resturlaubJAHR,
         id: request.id,
         note: request.note,
-        approved: request.approved
+        approved: request.approved,
+        type: request.type && request.type[0].toUpperCase() + request.type.substring(1)
       }
       fetch(`${protocol}//${host}/api/mail/file?id=${request.id}`)
         .then(data => data.json())
@@ -589,7 +593,7 @@ class Wrapper extends React.Component {
               </Modal>
             )}
             {openEditModal && (
-              <Modal enforceFocus size='sm' backdrop show={openEditModal} onHide={this.toggleEditModal} style={{ marginTop: '100px' }}>
+              <Modal enforceFocus size='sm' backdrop show={openEditModal} onHide={this.toggleEditModal} style={{ marginTop: '40px' }}>
                 <Modal.Header>
                   <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>Edit Request</Modal.Title>
                 </Modal.Header>
@@ -600,6 +604,10 @@ class Wrapper extends React.Component {
                     </div>
                   ) : (
                     <Form layout='horizontal'>
+                      <FormGroup>
+                        <ControlLabel>Type</ControlLabel>
+                        <Input name='daysLastYear' disabled value={editData.type} style={{ width: '300px' }} />
+                      </FormGroup>
                       <FormGroup>
                         <ControlLabel>Days from Last Year</ControlLabel>
                         <InputNumber postfix='days' min={0} name='daysLastYear' inputMode='numeric' disabled={editAvailable} onChange={this.handleLastYearChange} value={editData.lastYear} />
@@ -630,7 +638,15 @@ class Wrapper extends React.Component {
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Note</ControlLabel>
-                        <FormControl name='note' type='text' onChange={this.handleNoteChange} value={editData.note} />
+                        {/* <FormControl name='note' type='text' onChange={this.handleNoteChange} value={editData.note} /> */}
+                        <Input
+                          name='note'
+                          onChange={this.handleNoteChange}
+                          value={editData.note}
+                          componentClass='textarea'
+                          rows={3}
+                          style={{ width: 300, resize: 'auto' }}
+                        />
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Files</ControlLabel>
@@ -656,7 +672,7 @@ class Wrapper extends React.Component {
                     </Form>
                   )}
                 </Modal.Body>
-                <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
+                <Modal.Footer style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
                   <ButtonToolbar style={{ width: '100%' }}>
                     <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
                       <Button onClick={this.toggleEditModal} style={{ width: '33%', fontSize: '16px' }} appearance='default'>
@@ -703,7 +719,7 @@ class Wrapper extends React.Component {
             :global(.edit-file-wrapper) {
               max-width: 300px;
               min-height: 50px;
-              box-shadow: none;
+              box-shadow: none !important;
               display: flex;
               justify-content: flex-start;
               align-items: center;
