@@ -60,12 +60,14 @@ module.exports = async (req, res) => {
 
   mailBody = mailBody.replace('[TYPE]', type)
   mailBody = mailBody.replace('[NAME]', name)
-  mailBody = mailBody.replace('[NOTE]', `<br><h3>Note:</h3>${note}`)
+  if (note) {
+    mailBody = mailBody.replace('[NOTE]', `<br><h3>Note:</h3>${note}`)
+  }
   mailBody = mailBody.replace('[FROM]', from)
   mailBody = mailBody.replace('[TO]', to)
   mailBody = mailBody.replace('[DATE_TODAY]', dateToday)
   mailBody = mailBody.replace(/SERVER_URL/g, process.env.SERVER_URL)
-  if (files) {
+  if (files.length > 0) {
     let filesHtml = '<h3>Uploaded Files</h3>'
     files.forEach(file => {
       filesHtml += `<a target="_blank" href="${file.url}">${file.name}</a><br />`
@@ -79,14 +81,16 @@ module.exports = async (req, res) => {
     fetch(`https://api.crm.newtelco.de/absence/sick?user=${encodeURIComponent(name)}`)
       .then(res => res.json())
       .then(data => {
-        data.results.forEach((project, index) => {
-          sickBody += `
-            <tr><td><b>DS</b></td><td>${project.id}</td></tr> 
-            <tr><td><b>Status</b></td><td>${project.status}</td></tr> 
-          `
-          if (index !== data.results.length - 1) { sickBody += '<tr><td colspan="2"><hr /></td><tr></tr>' }
-        })
-        sickBody = '<table cellpadding="10"><tr><td style="text-align: center" colspan="2"><b>Open Projects</b></td><tr>' + sickBody
+        if (data.results.length > 0) {
+          data.results.forEach((project, index) => {
+            sickBody += `
+              <tr><td><b>DS</b></td><td>${project.id}</td></tr> 
+              <tr><td><b>Status</b></td><td>${project.status}</td></tr> 
+            `
+            if (index !== data.results.length - 1) { sickBody += '<tr><td colspan="2"><hr /></td><tr></tr>' }
+          })
+          sickBody = '<table cellpadding="10"><tr><td style="text-align: center" colspan="2"><b>Open Projects</b></td><tr>' + sickBody
+        }
         sickBody = sickBody + '</table>'
         const headerText = 'Please be advised, your colleague has notified you of the following sick days.'
         mailBody = mailBody.replace('[HEADER_TEXT]', headerText)

@@ -7,8 +7,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faGoogle
 } from '@fortawesome/free-brands-svg-icons'
-import NewtelcoGray from '../../../public/static/img/newtelco_gray.png'
-// import NewtelcoSvg from '../../../public/static/img/newtelco.svg'
 import NewtelcoSvg from '../../components/newtelcosvg'
 import anime from 'animejs'
 import '../../style/newtelco-rsuite.less'
@@ -51,16 +49,10 @@ export default class App extends React.Component {
 
   animateText = () => {
     anime({
-      // targets: '.path0, .path1',
-      // strokeDashoffset: [anime.setDashoffset, 0],
-      // easing: 'cubicBezier(.5, .05, .1, .3)',
-      // duration: 2000,
-      // delay: function (el, i) { return i * 250 }
-
       targets: '.path0, .path1',
       strokeDashoffset: [anime.setDashoffset, 2],
       easing: 'easeInOutSine',
-      duration: 5500,
+      duration: 3500,
       delay: function (el, i) { return i * 250 },
       direction: 'alternate',
       loop: false

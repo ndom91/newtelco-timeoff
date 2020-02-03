@@ -89,7 +89,7 @@ class Wrapper extends React.Component {
       openConfirmModal: false,
       confirmText: '',
       successfullySent: false,
-      sideBar: 20,
+      sideBar: -240,
       calcSideBar: -30,
       uploading: false,
       loaded: 0,
@@ -437,13 +437,13 @@ class Wrapper extends React.Component {
       sideBar
     } = this.state
 
-    if (sideBar === 20) {
+    if (sideBar === -240) {
       this.setState({
-        sideBar: 260
+        sideBar: -20
       })
     } else {
       this.setState({
-        sideBar: 20
+        sideBar: -240
       })
     }
   }
@@ -718,7 +718,7 @@ class Wrapper extends React.Component {
                   position='right'
                   sticky
                 >
-                  <FontAwesomeIcon icon={sideBar === 20 ? faAngleRight : faAngleLeft} width='2em' />
+                  <FontAwesomeIcon icon={sideBar === -240 ? faAngleRight : faAngleLeft} width='2em' />
                 </Tooltip>
               </div>
             </div>
@@ -776,7 +776,7 @@ class Wrapper extends React.Component {
             border-radius: 10px;
             background-color: #fff;
             box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
-            transition: all 250ms ease-in-out;
+            transition: left 250ms ease-in-out;
           }
           .calc-sidebar {
             position: absolute;
@@ -787,7 +787,7 @@ class Wrapper extends React.Component {
             border-radius: 10px;
             background-color: #fff;
             box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
-            transition: all 250ms ease-in-out;
+            transition: left 250ms ease-in-out;
             z-index: -1;
           }
           :global(.history-input-wrapper) {

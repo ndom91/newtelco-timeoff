@@ -135,6 +135,7 @@ class Layout extends React.Component {
           :global(.content-wrapper) {
             padding: 20px;
             overflow-y: scroll;
+            position: relative;
           }
           :global(.footer-wrapper) {
             height: 56px;
