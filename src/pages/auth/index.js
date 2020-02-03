@@ -169,7 +169,7 @@ export default class App extends React.Component {
               display: flex;
               flex-direction: column;
               align-items: center;
-              margin-top: 200px;
+              margin-top: 100px;
             }
             :global(#signin) {
               margin-top: 10px;

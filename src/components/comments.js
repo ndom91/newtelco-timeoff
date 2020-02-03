@@ -8,6 +8,13 @@ import {
   Button,
   Notification
 } from 'rsuite'
+// import {
+//   faPaperPlane
+// } from '@fortawesome/free-solid-svg-icons'
+import {
+  faPaperPlane
+} from '@fortawesome/free-regular-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 class Comments extends React.Component {
   constructor (props) {
@@ -185,18 +192,18 @@ class Comments extends React.Component {
         <div className='comment-input-wrapper'>
           <Input
             componentClass='textarea'
-            rows={3}
-            style={{ width: '80%', resize: 'auto' }}
+            rows={1}
+            style={{ width: '100%', resize: 'auto', min2eight: '45px' }}
             placeholder='What do you want to say?'
             value={this.state.commentText}
             onChange={this.handleCommentChange}
           />
           <Button
             className='comment-submit-btn'
-            appearance='primary'
+            appearance='ghost'
             onClick={this.handleSubmit}
           >
-            Post
+            <FontAwesomeIcon icon={faPaperPlane} width='1.3rem' />
           </Button>
         </div>
         <style jsx>{`
@@ -209,20 +216,29 @@ class Comments extends React.Component {
           :global(.infinite-scroll-item-wrapper) {
             display: flex;
             flex-wrap: wrap;
-            justify-content: flex-start;
+            justify-content: center;
           }
           :global(.comment-input-wrapper) {
             display: flex;
+            width: 90%;
             justify-content: space-between;
             align-items: center;
             overflow-y: scroll;
+            margin: 0 auto;
             margin-top: 25px;
           }
           :global(.comment-submit-btn) {
             height: 45px;
             margin: 5px;
-            margin-right: 15px;
-            box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 7px rgba(90,97,105,.22), 0 10px 10px rgba(90,7,105,.26), 0 7px 70px rgba(90,97,105,.1);
+            margin-left: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: box-shadow 250ms ease-in-out, transform 250ms ease-in-out;
+          }
+          :global(.comment-submit-btn:hover) {
+            transform: translateY(-3px);
+            box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
           }
           :global(.scrollable-div) {
             overflow-y: scroll;

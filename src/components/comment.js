@@ -48,9 +48,9 @@ const Comment = (props) => {
       <style jsx>{`
         :global(.comment-panel) {
           position: relative;
-          width: 100%;
-          margin-bottom: 10px;
-          transition: all 300ms linear;
+          width: 90%;
+          margin-bottom: 25px;
+          transition: transform 250ms ease-in-out;
         }
         :global(.comment-panel:hover) {
           transform: translateY(-5px);

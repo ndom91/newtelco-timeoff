@@ -152,6 +152,11 @@ class Layout extends React.Component {
           :global(.wrapper, .rs-container-has-sidebar) {
             height: 100vh;
           }
+          :global(.wrapper) {
+            max-width: 1700px;
+            margin: 0 auto;
+            box-shadow: 0px 0px 25px rgba(0,0,0,0.2);
+          }
           :global(.rs-sidenav) {
             flex-grow: 1;
           }
