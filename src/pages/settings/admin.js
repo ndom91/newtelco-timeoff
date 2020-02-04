@@ -1125,11 +1125,10 @@ class Wrapper extends React.Component {
             }
             :global(.table-tab-list .react-tabs__tab) {
               padding: 10px;
-              border: 1px solid #67B246 !important;
-              border-radius: 10px !important;
             }
             :global(.react-tabs__tab--selected) {
-              border-color: #67B246;
+              border: 1px solid #67B246 !important;
+              border-radius: 10px !important;
             }
             :global(.react-tabs__tab:focus) {
               box-shadow: 0 0 5px #67B246;
