@@ -11,7 +11,6 @@ import Calculator from '../components/newcalculator'
 import { Tooltip } from 'react-tippy'
 import 'react-tippy/dist/tippy.css'
 import UploadFile from '../components/uploadfile'
-import { InView } from 'react-intersection-observer'
 import uuid from 'v4-uuid'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -43,8 +42,7 @@ import {
   Modal,
   Notification,
   HelpBlock,
-  Table,
-  Steps
+  Table
 } from 'rsuite'
 
 const { Column, HeaderCell, Cell } = Table
@@ -89,13 +87,13 @@ class Wrapper extends React.Component {
       openConfirmModal: false,
       confirmText: '',
       successfullySent: false,
-      sideBar: -240,
+      sideBar: -255,
       calcSideBar: -30,
       uploading: false,
       loaded: 0,
+      hideHistory: false,
       message: 'Please click or drop file',
       uploadedFiles: [],
-      currentStep: 0,
       vaca: {
         name: props.session.user.name,
         email: props.session.user.email,
@@ -173,23 +171,6 @@ class Wrapper extends React.Component {
       .catch(err => console.error(err))
   }
 
-  // handleFileDrop = (file) => {
-  //   console.log(file)
-  //   const newFiles = this.state.files
-  //   file.forEach(f => newFiles.push(f))
-  //   this.setState({
-  //     files: newFiles
-  //   })
-  // }
-
-  // handleFileDelete = (file) => {
-  //   const files = this.state.files
-  //   const newFiles = files.filter(f => f.name !== file)
-  //   this.setState({
-  //     files: newFiles
-  //   })
-  // }
-
   handleNameChange = (value) => {
     this.setState({
       vaca: {
@@ -254,11 +235,18 @@ class Wrapper extends React.Component {
   }
 
   handleTypeChange = (value) => {
+    let hideHistory = false
+    if (value === 'sick') {
+      hideHistory = true
+    } else if (value === 'trip') {
+      hideHistory = true
+    }
     this.setState({
       vaca: {
         ...this.state.vaca,
         type: value
-      }
+      },
+      hideHistory
     })
   }
 
@@ -332,11 +320,11 @@ class Wrapper extends React.Component {
           {
             title: 'Requested Days',
             value: vaca.requested
-          },
-          {
-            title: 'Remaining Days',
-            value: vaca.remaining
           }
+          // {
+          //   title: 'Remaining Days',
+          //   value: vaca.remaining
+          // }
         ]
         this.setState({
           openConfirmModal: !this.state.openConfirmModal,
@@ -437,13 +425,13 @@ class Wrapper extends React.Component {
       sideBar
     } = this.state
 
-    if (sideBar === -240) {
+    if (sideBar === -255) {
       this.setState({
         sideBar: -20
       })
     } else {
       this.setState({
-        sideBar: -240
+        sideBar: -255
       })
     }
   }
@@ -464,23 +452,6 @@ class Wrapper extends React.Component {
     })
   }
 
-  getCurrentStep = (inView, entry) => {
-    const currentStep = entry.target.localName
-    if (currentStep === 'dates' && inView === true) {
-      this.setState({
-        currentStep: 2
-      })
-    } else if (currentStep === 'history' && inView === true) {
-      this.setState({
-        currentStep: 1
-      })
-    } else if (currentStep === 'user' && inView === true) {
-      this.setState({
-        currentStep: 0
-      })
-    }
-  }
-
   render () {
     const {
       vaca,
@@ -491,63 +462,49 @@ class Wrapper extends React.Component {
       sideBar,
       calcSideBar,
       lastRequest,
-      currentStep
+      hideHistory
     } = this.state
 
     if (this.props.session.user) {
       return (
         <Layout user={this.props.session.user.email} token={this.props.session.csrfToken}>
-          <div className='steps-wrapper'>
-            <Steps current={currentStep} vertical style={{ width: '200px', display: 'inline-table', verticalAlign: 'top', height: '500px' }}>
-              <Steps.Item title='User' description='Details' />
-              <CSSTransition
-                in={vaca.type !== 'sick'}
-                timeout={1000}
-                classNames='step'
-              >
-                <Steps.Item title='History' description='Requests' />
-              </CSSTransition>
-              <Steps.Item title='Dates' description='Days' />
-            </Steps>
-          </div>
           <Container style={{ alignItems: 'center' }}>
             <Subheader header='New Request' subheader='Create New' />
             <Content style={{ width: '410px' }}>
               <Form className='new-request-form' layout='horizontal' style={{ flexDirection: 'column' }}>
                 <Panel bordered>
                   <PanelGroup style={{ maxWidth: '700px' }}>
-                    <InView as='user' onChange={(inView, entry) => this.getCurrentStep(inView, entry)} threshold={0.2}>
-                      <Panel
-                        bordered style={{ position: 'relative' }} header={
-                          <h4 className='form-section-heading' style={{ position: 'relative' }}>
+                    <Panel
+                      bordered style={{ position: 'relative' }} header={
+                        <h4 className='form-section-heading' style={{ position: 'relative' }}>
                           User
-                            <FontAwesomeIcon icon={faUser} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
-                          </h4>
-                        }
-                      >
-                        <FormGroup>
-                          <ControlLabel>Name</ControlLabel>
-                          <FormControl name='name' onChange={this.handleNameChange} value={vaca.name} style={{ width: '320px' }} />
-                        </FormGroup>
-                        <FormGroup>
-                          <ControlLabel>Email</ControlLabel>
-                          <FormControl name='email' inputMode='email' autoComplete='email' onChange={this.handleEmailChange} value={vaca.email} style={{ width: '320px' }} />
-                        </FormGroup>
-                        <FormGroup>
-                          <ControlLabel>Type of Absence</ControlLabel>
-                          <RadioGroup onChange={this.handleTypeChange} name='radioList' inline appearance='picker' defaultValue='vacation' style={{ width: '320px' }}>
-                            <Radio value='vacation'>Vacation</Radio>
-                            <Radio value='sick'>Illness</Radio>
-                            <Radio value='moving'>Moving</Radio>
-                            <Radio value='other'>Other</Radio>
-                          </RadioGroup>
-                        </FormGroup>
-                      </Panel>
-                    </InView>
+                          <FontAwesomeIcon icon={faUser} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
+                        </h4>
+                      }
+                    >
+                      <FormGroup>
+                        <ControlLabel>Name</ControlLabel>
+                        <FormControl name='name' onChange={this.handleNameChange} value={vaca.name} style={{ width: '320px' }} />
+                      </FormGroup>
+                      <FormGroup>
+                        <ControlLabel>Email</ControlLabel>
+                        <FormControl name='email' inputMode='email' autoComplete='email' onChange={this.handleEmailChange} value={vaca.email} style={{ width: '320px' }} />
+                      </FormGroup>
+                      <FormGroup>
+                        <ControlLabel>Type of Absence</ControlLabel>
+                        <RadioGroup onChange={this.handleTypeChange} name='radioList' inline appearance='picker' defaultValue='vacation' style={{ width: '320px' }}>
+                          <Radio value='vacation'>Vacation</Radio>
+                          <Radio value='sick'>Illness</Radio>
+                          <Radio value='trip'>Trip</Radio>
+                          <Radio value='moving'>Moving</Radio>
+                          <Radio value='other'>Other</Radio>
+                        </RadioGroup>
+                      </FormGroup>
+                    </Panel>
                   </PanelGroup>
                 </Panel>
                 <CSSTransition
-                  in={vaca.type !== 'sick'}
+                  in={!hideHistory}
                   timeout={1000}
                   classNames='panel'
                   unmountOnExit
@@ -559,44 +516,42 @@ class Wrapper extends React.Component {
                       style={{ position: 'relative', overflow: 'visible', zIndex: '3' }}
                       bordered
                     >
-                      <InView as='history' onChange={(inView, entry) => this.getCurrentStep(inView, entry)} threshold={1}>
-                        <PanelGroup>
-                          <Panel
-                            bordered header={
-                              <h4 className='form-section-heading' style={{ position: 'relative' }}>
+                      <PanelGroup>
+                        <Panel
+                          bordered header={
+                            <h4 className='form-section-heading' style={{ position: 'relative' }}>
                               History
-                                <FontAwesomeIcon icon={faHistory} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
-                              </h4>
-                            }
-                          >
-                            <FormGroup className='history-input-wrapper'>
-                              <ControlLabel>Days from Last Year</ControlLabel>
-                              <InputNumber min={0} size='lg' postfix='days' value={vaca.lastYear} onChange={this.handleLastYearChange} />
-                              <HelpBlock tooltip>Days which you have transfered with you from last year</HelpBlock>
-                            </FormGroup>
-                            <FormGroup className='history-input-wrapper'>
-                              <ControlLabel>Days from this Year</ControlLabel>
-                              <InputNumber min={0} size='lg' postfix='days' name='daysThisYear' onChange={this.handleThisYearChange} value={vaca.thisYear} />
-                              <HelpBlock tooltip>Days which you have earned this year</HelpBlock>
-                            </FormGroup>
-                            <FormGroup className='history-input-wrapper'>
-                              <ControlLabel>Total Days Available</ControlLabel>
-                              <InputNumber min={0} size='lg' postfix='days' name='totalDaysAvailable' onChange={this.handleTotalAvailableChange} value={vaca.total} />
-                              <HelpBlock tooltip>The sum of the last two fields</HelpBlock>
-                            </FormGroup>
-                            <FormGroup className='history-input-wrapper'>
-                              <ControlLabel>Requested Days</ControlLabel>
-                              <InputNumber min={0} size='lg' postfix='days' name='requestedDays' onChange={this.handleRequestedChange} value={vaca.requested} />
-                              <HelpBlock tooltip>Number of day(s) you need off. <br /> Half days = '0.5'</HelpBlock>
-                            </FormGroup>
-                            <FormGroup className='history-input-wrapper'>
-                              <ControlLabel>Days Remaining</ControlLabel>
-                              <InputNumber min={0} size='lg' postfix='days' name='remainingDays' onChange={this.handleRemainingChange} value={vaca.remaining} />
-                              <HelpBlock tooltip>Number of remaining days after subtracting requested from total available</HelpBlock>
-                            </FormGroup>
-                          </Panel>
-                        </PanelGroup>
-                      </InView>
+                              <FontAwesomeIcon icon={faHistory} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
+                            </h4>
+                          }
+                        >
+                          <FormGroup className='history-input-wrapper'>
+                            <ControlLabel>Days from Last Year</ControlLabel>
+                            <InputNumber min={0} size='lg' postfix='days' value={vaca.lastYear} onChange={this.handleLastYearChange} />
+                            <HelpBlock tooltip>Days which you have transfered with you from last year</HelpBlock>
+                          </FormGroup>
+                          <FormGroup className='history-input-wrapper'>
+                            <ControlLabel>Days from this Year</ControlLabel>
+                            <InputNumber min={0} size='lg' postfix='days' name='daysThisYear' onChange={this.handleThisYearChange} value={vaca.thisYear} />
+                            <HelpBlock tooltip>Days which you have earned this year</HelpBlock>
+                          </FormGroup>
+                          <FormGroup className='history-input-wrapper'>
+                            <ControlLabel>Total Days Available</ControlLabel>
+                            <InputNumber min={0} size='lg' postfix='days' name='totalDaysAvailable' onChange={this.handleTotalAvailableChange} value={vaca.total} />
+                            <HelpBlock tooltip>The sum of the last two fields</HelpBlock>
+                          </FormGroup>
+                          <FormGroup className='history-input-wrapper'>
+                            <ControlLabel>Requested Days</ControlLabel>
+                            <InputNumber min={0} size='lg' postfix='days' name='requestedDays' onChange={this.handleRequestedChange} value={vaca.requested} />
+                            <HelpBlock tooltip>Number of day(s) you need off. <br /> Half days = '0.5'</HelpBlock>
+                          </FormGroup>
+                          <FormGroup className='history-input-wrapper'>
+                            <ControlLabel>Days Remaining</ControlLabel>
+                            <InputNumber min={0} size='lg' postfix='days' name='remainingDays' onChange={this.handleRemainingChange} value={vaca.remaining} />
+                            <HelpBlock tooltip>Number of remaining days after subtracting requested from total available</HelpBlock>
+                          </FormGroup>
+                        </Panel>
+                      </PanelGroup>
                     </Panel>
                     <div className='calc-sidebar'>
                       <Calculator />
@@ -618,56 +573,54 @@ class Wrapper extends React.Component {
                 </CSSTransition>
                 <Panel bordered>
                   <PanelGroup>
-                    <InView as='dates' onChange={(inView, entry) => this.getCurrentStep(inView, entry)} threshold={0.5}>
-                      <Panel
-                        bordered header={
-                          <h4 className='form-section-heading' style={{ position: 'relative' }}>
+                    <Panel
+                      bordered header={
+                        <h4 className='form-section-heading' style={{ position: 'relative' }}>
                           Dates
-                            <FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
-                          </h4>
-                        }
-                      >
-                        <FormGroup>
-                          <ControlLabel>On which days?</ControlLabel>
-                          <DateRangePicker
-                            placement='top'
-                            style={{ width: 320 }}
-                            showWeekNumbers
-                            onChange={this.handleDateChange}
-                          />
-                        </FormGroup>
-                        <FormGroup>
-                          <ControlLabel>Manager</ControlLabel>
-                          <SelectPicker data={availableManagers} onChange={this.handleManagerChange} style={{ width: '320px' }} />
-                        </FormGroup>
-                        <FormGroup>
-                          <ControlLabel>Note</ControlLabel>
-                          <Input componentClass='textarea' rows={3} placeholder='Optional Note' onChange={this.handleNotesChange} style={{ width: '320px' }} />
-                        </FormGroup>
-                        <FormGroup>
-                          <ControlLabel className='filedrop-label'>
+                          <FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
+                        </h4>
+                      }
+                    >
+                      <FormGroup>
+                        <ControlLabel>On which days?</ControlLabel>
+                        <DateRangePicker
+                          placement='top'
+                          style={{ width: 320 }}
+                          showWeekNumbers
+                          onChange={this.handleDateChange}
+                        />
+                      </FormGroup>
+                      <FormGroup>
+                        <ControlLabel>Manager</ControlLabel>
+                        <SelectPicker data={availableManagers} onChange={this.handleManagerChange} style={{ width: '320px' }} />
+                      </FormGroup>
+                      <FormGroup>
+                        <ControlLabel>Note</ControlLabel>
+                        <Input componentClass='textarea' rows={3} placeholder='Optional Note' onChange={this.handleNotesChange} style={{ width: '320px' }} />
+                      </FormGroup>
+                      <FormGroup>
+                        <ControlLabel className='filedrop-label'>
                           Documents
-                          </ControlLabel>
-                          <div
-                            className='upload-file'
-                          >
-                            <UploadFile
-                              email={this.props.session.user.email}
-                              csrfToken={this.props.session.csrfToken}
-                              handleFileUploadSuccess={this.onFileUploadSuccess}
-                            />
-                          </div>
-                        </FormGroup>
-                        <FormGroup>
-                          <ButtonToolbar style={{ paddingLeft: '0px' }}>
-                            <ButtonGroup style={{ width: '320px' }}>
-                              <Button style={{ width: '50%' }} onClick={this.handleClear} appearance='default'>Clear</Button>
-                              <Button style={{ width: '50%' }} onClick={this.toggleSubmitModal} disabled={successfullySent} appearance='primary'>Submit</Button>
-                            </ButtonGroup>
-                          </ButtonToolbar>
-                        </FormGroup>
-                      </Panel>
-                    </InView>
+                        </ControlLabel>
+                        <div
+                          className='upload-file'
+                        >
+                          <UploadFile
+                            email={this.props.session.user.email}
+                            csrfToken={this.props.session.csrfToken}
+                            handleFileUploadSuccess={this.onFileUploadSuccess}
+                          />
+                        </div>
+                      </FormGroup>
+                      <FormGroup>
+                        <ButtonToolbar style={{ paddingLeft: '0px' }}>
+                          <ButtonGroup style={{ width: '320px' }}>
+                            <Button style={{ width: '50%' }} onClick={this.handleClear} appearance='default'>Clear</Button>
+                            <Button style={{ width: '50%' }} onClick={this.toggleSubmitModal} disabled={successfullySent} appearance='primary'>Submit</Button>
+                          </ButtonGroup>
+                        </ButtonToolbar>
+                      </FormGroup>
+                    </Panel>
                   </PanelGroup>
                 </Panel>
               </Form>
@@ -718,7 +671,7 @@ class Wrapper extends React.Component {
                   position='right'
                   sticky
                 >
-                  <FontAwesomeIcon icon={sideBar === -240 ? faAngleRight : faAngleLeft} width='2em' />
+                  <FontAwesomeIcon icon={sideBar === -255 ? faAngleRight : faAngleLeft} width='2em' />
                 </Tooltip>
               </div>
             </div>
@@ -740,6 +693,9 @@ class Wrapper extends React.Component {
                     <Cell dataKey='value' />
                   </Column>
                 </Table>
+                {hideHistory && (
+                  <span style={{ textAlign: 'center', display: 'block', maxWidth: '80%', margin: '40px auto 20px auto' }}>You have selected to submit an absence which does not require approval - instead we will send out a notification to your chosen manager and team group email address.</span>
+                )}
               </Modal.Body>
               <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
                 <ButtonToolbar style={{ width: '100%' }}>
@@ -793,14 +749,12 @@ class Wrapper extends React.Component {
           :global(.history-input-wrapper) {
             display: flex;
           }
-          :global(.steps-wrapper) {
-            position: absolute;
-            right: 20px;
-            top: 100px;
-          }
           :global(.upload-file) {
             display: inline-block;
             width: 100%;
+          }
+          :global(.rs-radio.rs-radio-inline) {
+            margin-left: 0px !important;
           }
           :global(.last-request-panel .rs-control-label) {
             margin-left: 40px;
