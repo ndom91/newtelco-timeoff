@@ -76,6 +76,8 @@ class Wrapper extends React.Component {
     const thisYear = new Date().getFullYear()
     this.state = {
       addCount: 0,
+      allMonths: [],
+      allYears: [],
       updateCount: 0,
       showSyncModal: false,
       rowData: props.users.userList,
@@ -431,9 +433,24 @@ class Wrapper extends React.Component {
     this.props.users.userList.forEach(user => {
       selectUserList.push({ value: user.email, label: `${user.fname} ${user.lname}` })
     })
+    const allYears = []
+    const yearNow = moment().format('YYYY')
+    for (let i = 0; i < 3; i++) {
+      const yearNowLoop = yearNow - i
+      allYears.push({ value: yearNowLoop, label: yearNowLoop })
+    }
+    const allMonths = []
+    const monthNow = moment()
+    for (let i = 0; i < 12; i++) {
+      const monthNowLoop = moment(monthNow).subtract(i, 'months').format('MMMM YYYY')
+      allMonths.push({ value: monthNowLoop, label: monthNowLoop })
+    }
+
     this.setState({
       allUsers: selectUserList,
-      admin: userAdmin
+      admin: userAdmin,
+      allMonths,
+      allYears
     })
     const host = window.location.host
     const protocol = window.location.protocol
@@ -822,6 +839,30 @@ class Wrapper extends React.Component {
       .catch(err => console.error(err))
   }
 
+  handleMonthReportExport = () => {
+
+  }
+
+  handleMonthReportSelectChange = () => {
+
+  }
+
+  handleYearReportExport = () => {
+
+  }
+
+  handleYearReportSelectChange = () => {
+
+  }
+
+  handleYearTDReportExport = () => {
+
+  }
+
+  handleYearTDReportSelectChange = () => {
+
+  }
+
   render () {
     const {
       gridOptions,
@@ -838,7 +879,9 @@ class Wrapper extends React.Component {
       openManagerEditModal,
       openManagerAddModal,
       activeManager,
-      teamSelectData
+      teamSelectData,
+      allMonths,
+      allYears
     } = this.state
 
     if (this.props.session.user && this.state.admin) {
@@ -892,18 +935,16 @@ class Wrapper extends React.Component {
                             this.handleManagerDelete(rowData.id)
                           }
                           return (
-                            <span>
-                              <ButtonToolbar>
-                                <ButtonGroup>
-                                  <Button size='sm' appearance='ghost' onClick={handleEdit}>
-                                    <FontAwesomeIcon icon={faPencilAlt} width='0.8rem' />
-                                  </Button>
-                                  <Button size='sm' appearance='ghost' onClick={handleDelete}>
-                                    <FontAwesomeIcon icon={faTrashAlt} width='0.7rem' />
-                                  </Button>
-                                </ButtonGroup>
-                              </ButtonToolbar>
-                            </span>
+                            <ButtonToolbar>
+                              <ButtonGroup>
+                                <Button size='sm' appearance='ghost' onClick={handleEdit}>
+                                  <FontAwesomeIcon icon={faPencilAlt} width='0.8rem' />
+                                </Button>
+                                <Button size='sm' appearance='ghost' onClick={handleDelete}>
+                                  <FontAwesomeIcon icon={faTrashAlt} width='0.7rem' />
+                                </Button>
+                              </ButtonGroup>
+                            </ButtonToolbar>
                           )
                         }}
                       </Cell>
@@ -946,66 +987,124 @@ class Wrapper extends React.Component {
                 </Panel>
               </Col>
             </Row>
-            <Panel bordered className='person-panel-body'>
-              <Tabs>
-                <TabList className='table-tab-list'>
-                  <Tab>All Colleagues</Tab>
-                  <Tab>Individual People</Tab>
-                </TabList>
-                <TabPanel>
-                  <Header style={{ justifyContent: 'flex-end' }} className='user-content-header'>
-                    <IconButton icon={<Icon icon='export' />} appearance='ghost' onClick={this.handleAllGridExport}>
+            <Row>
+              <Col className='settings-admin-col-1'>
+                <Panel bordered className='person-panel-body'>
+                  <Tabs>
+                    <TabList className='table-tab-list'>
+                      <Tab>All Colleagues</Tab>
+                      <Tab>Individual People</Tab>
+                    </TabList>
+                    <TabPanel>
+                      <Header style={{ justifyContent: 'flex-end' }} className='user-content-header'>
+                        <IconButton icon={<Icon icon='export' />} appearance='ghost' onClick={this.handleAllGridExport}>
                       Export
-                    </IconButton>
+                        </IconButton>
+                      </Header>
+                      <Content className='user-grid-wrapper'>
+                        <div className='ag-theme-material user-grid'>
+                          <AgGridReact
+                            gridOptions={allGridOptions}
+                            rowData={allRowData}
+                            onGridReady={this.handleAllGridReady}
+                            animateRows
+                            pagination
+                          />
+                        </div>
+                      </Content>
+                    </TabPanel>
+                    <TabPanel>
+                      <Header className='user-content-header'>
+                        <span className='section-header'>
+                          <SelectPicker
+                            onChange={this.handlePersonalSelectChange}
+                            data={allUsers}
+                            placeholder='Please Select a User'
+                            style={{ width: '300px' }}
+                          />
+                        </span>
+                        <IconButton icon={<Icon icon='export' />} appearance='ghost' onClick={this.handlePersonalGridExport}>
+                          Export
+                        </IconButton>
+                      </Header>
+                      <Content className='user-grid-wrapper'>
+                        <div className='ag-theme-material user-grid person-grid'>
+                          <AgGridReact
+                            gridOptions={personalGridOptions}
+                            rowData={personalRowData}
+                            onGridReady={this.handlePersonalGridReady}
+                            animateRows
+                            pagination
+                          />
+                        </div>
+                      </Content>
+                    </TabPanel>
+                  </Tabs>
+                </Panel>
+              </Col>
+            </Row>
+            <Row className='settings-admin-row'>
+              <Col style={{ width: '30%' }} className='settings-admin-col-2'>
+                <Panel bordered className='person-panel-body reports-panel'>
+                  <Header className='user-content-header reports-header'>
+                    <h4>Reports</h4>
                   </Header>
-                  <Content className='user-grid-wrapper'>
-                    <div className='ag-theme-material user-grid'>
-                      <AgGridReact
-                        gridOptions={allGridOptions}
-                        rowData={allRowData}
-                        onGridReady={this.handleAllGridReady}
-                        animateRows
-                        pagination
-                      />
-                    </div>
-                  </Content>
-                </TabPanel>
-                <TabPanel>
+                  <Panel bordered style={{ boxShadow: 'none' }}>
+                    <Panel style={{ boxShadow: 'none' }}>
+                      <FormGroup>
+                        <ControlLabel>Monthly</ControlLabel>
+                        <SelectPicker
+                          onChange={this.handleMonthReportSelectChange}
+                          data={allMonths}
+                          placeholder='Please Select a month'
+                          style={{ width: '200px' }}
+                        />
+                        <IconButton block icon={<Icon icon='export' />} appearance='ghost' onClick={this.handleMonthReportExport}>
+                            Export
+                        </IconButton>
+                      </FormGroup>
+                    </Panel>
+                    <hr className='reports-hr' />
+                    <Panel style={{ boxShadow: 'none' }}>
+                      <FormGroup>
+                        <ControlLabel>Yearly</ControlLabel>
+                        <SelectPicker
+                          onChange={this.handleYearReportSelectChange}
+                          data={allYears}
+                          placeholder='Please select a year'
+                          searchable={false}
+                        />
+                        <IconButton block icon={<Icon icon='export' />} appearance='ghost' onClick={this.handleYearReportExport}>
+                          Export
+                        </IconButton>
+                      </FormGroup>
+                    </Panel>
+                    <hr className='reports-hr' />
+                    <Panel style={{ boxShadow: 'none' }}>
+                      <FormGroup>
+                        <ControlLabel>Year-end left-over</ControlLabel>
+                        <SelectPicker
+                          onChange={this.handleYearTDReportSelectChange}
+                          data={allYears}
+                          placeholder='Please select a year'
+                          searchable={false}
+                        />
+                        <IconButton block icon={<Icon icon='export' />} appearance='ghost' onClick={this.handleYearTDReportExport}>
+                          Export
+                        </IconButton>
+                      </FormGroup>
+                    </Panel>
+                  </Panel>
+                </Panel>
+              </Col>
+              <Col style={{ width: '70%' }} className='settings-admin-col-2'>
+                <Panel bordered className='person-panel-body'>
                   <Header className='user-content-header'>
-                    <span className='section-header'>
-                      <SelectPicker
-                        onChange={this.handlePersonalSelectChange}
-                        data={allUsers}
-                        placeholder='Please Select a User'
-                        style={{ width: '300px', marginLeft: '20px' }}
-                      />
-                    </span>
-                    <IconButton icon={<Icon icon='export' />} appearance='ghost' onClick={this.handlePersonalGridExport}>
-                      Export
-                    </IconButton>
+                    <h4>Charts</h4>
                   </Header>
-                  <Content className='user-grid-wrapper'>
-                    <div className='ag-theme-material user-grid person-grid'>
-                      <AgGridReact
-                        gridOptions={personalGridOptions}
-                        rowData={personalRowData}
-                        onGridReady={this.handlePersonalGridReady}
-                        animateRows
-                        pagination
-                      />
-                    </div>
-                  </Content>
-                </TabPanel>
-              </Tabs>
-            </Panel>
-            <Panel bordered className='person-panel-body'>
-              <Header className='user-content-header'>
-                <h4>Reports</h4>
-                {/* <IconButton icon={<Icon icon='refresh' />} appearance='ghost' onClick={this.handleAdGroupSync}>
-                  Sync Domain Users
-                </IconButton> */}
-              </Header>
-            </Panel>
+                </Panel>
+              </Col>
+            </Row>
           </Container>
           {showSyncModal && (
             <Modal show={showSyncModal} onHide={this.handleSyncModalClose}>
@@ -1123,8 +1222,37 @@ class Wrapper extends React.Component {
               margin-bottom: 20px;
               padding-left: 0px !important;
             }
+            :global(.reports-header) {
+              padding-top: 10px;
+              padding-left: 20px;
+              padding-bottom: 20px;
+            }
+            :global(.rs-panel-default .rs-panel-body .rs-panel-default) {
+              margin-top: 0px;
+            }
+            :global(.reports-panel) {
+              padding: 10px;
+            }
+            :global(.reports-panel .rs-panel-body) {
+              padding: 20px !important;
+            }
+            :global(.reports-panel .rs-panel) {
+              margin-top: 20px;
+            }
+            :global(.reports-panel .rs-form-group) {
+              margin: 10px;
+            }
+            :global(.reports-panel .rs-picker-select) {
+              margin: 10px 0;
+              width: 100%;
+            }
+            .reports-hr {
+              width: 80%;
+              margin: 0 auto;
+            }
             :global(.table-tab-list .react-tabs__tab) {
               padding: 10px;
+              transition: border 250ms ease-in-out;
             }
             :global(.react-tabs__tab--selected) {
               border: 1px solid #67B246 !important;
@@ -1142,11 +1270,13 @@ class Wrapper extends React.Component {
               align-items: flex-start;
               justify-content: space-around;
             }
+            :global(.settings-admin-col-1) {
+               margin: 10px;
+            }
             :global(.settings-admin-col-2) {
-               display: inline;
+               display: inline-block;
                width: 50%;
                margin: 10px;
-               padding: 10px;
             }
             :global(.manager-user-wrapper > div) {
               width: 100%; 

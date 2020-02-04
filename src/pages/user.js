@@ -503,7 +503,6 @@ class Wrapper extends React.Component {
     const to = moment(editData.to)
     const from = moment(editData.from)
     const requestedDays = to.diff(from, 'days')
-    console.log(requestedDays)
 
     // if (requestedDays !== editData.requested) {
     //   this.notifyWarn('Warning - Daterange no longer equals approved number of days')
