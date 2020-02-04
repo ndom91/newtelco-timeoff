@@ -6,6 +6,7 @@ module.exports = async (req, res) => {
   const editData = body.editData
   const lastYear = editData.lastYear
   const thisYear = editData.thisYear
+  const spentThisYear = editData.spent
   const total = editData.total
   const requested = editData.requested
   const remaining = editData.remaining
@@ -19,7 +20,7 @@ module.exports = async (req, res) => {
   let updateQuery
   if (approved == 0) {
     updateQuery = await db.query(escape`
-      UPDATE vacations SET resturlaubVorjahr = ${lastYear}, jahresurlaubInsgesamt = ${thisYear}, restjahresurlaubInsgesamt = ${total}, beantragt = ${requested}, resturlaubJAHR = ${remaining}, fromDate = ${from}, toDate = ${to}, note = ${notes}, files = ${files} WHERE id LIKE ${id}
+      UPDATE vacations SET resturlaubVorjahr = ${lastYear}, jahresurlaubInsgesamt = ${thisYear}, jahresUrlaubAusgegeben = ${spentThisYear}, restjahresurlaubInsgesamt = ${total}, beantragt = ${requested}, resturlaubJAHR = ${remaining}, fromDate = ${from}, toDate = ${to}, note = ${notes}, files = ${files} WHERE id LIKE ${id}
     `)
   } else {
     updateQuery = await db.query(escape`

@@ -142,6 +142,16 @@ class Wrapper extends React.Component {
               height: '100%'
             }
           }, {
+            headerName: 'Days spent this Year',
+            field: 'jahresUrlaubAusgegeben',
+            tooltipField: 'jahresUrlaubAusgegeben',
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            }
+          }, {
             headerName: 'Total Days Available',
             field: 'restjahresurlaubInsgesamt',
             width: 160,
@@ -257,6 +267,16 @@ class Wrapper extends React.Component {
             headerName: 'Days Earned This Year',
             field: 'jahresurlaubInsgesamt',
             tooltipField: 'jahresurlaubInsgesamt',
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            }
+          }, {
+            headerName: 'Days spent this Year',
+            field: 'jahresUrlaubAusgegeben',
+            tooltipField: 'jahresUrlaubAusgegeben',
             cellStyle: {
               display: 'flex',
               justifyContent: 'center',

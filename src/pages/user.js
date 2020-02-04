@@ -128,6 +128,16 @@ class Wrapper extends React.Component {
               height: '100%'
             }
           }, {
+            headerName: 'Days spent this Year',
+            field: 'jahresUrlaubAusgegeben',
+            tooltipField: 'jahresUrlaubAusgegeben',
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            }
+          }, {
             headerName: 'Total Days Available',
             field: 'restjahresurlaubInsgesamt',
             width: 160,
@@ -292,6 +302,14 @@ class Wrapper extends React.Component {
     })
   }
 
+  handleTotalSpentChange = (value) => {
+    const editData = this.state.editData
+    editData.spent = value
+    this.setState({
+      editData
+    })
+  }
+
   handleTotalAvailableChange = (value) => {
     const editData = this.state.editData
     editData.total = value
@@ -417,10 +435,11 @@ class Wrapper extends React.Component {
       })
       console.log(request)
       const tableData = {
-        from: request.fromDate,
-        to: request.toDate,
+        from: moment(request.fromDate).format('YYYY-MM-DD'),
+        to: moment(request.toDate).format('YYYY-MM-DD'),
         lastYear: request.resturlaubVorjahr,
         thisYear: request.jahresurlaubInsgesamt,
+        spent: request.jahresUrlaubAusgegeben,
         total: request.restjahresurlaubInsgesamt,
         requested: request.beantragt,
         remaining: request.resturlaubJAHR,
@@ -486,12 +505,12 @@ class Wrapper extends React.Component {
     const requestedDays = to.diff(from, 'days')
     console.log(requestedDays)
 
-    if (requestedDays !== editData.requested) {
-      this.notifyWarn('Warning - Daterange no longer equals approved number of days')
-      return
-    }
+    // if (requestedDays !== editData.requested) {
+    //   this.notifyWarn('Warning - Daterange no longer equals approved number of days')
+    //   return
+    // }
 
-    fetch(`${protocol}//${host}/api/entires/update`, {
+    fetch(`${protocol}//${host}/api/user/entries/update`, {
       method: 'POST',
       body: JSON.stringify({
         editData: editData,
@@ -503,7 +522,11 @@ class Wrapper extends React.Component {
     })
       .then(data => data.json())
       .then(data => {
-        console.log(data)
+        if (data.affectedRows === 1) {
+          this.notifyInfo('Update Success')
+        } else {
+          this.notifyWarn('Error Updating Request')
+        }
       })
       .catch(err => console.error(err))
   }
@@ -619,6 +642,10 @@ class Wrapper extends React.Component {
                       <FormGroup>
                         <ControlLabel>Days from this Year</ControlLabel>
                         <InputNumber postfix='days' min={0} name='daysThisYear' inputMode='numeric' disabled={editAvailable} onChange={this.handleThisYearChange} value={editData.thisYear} />
+                      </FormGroup>
+                      <FormGroup>
+                        <ControlLabel>Days spent this Year</ControlLabel>
+                        <InputNumber postfix='days' min={0} name='daysSpent' inputMode='numeric' disabled={editAvailable} onChange={this.handleTotalSpentChange} value={editData.spent} />
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Total Days Available</ControlLabel>

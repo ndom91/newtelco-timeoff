@@ -386,7 +386,7 @@ class Wrapper extends React.Component {
               })
             }
             if (data.code === 200) {
-              this.notifyInfo('Request Sent')
+              this.notifyInfo('Request Successfully Sent')
               this.setState({
                 successfullySent: true
               })
