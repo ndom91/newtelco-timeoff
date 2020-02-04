@@ -37,7 +37,6 @@ import {
   Panel,
   ButtonToolbar,
   ButtonGroup,
-  Schema,
   SelectPicker,
   Modal,
   Notification,
@@ -67,23 +66,7 @@ class Wrapper extends React.Component {
   constructor (props) {
     super(props)
 
-    this.uploadRef = React.createRef()
-
-    const { StringType, NumberType, DateType } = Schema.Types
-    const absenceModel = Schema.Model({
-      name: StringType().isRequired('Name is required'),
-      email: StringType().isEmail('Please enter a correct email'),
-      daysFromLastYear: NumberType('Please enter a valid number'),
-      daysFromThisYear: NumberType('Please enter a valid number'),
-      totalDaysAvailable: NumberType('Please enter a valid number'),
-      requestedDays: NumberType('Please enter a valid number'),
-      daysRemaining: NumberType('Please enter a valid number'),
-      type: StringType().isRequired('Please select an option'),
-      dateRange: DateType().isRequired('Please select a valid date range')
-    })
-
     this.state = {
-      model: absenceModel,
       openConfirmModal: false,
       confirmText: '',
       successfullySent: false,
@@ -99,6 +82,7 @@ class Wrapper extends React.Component {
         email: props.session.user.email,
         lastYear: '',
         thisYear: '',
+        spentThisYear: '',
         total: '',
         requested: '',
         remaining: '',
@@ -110,6 +94,7 @@ class Wrapper extends React.Component {
       },
       lastRequest: {
         lastYear: 0,
+        spentThisYear: 0,
         thisYear: 0,
         total: 0,
         requested: 0,
@@ -157,6 +142,7 @@ class Wrapper extends React.Component {
         const newRequest = {
           lastYear: data.lastRequest[0].resturlaubVorjahr,
           thisYear: data.lastRequest[0].jahresurlaubInsgesamt,
+          spentThisYear: data.lastRequest[0].jahresUrlaubAusgegeben,
           total: data.lastRequest[0].restjahresurlaubInsgesamt,
           requested: data.lastRequest[0].beantragt,
           remaining: data.lastRequest[0].resturlaubJAHR,
@@ -194,6 +180,15 @@ class Wrapper extends React.Component {
       vaca: {
         ...this.state.vaca,
         lastYear: value
+      }
+    })
+  }
+
+  handleSpentThisYearChange = (value) => {
+    this.setState({
+      vaca: {
+        ...this.state.vaca,
+        spentThisYear: value
       }
     })
   }
@@ -536,9 +531,14 @@ class Wrapper extends React.Component {
                             <HelpBlock tooltip>Days which you have earned this year</HelpBlock>
                           </FormGroup>
                           <FormGroup className='history-input-wrapper'>
+                            <ControlLabel>Days spent This Year</ControlLabel>
+                            <InputNumber min={0} size='lg' postfix='days' name='daysSpentThisYear' onChange={this.handleSpentThisYearChange} value={vaca.spentThisYear} />
+                            <HelpBlock tooltip>Days which you have already used up this year</HelpBlock>
+                          </FormGroup>
+                          <FormGroup className='history-input-wrapper'>
                             <ControlLabel>Total Days Available</ControlLabel>
                             <InputNumber min={0} size='lg' postfix='days' name='totalDaysAvailable' onChange={this.handleTotalAvailableChange} value={vaca.total} />
-                            <HelpBlock tooltip>The sum of the last two fields</HelpBlock>
+                            <HelpBlock tooltip>The sum of the first two fields minus the third</HelpBlock>
                           </FormGroup>
                           <FormGroup className='history-input-wrapper'>
                             <ControlLabel>Requested Days</ControlLabel>
@@ -641,7 +641,11 @@ class Wrapper extends React.Component {
                 <Input disabled value={lastRequest.thisYear} />
               </FormGroup>
               <FormGroup>
-                <ControlLabel>Total Days Available</ControlLabel>
+                <ControlLabel>Days already Spent</ControlLabel>
+                <Input disabled value={lastRequest.spentThisYear} />
+              </FormGroup>
+              <FormGroup>
+                <ControlLabel>Total Days Available Today</ControlLabel>
                 <Input disabled value={lastRequest.total} />
               </FormGroup>
               <FormGroup>
@@ -733,6 +737,9 @@ class Wrapper extends React.Component {
             background-color: #fff;
             box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
             transition: left 250ms ease-in-out;
+          }
+          :global(.last-request-sidebar .rs-form-group) {
+            margin-bottom: 10px !important;
           }
           .calc-sidebar {
             position: absolute;

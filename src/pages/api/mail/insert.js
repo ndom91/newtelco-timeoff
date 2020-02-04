@@ -8,6 +8,7 @@ module.exports = async (req, res) => {
   const email = vaca.email
   const lastYear = vaca.lastYear
   const thisYear = vaca.thisYear
+  const spentThisYear = vaca.spentThisYear
   const total = vaca.total
   const requested = vaca.requested
   const remaining = vaca.remaining
@@ -23,7 +24,7 @@ module.exports = async (req, res) => {
   const files = JSON.stringify(body.files)
 
   const insertAbsence = await db.query(escape`
-      INSERT INTO vacations (name, email, resturlaubVorjahr, jahresurlaubInsgesamt, restjahresurlaubInsgesamt, beantragt, resturlaubJAHR, type, fromDate, toDate, manager, note, submitted_datetime, submitted_by, approval_hash, files) VALUES (${name}, ${email}, ${lastYear}, ${thisYear}, ${total}, ${requested}, ${remaining}, ${type}, ${dateFrom}, ${dateTo}, ${manager}, ${note}, ${new Date().toISOString().slice(0, 19).replace('T', ' ')}, ${submittedBy}, ${approvalHash}, ${files} ) 
+      INSERT INTO vacations (name, email, resturlaubVorjahr, jahresurlaubInsgesamt, jahresUrlaubAusgegeben, restjahresurlaubInsgesamt, beantragt, resturlaubJAHR, type, fromDate, toDate, manager, note, submitted_datetime, submitted_by, approval_hash, files) VALUES (${name}, ${email}, ${lastYear}, ${thisYear}, ${spentThisYear}, ${total}, ${requested}, ${remaining}, ${type}, ${dateFrom}, ${dateTo}, ${manager}, ${note}, ${new Date().toISOString().slice(0, 19).replace('T', ' ')}, ${submittedBy}, ${approvalHash}, ${files} ) 
   `)
   if (insertAbsence.affectedRows === 1) {
     res.status(200).json({ code: 200, id: insertAbsence.insertId })
