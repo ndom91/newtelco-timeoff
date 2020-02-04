@@ -15,6 +15,8 @@ import DateTimeFieldApproval from '../../components/aggrid/datetimeapproval'
 import ApprovedBtn from '../../components/aggrid/approvedbtn'
 import ApprovedField from '../../components/aggrid/approved'
 import Subheader from '../../components/content-subheader'
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
+import 'react-tabs/style/react-tabs.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   Container,
@@ -945,52 +947,64 @@ class Wrapper extends React.Component {
               </Col>
             </Row>
             <Panel bordered className='person-panel-body'>
-              <Header className='user-content-header'>
-                <span className='section-header'>
-                  <h4>Person</h4>
-                  <SelectPicker
-                    onChange={this.handlePersonalSelectChange}
-                    data={allUsers}
-                    placeholder='Please Select a User'
-                    style={{ width: '300px', marginLeft: '20px' }}
-                  />
-                </span>
-                <IconButton icon={<Icon icon='export' />} appearance='ghost' onClick={this.handlePersonalGridExport}>
-                  Export
-                </IconButton>
-              </Header>
-              <Content className='user-grid-wrapper'>
-                <div className='ag-theme-material user-grid person-grid'>
-                  <AgGridReact
-                    gridOptions={personalGridOptions}
-                    rowData={personalRowData}
-                    onGridReady={this.handlePersonalGridReady}
-                    animateRows
-                    pagination
-                  />
-                </div>
-              </Content>
+              <Tabs>
+                <TabList className='table-tab-list'>
+                  <Tab>All Colleagues</Tab>
+                  <Tab>Individual People</Tab>
+                </TabList>
+                <TabPanel>
+                  <Header style={{ justifyContent: 'flex-end' }} className='user-content-header'>
+                    <IconButton icon={<Icon icon='export' />} appearance='ghost' onClick={this.handleAllGridExport}>
+                      Export
+                    </IconButton>
+                  </Header>
+                  <Content className='user-grid-wrapper'>
+                    <div className='ag-theme-material user-grid'>
+                      <AgGridReact
+                        gridOptions={allGridOptions}
+                        rowData={allRowData}
+                        onGridReady={this.handleAllGridReady}
+                        animateRows
+                        pagination
+                      />
+                    </div>
+                  </Content>
+                </TabPanel>
+                <TabPanel>
+                  <Header className='user-content-header'>
+                    <span className='section-header'>
+                      <SelectPicker
+                        onChange={this.handlePersonalSelectChange}
+                        data={allUsers}
+                        placeholder='Please Select a User'
+                        style={{ width: '300px', marginLeft: '20px' }}
+                      />
+                    </span>
+                    <IconButton icon={<Icon icon='export' />} appearance='ghost' onClick={this.handlePersonalGridExport}>
+                      Export
+                    </IconButton>
+                  </Header>
+                  <Content className='user-grid-wrapper'>
+                    <div className='ag-theme-material user-grid person-grid'>
+                      <AgGridReact
+                        gridOptions={personalGridOptions}
+                        rowData={personalRowData}
+                        onGridReady={this.handlePersonalGridReady}
+                        animateRows
+                        pagination
+                      />
+                    </div>
+                  </Content>
+                </TabPanel>
+              </Tabs>
             </Panel>
-            <Panel bordered>
+            <Panel bordered className='person-panel-body'>
               <Header className='user-content-header'>
-                <span className='section-header'>
-                  <h4>All Colleagues</h4>
-                </span>
-                <IconButton icon={<Icon icon='export' />} appearance='ghost' onClick={this.handleAllGridExport}>
-                  Export
-                </IconButton>
+                <h4>Reports</h4>
+                {/* <IconButton icon={<Icon icon='refresh' />} appearance='ghost' onClick={this.handleAdGroupSync}>
+                  Sync Domain Users
+                </IconButton> */}
               </Header>
-              <Content className='user-grid-wrapper'>
-                <div className='ag-theme-material user-grid'>
-                  <AgGridReact
-                    gridOptions={allGridOptions}
-                    rowData={allRowData}
-                    onGridReady={this.handleAllGridReady}
-                    animateRows
-                    pagination
-                  />
-                </div>
-              </Content>
             </Panel>
           </Container>
           {showSyncModal && (
@@ -1105,6 +1119,22 @@ class Wrapper extends React.Component {
             </Modal>
           )}
           <style jsx>{`
+            :global(.table-tab-list) {
+              margin-bottom: 20px;
+              padding-left: 0px !important;
+            }
+            :global(.table-tab-list .react-tabs__tab) {
+              padding: 10px;
+              border: 1px solid #67B246 !important;
+              border-radius: 10px !important;
+            }
+            :global(.react-tabs__tab--selected) {
+              border-color: #67B246;
+            }
+            :global(.react-tabs__tab:focus) {
+              box-shadow: 0 0 5px #67B246;
+              border-color: #67B246;
+            }
             :global(.settings-admin-container > .rs-panel) {
               margin: 10px;
             }
