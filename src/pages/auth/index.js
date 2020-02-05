@@ -143,7 +143,7 @@ export default class App extends React.Component {
             </Footer>
           </Container>
           <style jsx>{`
-            @media screen and (max-width: 479px) {
+            @media screen and (max-width: 500px) {
               :global(.login-grid-wrapper > svg) {
                 max-width: 85%;
               }

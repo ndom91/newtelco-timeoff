@@ -1547,7 +1547,7 @@ class Wrapper extends React.Component {
             </Modal>
           )}
           <style jsx>{`
-            @media screen and (max-width: 479px) {
+            @media screen and (max-width: 500px) {
               :global(.wrapper) {
                 width: 100%;
               }
