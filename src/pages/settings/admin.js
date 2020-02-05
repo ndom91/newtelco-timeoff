@@ -1238,7 +1238,7 @@ class Wrapper extends React.Component {
                       <Header className='user-content-header'>
                         <span className='section-header'>
                           <span style={{ fontSize: '1rem', marginRight: '10px', display: 'flex', alignItems: 'center' }}>
-                            Type: 
+                            Type:
                           </span>
                           <SelectPicker
                             defaultValue='vacation'
@@ -1547,6 +1547,26 @@ class Wrapper extends React.Component {
             </Modal>
           )}
           <style jsx>{`
+            @media screen and (max-width: 479px) {
+              :global(.wrapper) {
+                width: 100%;
+              }
+              :global(.settings-admin-container) {
+                width: 80%;
+              }
+              :global(.settings-admin-row) {
+                flex-direction: column;
+              }
+              :global(.settings-admin-col-2) {
+                width: 100% !important;
+              }
+              :global(.settings-admin-col-1) {
+                width: 100% !important;
+              }
+              :global(.person-panel-body .rs-panel-body) {
+                padding: 20px !important;
+              }
+            }
             :global(.table-tab-list) {
               margin-bottom: 20px;
               padding-left: 0px !important;

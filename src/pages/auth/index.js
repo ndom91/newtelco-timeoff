@@ -143,6 +143,15 @@ export default class App extends React.Component {
             </Footer>
           </Container>
           <style jsx>{`
+            @media screen and (max-width: 479px) {
+              :global(.login-grid-wrapper > svg) {
+                max-width: 85%;
+              }
+              :global(.google-signin-btn svg) {
+                width: 8.5em;
+                margin-right: 5px;
+              }
+            }
             .text-center {
               margin: 100px 0 50px 0;
             } 

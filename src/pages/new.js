@@ -13,7 +13,7 @@ import 'react-tippy/dist/tippy.css'
 import UploadFile from '../components/uploadfile'
 import uuid from 'v4-uuid'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import Joyride, { STATUS }  from 'react-joyride'
+import Joyride, { STATUS } from 'react-joyride'
 import {
   faCalendarAlt,
   faUser,
@@ -140,12 +140,18 @@ class Wrapper extends React.Component {
     const host = window.location.host
     const protocol = window.location.protocol
     const tutorial = window.localStorage.getItem('tut')
-    console.log(tutorial)
-    console.log(typeof tutorial)
-    if (tutorial === 'true') {
+    const isMobile = window.innerWidth < 500
+    if (isMobile) {
       this.setState({
-        joyrideRun: false
+        joyrideRun: false,
+        isMobile: isMobile
       })
+    } else {
+      if (tutorial === 'true') {
+        this.setState({
+          joyrideRun: false
+        })
+      }
     }
     fetch(`${protocol}//${host}/api/managers`)
       .then(res => res.json())
@@ -486,7 +492,8 @@ class Wrapper extends React.Component {
       lastRequest,
       hideHistory,
       tutSteps,
-      joyrideRun
+      joyrideRun,
+      isMobile
     } = this.state
 
     if (this.props.session.user) {
@@ -529,7 +536,7 @@ class Wrapper extends React.Component {
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Type of Absence</ControlLabel>
-                        <RadioGroup onChange={this.handleTypeChange} name='radioList' inline appearance='picker' defaultValue='vacation' className='absence-select' style={{ width: '320px' }}>
+                        <RadioGroup onChange={this.handleTypeChange} name='radioList' inline appearance='picker' defaultValue='vacation' className='absence-select' style={{ width: isMobile ? '250px' : '320px' }}>
                           <Radio value='vacation'>Vacation</Radio>
                           <Radio value='sick'>Illness</Radio>
                           <Radio value='trip'>Trip</Radio>
@@ -638,7 +645,7 @@ class Wrapper extends React.Component {
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Note</ControlLabel>
-                        <Input componentClass='textarea' rows={3} placeholder='Optional Note' onChange={this.handleNotesChange} style={{ width: '320px' }} />
+                        <Input componentClass='textarea' rows={3} placeholder='Optional Note' onChange={this.handleNotesChange} style={{ width: isMobile ? '240px' : '320px' }} />
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel className='filedrop-label'>
@@ -657,7 +664,7 @@ class Wrapper extends React.Component {
                       </FormGroup>
                       <FormGroup>
                         <ButtonToolbar style={{ paddingLeft: '0px' }}>
-                          <ButtonGroup style={{ width: '320px' }}>
+                          <ButtonGroup style={{ width: isMobile ? '240px' : '320px' }}>
                             <Button style={{ width: '50%' }} onClick={this.handleClear} appearance='default'>Clear</Button>
                             <Button style={{ width: '50%' }} onClick={this.toggleSubmitModal} disabled={successfullySent} appearance='primary'>Submit</Button>
                           </ButtonGroup>
@@ -759,6 +766,29 @@ class Wrapper extends React.Component {
             </Modal>
           )}
           <style jsx>{`
+          @media screen and (max-width: 479px) {
+            :global(.last-request-sidebar) {
+              display: none;
+            }
+            :global(.calc-sidebar) {
+              display: none;
+            }
+            :global(.rs-form-control-wrapper input) {
+              max-width: 80%;
+            }
+            :global(.new-request-form) {
+              width: 78%;
+            }
+            :global(.rs-form-horizontal .rs-form-group .rs-control-label) {
+              width: 60% !important;
+            }
+            :global(.rs-form-control-wrapper > .rs-input-number, .rs-form-control-wrapper > .rs-input) {
+              max-width: 240px !important;
+            }
+            :global(textarea.rs-input) {
+              min-width: unset;
+            }
+          }
           :global(.__floater.__floater__open) {
             z-index: 1000 !important;
           }
