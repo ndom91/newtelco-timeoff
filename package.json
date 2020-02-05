@@ -29,6 +29,7 @@
     "@fullcalendar/daygrid": "^4.3.0",
     "@fullcalendar/google-calendar": "^4.3.0",
     "@fullcalendar/react": "^4.3.0",
+    "@nivo/swarmplot": "^0.61.1",
     "@toast-ui/react-calendar": "^1.0.4",
     "@zeit/next-css": "^1.0.1",
     "@zeit/next-less": "^1.0.1",

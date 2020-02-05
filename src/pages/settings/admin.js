@@ -18,6 +18,7 @@ import Subheader from '../../components/content-subheader'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import 'react-tabs/style/react-tabs.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { ResponsiveSwarmPlot } from '@nivo/swarmplot'
 import {
   Container,
   Header,
@@ -75,6 +76,7 @@ class Wrapper extends React.Component {
     super(props)
     const thisYear = new Date().getFullYear()
     this.state = {
+      plotData: [],
       addCount: 0,
       allMonths: [],
       allYears: [],
@@ -476,6 +478,17 @@ class Wrapper extends React.Component {
         }
       })
       .catch(err => console.error(err))
+    const year = moment().format('YYYY') - 1
+    fetch(`${protocol}//${host}/api/report/swarmplot?y=${year}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.query) {
+          this.setState({
+            plotData: data.query
+          })
+        }
+      })
+      .catch(err => console.error(err))
   }
 
   notifyInfo = (header, text) => {
@@ -839,28 +852,208 @@ class Wrapper extends React.Component {
       .catch(err => console.error(err))
   }
 
-  handleMonthReportExport = () => {
+   convertToCSV = (objArray) => {
+     const array = typeof objArray !== 'object' ? JSON.parse(objArray) : objArray
+     let str = ''
 
+     for (let i = 0; i < array.length; i++) {
+       let line = ''
+       for (const index in array[i]) {
+         if (line !== '') line += ','
+         line += array[i][index]
+       }
+       str += line + '\r\n'
+     }
+     return str
+   }
+
+  exportCSVFile = (headers, items, fileTitle) => {
+    if (headers) {
+      items.unshift(headers)
+    }
+    const jsonObject = JSON.stringify(items)
+    const csv = this.convertToCSV(jsonObject)
+    const exportedFilenmae = fileTitle + '.csv' || 'export.csv'
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    if (navigator.msSaveBlob) {
+      navigator.msSaveBlob(blob, exportedFilenmae)
+    } else {
+      const link = document.createElement('a')
+      if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob)
+        link.setAttribute('href', url)
+        link.setAttribute('download', exportedFilenmae)
+        link.style.visibility = 'hidden'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      }
+    }
   }
 
-  handleMonthReportSelectChange = () => {
+  handleMonthReportExport = () => {
+    const host = window.location.host
+    const protocol = window.location.protocol
+    const date = this.state.reportSelection.month
+    fetch(`${protocol}//${host}/api/report/month?m=${JSON.stringify(date)}`)
+      .then(resp => resp.json())
+      .then(data => {
+        const exportData = []
+        data.query.forEach(data => {
+          exportData.push({
+            id: data.id,
+            name: data.name,
+            email: data.email,
+            lastYear: data.resturlaubVorjahr,
+            thisYear: data.jahresurlaubInsgesamt,
+            spent: data.jahresUrlaubAusgegeben,
+            total: data.restjahresurlaubInsgesamt,
+            requested: data.beantragt,
+            remaining: data.resturlaubJAHR,
+            type: data.type,
+            from: moment(data.fromDate).format('DD.MM.YYYY'),
+            to: moment(data.toDate).format('DD.MM.YYYY'),
+            manager: data.manager,
+            note: data.note,
+            submitted: moment(data.submitted_datetime).format('DD.MM.YYYY HH:mm'),
+            submittedBy: data.submitted_by,
+            approvedDateTime: moment(data.approval_datetime).format('DD.MM.YYYY HH:mm')
+          })
+        })
+        const headers = {
+          id: 'ID',
+          name: 'Name',
+          email: 'Email',
+          lastYear: 'Last Year',
+          thisYear: 'This Year',
+          spent: 'Spent this Year',
+          total: 'Total Available',
+          requested: 'Requested',
+          remaining: 'Remaining',
+          type: 'Type',
+          from: 'From',
+          to: 'To',
+          manager: 'Manager',
+          note: 'Note',
+          submitted: 'Submitted',
+          submittedBy: 'Submmitted By',
+          approvedDateTime: 'Approved Date/Time'
+        }
+        this.exportCSVFile(headers, exportData, `${date.month}${date.year}_vacation_export`)
+      })
+  }
 
+  handleMonthReportSelectChange = (selection) => {
+    const monthName = selection.split(' ')[0]
+    const year = selection.split(' ')[1]
+    const month = {
+      month: moment().month(monthName).format('MM'),
+      year: year
+    }
+    this.setState({
+      reportSelection: {
+        ...this.state.reportSelection,
+        month: month
+      }
+    })
   }
 
   handleYearReportExport = () => {
-
+    const host = window.location.host
+    const protocol = window.location.protocol
+    const year = this.state.reportSelection.year
+    fetch(`${protocol}//${host}/api/report/year?y=${year}`)
+      .then(resp => resp.json())
+      .then(data => {
+        const exportData = []
+        data.query.forEach(data => {
+          exportData.push({
+            id: data.id,
+            name: data.name,
+            email: data.email,
+            lastYear: data.resturlaubVorjahr,
+            thisYear: data.jahresurlaubInsgesamt,
+            spent: data.jahresUrlaubAusgegeben,
+            total: data.restjahresurlaubInsgesamt,
+            requested: data.beantragt,
+            remaining: data.resturlaubJAHR,
+            type: data.type,
+            from: moment(data.fromDate).format('DD.MM.YYYY'),
+            to: moment(data.toDate).format('DD.MM.YYYY'),
+            manager: data.manager,
+            note: data.note,
+            submitted: moment(data.submitted_datetime).format('DD.MM.YYYY HH:mm'),
+            submittedBy: data.submitted_by,
+            approvedDateTime: moment(data.approval_datetime).format('DD.MM.YYYY HH:mm')
+          })
+        })
+        const headers = {
+          id: 'ID',
+          name: 'Name',
+          email: 'Email',
+          lastYear: 'Last Year',
+          thisYear: 'This Year',
+          spent: 'Spent this Year',
+          total: 'Total Available',
+          requested: 'Requested',
+          remaining: 'Remaining',
+          type: 'Type',
+          from: 'From',
+          to: 'To',
+          manager: 'Manager',
+          note: 'Note',
+          submitted: 'Submitted',
+          submittedBy: 'Submmitted By',
+          approvedDateTime: 'Approved Date/Time'
+        }
+        this.exportCSVFile(headers, exportData, `${year}_vacation_export`)
+      })
   }
 
-  handleYearReportSelectChange = () => {
-
+  handleYearReportSelectChange = (selection) => {
+    this.setState({
+      reportSelection: {
+        ...this.state.reportSelection,
+        year: selection
+      }
+    })
   }
 
   handleYearTDReportExport = () => {
-
+    const host = window.location.host
+    const protocol = window.location.protocol
+    const year = this.state.reportSelection.ytd
+    fetch(`${protocol}//${host}/api/report/ytd?y=${year}`)
+      .then(resp => resp.json())
+      .then(data => {
+        const exportData = []
+        data.query.forEach(data => {
+          exportData.push({
+            id: data.id,
+            name: data.name,
+            email: data.email,
+            remaining: data.resturlaubJAHR,
+            submitted: moment(data.submitted_datetime).format('DD.MM.YYYY HH:mm')
+          })
+        })
+        const headers = {
+          id: 'ID',
+          name: 'Name',
+          email: 'Email',
+          remaining: `Remaining from ${year}`,
+          submitted: 'Submitted On'
+        }
+        this.exportCSVFile(headers, exportData, `${year}_daysLeftOver_export`)
+      })
   }
 
-  handleYearTDReportSelectChange = () => {
-
+  handleYearTDReportSelectChange = (selection) => {
+    this.setState({
+      reportSelection: {
+        ...this.state.reportSelection,
+        ytd: selection
+      }
+    })
   }
 
   render () {
@@ -881,7 +1074,8 @@ class Wrapper extends React.Component {
       activeManager,
       teamSelectData,
       allMonths,
-      allYears
+      allYears,
+      plotData
     } = this.state
 
     if (this.props.session.user && this.state.admin) {
@@ -1057,7 +1251,6 @@ class Wrapper extends React.Component {
                           onChange={this.handleMonthReportSelectChange}
                           data={allMonths}
                           placeholder='Please Select a month'
-                          style={{ width: '200px' }}
                         />
                         <IconButton block icon={<Icon icon='export' />} appearance='ghost' onClick={this.handleMonthReportExport}>
                             Export
@@ -1102,6 +1295,54 @@ class Wrapper extends React.Component {
                   <Header className='user-content-header'>
                     <h4>Charts</h4>
                   </Header>
+                  <Panel bordered style={{ boxShadow: 'none' }}>
+                    <div style={{ height: '300px', width: '100%' }}>
+                      <ResponsiveSwarmPlot
+                        data={plotData}
+                        groups={['Technik', 'Order', 'Sales', 'Empfang', 'Billing', 'Marketing', 'Management']}
+                        value='date'
+                        valueScale={{ type: 'linear', min: 1, max: 12, reverse: false }}
+                        size={{ key: 'volume', values: [0, 24], sizes: [0, 40] }}
+                        label='name'
+                        spaceing={4}
+                        forceStrength={4}
+                        simulationIterations={100}
+                        borderColor={{
+                          from: 'color',
+                          modifiers: [
+                            [
+                              'darker',
+                              0.7
+                            ],
+                            [
+                              'opacity',
+                              0.3
+                            ]
+                          ]
+                        }}
+                        margin={{ top: 20, right: 10, bottom: 40, left: 40 }}
+                        axisBottom={{
+                          orient: 'bottom',
+                          tickSize: 10,
+                          tickPadding: 5,
+                          tickRotation: 0,
+                          legend: 'Teams',
+                          legendPosition: 'middle',
+                          legendOffset: 46
+                        }}
+                        axisLeft={{
+                          orient: 'left',
+                          tickSize: 10,
+                          tickPadding: 5,
+                          tickRotation: 0,
+                          legend: 'Month',
+                          legendPosition: 'middle',
+                          legendOffset: -36
+                        }}
+                        animate={false}
+                      />
+                    </div>
+                  </Panel>
                 </Panel>
               </Col>
             </Row>
@@ -1152,7 +1393,6 @@ class Wrapper extends React.Component {
                   </FormGroup>
                   <FormGroup>
                     <ControlLabel>Team</ControlLabel>
-                    {/* <FormControl onChange={this.handleManagerTeamChange} name='team' value={activeManager.team} /> */}
                     <SelectPicker
                       onChange={this.handleManagerTeamChange}
                       value={activeManager.team}
@@ -1196,7 +1436,6 @@ class Wrapper extends React.Component {
                   </FormGroup>
                   <FormGroup>
                     <ControlLabel>Team</ControlLabel>
-                    {/* <FormControl onChange={this.handleManagerTeamChange} name='team' value={activeManager.team} /> */}
                     <SelectPicker
                       onChange={this.handleManagerTeamChange}
                       value={activeManager.team}

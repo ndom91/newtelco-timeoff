@@ -133,7 +133,8 @@ export default class UploadFile extends React.Component {
           <div>
             <Dropzone
               onFilesAdded={this.onFilesAdded}
-              disabled={this.state.uploading || this.state.successfullUploaded}
+              disabled={this.state.uploading}
+              // disabled={this.state.uploading || this.state.successfullUploaded}
             />
           </div>
           <div className='Files'>
