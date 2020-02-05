@@ -42,7 +42,8 @@ import {
   Modal,
   Notification,
   HelpBlock,
-  Table
+  Table,
+  Alert
 } from 'rsuite'
 
 const { Column, HeaderCell, Cell } = Table
@@ -409,12 +410,14 @@ class Wrapper extends React.Component {
               })
             }
             if (data1.code === 200 && data.code === 200) {
-              this.notifyInfo('Request Successfully Sent')
+              // this.notifyInfo('Request Successfully Sent')
+              Alert.success('Request Successfully Sent')
               this.setState({
                 successfullySent: true
               })
             } else if (data.code === 500) {
-              this.notifyWarn(`Error sending message - ${data.msg}`)
+              // this.notifyWarn(`Error sending message - ${data.msg}`)
+              Alert.error(`Error sending message - ${data.msg}`)
             }
           })
           .catch(err => console.error(err))
@@ -776,14 +779,17 @@ class Wrapper extends React.Component {
             :global(.rs-form-control-wrapper input) {
               max-width: 80%;
             }
+            :global(.rs-content) {
+              width: 100%;
+            }
             :global(.new-request-form) {
-              width: 78%;
+              width: 80%;
             }
             :global(.rs-form-horizontal .rs-form-group .rs-control-label) {
               width: 60% !important;
             }
             :global(.rs-form-control-wrapper > .rs-input-number, .rs-form-control-wrapper > .rs-input) {
-              max-width: 240px !important;
+              max-width: 80% !important;
             }
             :global(textarea.rs-input) {
               min-width: unset;

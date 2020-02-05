@@ -779,7 +779,8 @@ class Wrapper extends React.Component {
           this.setState({
             managerRowData: managers
           })
-          this.notifyInfo('Manager Removed')
+          // this.notifyInfo('Manager Removed')
+          Alert.info('Manager Removed')
         }
       })
       .catch(err => console.error(err))
@@ -837,7 +838,8 @@ class Wrapper extends React.Component {
             openManagerEditModal: !this.state.openManagerEditModal,
             managerRowData: managers
           })
-          this.notifyInfo('Manager Info Saved')
+          // this.notifyInfo('Manager Info Saved')
+          Alert.info('Manager Info Saved')
         }
       })
       .catch(err => console.error(err))
@@ -868,7 +870,8 @@ class Wrapper extends React.Component {
             openManagerAddModal: !this.state.openManagerAddModal,
             managerRowData: managers
           })
-          this.notifyInfo('Manager Added')
+          // this.notifyInfo('Manager Added')
+          Alert.info('Manager Added')
         }
       })
       .catch(err => console.error(err))
@@ -887,9 +890,11 @@ class Wrapper extends React.Component {
       .then(resp => resp.json())
       .then(data => {
         if (data.userUpdate.affectedRows === 1) {
-          this.notifyInfo('User Info Saved')
+          // this.notifyInfo('User Info Saved')
+          Alert.info('User Info Saved')
         } else {
-          this.notifyWarn('Error Saving User Info')
+          // this.notifyWarn('Error Saving User Info')
+          Alert.error('Error Saving user Info')
         }
       })
       .catch(err => console.error(err))
@@ -1176,10 +1181,10 @@ class Wrapper extends React.Component {
                           return (
                             <ButtonToolbar>
                               <ButtonGroup>
-                                <Button size='sm' appearance='ghost' onClick={handleEdit}>
+                                <Button size='sm' className='manager-btn' appearance='ghost' onClick={handleEdit}>
                                   <FontAwesomeIcon icon={faPencilAlt} width='0.8rem' />
                                 </Button>
-                                <Button size='sm' appearance='ghost' onClick={handleDelete}>
+                                <Button size='sm' className='manager-btn' appearance='ghost' onClick={handleDelete}>
                                   <FontAwesomeIcon icon={faTrashAlt} width='0.7rem' />
                                 </Button>
                               </ButtonGroup>
@@ -1676,6 +1681,14 @@ class Wrapper extends React.Component {
             }
             :global(.rs-table) {
               max-width: 100%;
+            }
+            :global(.manager-btn) {
+              line-height: 1.0;
+              padding-top: 7px !important;
+              transition: box-shadow 250ms ease-in-out;
+            }
+            :global(.manager-btn:hover) {
+              box-shadow: 0 2px 0 rgba(247, 130, 130,.11), 0 4px 8px rgba(247, 130, 130,.12), 0 10px 10px rgba(247, 130, 130,.06), 0 7px 70px rgba(247, 130, 130,.1);
             }
           `}
           </style>

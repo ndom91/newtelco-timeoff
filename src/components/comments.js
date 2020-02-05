@@ -6,7 +6,8 @@ import BarLoader from 'react-spinners/ClipLoader'
 import {
   Input,
   Button,
-  Notification
+  Notification,
+  Alert
 } from 'rsuite'
 // import {
 //   faPaperPlane
@@ -60,7 +61,8 @@ class Comments extends React.Component {
       .then(res => res.json())
       .then(data => {
         if (data.discussionInsert.affectedRows === 1) {
-          this.notifyInfo('Comment Posted')
+          // this.notifyInfo('Comment Posted')
+          Alert.info('Comment Posted')
           const newComments = this.state.items
           const userFullname = this.props.user.name
           newComments.unshift({
@@ -78,7 +80,8 @@ class Comments extends React.Component {
             commentText: ''
           })
         } else {
-          this.notifyWarn('Error Posting Comment')
+          // this.notifyWarn('Error Posting Comment')
+          Alert.error('Error Posting Comment')
         }
       })
       .catch(err => console.error(err))
@@ -92,14 +95,16 @@ class Comments extends React.Component {
       .then(res => res.json())
       .then(data => {
         if (data.discussionDelete.affectedRows === 1) {
-          this.notifyInfo('Comment Deleted')
+          // this.notifyInfo('Comment Deleted')
+          Alert.info('Comment Deleted')
           const comments = this.state.items
           const remainingComments = comments.filter(com => com.id !== id)
           this.setState({
             items: remainingComments
           })
         } else {
-          this.notifyWarn('Error Deleting Comment')
+          // this.notifyWarn('Error Deleting Comment')
+          Alert.error('Error Deleting Comment')
         }
       })
       .catch(err => console.error(err))

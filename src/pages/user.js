@@ -779,8 +779,8 @@ class Wrapper extends React.Component {
             :global(.ag-cell-label-container) {
               width: 110%;
             }
-            :global(div.ag-cell.ag-cell-first-right-pinned > div.ag-react-container) {
-              margin-top: 15px;
+            :global(.tag-wrapper) {
+              box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.16), 0 7px 70px rgba(90,97,105,.1);
             }
           `}
           </style>
