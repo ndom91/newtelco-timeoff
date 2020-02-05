@@ -11,7 +11,7 @@ module.exports = async (req, res) => {
       where year(fromDate) = ${year} or year(toDate) = ${year}
       and vacations.id is not null
       and vacations.name is not null
-      and vacations.team is not null
+      and users.team is not null
       order by vacations.id desc
   `)
   res.status(200).json({ query })
