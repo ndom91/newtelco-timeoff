@@ -1,8 +1,8 @@
 import React from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-  faFileAlt
-} from '@fortawesome/free-regular-svg-icons'
+  Icon,
+  IconButton
+} from 'rsuite'
 
 export default class ViewFiles extends React.Component {
   render () {
@@ -11,7 +11,9 @@ export default class ViewFiles extends React.Component {
       if (files.length > 0) {
         return (
           <span onClick={() => this.props.viewFiles(files)} className='file-icon'>
-            <FontAwesomeIcon icon={faFileAlt} width='1.2rem' />
+            <IconButton size='sm' icon={<Icon icon='download' />} appearance='ghost'>
+              Files
+            </IconButton>
             <style jsx>{`
               .file-icon:hover {
                 cursor: pointer;
