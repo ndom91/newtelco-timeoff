@@ -13,6 +13,7 @@ import 'react-tippy/dist/tippy.css'
 import UploadFile from '../components/uploadfile'
 import uuid from 'v4-uuid'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import Joyride, { STATUS }  from 'react-joyride'
 import {
   faCalendarAlt,
   faUser,
@@ -75,7 +76,9 @@ class Wrapper extends React.Component {
       uploading: false,
       loaded: 0,
       hideHistory: false,
+      joyrideRun: true,
       message: 'Please click or drop file',
+      tutorialComplete: false,
       uploadedFiles: [],
       vaca: {
         name: props.session.user.name,
@@ -99,7 +102,21 @@ class Wrapper extends React.Component {
         total: 0,
         requested: 0,
         remaining: 0
-      }
+      },
+      tutSteps: [
+        {
+          target: '.last-btn',
+          content: 'Click here to open the slider. There you can quickly view the details of your last request.'
+        },
+        {
+          target: '.calc-btn',
+          content: 'Click this slider to access the calculator for days available this year.'
+        },
+        {
+          target: '.absence-select',
+          content: 'Finally, begin by selecting the type of absence you would like to submit.'
+        }
+      ]
     }
   }
 
@@ -122,6 +139,14 @@ class Wrapper extends React.Component {
   componentDidMount () {
     const host = window.location.host
     const protocol = window.location.protocol
+    const tutorial = window.localStorage.getItem('tut')
+    console.log(tutorial)
+    console.log(typeof tutorial)
+    if (tutorial === 'true') {
+      this.setState({
+        joyrideRun: false
+      })
+    }
     fetch(`${protocol}//${host}/api/managers`)
       .then(res => res.json())
       .then(data => {
@@ -311,15 +336,7 @@ class Wrapper extends React.Component {
           {
             title: 'Type',
             value: vaca.type.charAt(0).toUpperCase() + vaca.type.slice(1)
-          },
-          {
-            title: 'Requested Days',
-            value: vaca.requested
           }
-          // {
-          //   title: 'Remaining Days',
-          //   value: vaca.remaining
-          // }
         ]
         this.setState({
           openConfirmModal: !this.state.openConfirmModal,
@@ -447,6 +464,16 @@ class Wrapper extends React.Component {
     })
   }
 
+  handleJoyrideCallback = data => {
+    const { status } = data
+
+    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+      // Need to set our running state to false, so we can restart if we click start again.
+      // this.setState({ run: false })
+      window.localStorage.setItem('tut', true)
+    }
+  }
+
   render () {
     const {
       vaca,
@@ -457,7 +484,9 @@ class Wrapper extends React.Component {
       sideBar,
       calcSideBar,
       lastRequest,
-      hideHistory
+      hideHistory,
+      tutSteps,
+      joyrideRun
     } = this.state
 
     if (this.props.session.user) {
@@ -467,6 +496,19 @@ class Wrapper extends React.Component {
             <Subheader header='New Request' subheader='Create New' />
             <Content style={{ width: '410px' }}>
               <Form className='new-request-form' layout='horizontal' style={{ flexDirection: 'column' }}>
+                <Joyride
+                  steps={tutSteps}
+                  continuous
+                  showProgress
+                  showSkipButton
+                  run={joyrideRun}
+                  styles={{
+                    options: {
+                      zIndex: 1000
+                    }
+                  }}
+                  callback={this.handleJoyrideCallback}
+                />
                 <Panel bordered>
                   <PanelGroup style={{ maxWidth: '700px' }}>
                     <Panel
@@ -487,7 +529,7 @@ class Wrapper extends React.Component {
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Type of Absence</ControlLabel>
-                        <RadioGroup onChange={this.handleTypeChange} name='radioList' inline appearance='picker' defaultValue='vacation' style={{ width: '320px' }}>
+                        <RadioGroup onChange={this.handleTypeChange} name='radioList' inline appearance='picker' defaultValue='vacation' className='absence-select' style={{ width: '320px' }}>
                           <Radio value='vacation'>Vacation</Radio>
                           <Radio value='sick'>Illness</Radio>
                           <Radio value='trip'>Trip</Radio>
@@ -556,7 +598,7 @@ class Wrapper extends React.Component {
                     <div className='calc-sidebar'>
                       <Calculator />
                       <div className='sidebar-button' onClick={this.showTimeCalculator}>
-                        <div style={{ marginLeft: '10px', right: '2px', top: '110px', position: 'absolute', color: 'secondary' }}>
+                        <div className='calc-btn' style={{ marginLeft: '10px', right: '2px', top: '110px', position: 'absolute', color: 'secondary' }}>
                           <Tooltip
                             title='Calculator for Days Available'
                             position='right'
@@ -564,7 +606,7 @@ class Wrapper extends React.Component {
                             distance='20'
                             offset='-23'
                           >
-                            <FontAwesomeIcon icon={calcSideBar === -30 ? faAngleRight : faAngleLeft} width='2em' />
+                            <FontAwesomeIcon className='calc-btn' icon={calcSideBar === -30 ? faAngleRight : faAngleLeft} width='2em' />
                           </Tooltip>
                         </div>
                       </div>
@@ -676,7 +718,7 @@ class Wrapper extends React.Component {
                   position='right'
                   sticky
                 >
-                  <FontAwesomeIcon icon={sideBar === -255 ? faAngleRight : faAngleLeft} width='2em' />
+                  <FontAwesomeIcon className='last-btn' icon={sideBar === -255 ? faAngleRight : faAngleLeft} width='2em' />
                 </Tooltip>
               </div>
             </div>
@@ -688,7 +730,7 @@ class Wrapper extends React.Component {
               </Modal.Header>
               <Modal.Body>
                 <span style={{ textAlign: 'center', display: 'block', fontWeight: '600' }}>Are you sure you want to submit the following absence request?</span>
-                <Table showHeader={false} autoHeight bordered={false} data={confirmTableData} style={{ margin: '20px 50px' }}>
+                <Table showHeader={false} height={200} bordered={false} data={confirmTableData} style={{ margin: '20px 50px' }}>
                   <Column width={200} align='left'>
                     <HeaderCell>Field: </HeaderCell>
                     <Cell dataKey='title' />
@@ -717,6 +759,9 @@ class Wrapper extends React.Component {
             </Modal>
           )}
           <style jsx>{`
+          :global(.__floater.__floater__open) {
+            z-index: 1000 !important;
+          }
           :global(.calc-button) {
             position: absolute;
             right:10px;

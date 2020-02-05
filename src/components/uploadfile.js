@@ -1,6 +1,5 @@
 import React from 'react'
 import Dropzone from './dropzone'
-import fetch from 'isomorphic-unfetch'
 import { Progress } from 'rsuite'
 const { Line } = Progress
 
@@ -78,7 +77,6 @@ export default class UploadFile extends React.Component {
         if (req.readyState === 4 && req.status === 200) {
         // File uploaded successfully
           var response = JSON.parse(req.responseText)
-          console.log(response)
           this.props.handleFileUploadSuccess(response)
         }
       }

@@ -62,6 +62,8 @@ module.exports = async (req, res) => {
   mailBody = mailBody.replace('[NAME]', name)
   if (note) {
     mailBody = mailBody.replace('[NOTE]', `<br><h3>Note:</h3>${note}`)
+  } else {
+    mailBody = mailBody.replace('[NOTE]', '')
   }
   mailBody = mailBody.replace('[FROM]', from)
   mailBody = mailBody.replace('[TO]', to)
