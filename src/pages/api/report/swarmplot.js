@@ -12,6 +12,7 @@ module.exports = async (req, res) => {
       and vacations.id is not null
       and vacations.name is not null
       and users.team is not null
+      and users.team not like '%anagement'
       order by vacations.id desc
   `)
   res.status(200).json({ query })

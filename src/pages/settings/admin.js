@@ -14,6 +14,7 @@ import Uppercase from '../../components/aggrid/uppercase'
 import DateTimeFieldApproval from '../../components/aggrid/datetimeapproval'
 import ApprovedBtn from '../../components/aggrid/approvedbtn'
 import ApprovedField from '../../components/aggrid/approved'
+import ViewFiles from '../../components/aggrid/viewfiles'
 import Subheader from '../../components/content-subheader'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import 'react-tabs/style/react-tabs.css'
@@ -80,11 +81,13 @@ class Wrapper extends React.Component {
       addCount: 0,
       allMonths: [],
       allYears: [],
+      viewFiles: [],
       updateCount: 0,
       showSyncModal: false,
       rowData: props.users.userList,
       openManagerEditModal: false,
       openManagerAddModal: false,
+      viewFilesModals: false,
       admin: props.admin,
       allUsers: [],
       allRowData: [],
@@ -207,6 +210,21 @@ class Wrapper extends React.Component {
             field: 'manager',
             width: 160
           }, {
+            headerName: 'View Files',
+            width: 160,
+            cellRenderer: 'viewfiles',
+            cellRendererParams: {
+              viewFiles: this.toggleViewFilesModal
+            },
+            cellStyle: {
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%',
+              marginTop: '8px',
+              border: 'none'
+            }
+          }, {
             headerName: 'Approved',
             field: 'approved',
             width: 160,
@@ -226,7 +244,8 @@ class Wrapper extends React.Component {
           dateTimeShortApproval: DateTimeFieldApproval,
           dateShort: DateField,
           approvedbtn: ApprovedBtn,
-          uppercase: Uppercase
+          uppercase: Uppercase,
+          viewfiles: ViewFiles
         },
         rowSelection: 'multiple',
         paginationPageSize: 10,
@@ -456,7 +475,7 @@ class Wrapper extends React.Component {
     })
     const host = window.location.host
     const protocol = window.location.protocol
-    fetch(`${protocol}//${host}/api/user/entries/all`)
+    fetch(`${protocol}//${host}/api/user/entries/all?t=vacation`)
       .then(res => res.json())
       .then(data => {
         if (data.userEntries) {
@@ -505,6 +524,23 @@ class Wrapper extends React.Component {
       duration: 2000,
       description: <div className='notify-body'>{text}</div>
     })
+  }
+
+  handleAllUserTypeChange = (selection) => {
+    const host = window.location.host
+    const protocol = window.location.protocol
+    const type = selection
+    fetch(`${protocol}//${host}/api/user/entries/all?t=${type}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.userEntries) {
+          this.setState({
+            allRowData: data.userEntries
+          })
+          // window.gridApi && window.gridApi.refreshCells()
+        }
+      })
+      .catch(err => console.error(err))
   }
 
   handleAdGroupSync = () => {
@@ -723,6 +759,13 @@ class Wrapper extends React.Component {
         openManagerAddModal: !this.state.openManagerAddModal
       })
     }
+  }
+
+  toggleViewFilesModal = (files) => {
+    this.setState({
+      viewFilesModal: !this.state.viewFilesModal,
+      viewFiles: files
+    })
   }
 
   handleManagerDelete = (id) => {
@@ -1075,7 +1118,9 @@ class Wrapper extends React.Component {
       teamSelectData,
       allMonths,
       allYears,
-      plotData
+      plotData,
+      viewFilesModal,
+      viewFiles
     } = this.state
 
     if (this.props.session.user && this.state.admin) {
@@ -1190,7 +1235,25 @@ class Wrapper extends React.Component {
                       <Tab>Individual People</Tab>
                     </TabList>
                     <TabPanel>
-                      <Header style={{ justifyContent: 'flex-end' }} className='user-content-header'>
+                      <Header className='user-content-header'>
+                        <span className='section-header'>
+                          <span style={{ fontSize: '1rem', marginRight: '10px', display: 'flex', alignItems: 'center' }}>
+                            Type: 
+                          </span>
+                          <SelectPicker
+                            defaultValue='vacation'
+                            onChange={this.handleAllUserTypeChange}
+                            data={[
+                              { label: 'Vacation', value: 'vacation' },
+                              { label: 'Sick', value: 'sick' },
+                              { label: 'Trip', value: 'trip' },
+                              { label: 'Moving', value: 'moving' },
+                              { label: 'Other', value: 'other' }
+                            ]}
+                            placeholder='Please Select a Type'
+                            style={{ width: '300px' }}
+                          />
+                        </span>
                         <IconButton icon={<Icon icon='export' />} appearance='ghost' onClick={this.handleAllGridExport}>
                       Export
                         </IconButton>
@@ -1292,21 +1355,26 @@ class Wrapper extends React.Component {
               </Col>
               <Col style={{ width: '70%' }} className='settings-admin-col-2'>
                 <Panel bordered className='person-panel-body'>
-                  <Header className='user-content-header'>
+                  <Header style={{ marginBottom: '20px' }} className='user-content-header'>
                     <h4>Charts</h4>
                   </Header>
                   <Panel bordered style={{ boxShadow: 'none' }}>
                     <div style={{ height: '300px', width: '100%' }}>
                       <ResponsiveSwarmPlot
                         data={plotData}
-                        groups={['Technik', 'Order', 'Sales', 'Empfang', 'Billing', 'Marketing', 'Management']}
+                        groups={['Technik', 'Order', 'Sales', 'Empfang', 'Billing', 'Marketing']}
+                        groupBy='group'
+                        identity='id'
                         value='date'
                         valueScale={{ type: 'linear', min: 1, max: 12, reverse: false }}
-                        size={{ key: 'volume', values: [0, 24], sizes: [0, 40] }}
+                        size={{ key: 'volume', values: [0, 24], sizes: [2, 40] }}
                         label='name'
                         spaceing={4}
+                        layout='vertical'
                         forceStrength={4}
+                        isInteractive={false}
                         simulationIterations={100}
+                        colors={{ scheme: 'set2' }}
                         borderColor={{
                           from: 'color',
                           modifiers: [
@@ -1454,6 +1522,28 @@ class Wrapper extends React.Component {
                   Cancel
                 </Button>
               </Modal.Footer>
+            </Modal>
+          )}
+          {viewFilesModal && (
+            <Modal
+              show={viewFilesModal}
+              onHide={this.toggleViewFilesModal}
+              style={{
+                width: '350px'
+              }}
+            >
+              <Modal.Header>
+                <Modal.Title>View Files</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                {viewFiles && viewFiles.map((file, index) => {
+                  return (
+                    <div className='view-file-item' key={index}>
+                      <a href={file.url}>{file.name}</a>
+                    </div>
+                  )
+                })}
+              </Modal.Body>
             </Modal>
           )}
           <style jsx>{`

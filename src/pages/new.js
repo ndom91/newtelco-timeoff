@@ -361,7 +361,7 @@ class Wrapper extends React.Component {
       }
     })
       .then(resp => resp.json())
-      .then(data => {
+      .then(data1 => {
         fetch(`${protocol}//${host}/api/mail/send`, {
           method: 'POST',
           body: JSON.stringify({
@@ -385,7 +385,7 @@ class Wrapper extends React.Component {
                 openConfirmModal: !this.state.openConfirmModal
               })
             }
-            if (data.code === 200) {
+            if (data1.code === 200 && data.code === 200) {
               this.notifyInfo('Request Successfully Sent')
               this.setState({
                 successfullySent: true
@@ -609,6 +609,7 @@ class Wrapper extends React.Component {
                             email={this.props.session.user.email}
                             csrfToken={this.props.session.csrfToken}
                             handleFileUploadSuccess={this.onFileUploadSuccess}
+                            successfullySent={successfullySent}
                           />
                         </div>
                       </FormGroup>
