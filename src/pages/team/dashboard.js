@@ -6,6 +6,8 @@ import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../../components/requiredLogin'
 import Comments from '../../components/comments'
 import Subheader from '../../components/content-subheader'
+// https://github.com/milesj/interweave/tree/master/packages/emoji-picker
+// import InterweaveEmojiPicker from 'interweave-emoji-picker'
 import {
   Container,
   Content,

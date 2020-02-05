@@ -87,6 +87,7 @@ class Wrapper extends React.Component {
       rowData: props.users.userList,
       openManagerEditModal: false,
       openManagerAddModal: false,
+      openConfirmDeleteModal: false,
       viewFilesModals: false,
       admin: props.admin,
       allUsers: [],
@@ -900,6 +901,79 @@ class Wrapper extends React.Component {
       .catch(err => console.error(err))
   }
 
+  handleDeleteFromAllModal = () => {
+    if (this.allGridApi) {
+      const selectedRow = this.allGridApi.getSelectedRows()
+      if (!selectedRow[0]) {
+        Alert.info('Please select a row')
+        return
+      }
+      const request = selectedRow[0]
+      console.log(request)
+      const tableData = [
+        {
+          title: 'Colleague',
+          value: request.name
+        },
+        {
+          title: 'From',
+          value: moment(request.fromDate).format('DD.MM.YYYY')
+        },
+        {
+          title: 'To',
+          value: moment(request.toDate).format('DD.MM.YYYY')
+        },
+        {
+          title: 'Manager',
+          value: request.manager
+        },
+        {
+          title: 'Type',
+          value: request.type.charAt(0).toUpperCase() + request.type.slice(1)
+        },
+        {
+          title: 'Requested Days',
+          value: request.beantragt
+        },
+        {
+          title: 'Remaining Days',
+          value: request.resturlaubJAHR
+        },
+        {
+          title: 'Submitted On',
+          value: moment(request.submitted_datetime).format('DD.MM.YYYY HH:mm')
+        }
+      ]
+      this.setState({
+        openConfirmDeleteModal: !this.state.openConfirmDeleteModal,
+        confirmDeleteData: tableData,
+        toDelete: request.id || 0
+      })
+    }
+  }
+
+  handleSubmitDelete = () => {
+    const deleteId = this.state.toDelete
+    const host = window.location.host
+    const protocol = window.location.protocol
+    fetch(`${protocol}//${host}/api/user/entries/delete?id=${deleteId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.deleteQuery.affectedRows > 0) {
+          Alert.success('Request Deleted')
+        } else {
+          Alert.error('Error Deleting Request')
+        }
+        const newRowData = this.state.allRowData.filter(row => row.id !== deleteId)
+        this.setState({
+          allRowData: newRowData,
+          openConfirmDeleteModal: !this.state.openConfirmDeleteModal
+        })
+        this.allGridApi.refreshCells()
+      })
+      .catch(err => console.error(err))
+  }
+
    convertToCSV = (objArray) => {
      const array = typeof objArray !== 'object' ? JSON.parse(objArray) : objArray
      let str = ''
@@ -1125,7 +1199,9 @@ class Wrapper extends React.Component {
       allYears,
       plotData,
       viewFilesModal,
-      viewFiles
+      viewFiles,
+      openConfirmDeleteModal,
+      confirmDeleteData
     } = this.state
 
     if (this.props.session.user && this.state.admin) {
@@ -1259,9 +1335,14 @@ class Wrapper extends React.Component {
                             style={{ width: '300px' }}
                           />
                         </span>
-                        <IconButton icon={<Icon icon='export' />} appearance='ghost' onClick={this.handleAllGridExport}>
-                      Export
-                        </IconButton>
+                        <span>
+                          <IconButton style={{ marginRight: '10px' }} icon={<Icon icon='trash' />} appearance='ghost' onClick={this.handleDeleteFromAllModal}>
+                            Delete
+                          </IconButton>
+                          <IconButton icon={<Icon icon='export' />} appearance='ghost' onClick={this.handleAllGridExport}>
+                            Export
+                          </IconButton>
+                        </span>
                       </Header>
                       <Content className='user-grid-wrapper'>
                         <div className='ag-theme-material user-grid'>
@@ -1551,6 +1632,38 @@ class Wrapper extends React.Component {
               </Modal.Body>
             </Modal>
           )}
+          {openConfirmDeleteModal && (
+            <Modal enforceFocus size='sm' backdrop show={openConfirmDeleteModal} onHide={this.handleDeleteFromAllModal} style={{ marginTop: '150px' }}>
+              <Modal.Header>
+                <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>Confirm Submit</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <span style={{ textAlign: 'center', display: 'block', fontWeight: '600' }}>Are you sure you want to delete this request?</span>
+                <Table showHeader={false} height={8 * 50} bordered={false} data={confirmDeleteData} style={{ margin: '20px 50px' }}>
+                  <Column width={200} align='left'>
+                    <HeaderCell>Field: </HeaderCell>
+                    <Cell dataKey='title' />
+                  </Column>
+                  <Column width={250} align='left'>
+                    <HeaderCell>Value: </HeaderCell>
+                    <Cell dataKey='value' />
+                  </Column>
+                </Table>
+              </Modal.Body>
+              <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
+                <ButtonToolbar style={{ width: '100%' }}>
+                  <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+                    <Button onClick={this.handleDeleteFromAllModal} style={{ width: '33%', fontSize: '16px' }} appearance='default'>
+                      Cancel
+                    </Button>
+                    <Button onClick={this.handleSubmitDelete} style={{ width: '33%', fontSize: '16px' }} appearance='primary'>
+                      Confirm
+                    </Button>
+                  </ButtonGroup>
+                </ButtonToolbar>
+              </Modal.Footer>
+            </Modal>
+          )}
           <style jsx>{`
             @media screen and (max-width: 500px) {
               :global(.wrapper) {
@@ -1610,6 +1723,7 @@ class Wrapper extends React.Component {
             }
             :global(.react-tabs__tab--selected) {
               border: 1px solid #67B246 !important;
+              color: #67b246 !important;
               border-radius: 10px !important;
             }
             :global(.react-tabs__tab:focus) {

@@ -9,6 +9,15 @@ import { Container, Header, IconButton, ButtonGroup, Icon } from 'rsuite'
 // https://github.com/nhn/toast-ui.react-calendar
 // https://nhn.github.io/tui.calendar/latest/tutorial-example00-basic
 
+// Such enterprise, very business: http://intljusticemission.github.io/react-big-calendar/examples/index.html#selectable
+// Howto: https://medium.com/@klferenczy/add-a-basic-calendar-and-scheduler-into-your-react-app-bffae987b904
+
+// https://stephenchou1017.github.io/scheduler/#/
+
+// https://devexpress.github.io/devextreme-reactive/react/scheduler/docs/guides/grouping/
+
+// https://github.com/remotelock/react-week-scheduler
+
 class TuiCalendar extends React.Component {
   constructor (props) {
     super(props)
