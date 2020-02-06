@@ -42,8 +42,8 @@ class BasicLayout extends React.Component {
     super(props)
 
     const newAptData = this.props.appointmentData
-    if (newAptData.title === 'undefined') {
-      newAptData.title = 'On Call'
+    if (newAptData.title === undefined) {
+      newAptData.title = 'TYPE - NAME'
     }
 
     this.state = {
@@ -54,24 +54,26 @@ class BasicLayout extends React.Component {
     }
   }
 
-  // onTypeChange = (nextValue) => {
-  //   // nextValue = id of chosen value
-  //   this.props.onFieldChange({ nextValue })
-  //   this.setState({
-  //     typeValue: nextValue
-  //   })
-  // }
+  onTypeChange = (nextValue) => {
+    this.props.onFieldChange({ nextValue })
+    const user = this.state.users[nextValue - 2]
+    const aptdata = this.state.appointmentData
+    console.log(aptdata)
+    this.setState({
+      typeValue: nextValue
+      // appointmentData: aptdata
+    })
+  }
 
   onUserChange = (nextValue) => {
     this.props.onFieldChange({ nextValue })
-    console.log(nextValue)
-    const user = this.state.users[nextValue - 1]
-    console.log(user)
+    const user = this.state.users[nextValue - 2]
     const aptdata = this.state.appointmentData
-    aptdata.title = `${aptdata.oncallType} - ${user.text}`
+    // aptdata.title = `${aptdata.oncallType.charAt(0).toUpperCase() + aptdata.oncallType.slice(1)} - ${user.text}`
+    console.log(aptdata)
     this.setState({
-      userValue: nextValue,
-      appointmentData: aptdata
+      userValue: nextValue
+      // appointmentData: aptdata
     })
   }
 
@@ -86,7 +88,7 @@ class BasicLayout extends React.Component {
           data.teamMembers.forEach((member, index) => {
             if (member.email === 'device@newtelco.de') return
             if (member.email === null) return
-            team.push({ id: index, text: `${member.fname} ${member.lname}` })
+            team.push({ id: member.email, text: `${member.fname} ${member.lname}` })
           })
           this.setState({
             users: team
@@ -99,8 +101,8 @@ class BasicLayout extends React.Component {
   render () {
     const {
       users,
-      // typeValue,
       userValue,
+      typeValue,
       appointmentData
     } = this.state
 
@@ -111,16 +113,6 @@ class BasicLayout extends React.Component {
         {...this.props}
       >
         {/* <AppointmentForm.Label
-          text='Type'
-          type='ordinary'
-        />
-        <AppointmentForm.Select
-          value={typeValue}
-          onValueChange={this.onTypeChange}
-          availableOptions={[{ text: 'Driving', id: 'driving' }, { text: 'Email', id: 'email' }]}
-          type='outlinedSelect'
-        /> */}
-        <AppointmentForm.Label
           text='User'
           type='ordinary'
         />
@@ -130,6 +122,16 @@ class BasicLayout extends React.Component {
           availableOptions={users}
           type='outlinedSelect'
         />
+        <AppointmentForm.Label
+          text='Type'
+          type='ordinary'
+        />
+        <AppointmentForm.Select
+          value={typeValue}
+          onValueChange={this.onTypeChange}
+          availableOptions={[{ id: 'driving', text: 'Driving' }, { id: 'email', text: 'Email' }]}
+          type='outlinedSelect'
+        /> */}
       </AppointmentForm.BasicLayout>
     )
   }
@@ -145,6 +147,15 @@ const oncallType = [{
   color: '#123456'
 }]
 
+const userTypes = [
+  { id: 'nsaldadze@newtelco.de', text: 'Nodar Saldadze' },
+  { id: 'fwaleska@newtelco.de', text: 'Felix Waleska' },
+  { id: 'alissitsin@newtelco.de', text: 'Andreas Lissitsin' },
+  { id: 'sstergiou@newtelco.de', text: 'Stelios Stergiou' },
+  { id: 'kmoeller@newtelco.de', text: 'Kay Moeller' },
+  { id: 'kkoester@newtelco.de', text: 'Kai Koester' }
+]
+
 export default class OnCall extends React.Component {
   constructor (props) {
     super(props)
@@ -154,13 +165,17 @@ export default class OnCall extends React.Component {
       addedAppointment: {},
       appointmentChanges: {},
       editingAppointmentId: undefined,
-      grouping: [{
-        resourceName: 'oncallType'
-      }],
+      // grouping: [{
+      //   resourceName: 'oncallType'
+      // }],
       resources: [{
         fieldName: 'oncallType',
         title: 'Type',
         instances: oncallType
+      }, {
+        fieldName: 'user',
+        title: 'Person',
+        instances: userTypes
       }]
     }
   }
@@ -175,27 +190,13 @@ export default class OnCall extends React.Component {
       .then(data => {
         const schedule = []
         data.query.forEach((data, index) => {
-          schedule.push({ id: index, startDate: new Date(data.fromDate), endDate: new Date(data.toDate), title: `${data.oncallType.charAt(0).toUpperCase() + data.oncallType.slice(1)} - ${data.fname} ${data.lname}`, oncallType: data.oncallType })
+          schedule.push({ id: index, startDate: new Date(data.fromDate), endDate: new Date(data.toDate), title: `${data.oncallType.charAt(0).toUpperCase() + data.oncallType.slice(1)} - ${data.fname} ${data.lname}`, oncallType: data.oncallType, user: data.user })
         })
         this.setState({
           schedule
         })
       })
       .catch(err => console.error(err))
-    // fetch(`${protocol}//${host}/api/settings/team/members?team=technik`)
-    //   .then(res => res.json())
-    //   .then(data => {
-    //     if (data.teamMembers) {
-    //       const team = []
-    //       data.teamMembers.forEach(member => {
-    //         team.push(`${member.fname} ${member.lname}`)
-    //       })
-    //       this.setState({
-    //         teamMembers: team
-    //       })
-    //     }
-    //   })
-    //   .catch(err => console.error(err))
   }
 
   componentWillUnmount = () => {
@@ -257,12 +258,22 @@ export default class OnCall extends React.Component {
     })
   }
 
+  currentDateChange = (currentDate) => { this.setState({ curDate: currentDate }) };
+
   appointmentFieldChange = (data) => {
     console.log(data)
   }
 
   handleNavigateDate = (date) => {
     console.log(date)
+  }
+
+  handleDeleteBtnClick = (e) => {
+    console.log(e)
+  }
+
+  handleConfirmationClick = (e) => {
+    console.log(e)
   }
 
   render () {
@@ -280,7 +291,10 @@ export default class OnCall extends React.Component {
       <Scheduler
         data={schedule}
       >
-        <ViewState currentDate={curDate} />
+        <ViewState
+          onCurrentDateChange={this.currentDateChange}
+          currentDate={curDate}
+        />
         <EditingState
           onCommitChanges={this.commitChanges}
 
@@ -293,9 +307,9 @@ export default class OnCall extends React.Component {
           editingAppointmentId={editingAppointmentId}
           onEditingAppointmentIdChange={this.changeEditingAppointmentId}
         />
-        <GroupingState
+        {/* <GroupingState
           grouping={grouping}
-        />
+        /> */}
         <Toolbar />
         <DateNavigator onNavigate={this.handleNavigateDate} />
         <TodayButton />
@@ -303,12 +317,14 @@ export default class OnCall extends React.Component {
         <MonthView />
         <WeekView />
         <AllDayPanel />
-        <Appointments />
+        <Appointments
+          draggable
+        />
         <Resources
           data={resources}
           mainResourceName='oncallType'
         />
-        <IntegratedGrouping />
+        {/* <IntegratedGrouping /> */}
         <IntegratedEditing />
         <ConfirmationDialog
           ignoreCancel
@@ -316,13 +332,16 @@ export default class OnCall extends React.Component {
         <AppointmentTooltip
           showOpenButton
           showCloseButton
+          showDeleteButton
+          onDeleteButtonClick={this.handleDeleteBtnClick}
         />
         <AppointmentForm
           basicLayoutComponent={BasicLayout}
           textEditorComponent={TextEditor}
-          onFieldChange={this.appointmentFieldChange}
+          // onFieldChange={this.appointmentFieldChange}
+          onAppointmentDataChange={this.appointmentFieldChange}
         />
-        <GroupingPanel />
+        {/* <GroupingPanel /> */}
         <DragDropProvider />
         <CurrentTimeIndicator
           shadePreviousCells
