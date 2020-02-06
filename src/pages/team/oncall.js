@@ -43,7 +43,7 @@ class Wrapper extends React.Component {
             <Panel bordered>
               <Content>
                 {/* <TuiCalendar /> */}
-                <OnCall />
+                <OnCall csrfToken={this.props.session.csrfToken} />
               </Content>
             </Panel>
           </Container>

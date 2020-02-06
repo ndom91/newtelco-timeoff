@@ -165,9 +165,6 @@ export default class OnCall extends React.Component {
       addedAppointment: {},
       appointmentChanges: {},
       editingAppointmentId: undefined,
-      // grouping: [{
-      //   resourceName: 'oncallType'
-      // }],
       resources: [{
         fieldName: 'oncallType',
         title: 'Type',
@@ -226,20 +223,24 @@ export default class OnCall extends React.Component {
   }
 
   changeEditingAppointmentId = (editingAppointmentId) => {
+    console.log('eAid', editingAppointmentId)
     this.setState({ editingAppointmentId })
   }
 
   commitChanges = ({ added, changed, deleted }) => {
     this.setState((state) => {
+      const host = window.location.host
+      const protocol = window.location.protocol
       let { schedule } = state
-      console.log('ss', schedule)
       const { isShiftPressed } = this.state
       if (added) {
         const startingAddedId = schedule.length > 0 ? schedule[schedule.length - 1].id + 1 : 0
         schedule = [...schedule, { id: startingAddedId, ...added }]
       }
       if (changed) {
+        console.log(changed)
         if (isShiftPressed) {
+          // insert
           const changedAppointment = schedule.find(appointment => changed[appointment.id])
           const startingAddedId = schedule.length > 0 ? schedule[schedule.length - 1].id + 1 : 0
           schedule = [
@@ -247,10 +248,25 @@ export default class OnCall extends React.Component {
             { ...changedAppointment, id: startingAddedId, ...changed[changedAppointment.id] }
           ]
         } else {
+          // update
           schedule = schedule.map(appointment => (
             changed[appointment.id]
               ? { ...appointment, ...changed[appointment.id] }
               : appointment))
+          fetch(`${protocol}//${host}/api/team/oncall/update`, {
+            method: 'POST',
+            body: JSON.stringify({
+              changed: changed
+            }),
+            headers: {
+              'X-CSRF-TOKEN': this.props.csrfToken
+            }
+          })
+            .then(resp => resp.json())
+            .then(data => {
+              console.log(data)
+            })
+            .catch(err => console.error(err))
         }
       }
       if (deleted !== undefined) {
@@ -285,7 +301,6 @@ export default class OnCall extends React.Component {
       appointmentChanges,
       editingAppointmentId,
       curDate,
-      grouping,
       resources
     } = this.state
 
@@ -309,9 +324,6 @@ export default class OnCall extends React.Component {
           editingAppointmentId={editingAppointmentId}
           onEditingAppointmentIdChange={this.changeEditingAppointmentId}
         />
-        {/* <GroupingState
-          grouping={grouping}
-        /> */}
         <Toolbar />
         <DateNavigator onNavigate={this.handleNavigateDate} />
         <TodayButton />
@@ -324,10 +336,8 @@ export default class OnCall extends React.Component {
         />
         <Resources
           data={resources}
-          // mainResourceName='email'
           mainResourceName='oncallType'
         />
-        {/* <IntegratedGrouping /> */}
         <IntegratedEditing />
         <ConfirmationDialog
           ignoreCancel
@@ -341,10 +351,8 @@ export default class OnCall extends React.Component {
         <AppointmentForm
           basicLayoutComponent={BasicLayout}
           textEditorComponent={TextEditor}
-          // onFieldChange={this.appointmentFieldChange}
           onAppointmentDataChange={this.appointmentFieldChange}
         />
-        {/* <GroupingPanel /> */}
         <DragDropProvider />
         <CurrentTimeIndicator
           shadePreviousCells
