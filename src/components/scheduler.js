@@ -40,25 +40,38 @@ class BasicLayout extends React.Component {
   // TODO: Add some Notification Button or automatic thing
   constructor (props) {
     super(props)
+
+    const newAptData = this.props.appointmentData
+    if (newAptData.title === 'undefined') {
+      newAptData.title = 'On Call'
+    }
+
     this.state = {
       users: [],
       typeValue: 'driving',
-      userValue: ''
+      userValue: '',
+      appointmentData: newAptData
     }
   }
 
-  onTypeChange = (nextValue) => {
-    // nextValue = id of chosen value
-    this.props.onFieldChange({ nextValue })
-    this.setState({
-      typeValue: nextValue
-    })
-  }
+  // onTypeChange = (nextValue) => {
+  //   // nextValue = id of chosen value
+  //   this.props.onFieldChange({ nextValue })
+  //   this.setState({
+  //     typeValue: nextValue
+  //   })
+  // }
 
   onUserChange = (nextValue) => {
     this.props.onFieldChange({ nextValue })
+    console.log(nextValue)
+    const user = this.state.users[nextValue - 1]
+    console.log(user)
+    const aptdata = this.state.appointmentData
+    aptdata.title = `${aptdata.oncallType} - ${user.text}`
     this.setState({
-      userValue: nextValue
+      userValue: nextValue,
+      appointmentData: aptdata
     })
   }
 
@@ -86,17 +99,18 @@ class BasicLayout extends React.Component {
   render () {
     const {
       users,
-      typeValue,
-      userValue
+      // typeValue,
+      userValue,
+      appointmentData
     } = this.state
 
     return (
       <AppointmentForm.BasicLayout
-        appointmentData={this.props.appointmentData}
+        appointmentData={appointmentData}
         onFieldChange={this.props.onFieldChange}
         {...this.props}
       >
-        <AppointmentForm.Label
+        {/* <AppointmentForm.Label
           text='Type'
           type='ordinary'
         />
@@ -105,7 +119,7 @@ class BasicLayout extends React.Component {
           onValueChange={this.onTypeChange}
           availableOptions={[{ text: 'Driving', id: 'driving' }, { text: 'Email', id: 'email' }]}
           type='outlinedSelect'
-        />
+        /> */}
         <AppointmentForm.Label
           text='User'
           type='ordinary'
