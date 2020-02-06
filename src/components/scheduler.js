@@ -88,7 +88,7 @@ class BasicLayout extends React.Component {
           data.teamMembers.forEach((member, index) => {
             if (member.email === 'device@newtelco.de') return
             if (member.email === null) return
-            team.push({ id: member.email, text: `${member.fname} ${member.lname}` })
+            team.push({ id: index, text: `${member.fname} ${member.lname}` })
           })
           this.setState({
             users: team
@@ -147,7 +147,7 @@ const oncallType = [{
   color: '#123456'
 }]
 
-const userTypes = [
+const techniker = [
   { id: 'nsaldadze@newtelco.de', text: 'Nodar Saldadze' },
   { id: 'fwaleska@newtelco.de', text: 'Felix Waleska' },
   { id: 'alissitsin@newtelco.de', text: 'Andreas Lissitsin' },
@@ -173,9 +173,10 @@ export default class OnCall extends React.Component {
         title: 'Type',
         instances: oncallType
       }, {
-        fieldName: 'user',
+        fieldName: 'email',
         title: 'Person',
-        instances: userTypes
+        instances: techniker,
+        allowMultiple: true
       }]
     }
   }
@@ -190,7 +191,7 @@ export default class OnCall extends React.Component {
       .then(data => {
         const schedule = []
         data.query.forEach((data, index) => {
-          schedule.push({ id: index, startDate: new Date(data.fromDate), endDate: new Date(data.toDate), title: `${data.oncallType.charAt(0).toUpperCase() + data.oncallType.slice(1)} - ${data.fname} ${data.lname}`, oncallType: data.oncallType, user: data.user })
+          schedule.push({ id: index, startDate: new Date(data.fromDate), endDate: new Date(data.toDate), title: `${data.oncallType.charAt(0).toUpperCase() + data.oncallType.slice(1)} - ${data.fname} ${data.lname}`, oncallType: data.oncallType, email: [data.email] })
         })
         this.setState({
           schedule
@@ -231,6 +232,7 @@ export default class OnCall extends React.Component {
   commitChanges = ({ added, changed, deleted }) => {
     this.setState((state) => {
       let { schedule } = state
+      console.log('ss', schedule)
       const { isShiftPressed } = this.state
       if (added) {
         const startingAddedId = schedule.length > 0 ? schedule[schedule.length - 1].id + 1 : 0
@@ -322,6 +324,7 @@ export default class OnCall extends React.Component {
         />
         <Resources
           data={resources}
+          // mainResourceName='email'
           mainResourceName='oncallType'
         />
         {/* <IntegratedGrouping /> */}
