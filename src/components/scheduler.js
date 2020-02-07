@@ -42,9 +42,12 @@ class BasicLayout extends React.Component {
   constructor (props) {
     super(props)
 
+    console.log(props)
     const newAptData = this.props.appointmentData
     if (newAptData.title === undefined) {
       newAptData.title = 'TYPE - NAME'
+    // } else {
+    //   newAptData.title =
     }
 
     this.state = {
@@ -122,7 +125,7 @@ class BasicLayout extends React.Component {
           onValueChange={this.onUserChange}
           availableOptions={users}
           type='outlinedSelect'
-        />
+        /> */}
         <AppointmentForm.Label
           text='Type'
           type='ordinary'
@@ -132,7 +135,7 @@ class BasicLayout extends React.Component {
           onValueChange={this.onTypeChange}
           availableOptions={[{ id: 'driving', text: 'Driving' }, { id: 'email', text: 'Email' }]}
           type='outlinedSelect'
-        /> */}
+        />
       </AppointmentForm.BasicLayout>
     )
   }
@@ -153,6 +156,10 @@ const techniker = [
   { id: 'fwaleska@newtelco.de', text: 'Felix Waleska' },
   { id: 'alissitsin@newtelco.de', text: 'Andreas Lissitsin' },
   { id: 'sstergiou@newtelco.de', text: 'Stelios Stergiou' },
+  { id: 'ndomino@newtelco.de', text: 'Nico Domino' },
+  { id: 'jharfert@newtelco.de', text: 'Jurij Harfert' },
+  { id: 'nchachua@newtelco.de', text: 'Nik Chachua' },
+  { id: 'aklementyev@newtelco.de', text: 'Anton Klementyev' },
   { id: 'kmoeller@newtelco.de', text: 'Kay Moeller' },
   { id: 'kkoester@newtelco.de', text: 'Kai Koester' }
 ]
@@ -167,14 +174,13 @@ export default class OnCall extends React.Component {
       appointmentChanges: {},
       editingAppointmentId: undefined,
       resources: [{
-        fieldName: 'oncallType',
-        title: 'Type',
-        instances: oncallType
-      }, {
+      //   fieldName: 'oncallType',
+      //   title: 'Type',
+      //   instances: oncallType
+      // }, {
         fieldName: 'email',
         title: 'Person',
-        instances: techniker,
-        allowMultiple: true
+        instances: techniker
       }]
     }
   }
@@ -189,7 +195,8 @@ export default class OnCall extends React.Component {
       .then(data => {
         const schedule = []
         data.query.forEach((data, index) => {
-          schedule.push({ id: index, startDate: new Date(data.fromDate), endDate: new Date(data.toDate), title: `${data.oncallType.charAt(0).toUpperCase() + data.oncallType.slice(1)} - ${data.fname} ${data.lname}`, oncallType: data.oncallType, email: [data.email] })
+          const title = data.title || `${data.oncallType.charAt(0).toUpperCase() + data.oncallType.slice(1)} - ${data.fname} ${data.lname}`
+          schedule.push({ id: index, startDate: new Date(data.fromDate), endDate: new Date(data.toDate), title: title, oncallType: data.oncallType, email: data.email })
         })
         this.setState({
           schedule
@@ -237,11 +244,27 @@ export default class OnCall extends React.Component {
       if (added) {
         const startingAddedId = schedule.length > 0 ? schedule[schedule.length - 1].id + 1 : 0
         schedule = [...schedule, { id: startingAddedId, ...added }]
+        fetch(`${protocol}//${host}/api/team/oncall/insert`, {
+          method: 'POST',
+          body: JSON.stringify({
+            added: added
+          }),
+          headers: {
+            'X-CSRF-TOKEN': this.props.csrfToken
+          }
+        })
+          .then(resp => resp.json())
+          .then(data => {
+            console.log(data)
+            if (data && data.status === 'ok' && data.query.affectedRows === 1) {
+              Alert.success('Added  On-Call')
+            }
+          })
+          .catch(err => console.error(err))
       }
       if (changed) {
         console.log(changed)
         if (isShiftPressed) {
-          // insert
           const changedAppointment = schedule.find(appointment => changed[appointment.id])
           const startingAddedId = schedule.length > 0 ? schedule[schedule.length - 1].id + 1 : 0
           schedule = [
@@ -249,7 +272,6 @@ export default class OnCall extends React.Component {
             { ...changedAppointment, id: startingAddedId, ...changed[changedAppointment.id] }
           ]
         } else {
-          // update
           schedule = schedule.map(appointment => (
             changed[appointment.id]
               ? { ...appointment, ...changed[appointment.id] }
@@ -266,15 +288,36 @@ export default class OnCall extends React.Component {
             .then(resp => resp.json())
             .then(data => {
               console.log(data)
-              if (data && data.query.status === 'ok') {
-                Alert.success('Updated On-Call Entry')
+              if (data && data.status === 'ok') {
+                Alert.success('Updated On-Call')
               }
             })
             .catch(err => console.error(err))
         }
       }
       if (deleted !== undefined) {
+        const ogSchedule = schedule
         schedule = schedule.filter(appointment => appointment.id !== deleted)
+        const toDelete = ogSchedule.find(apt => apt.id === deleted)
+        console.log(toDelete)
+        fetch(`${protocol}//${host}/api/team/oncall/delete`, {
+          method: 'POST',
+          body: JSON.stringify({
+            deleted: deleted,
+            toDelete: toDelete
+          }),
+          headers: {
+            'X-CSRF-TOKEN': this.props.csrfToken
+          }
+        })
+          .then(resp => resp.json())
+          .then(data => {
+            console.log(data)
+            if (data && data.status === 'ok' && data.query.affectedRows === 1) {
+              Alert.success('Deleted  On-Call')
+            }
+          })
+          .catch(err => console.error(err))
       }
       return { schedule }
     })
@@ -340,7 +383,7 @@ export default class OnCall extends React.Component {
         />
         <Resources
           data={resources}
-          mainResourceName='oncallType'
+          mainResourceName='email'
         />
         <IntegratedEditing />
         <ConfirmationDialog
