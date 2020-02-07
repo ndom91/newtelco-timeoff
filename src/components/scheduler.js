@@ -1,6 +1,7 @@
 import React from 'react'
 import fetch from 'isomorphic-unfetch'
 import moment from 'moment-timezone'
+import { Alert } from 'rsuite'
 import {
   ViewState,
   EditingState,
@@ -265,6 +266,9 @@ export default class OnCall extends React.Component {
             .then(resp => resp.json())
             .then(data => {
               console.log(data)
+              if (data && data.query.status === 'ok') {
+                Alert.success('Updated On-Call Entry')
+              }
             })
             .catch(err => console.error(err))
         }

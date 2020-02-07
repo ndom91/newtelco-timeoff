@@ -682,7 +682,7 @@ class Wrapper extends React.Component {
   handlePersonalSelectChange = (user) => {
     const host = window.location.host
     const protocol = window.location.protocol
-    fetch(`${protocol}//${host}/api/user/entries?user=${user}`)
+    fetch(`${protocol}//${host}/api/user/entries?user=${user}&t=vacation`)
       .then(res => res.json())
       .then(data => {
         if (data.userEntries) {
