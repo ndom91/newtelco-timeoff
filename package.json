@@ -46,6 +46,7 @@
     "date-fns-tz": "^1.0.8",
     "dotenv": "^8.2.0",
     "dotenv-webpack": "^1.7.0",
+    "emoji-mart": "^2.11.2",
     "express-session": "^1.17.0",
     "formidable": "^1.2.1",
     "isomorphic-unfetch": "^3.0.0",

@@ -39,7 +39,7 @@ const Comment = (props) => {
         {props.data.userDetails && props.user === props.data.userDetails.email
           ? (
             <Button onClick={() => props.onDelete(props.data.id)} className='comment-del-btn'>
-              <FontAwesomeIcon icon={faTrashAlt} />
+              <FontAwesomeIcon icon={faTrashAlt} width='1em' />
             </Button>
           ) : (
             null

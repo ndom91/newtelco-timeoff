@@ -131,6 +131,7 @@ class Wrapper extends React.Component {
             :global(.user-panel) {
               width: 48%;
               margin-right: 20px;
+              overflow: visible;
             }
             :global(.team-panel) {
               width: 48%;

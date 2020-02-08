@@ -3,17 +3,22 @@ import fetch from 'isomorphic-unfetch'
 import Comment from './comment'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import BarLoader from 'react-spinners/ClipLoader'
+import 'emoji-mart/css/emoji-mart.css'
+import { Picker } from 'emoji-mart'
 import {
   Input,
   Button,
   Notification,
-  Alert
+  Alert,
+  ButtonGroup,
+  ButtonToolbar
 } from 'rsuite'
 // import {
 //   faPaperPlane
 // } from '@fortawesome/free-solid-svg-icons'
 import {
-  faPaperPlane
+  faPaperPlane,
+  faSmileWink
 } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -25,7 +30,8 @@ class Comments extends React.Component {
       items: [],
       count: 15,
       commentText: '',
-      commentsLoading: true
+      commentsLoading: true,
+      showEmoji: false
     }
     // Roll your own: https://www.taniarascia.com/add-comments-to-static-site/
   }
@@ -116,6 +122,24 @@ class Comments extends React.Component {
     })
   }
 
+  addEmoji = (data) => {
+    const {
+      commentText
+    } = this.state
+
+    const newCommentText = `${commentText} ${data.native}`
+    this.setState({
+      showEmoji: !this.state.showEmoji,
+      commentText: newCommentText
+    })
+  }
+
+  showEmojiPicker = () => {
+    this.setState({
+      showEmoji: !this.state.showEmoji
+    })
+  }
+
   fetchData = () => {
     if (this.state.items.length >= this.props.length) {
       this.setState({ hasMore: false, commentsLoading: true })
@@ -128,8 +152,14 @@ class Comments extends React.Component {
     fetch(pageRequest)
       .then(res => res.json())
       .then(data => {
+        const returnBody = data.resp
+        data.resp.forEach((comment, index) => {
+          const buffer = Buffer.from(comment.body)
+          var string = new TextDecoder('utf-8').decode(buffer)
+          returnBody[index].body = string
+        })
         this.setState({
-          items: data.resp,
+          items: returnBody,
           count: this.state.count + 15,
           commentsLoading: false
         })
@@ -141,7 +171,8 @@ class Comments extends React.Component {
     const {
       hasMore,
       items,
-      commentsLoading
+      commentsLoading,
+      showEmoji
     } = this.state
 
     return (
@@ -198,18 +229,44 @@ class Comments extends React.Component {
           <Input
             componentClass='textarea'
             rows={1}
-            style={{ width: '100%', resize: 'auto', min2eight: '45px' }}
+            style={{ width: '100%', resize: 'auto', minHeight: '45px' }}
             placeholder='What do you want to say?'
             value={this.state.commentText}
             onChange={this.handleCommentChange}
           />
-          <Button
-            className='comment-submit-btn'
-            appearance='ghost'
-            onClick={this.handleSubmit}
-          >
-            <FontAwesomeIcon icon={faPaperPlane} width='1.3rem' />
-          </Button>
+          <ButtonToolbar>
+            <ButtonGroup>
+              <Button
+                onClick={this.showEmojiPicker}
+                appearance='default'
+                className='emoji-picker-btn'
+              >
+                <FontAwesomeIcon icon={faSmileWink} width='1.5rem' />
+              </Button>
+              <Button
+                className='comment-submit-btn'
+                appearance='primary'
+                onClick={this.handleSubmit}
+              >
+                <FontAwesomeIcon icon={faPaperPlane} width='1.3rem' />
+              </Button>
+            </ButtonGroup>
+          </ButtonToolbar>
+          {showEmoji ? (
+            <div className='emoji-picker'>
+              <Picker
+                set='emojione'
+                onSelect={this.addEmoji}
+                showPreview={false}
+                title='Emoji Picker'
+                style={{
+                  width: '425px'
+                }}
+              />
+            </div>
+          ) : (
+            null
+          )}
         </div>
         <style jsx>{`
           :global(.comments-wrapper) {
@@ -231,18 +288,40 @@ class Comments extends React.Component {
             overflow-y: scroll;
             margin: 0 auto;
             margin-top: 25px;
+            overflow: visible;
+            position: relative;
           }
-          :global(.comment-submit-btn) {
+          :global(.rs-btn-toolbar) {
+            margin-left: 10px;
+            width: 150px;
+          }
+          :global(.emoji-picker) {
+            z-index: 999;
+            position: absolute;
+            display: inline-block;
+            top: 50px;
+          }
+          :global(.emoji-picker-btn) {
             height: 45px;
-            margin: 5px;
-            margin-left: 15px;
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: box-shadow 250ms ease-in-out, transform 250ms ease-in-out;
+            margin-left: 10px;
+          }
+          :global(.emoji-mart-search input) {
+            width: 75%;
+          }
+          :global(.emoji-mart-preview) {
+            display: none;
+          }
+          :global(.comment-submit-btn) {
+            height: 45px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: box-shadow 250ms ease-in-out;
           }
           :global(.comment-submit-btn:hover) {
-            transform: translateY(-3px);
             box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
           }
           :global(.scrollable-div) {

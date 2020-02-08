@@ -10,7 +10,7 @@ module.exports = async (req, res) => {
   `)
   const userId = userInfo[0].id
   const discussionInsert = await db.query(escape`
-    INSERT INTO discussion (user, body, page) VALUES (${userId}, ${body}, ${page})
+    INSERT INTO discussion (user, body, page) VALUES (${userId}, TO_BASE64(${body}), ${page})
   `)
   res.status(200).json({ discussionInsert })
 }
