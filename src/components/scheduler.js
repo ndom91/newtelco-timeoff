@@ -161,6 +161,7 @@ const techniker = [
   { id: 'nchachua@newtelco.de', text: 'Nik Chachua' },
   { id: 'aklementyev@newtelco.de', text: 'Anton Klementyev' },
   { id: 'kmoeller@newtelco.de', text: 'Kay Moeller' },
+  { id: 'pkrieger@newtelco.de', text: 'Paul Krieger' },
   { id: 'kkoester@newtelco.de', text: 'Kai Koester' }
 ]
 
