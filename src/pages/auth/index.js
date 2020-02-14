@@ -10,6 +10,7 @@ import {
 import NewtelcoSvg from '../../components/newtelcosvg'
 import anime from 'animejs'
 import '../../style/newtelco-rsuite.less'
+import VacaPattern from '../../../public/static/img/vacation_pattern.svg'
 import {
   Divider,
   ControlLabel,
@@ -108,6 +109,7 @@ export default class App extends React.Component {
     } else {
       return (
         <div className='show-fake-browser login-page'>
+          <img src={VacaPattern} className='vacation-background' />
           <Container className='login-wrapper'>
             <Content className='login-content-wrapper'>
               <FlexboxGrid justify='center' className='login-grid-wrapper'>
@@ -152,6 +154,12 @@ export default class App extends React.Component {
                 margin-right: 5px;
               }
             }
+            .vacation-background {
+              position: absolute;
+              height: 100%;
+              width: 100%;
+              z-index: -10;
+            }
             .text-center {
               margin: 100px 0 50px 0;
             } 
@@ -192,7 +200,7 @@ export default class App extends React.Component {
 
             }
             :global(.login-content-wrapper) {
-              background-color: #f5f6f8;
+              background-color: transparent;
               flex-grow: 1;
             }
             :global(.login-footer-wrapper) {
