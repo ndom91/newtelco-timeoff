@@ -1685,6 +1685,10 @@ class Wrapper extends React.Component {
                 padding: 20px !important;
               }
             }
+            :global(.rs-table-cell-group-fixed-right) {
+              right: 80px !important;
+              left: unset !important;
+            }
             :global(.table-tab-list) {
               margin-bottom: 20px;
               padding-left: 0px !important;

@@ -255,6 +255,9 @@ class Layout extends React.Component {
                 display: flex;
                 align-items: center;
               }
+              :global(.rs-tag-green) {
+                background-color: #67b246 !important;
+              }
             `}
           </style>
         </div>
