@@ -5,7 +5,7 @@ import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { Button, ButtonGroup, ButtonToolbar, Tag, Alert } from 'rsuite'
 
 export default class ApprovedBtn extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       approval: 0
@@ -48,7 +48,7 @@ export default class ApprovedBtn extends Component {
       .catch(err => console.error(err))
   };
 
-  render() {
+  render () {
     const {
       approval
     } = this.state
