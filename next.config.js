@@ -9,7 +9,7 @@ const path = require('path')
 const Dotenv = require('dotenv-webpack')
 
 // eslint-disable-next-line
-function HACK_removeMinimizeOptionFromCssLoaders (config) {
+function HACK_removeMinimizeOptionFromCssLoaders(config) {
   // console.warn(
   //   'HACK: Removing `minimize` option from `css-loader` entries in Webpack config'
   // )
@@ -30,11 +30,11 @@ const nextConfig = {
   lessLoaderOptions: {
     javascriptEnabled: true
   },
-  exportPathMap: function () {
-    return {
-      '/': { page: '/' }
-    }
-  },
+  // exportPathMap: function () {
+  //   return {
+  //     '/': { page: '/' }
+  //   }
+  // },
   webpack (config, { isServer, buildId, dev }) {
     config.plugins.push(new webpack.EnvironmentPlugin(localEnv))
     HACK_removeMinimizeOptionFromCssLoaders(config)

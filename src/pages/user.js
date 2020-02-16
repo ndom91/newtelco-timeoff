@@ -184,6 +184,10 @@ class Wrapper extends React.Component {
             cellRenderer: 'dateTimeShort',
             width: 160
           }, {
+            headerName: 'Submitted By',
+            field: 'submitted_by',
+            width: 140
+          }, {
             headerName: 'View Files',
             width: 160,
             cellRenderer: 'viewfiles',

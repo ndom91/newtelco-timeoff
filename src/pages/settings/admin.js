@@ -202,6 +202,10 @@ class Wrapper extends React.Component {
             field: 'submitted_datetime',
             width: 160
           }, {
+            headerName: 'Submitted By',
+            field: 'submitted_by',
+            width: 140
+          }, {
             headerName: 'Approval Date/Time',
             field: 'approval_datetime',
             cellRenderer: 'dateTimeShortApproval',
@@ -350,6 +354,10 @@ class Wrapper extends React.Component {
             field: 'submitted_datetime',
             sort: { direction: 'desc', priority: 0 },
             width: 160
+          }, {
+            headerName: 'Submitted By',
+            field: 'submitted_by',
+            width: 140
           }, {
             headerName: 'Approval Date/Time',
             field: 'approval_datetime',
