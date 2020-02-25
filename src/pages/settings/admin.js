@@ -141,7 +141,7 @@ class Wrapper extends React.Component {
               alignItems: 'center',
               height: '100%'
             },
-            width: 200,
+            width: 200
           }, {
             headerName: 'Days Earned This Year',
             field: 'jahresurlaubInsgesamt',
@@ -519,6 +519,31 @@ class Wrapper extends React.Component {
       .catch(err => console.error(err))
   }
 
+  componentDidUpdate = () => {
+    const type = this.state.allUserType
+    if (this.allGridColumnApi) {
+      const sickHideColumns = [
+        'resturlaubVorjahr',
+        'jahresurlaubInsgesamt',
+        'jahresUrlaubAusgegeben',
+        'restjahresurlaubInsgesamt',
+        'beantragt',
+        'resturlaubJAHR',
+        'approved',
+        'approval_datetime'
+      ]
+      if (type === 'sick') {
+        sickHideColumns.forEach(column => {
+          this.allGridColumnApi.setColumnVisible(column, false)
+        })
+      } else {
+        sickHideColumns.forEach(column => {
+          this.allGridColumnApi.setColumnVisible(column, true)
+        })
+      }
+    }
+  }
+
   notifyInfo = (header, text) => {
     Notification.info({
       title: header,
@@ -668,6 +693,7 @@ class Wrapper extends React.Component {
   handleAllGridReady = params => {
     params.api.sizeColumnsToFit()
     this.allGridApi = params.api
+    this.allGridColumnApi = params.columnApi
   }
 
   handleManagerGridReady = params => {
@@ -918,41 +944,70 @@ class Wrapper extends React.Component {
         return
       }
       const request = selectedRow[0]
-      console.log(request)
-      const tableData = [
-        {
-          title: 'Colleague',
-          value: request.name
-        },
-        {
-          title: 'From',
-          value: moment(request.fromDate).format('DD.MM.YYYY')
-        },
-        {
-          title: 'To',
-          value: moment(request.toDate).format('DD.MM.YYYY')
-        },
-        {
-          title: 'Manager',
-          value: request.manager
-        },
-        {
-          title: 'Type',
-          value: request.type.charAt(0).toUpperCase() + request.type.slice(1)
-        },
-        {
-          title: 'Requested Days',
-          value: request.beantragt
-        },
-        {
-          title: 'Remaining Days',
-          value: request.resturlaubJAHR
-        },
-        {
-          title: 'Submitted On',
-          value: moment(request.submitted_datetime).format('DD.MM.YYYY HH:mm')
-        }
-      ]
+      let tableData = []
+      if (request.type === 'sick') {
+        tableData = [
+          {
+            title: 'Colleague',
+            value: request.name
+          },
+          {
+            title: 'From',
+            value: moment(request.fromDate).format('DD.MM.YYYY')
+          },
+          {
+            title: 'To',
+            value: moment(request.toDate).format('DD.MM.YYYY')
+          },
+          {
+            title: 'Manager',
+            value: request.manager
+          },
+          {
+            title: 'Type',
+            value: request.type.charAt(0).toUpperCase() + request.type.slice(1)
+          },
+          {
+            title: 'Submitted On',
+            value: moment(request.submitted_datetime).format('DD.MM.YYYY HH:mm')
+          }
+        ]
+      } else {
+        tableData = [
+          {
+            title: 'Colleague',
+            value: request.name
+          },
+          {
+            title: 'From',
+            value: moment(request.fromDate).format('DD.MM.YYYY')
+          },
+          {
+            title: 'To',
+            value: moment(request.toDate).format('DD.MM.YYYY')
+          },
+          {
+            title: 'Manager',
+            value: request.manager
+          },
+          {
+            title: 'Type',
+            value: request.type.charAt(0).toUpperCase() + request.type.slice(1)
+          },
+          {
+            title: 'Requested Days',
+            value: request.beantragt
+          },
+          {
+            title: 'Remaining Days',
+            value: request.resturlaubJAHR
+          },
+          {
+            title: 'Submitted On',
+            value: moment(request.submitted_datetime).format('DD.MM.YYYY HH:mm')
+          }
+        ]
+      }
       this.setState({
         openConfirmDeleteModal: !this.state.openConfirmDeleteModal,
         confirmDeleteData: tableData,
@@ -1648,7 +1703,7 @@ class Wrapper extends React.Component {
               </Modal.Header>
               <Modal.Body>
                 <span style={{ textAlign: 'center', display: 'block', fontWeight: '600' }}>Are you sure you want to delete this request?</span>
-                <Table showHeader={false} height={8 * 50} bordered={false} data={confirmDeleteData} style={{ margin: '20px 50px' }}>
+                <Table showHeader={false} height={confirmDeleteData.length * 50} bordered={false} data={confirmDeleteData} style={{ margin: '20px 50px' }}>
                   <Column width={200} align='left'>
                     <HeaderCell>Field: </HeaderCell>
                     <Cell dataKey='title' />

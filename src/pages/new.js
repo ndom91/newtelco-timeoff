@@ -49,7 +49,7 @@ import {
 const { Column, HeaderCell, Cell } = Table
 
 class Wrapper extends React.Component {
-  static async getInitialProps ({ res, req, query }) {
+  static async getInitialProps({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -65,7 +65,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
 
     this.state = {
@@ -97,12 +97,15 @@ class Wrapper extends React.Component {
         notes: ''
       },
       lastRequest: {
+        submitted: '',
         lastYear: 0,
         spentThisYear: 0,
         thisYear: 0,
         total: 0,
         requested: 0,
-        remaining: 0
+        remaining: 0,
+        from: '',
+        to: ''
       },
       tutSteps: [
         {
@@ -137,7 +140,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const host = window.location.host
     const protocol = window.location.protocol
     const tutorial = window.localStorage.getItem('tut')
@@ -172,7 +175,7 @@ class Wrapper extends React.Component {
       .then(res => res.json())
       .then(data => {
         const newRequest = {
-          lastYear: data.lastRequest[0].resturlaubVorjahr,
+          lastYear: data.lastRequest[0].resturlaubVorjahr || 0,
           thisYear: data.lastRequest[0].jahresurlaubInsgesamt,
           spentThisYear: data.lastRequest[0].jahresUrlaubAusgegeben,
           total: data.lastRequest[0].restjahresurlaubInsgesamt,
@@ -367,6 +370,7 @@ class Wrapper extends React.Component {
       dateTo,
       manager,
       type,
+      email,
       name,
       notes
     } = this.state.vaca
@@ -395,6 +399,7 @@ class Wrapper extends React.Component {
             type: type,
             name: name,
             note: notes,
+            email: email,
             ah: approvalHash,
             files: this.state.uploadedFiles
           }),
@@ -483,7 +488,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  render () {
+  render() {
     const {
       vaca,
       availableManagers,

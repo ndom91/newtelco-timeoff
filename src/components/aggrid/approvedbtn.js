@@ -53,6 +53,14 @@ export default class ApprovedBtn extends Component {
       approval
     } = this.state
 
+    if (this.props.data.type === 'sick') {
+      return (
+        <span>
+          <Tag color='green'>N/A</Tag>
+        </span>
+      )
+    }
+
     if (this.props.value === 2 || approval === 2) {
       return (
         <span>
