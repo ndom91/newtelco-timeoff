@@ -599,7 +599,7 @@ class Wrapper extends React.Component {
           const groupName = group.substr(3, group.length)
           adUsers.push({ id: index, fname: user.givenName, lname: user.sn, email: user.mail, team: groupName })
         })
-        const dbUsers = this.state.rowData
+        const dbUsers = this.state.allUsers
         let updateCount = 0
         let addCount = 0
         let newUsers = []
