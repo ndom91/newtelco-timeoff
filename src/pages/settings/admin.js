@@ -40,7 +40,8 @@ import {
   FormGroup,
   ControlLabel,
   Row,
-  Col
+  Col,
+  Loader
 } from 'rsuite'
 import {
   faPencilAlt,
@@ -90,6 +91,7 @@ class Wrapper extends React.Component {
       openConfirmDeleteModal: false,
       viewFilesModals: false,
       admin: props.admin,
+      adLoading: false,
       allUserType: 'vacation',
       allUsers: [],
       allRowData: [],
@@ -579,11 +581,18 @@ class Wrapper extends React.Component {
   }
 
   handleAdGroupSync = () => {
+    this.setState({
+      adLoading: true
+    })
     const host = window.location.host
     const protocol = window.location.protocol
     fetch(`${protocol}//${host}/api/ad`)
       .then(res => res.json())
       .then(data => {
+        if (data.status === 500) {
+          Alert.error('Error connecting to LDAP Server')
+          return
+        }
         const adUsers = []
         data.users.map((user, index) => {
           const group = user.dn.split(',')[1]
@@ -619,7 +628,8 @@ class Wrapper extends React.Component {
             updateCount: updateCount,
             newUsersToDb: newUsers,
             adUsers: adUsers,
-            showSyncModal: true
+            showSyncModal: true,
+            adLoading: false
             // rowData: adUsers
           })
         } else {
@@ -1265,7 +1275,8 @@ class Wrapper extends React.Component {
       viewFilesModal,
       viewFiles,
       openConfirmDeleteModal,
-      confirmDeleteData
+      confirmDeleteData,
+      adLoading
     } = this.state
 
     if (this.props.session.user && this.state.admin) {
@@ -1346,7 +1357,7 @@ class Wrapper extends React.Component {
                 >
                   <Header className='user-content-header'>
                     <h4>Users</h4>
-                    <IconButton icon={<Icon icon='refresh' />} appearance='ghost' onClick={this.handleAdGroupSync}>
+                    <IconButton icon={<Icon className={adLoading ? 'loading' : ''} icon='refresh' />} appearance='ghost' onClick={this.handleAdGroupSync}>
                       Sync Domain Users
                     </IconButton>
                   </Header>
@@ -1749,6 +1760,17 @@ class Wrapper extends React.Component {
                 padding: 20px !important;
               }
             }
+            :global(.loading) {
+              animation: rotating 1.5s linear infinite;
+              @keyframes rotating {
+                from {
+                  transform: rotate(0deg);
+                }
+                to {
+                  transform: rotate(360deg);
+                }
+              }
+            }
             :global(.rs-table-cell-group-fixed-right) {
               right: 80px !important;
               left: unset !important;
@@ -1840,7 +1862,7 @@ class Wrapper extends React.Component {
               transition: box-shadow 250ms ease-in-out;
             }
             :global(.rs-btn-ghost:hover) {
-              box-shadow: 0 2px 0 rgba(10, 10, 10,.05), 0 4px 8px rgba(10, 10, 10,.05), 0 10px 10px rgba(10, 10, 10,.05), 0 7px 70px rgba(10, 10, 10,.1);
+              box-shadow: 0px 3px 10px #67b24659;
             }
             :global(.accordion__button:focus) {
               outline: none;
