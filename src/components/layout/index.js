@@ -1,9 +1,13 @@
-import React from 'react';
-import fetch from 'isomorphic-unfetch';
-import SidebarNT from './sidebar';
-import '../../style/newtelco-rsuite.less';
-import VacaPattern from '../../../public/static/img/vacation_pattern.svg';
-import { Container, Content } from 'rsuite';
+import React from 'react'
+import fetch from 'isomorphic-unfetch'
+import SidebarNT from './sidebar'
+import '../../style/newtelco-rsuite.less'
+import VacaPattern from '../../../public/static/img/vacation_pattern.svg'
+import { Container, Content, Alert } from 'rsuite'
+
+Alert.config({
+  duration: 4000
+})
 
 class Layout extends React.Component {
   constructor (props) {
@@ -23,7 +27,7 @@ class Layout extends React.Component {
     const userTeam = JSON.parse(window.localStorage.getItem('userTeam'))
     const userAdmin = JSON.parse(window.localStorage.getItem('mA'))
     const expandStorage =
-      window.localStorage.getItem('layout-expand') === 'true';
+      window.localStorage.getItem('layout-expand') === 'true'
     if (companyInfo && userTeam && userAdmin) {
       this.setState({
         expand: expandStorage,
@@ -104,7 +108,7 @@ class Layout extends React.Component {
 
   capitalizeFirstLetter = string => {
     if (string === '') {
-      return 'Dashboard';
+      return 'Dashboard'
     }
     return string.charAt(0).toUpperCase() + string.slice(1)
   };

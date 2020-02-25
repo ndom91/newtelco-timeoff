@@ -599,7 +599,7 @@ class Wrapper extends React.Component {
           const groupName = group.substr(3, group.length)
           adUsers.push({ id: index, fname: user.givenName, lname: user.sn, email: user.mail, team: groupName })
         })
-        const dbUsers = this.state.allUsers
+        const dbUsers = this.state.rowData
         let updateCount = 0
         let addCount = 0
         let newUsers = []
@@ -616,6 +616,7 @@ class Wrapper extends React.Component {
           })
         }
         // check if there are new users in AD not in DB
+        console.log(dbUsers, adUsers)
         if (dbUsers.length !== adUsers.length) {
           // filter out users without email
           const usersWithEmail = adUsers.filter(user => user.email !== undefined)
@@ -633,7 +634,10 @@ class Wrapper extends React.Component {
             // rowData: adUsers
           })
         } else {
-          Alert.success('User DB is up-to-date with your LDAP Users')
+          this.setState({
+            adLoading: false
+          })
+          Alert.success('Users up-to-date with LDAP')
         }
       })
       .catch(err => console.error(err))
