@@ -603,7 +603,8 @@ class Wrapper extends React.Component {
         let updateCount = 0
         let addCount = 0
         let newUsers = []
-        // check for updates to users (fname, lname)
+        let updateUsers = []
+        // check for updates to users (fname, lname, team)
         if (dbUsers.length > 0) {
           dbUsers.forEach(user => {
             let updateUser = 0
@@ -611,12 +612,15 @@ class Wrapper extends React.Component {
             if (adUser.length > 0) {
               if (user.fname !== adUser[0].fname) user.update = 1 && updateUser++
               if (user.lname !== adUser[0].lname) user.update = 1 && updateUser++
-              if (updateUser !== 0) updateCount++
+              if (user.team !== adUser[0].team) user.update = 1 && updateUser++
+              if (updateUser !== 0) {
+                updateCount++
+                updateUsers.push(adUser[0].id)
+              }
             }
           })
         }
         // check if there are new users in AD not in DB
-        console.log(dbUsers, adUsers)
         if (dbUsers.length !== adUsers.length) {
           // filter out users without email
           const usersWithEmail = adUsers.filter(user => user.email !== undefined)
@@ -627,6 +631,7 @@ class Wrapper extends React.Component {
           this.setState({
             addCount: addCount,
             updateCount: updateCount,
+            updateUsers: updateUsers,
             newUsersToDb: newUsers,
             adUsers: adUsers,
             showSyncModal: true,
@@ -645,7 +650,9 @@ class Wrapper extends React.Component {
 
   handleConfirmAdSync = () => {
     const {
-      newUsersToDb
+      newUsersToDb,
+      updateUsers,
+      adUsers
     } = this.state
 
     if (newUsersToDb.length > 0) {
@@ -678,6 +685,48 @@ class Wrapper extends React.Component {
               showSyncModal: false
             })
             Alert.warn(`Error adding ${newUsersToDb.length} - ${data.error}`)
+          }
+        })
+        .catch(err => console.error(err))
+    }
+    if (updateUsers.length > 0) {
+      const host = window.location.host
+      const protocol = window.location.protocol
+      const updateUserDetails = []
+      updateUsers.forEach(user => {
+        const adUser = adUsers.find(adUser => adUser.id === user)
+        updateUserDetails.push(adUser)
+      })
+      fetch(`${protocol}//${host}/api/user/update`, {
+        method: 'POST',
+        body: JSON.stringify({
+          users: updateUserDetails
+        }),
+        headers: {
+          'X-CSRF-TOKEN': this.props.session.csrfToken
+        }
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 200) {
+            const users = this.state.rowData
+            updateUserDetails.forEach(user => {
+              const toUpdateUserId = users.indexOf(u => u.email === user.email)
+              users[toUpdateUserId].fname = user.fname
+              users[toUpdateUserId].lname = user.lname
+              users[toUpdateUserId].team = user.team
+            })
+            this.setState({
+              rowData: users,
+              showSyncModal: false
+            })
+            if (this.gridApi) { this.gridApi.refreshCells() }
+            Alert.success(`Successfully updated ${updateUsers.length} users`, 5000)
+          } else {
+            this.setState({
+              showSyncModal: false
+            })
+            Alert.warn(`Error updating ${updateUsers.length} - ${data.error}`)
           }
         })
         .catch(err => console.error(err))
