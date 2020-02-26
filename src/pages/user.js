@@ -568,18 +568,9 @@ class Wrapper extends React.Component {
 
     const to = moment.tz(moment(editData.to).format('YYYY-MM-DD'), 'Europe/Berlin').format('YYYY-MM-DD')
     const from = moment.tz(moment(editData.from).format('YYYY-MM-DD'), 'Europe/Berlin').format('YYYY-MM-DD')
-    // const requestedDays = to.diff(from, 'days')
-    console.log(editData.to)
     editData.to = to
-    console.log(editData.to)
     editData.from = from
 
-    // if (requestedDays !== editData.requested) {
-    //   this.notifyWarn('Warning - Daterange no longer equals approved number of days')
-    //   return
-    // }
-
-    console.log(editData)
     fetch(`${protocol}//${host}/api/user/entries/update`, {
       method: 'POST',
       body: JSON.stringify({

@@ -15,15 +15,14 @@ module.exports = async (req, res) => {
   const from = moment.parseZone(editData.from).utc().format('YYYY-MM-DD HH:mm:ss')
   const to = moment.parseZone(editData.to).utc().format('YYYY-MM-DD HH:mm:ss')
   const notes = editData.note
-  const files = body.files
+  const files = JSON.stringify(body.files)
   const approved = editData.approved
 
   let updateQuery
   if (approved == 0) {
     updateQuery = await db.query(escape`
-      UPDATE vacations SET resturlaubVorjahr = ${lastYear}, jahresurlaubInsgesamt = ${thisYear}, jahresUrlaubAusgegeben = ${spentThisYear}, restjahresurlaubInsgesamt = ${total}, beantragt = ${requested}, resturlaubJAHR = ${remaining}, fromDate = ${from}, toDate = ${to}, note = ${notes} WHERE id LIKE ${id}
+      UPDATE vacations SET resturlaubVorjahr = ${lastYear}, jahresurlaubInsgesamt = ${thisYear}, jahresUrlaubAusgegeben = ${spentThisYear}, restjahresurlaubInsgesamt = ${total}, beantragt = ${requested}, resturlaubJAHR = ${remaining}, files = ${files}, fromDate = ${from}, toDate = ${to}, note = ${notes} WHERE id LIKE ${id}
   `)
-    // UPDATE vacations SET resturlaubVorjahr = ${lastYear}, jahresurlaubInsgesamt = ${thisYear}, jahresUrlaubAusgegeben = ${spentThisYear}, restjahresurlaubInsgesamt = ${total}, beantragt = ${requested}, resturlaubJAHR = ${remaining}, fromDate = ${from}, toDate = ${to}, note = ${notes}, ${files.length !== 0 ? `files = ${files}` : `files = ${'NULL'}`} WHERE id LIKE ${id}
   } else {
     updateQuery = await db.query(escape`
   UPDATE vacations SET note = ${notes}, files = ${files} WHERE id LIKE ${id}

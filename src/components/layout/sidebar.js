@@ -55,7 +55,7 @@ const NavToggle = ({ expand, onChange, token, handleSignOut, toggleHelpModal }) 
   )
 }
 class SidebarNT extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       settings: {
@@ -66,7 +66,7 @@ class SidebarNT extends React.Component {
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const protocol = window.location.protocol
     const host = window.location.host
     const companyInfo = JSON.parse(window.localStorage.getItem('company'))
@@ -121,7 +121,7 @@ class SidebarNT extends React.Component {
     }
   }
 
-  render () {
+  render() {
     const {
       openHelpModal,
       team
@@ -166,17 +166,18 @@ class SidebarNT extends React.Component {
             <Nav>
               <Link passHref href='/'>
                 <Nav.Item eventKey='1' active={this.pageActive('/')} icon={<Icon icon='area-chart' />}>
-                      Dashboard
+                  Dashboard
                 </Nav.Item>
               </Link>
               <Link passHref href='/new'>
                 <Nav.Item eventKey='3' active={this.pageActive('/new')} icon={<Icon icon='plus-square' />}>
-                      New Request
+                  New Request
                 </Nav.Item>
               </Link>
               <Link passHref href='/user'>
                 <Nav.Item eventKey='2' active={this.pageActive('/user')} icon={<Icon icon='user' />}>
-                  {this.props.user.substr(0, this.props.user.indexOf('@'))}
+                  {/* {this.props.user.substr(0, this.props.user.indexOf('@'))} */}
+                  My Requests
                 </Nav.Item>
               </Link>
               <Dropdown
@@ -192,7 +193,7 @@ class SidebarNT extends React.Component {
                     eventKey='4-1'
                     active={this.pageActive('/team/dashboard')}
                   >
-                        Dashboard
+                    Dashboard
                   </Dropdown.Item>
                 </Link>
                 <Link passHref href='/team/calendar'>
@@ -200,7 +201,7 @@ class SidebarNT extends React.Component {
                     eventKey='4-2'
                     active={typeof window !== 'undefined' && Router.pathname === '/team/calendar'}
                   >
-                        Calendar
+                    Calendar
                   </Dropdown.Item>
                 </Link>
                 {team === 'Technik' && (
@@ -209,7 +210,7 @@ class SidebarNT extends React.Component {
                       eventKey='4-3'
                       active={typeof window !== 'undefined' && Router.pathname === '/team/oncall'}
                     >
-                          On Call
+                      On Call
                     </Dropdown.Item>
                   </Link>
                 )}
@@ -239,7 +240,7 @@ class SidebarNT extends React.Component {
                           eventKey='5-2'
                           active={typeof window !== 'undefined' && Router.pathname === '/settings/admin'}
                         >
-                            Admin
+                          Admin
                         </Dropdown.Item>
                       </Link>
                     </Dropdown>
