@@ -5,7 +5,7 @@ import {
 } from 'rsuite'
 
 export default class ViewFiles extends React.Component {
-  render () {
+  render() {
     if (this.props.data.files) {
       const files = JSON.parse(this.props.data.files)
       if (files.length > 0) {

@@ -45,7 +45,7 @@ const { Column, HeaderCell, Cell } = Table
 const moment = extendMoment(Moment)
 
 class Wrapper extends React.Component {
-  static async getInitialProps ({ res, req, query }) {
+  static async getInitialProps({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -61,7 +61,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     const thisYear = new Date().getFullYear()
 
@@ -257,7 +257,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const host = window.location.host
     const protocol = window.location.protocol
     const user = this.props.session.user.email
@@ -500,7 +500,6 @@ class Wrapper extends React.Component {
         openEditModal: !this.state.openEditModal,
         editAvailable: !request.approved == 0
       })
-      console.log(request)
       const tableData = {
         from: moment(request.fromDate).format('YYYY-MM-DD'),
         to: moment(request.toDate).format('YYYY-MM-DD'),
@@ -567,15 +566,20 @@ class Wrapper extends React.Component {
     const host = window.location.host
     const protocol = window.location.protocol
 
-    const to = moment(editData.to)
-    const from = moment(editData.from)
-    const requestedDays = to.diff(from, 'days')
+    const to = moment.tz(moment(editData.to).format('YYYY-MM-DD'), 'Europe/Berlin').format('YYYY-MM-DD')
+    const from = moment.tz(moment(editData.from).format('YYYY-MM-DD'), 'Europe/Berlin').format('YYYY-MM-DD')
+    // const requestedDays = to.diff(from, 'days')
+    console.log(editData.to)
+    editData.to = to
+    console.log(editData.to)
+    editData.from = from
 
     // if (requestedDays !== editData.requested) {
     //   this.notifyWarn('Warning - Daterange no longer equals approved number of days')
     //   return
     // }
 
+    console.log(editData)
     fetch(`${protocol}//${host}/api/user/entries/update`, {
       method: 'POST',
       body: JSON.stringify({
@@ -588,10 +592,34 @@ class Wrapper extends React.Component {
     })
       .then(data => data.json())
       .then(data => {
-        if (data.affectedRows === 1) {
+        if (data.updateQuery.affectedRows === 1) {
+          const oldData = this.state.rowData
+          const updateIndex = oldData.findIndex(entry => entry.id === editData.id)
+
+          oldData[updateIndex].note = editData.note
+          oldData[updateIndex].files = JSON.stringify(this.state.files)
+          if (oldData[updateIndex].approved === 0) {
+            oldData[updateIndex].fromDate = moment(editData.from).toISOString()
+            oldData[updateIndex].toDate = moment(editData.to).toISOString()
+            oldData[updateIndex].resturlaubVorjahr = editData.lastYear
+            oldData[updateIndex].resturlaubJAHR = editData.remaining
+            oldData[updateIndex].beantragt = editData.requested
+            oldData[updateIndex].jahresUrlaubAusgegeben = editData.spent
+            oldData[updateIndex].jahresurlaubInsgesamt = editData.thisYear
+            oldData[updateIndex].restjahresurlaubInsgesamt = editData.total
+          }
+
+          this.setState({
+            openEditModal: !this.state.openEditModal,
+            rowData: oldData
+          })
+          this.gridApi.refreshCells()
           this.notifyInfo('Update Success')
         } else {
           this.notifyWarn('Error Updating Request')
+          this.setState({
+            openEditModal: !this.state.openEditModal
+          })
         }
       })
       .catch(err => console.error(err))
@@ -604,7 +632,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  render () {
+  render() {
     const {
       gridOptions,
       rowData,
@@ -749,15 +777,56 @@ class Wrapper extends React.Component {
                         <ControlLabel>Days Remaining this Year</ControlLabel>
                         <InputNumber postfix='days' min={0} name='remainingDays' inputMode='numeric' disabled={editAvailable} onChange={this.handleRemainingChange} value={editData.remaining} />
                       </FormGroup>
-                      <FormGroup>
-                        <ControlLabel>From</ControlLabel>
-                        <DatePicker showWeekNumbers oneTap name='from' type='date' onChange={this.handleFromDateChange} value={editData.from} disabled={editAvailable} />
+                      <hr
+                        style={{
+                          marginTop: '40px',
+                          marginBottom: '40px',
+                          border: '0',
+                          borderTop: '2px solid #67b246',
+                          width: '75%'
+                        }}
+                      />
+                      <FormGroup
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-around'
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            maxWidth: '40%',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                        >
+                          <ControlLabel style={{ textAlign: 'center' }}>From</ControlLabel>
+                          <DatePicker showWeekNumbers oneTap name='from' type='date' onChange={this.handleFromDateChange} value={editData.from} disabled={editAvailable} />
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            maxWidth: '40%',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                        >
+                          <ControlLabel style={{ textAlign: 'center' }}>To</ControlLabel>
+                          <DatePicker showWeekNumbers oneTap name='to' type='date' onChange={this.handleToDateChange} value={editData.to} disabled={editAvailable} />
+                        </div>
                       </FormGroup>
                       <FormGroup>
-                        <ControlLabel>To</ControlLabel>
-                        <DatePicker showWeekNumbers oneTap name='to' type='date' onChange={this.handleToDateChange} value={editData.to} disabled={editAvailable} />
-                      </FormGroup>
-                      <FormGroup>
+                        <hr
+                          style={{
+                            marginTop: '40px',
+                            marginBottom: '40px',
+                            border: '0',
+                            borderTop: '2px solid #67b246',
+                            width: '75%'
+                          }}
+                        />
                         <ControlLabel>Note</ControlLabel>
                         {/* <FormControl name='note' type='text' onChange={this.handleNoteChange} value={editData.note} /> */}
                         <Input
