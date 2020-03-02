@@ -55,7 +55,7 @@ const NavToggle = ({ expand, onChange, token, handleSignOut, toggleHelpModal }) 
   )
 }
 class SidebarNT extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       settings: {
@@ -66,7 +66,7 @@ class SidebarNT extends React.Component {
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const protocol = window.location.protocol
     const host = window.location.host
     const companyInfo = JSON.parse(window.localStorage.getItem('company'))
@@ -121,7 +121,7 @@ class SidebarNT extends React.Component {
     }
   }
 
-  render () {
+  render() {
     const {
       openHelpModal,
       team
@@ -170,7 +170,7 @@ class SidebarNT extends React.Component {
                 </Nav.Item>
               </Link>
               <Link passHref href='/new'>
-                <Nav.Item eventKey='3' active={this.pageActive('/new')} icon={<Icon icon='plus-circle' />}>
+                <Nav.Item eventKey='3' active={this.pageActive('/new')} icon={<Icon icon='plus' />}>
                   New Request
                 </Nav.Item>
               </Link>
