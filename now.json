@@ -29,5 +29,39 @@
     "CLOUDINARY_NAME": "@cloudinary_name",
     "CLOUDINARY_URL": "@cloudinary_url",
     "CLOUDINARY_UPLOAD": "@cloudinary_upload"
+  },
+  "build": {
+    "env": {
+      "SERVER_URL": "@server_url",
+      "MYSQL_HOST": "@mysql_host",
+      "MYSQL_DATABASE": "@mysql_database",
+      "MYSQL_USER": "@mysql_user",
+      "MYSQL_PASSWORD": "@mysql_password",
+      "GOOGLE_ID": "@google_id",
+      "GOOGLE_SECRET": "@google_secret",
+      "GOOGLE_CAL_APIKEY": "@google_cal_apikey",
+      "GOOGLE_CAL_ID": "@google_cal_id",
+      "GOOGLE_ACCESS_TOKEN": "@google_access_token",
+      "GOOGLE_APPLICATION_CREDENTIALS": "@google_application_credentials",
+      "EMAIL_DOMAIN": "@email_domain",
+      "EMAIL_FROM": "@email_from",
+      "EMAIL_SERVER": "@email_server",
+      "EMAIL_PORT": "@email_port",
+      "EMAIL_USERNAME": "@email_username",
+      "EMAIL_PASSWORD": "@email_password",
+      "LDAP_URL": "@ldap_url",
+      "LDAP_BASE_DN": "@ldap_base_dn",
+      "LDAP_BIND_DN": "@ldap_bind_dn",
+      "LDAP_BIND_USER": "@ldap_bind_user",
+      "LDAP_BIND_PW": "@ldap_bind_pw",
+      "LDAP_USER_QUERY": "@ldap_user_query",
+      "LDAP_ADMIN_QUERY": "@ldap_admin_query",
+      "CLOUDINARY_SECRET": "@cloudinary_secret",
+      "CLOUDINARY_KEY": "@cloudinary_key",
+      "CLOUDINARY_NAME": "@cloudinary_name",
+      "CLOUDINARY_URL": "@cloudinary_url",
+      "CLOUDINARY_UPLOAD": "@cloudinary_upload"
+    }
   }
 }
+
