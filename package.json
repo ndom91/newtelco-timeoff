@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "NODE_ENV=development node index.js",
     "dev:inspect": "NODE_OPTIONS='--inspect' NODE_ENV=development node index.js",
+    "ci": "npm build",
     "build": "next build",
     "start": "PORT=7666 node index.js",
     "start:nt": "PORT=7666 node index.js",
