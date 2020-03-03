@@ -1,7 +1,7 @@
 import response from "./responseMessages";
 const db = require("../../../lib/db");
 const escape = require("sql-template-strings");
-# require("dotenv").config({ path: "./.env" });
+// require("dotenv").config({ path: "./.env" });
 
 module.exports = async (req, res) => {
   const approvalHash = req.query.h;
@@ -73,9 +73,9 @@ module.exports = async (req, res) => {
 
     const updateApproval = await db.query(escape`
       UPDATE vacations SET approved = ${approvalValue}, approval_datetime = ${new Date()
-      .toISOString()
-      .slice(0, 19)
-      .replace("T", " ")} WHERE approval_hash LIKE ${approvalHash}
+        .toISOString()
+        .slice(0, 19)
+        .replace("T", " ")} WHERE approval_hash LIKE ${approvalHash}
     `);
 
     nodemailer.createTransport(nodemailerTransport).sendMail(
