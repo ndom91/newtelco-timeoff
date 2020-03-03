@@ -36,7 +36,7 @@ import {
 const moment = extendMoment(Moment)
 
 class Wrapper extends React.Component {
-  static async getInitialProps ({ res, req, query }) {
+  static async getInitialProps({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -52,7 +52,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     const thisYear = new Date().getFullYear()
 
@@ -262,7 +262,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const host = window.location.host
     const protocol = window.location.protocol
     const user = this.props.session.user.email
@@ -496,7 +496,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  render () {
+  render() {
     const {
       gridOptions,
       rowData,
@@ -575,7 +575,7 @@ class Wrapper extends React.Component {
                 toDelete={this.state.toDelete}
                 gridApi={this.gridApi}
                 setRowData={this.setRowData}
-                rowData={this.rowData}
+                rowData={this.state.rowData}
               />
               // <Modal enforceFocus size='sm' backdrop show={openConfirmDeleteModal} onHide={this.toggleConfirmDeleteModal} style={{ marginTop: '150px' }}>
               //   <Modal.Header>
