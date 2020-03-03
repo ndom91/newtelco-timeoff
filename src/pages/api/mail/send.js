@@ -2,7 +2,7 @@ import fetch from 'isomorphic-unfetch'
 import mail from './requestMessage'
 const db = require('../../../lib/db')
 const escape = require('sql-template-strings')
-require('dotenv').config({ path: './.env' })
+# require('dotenv').config({ path: './.env' })
 
 module.exports = async (req, res) => {
   const body = JSON.parse(req.body)
