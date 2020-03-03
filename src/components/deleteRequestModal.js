@@ -25,7 +25,7 @@ const DeleteModal = props => {
         } else {
           Alert.error('Error Deleting Request')
         }
-        const newRowData = this.state.rowData.filter(row => row.id !== deleteId)
+        const newRowData = props.rowData.filter(row => row.id !== deleteId)
         props.setRowData(newRowData)
         props.toggleDeleteModal()
         props.gridApi.refreshCells()
@@ -34,13 +34,13 @@ const DeleteModal = props => {
   }
 
   return (
-    <Modal enforceFocus size='sm' backdrop show={props.openConfirmDeleteModal} onHide={props.toggleDeleteModal} style={{ marginTop: '150px' }}>
+    <Modal enforceFocus size='sm' backdrop show={props.open} onHide={props.toggleDeleteModal} style={{ marginTop: '150px' }}>
       <Modal.Header>
         <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>Confirm Submit</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <span style={{ textAlign: 'center', display: 'block', fontWeight: '600' }}>Are you sure you want to delete this request?</span>
-        <Table showHeader={false} autoHeight bordered={false} data={props.confirmDeleteData} style={{ margin: '20px 50px' }}>
+        <Table showHeader={false} autoHeight bordered={false} data={props.data} style={{ margin: '20px 50px' }}>
           <Column width={200} align='left'>
             <HeaderCell>Field: </HeaderCell>
             <Cell dataKey='title' />
