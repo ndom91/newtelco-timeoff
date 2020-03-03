@@ -16,31 +16,22 @@ import { AgGridReact } from 'ag-grid-react'
 import 'ag-grid-community/dist/styles/ag-grid.css'
 import 'ag-grid-community/dist/styles/ag-theme-material.css'
 import { extendMoment } from 'moment-range'
-import UploadFile from '../components/uploadfile'
-import BarLoader from 'react-spinners/ClipLoader'
+import EditModal from '../components/editRequestModal'
+import DeleteModal from '../components/deleteRequestModal'
 import {
   Container,
   Header,
   Content,
-  Button,
   ButtonToolbar,
   IconButton,
   ButtonGroup,
   Panel,
   Icon,
+  Alert,
   Modal,
-  Table,
-  Form,
-  Input,
-  FormGroup,
-  ControlLabel,
   Notification,
-  DatePicker,
-  InputNumber,
   SelectPicker
 } from 'rsuite'
-
-const { Column, HeaderCell, Cell } = Table
 
 const moment = extendMoment(Moment)
 
@@ -75,6 +66,20 @@ class Wrapper extends React.Component {
       openEditModal: false,
       editAvailable: false,
       viewFilesModal: false,
+      editData: {
+        from: '',
+        to: '',
+        lastYear: '',
+        thisYear: '',
+        spent: '',
+        total: '',
+        requested: '',
+        remaining: '',
+        id: '',
+        note: '',
+        approved: '',
+        type: ''
+      },
       gridOptions: {
         defaultColDef: {
           resizable: true,
@@ -312,6 +317,25 @@ class Wrapper extends React.Component {
     }
   }
 
+  setEditData = (files, data) => {
+    if (!data) {
+      this.setState({
+        files: files
+      })
+    } else {
+      this.setState({
+        editData: data,
+        files: files
+      })
+    }
+  }
+
+  setRowData = (data) => {
+    this.setState({
+      rowData: data
+    })
+  }
+
   handleGridReady = params => {
     this.gridApi = params.api
     this.gridColumnApi = params.columnApi
@@ -332,78 +356,6 @@ class Wrapper extends React.Component {
       }
       this.gridApi.exportDataAsCsv(params)
     }
-  }
-
-  handleLastYearChange = (value) => {
-    const editData = this.state.editData
-    editData.lastYear = value
-    this.setState({
-      editData
-    })
-  }
-
-  handleThisYearChange = (value) => {
-    const editData = this.state.editData
-    editData.thisYear = value
-    this.setState({
-      editData
-    })
-  }
-
-  handleTotalSpentChange = (value) => {
-    const editData = this.state.editData
-    editData.spent = value
-    this.setState({
-      editData
-    })
-  }
-
-  handleTotalAvailableChange = (value) => {
-    const editData = this.state.editData
-    editData.total = value
-    this.setState({
-      editData
-    })
-  }
-
-  handleRequestedChange = (value) => {
-    const editData = this.state.editData
-    editData.requested = value
-    this.setState({
-      editData
-    })
-  }
-
-  handleRemainingChange = (value) => {
-    const editData = this.state.editData
-    editData.remaining = value
-    this.setState({
-      editData
-    })
-  }
-
-  handleNoteChange = (value) => {
-    const editData = this.state.editData
-    editData.note = value
-    this.setState({
-      editData
-    })
-  }
-
-  handleFromDateChange = (value) => {
-    const editData = this.state.editData
-    editData.from = value
-    this.setState({
-      editData
-    })
-  }
-
-  handleToDateChange = (value) => {
-    const editData = this.state.editData
-    editData.to = value
-    this.setState({
-      editData
-    })
   }
 
   handleTypeChange = (selection) => {
@@ -428,15 +380,19 @@ class Wrapper extends React.Component {
   toggleConfirmDeleteModal = () => {
     if (this.gridApi) {
       const selectedRow = this.gridApi.getSelectedRows()
+      if (!selectedRow[0]) {
+        this.notifyInfo('Please select an entry to delete!')
+        return
+      }
       const request = selectedRow[0]
       const tableData = [
         {
           title: 'From',
-          value: moment(request.fromDate).format('DD.MM.YYYY')
+          value: request.fromDate
         },
         {
           title: 'To',
-          value: moment(request.toDate).format('DD.MM.YYYY')
+          value: request.toDate
         },
         {
           title: 'Manager',
@@ -463,27 +419,27 @@ class Wrapper extends React.Component {
     }
   }
 
-  handleSubmitDelete = () => {
-    const deleteId = this.state.toDelete
-    const host = window.location.host
-    const protocol = window.location.protocol
-    fetch(`${protocol}//${host}/api/user/entries/delete?id=${deleteId}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.deleteQuery.affectedRows > 0) {
-          this.notifyInfo('Request Deleted')
-        } else {
-          this.notifyWarn('Error Deleting Request')
-        }
-        const newRowData = this.state.rowData.filter(row => row.id !== deleteId)
-        this.setState({
-          rowData: newRowData,
-          openConfirmDeleteModal: !this.state.openConfirmDeleteModal
-        })
-        this.gridApi.refreshCells()
-      })
-      .catch(err => console.error(err))
-  }
+  // handleSubmitDelete = () => {
+  //   const deleteId = this.state.toDelete
+  //   const host = window.location.host
+  //   const protocol = window.location.protocol
+  //   fetch(`${protocol}//${host}/api/user/entries/delete?id=${deleteId}`)
+  //     .then(res => res.json())
+  //     .then(data => {
+  //       if (data.deleteQuery.affectedRows > 0) {
+  //         this.notifyInfo('Request Deleted')
+  //       } else {
+  //         this.notifyWarn('Error Deleting Request')
+  //       }
+  //       const newRowData = this.state.rowData.filter(row => row.id !== deleteId)
+  //       this.setState({
+  //         rowData: newRowData,
+  //         openConfirmDeleteModal: !this.state.openConfirmDeleteModal
+  //       })
+  //       this.gridApi.refreshCells()
+  //     })
+  //     .catch(err => console.error(err))
+  // }
 
   toggleEditModal = () => {
     if (this.gridApi) {
@@ -497,12 +453,13 @@ class Wrapper extends React.Component {
       const request = selectedRow[0]
       this.setState({
         loadingFiles: true,
-        openEditModal: !this.state.openEditModal,
         editAvailable: !request.approved == 0
       })
+      const rawFrom = request.fromDate.split('.')
+      const rawTo = request.toDate.split('.')
       const tableData = {
-        from: moment(request.fromDate).format('YYYY-MM-DD'),
-        to: moment(request.toDate).format('YYYY-MM-DD'),
+        from: `${rawFrom[2]}-${rawFrom[1]}-${rawFrom[0]}`,
+        to: `${rawTo[2]}-${rawTo[1]}-${rawTo[0]}`,
         lastYear: request.resturlaubVorjahr,
         thisYear: request.jahresurlaubInsgesamt,
         spent: request.jahresUrlaubAusgegeben,
@@ -524,96 +481,12 @@ class Wrapper extends React.Component {
           this.setState({
             editData: tableData,
             files: files,
-            loadingFiles: false
+            loadingFiles: false,
+            openEditModal: !this.state.openEditModal
           })
         })
         .catch(err => console.error(err))
     }
-  }
-
-  onFileUploadSuccess = (files) => {
-    const uploadedFiles = [...this.state.uploadedFiles]
-    const existingFiles = [...this.state.files]
-
-    if (Array.isArray(files)) {
-      files.forEach(file => {
-        const newFile = {
-          id: file.public_id,
-          url: file.url,
-          name: file.original_filename
-        }
-        uploadedFiles.push(newFile)
-        existingFiles.push(newFile)
-      })
-    } else {
-      const newFile = {
-        id: files.public_id,
-        url: files.url,
-        name: files.original_filename
-      }
-      uploadedFiles.push(newFile)
-      existingFiles.push(newFile)
-    }
-
-    this.setState({
-      uploadedFiles,
-      files: existingFiles
-    })
-  }
-
-  handleSubmitEdit = () => {
-    const editData = this.state.editData
-    const host = window.location.host
-    const protocol = window.location.protocol
-
-    const to = moment.tz(moment(editData.to).format('YYYY-MM-DD'), 'Europe/Berlin').format('YYYY-MM-DD')
-    const from = moment.tz(moment(editData.from).format('YYYY-MM-DD'), 'Europe/Berlin').format('YYYY-MM-DD')
-    editData.to = to
-    editData.from = from
-
-    fetch(`${protocol}//${host}/api/user/entries/update`, {
-      method: 'POST',
-      body: JSON.stringify({
-        editData: editData,
-        files: this.state.files
-      }),
-      headers: {
-        'X-CSRF-TOKEN': this.props.session.csrfToken
-      }
-    })
-      .then(data => data.json())
-      .then(data => {
-        if (data.updateQuery.affectedRows === 1) {
-          const oldData = this.state.rowData
-          const updateIndex = oldData.findIndex(entry => entry.id === editData.id)
-
-          oldData[updateIndex].note = editData.note
-          oldData[updateIndex].files = JSON.stringify(this.state.files)
-          if (oldData[updateIndex].approved === 0) {
-            oldData[updateIndex].fromDate = moment(editData.from).toISOString()
-            oldData[updateIndex].toDate = moment(editData.to).toISOString()
-            oldData[updateIndex].resturlaubVorjahr = editData.lastYear
-            oldData[updateIndex].resturlaubJAHR = editData.remaining
-            oldData[updateIndex].beantragt = editData.requested
-            oldData[updateIndex].jahresUrlaubAusgegeben = editData.spent
-            oldData[updateIndex].jahresurlaubInsgesamt = editData.thisYear
-            oldData[updateIndex].restjahresurlaubInsgesamt = editData.total
-          }
-
-          this.setState({
-            openEditModal: !this.state.openEditModal,
-            rowData: oldData
-          })
-          this.gridApi.refreshCells()
-          this.notifyInfo('Update Success')
-        } else {
-          this.notifyWarn('Error Updating Request')
-          this.setState({
-            openEditModal: !this.state.openEditModal
-          })
-        }
-      })
-      .catch(err => console.error(err))
   }
 
   toggleViewFilesModal = (files) => {
@@ -631,8 +504,6 @@ class Wrapper extends React.Component {
       confirmDeleteData,
       openEditModal,
       editData,
-      loadingFiles,
-      editAvailable,
       viewFilesModal,
       viewFiles
     } = this.state
@@ -697,175 +568,56 @@ class Wrapper extends React.Component {
               </Content>
             </Panel>
             {openConfirmDeleteModal && (
-              <Modal enforceFocus size='sm' backdrop show={openConfirmDeleteModal} onHide={this.toggleConfirmDeleteModal} style={{ marginTop: '150px' }}>
-                <Modal.Header>
-                  <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>Confirm Submit</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  <span style={{ textAlign: 'center', display: 'block', fontWeight: '600' }}>Are you sure you want to delete this request?</span>
-                  <Table showHeader={false} autoHeight bordered={false} data={confirmDeleteData} style={{ margin: '20px 50px' }}>
-                    <Column width={200} align='left'>
-                      <HeaderCell>Field: </HeaderCell>
-                      <Cell dataKey='title' />
-                    </Column>
-                    <Column width={250} align='left'>
-                      <HeaderCell>Value: </HeaderCell>
-                      <Cell dataKey='value' />
-                    </Column>
-                  </Table>
-                </Modal.Body>
-                <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
-                  <ButtonToolbar style={{ width: '100%' }}>
-                    <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-                      <Button onClick={this.toggleConfirmDeleteModal} style={{ width: '33%', fontSize: '16px' }} appearance='default'>
-                        Cancel
-                      </Button>
-                      <Button onClick={this.handleSubmitDelete} style={{ width: '33%', fontSize: '16px' }} appearance='primary'>
-                        Confirm
-                      </Button>
-                    </ButtonGroup>
-                  </ButtonToolbar>
-                </Modal.Footer>
-              </Modal>
+              <DeleteModal
+                open={openConfirmDeleteModal}
+                toggleDeleteModal={this.toggleConfirmDeleteModal}
+                data={confirmDeleteData}
+                toDelete={this.state.toDelete}
+                gridApi={this.gridApi}
+                setRowData={this.setRowData}
+              />
+              // <Modal enforceFocus size='sm' backdrop show={openConfirmDeleteModal} onHide={this.toggleConfirmDeleteModal} style={{ marginTop: '150px' }}>
+              //   <Modal.Header>
+              //     <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>Confirm Submit</Modal.Title>
+              //   </Modal.Header>
+              //   <Modal.Body>
+              //     <span style={{ textAlign: 'center', display: 'block', fontWeight: '600' }}>Are you sure you want to delete this request?</span>
+              //     <Table showHeader={false} autoHeight bordered={false} data={confirmDeleteData} style={{ margin: '20px 50px' }}>
+              //       <Column width={200} align='left'>
+              //         <HeaderCell>Field: </HeaderCell>
+              //         <Cell dataKey='title' />
+              //       </Column>
+              //       <Column width={250} align='left'>
+              //         <HeaderCell>Value: </HeaderCell>
+              //         <Cell dataKey='value' />
+              //       </Column>
+              //     </Table>
+              //   </Modal.Body>
+              //   <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
+              //     <ButtonToolbar style={{ width: '100%' }}>
+              //       <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+              //         <Button onClick={this.toggleConfirmDeleteModal} style={{ width: '33%', fontSize: '16px' }} appearance='default'>
+              //           Cancel
+              //         </Button>
+              //         <Button onClick={this.handleSubmitDelete} style={{ width: '33%', fontSize: '16px' }} appearance='primary'>
+              //           Confirm
+              //         </Button>
+              //       </ButtonGroup>
+              //     </ButtonToolbar>
+              //   </Modal.Footer>
+              // </Modal>
             )}
             {openEditModal && (
-              <Modal enforceFocus size='sm' backdrop show={openEditModal} onHide={this.toggleEditModal} style={{ marginTop: '40px' }}>
-                <Modal.Header>
-                  <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>Edit Request</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  {loadingFiles ? (
-                    <div className='edit-loader-wrapper'>
-                      <BarLoader width={80} height={3} color='#575757' loading={loadingFiles} />
-                    </div>
-                  ) : (
-                    <Form layout='horizontal'>
-                      <FormGroup>
-                        <ControlLabel>Type</ControlLabel>
-                        <Input name='daysLastYear' disabled value={editData.type} style={{ width: '300px' }} />
-                      </FormGroup>
-                      <FormGroup>
-                        <ControlLabel>Days from Last Year</ControlLabel>
-                        <InputNumber postfix='days' min={0} name='daysLastYear' inputMode='numeric' disabled={editAvailable} onChange={this.handleLastYearChange} value={editData.lastYear} />
-                      </FormGroup>
-                      <FormGroup>
-                        <ControlLabel>Days from this Year</ControlLabel>
-                        <InputNumber postfix='days' min={0} name='daysThisYear' inputMode='numeric' disabled={editAvailable} onChange={this.handleThisYearChange} value={editData.thisYear} />
-                      </FormGroup>
-                      <FormGroup>
-                        <ControlLabel>Days spent this Year</ControlLabel>
-                        <InputNumber postfix='days' min={0} name='daysSpent' inputMode='numeric' disabled={editAvailable} onChange={this.handleTotalSpentChange} value={editData.spent} />
-                      </FormGroup>
-                      <FormGroup>
-                        <ControlLabel>Total Days Available</ControlLabel>
-                        <InputNumber postfix='days' min={0} name='totalDaysAvailable' inputMode='numeric' disabled={editAvailable} onChange={this.handleTotalAvailableChange} value={editData.total} />
-                      </FormGroup>
-                      <FormGroup>
-                        <ControlLabel>Requested Days</ControlLabel>
-                        <InputNumber postfix='days' min={0} name='requestedDays' inputMode='numeric' disabled={editAvailable} onChange={this.handleRequestedChange} value={editData.requested} />
-                      </FormGroup>
-                      <FormGroup>
-                        <ControlLabel>Days Remaining this Year</ControlLabel>
-                        <InputNumber postfix='days' min={0} name='remainingDays' inputMode='numeric' disabled={editAvailable} onChange={this.handleRemainingChange} value={editData.remaining} />
-                      </FormGroup>
-                      <hr
-                        style={{
-                          marginTop: '40px',
-                          marginBottom: '40px',
-                          border: '0',
-                          borderTop: '2px solid #67b246',
-                          width: '75%'
-                        }}
-                      />
-                      <FormGroup
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-around'
-                        }}
-                      >
-                        <div
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            maxWidth: '40%',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                          }}
-                        >
-                          <ControlLabel style={{ textAlign: 'center' }}>From</ControlLabel>
-                          <DatePicker showWeekNumbers oneTap name='from' type='date' onChange={this.handleFromDateChange} value={editData.from} disabled={editAvailable} />
-                        </div>
-                        <div
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            maxWidth: '40%',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                          }}
-                        >
-                          <ControlLabel style={{ textAlign: 'center' }}>To</ControlLabel>
-                          <DatePicker showWeekNumbers oneTap name='to' type='date' onChange={this.handleToDateChange} value={editData.to} disabled={editAvailable} />
-                        </div>
-                      </FormGroup>
-                      <FormGroup>
-                        <hr
-                          style={{
-                            marginTop: '40px',
-                            marginBottom: '40px',
-                            border: '0',
-                            borderTop: '2px solid #67b246',
-                            width: '75%'
-                          }}
-                        />
-                        <ControlLabel>Note</ControlLabel>
-                        {/* <FormControl name='note' type='text' onChange={this.handleNoteChange} value={editData.note} /> */}
-                        <Input
-                          name='note'
-                          onChange={this.handleNoteChange}
-                          value={editData.note}
-                          componentClass='textarea'
-                          rows={3}
-                          style={{ width: 300, resize: 'auto' }}
-                        />
-                      </FormGroup>
-                      <FormGroup>
-                        <ControlLabel>Files</ControlLabel>
-                        <Panel bordered className='edit-file-wrapper'>
-                          {this.state.files.map(file => {
-                            return (
-                              <a key={file.name} className='edit-file-item' href={file.url}>{file.name}</a>
-                            )
-                          })}
-                        </Panel>
-                      </FormGroup>
-                      <FormGroup>
-                        <ControlLabel>Add File</ControlLabel>
-                        <Panel bordered style={{ maxWidth: '300px', boxShadow: 'none' }}>
-                          {/* <span style={{ fontSize: '1.1rem', textAlign: 'center' }}>Add new files</span> */}
-                          <UploadFile
-                            email={this.props.session.user.email}
-                            csrfToken={this.props.session.csrfToken}
-                            handleFileUploadSuccess={this.onFileUploadSuccess}
-                          />
-                        </Panel>
-                      </FormGroup>
-                    </Form>
-                  )}
-                </Modal.Body>
-                <Modal.Footer style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-                  <ButtonToolbar style={{ width: '100%' }}>
-                    <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-                      <Button onClick={this.toggleEditModal} style={{ width: '33%', fontSize: '16px' }} appearance='default'>
-                        Cancel
-                      </Button>
-                      <Button onClick={this.handleSubmitEdit} style={{ width: '33%', fontSize: '16px' }} appearance='primary'>
-                        Confirm
-                      </Button>
-                    </ButtonGroup>
-                  </ButtonToolbar>
-                </Modal.Footer>
-              </Modal>
+              <EditModal
+                open={openEditModal}
+                data={editData}
+                rowData={this.state.rowData}
+                gridApi={this.gridApi}
+                setEditData={this.setEditData}
+                toggleEditModal={this.toggleEditModal}
+                session={this.props.session}
+                setRowData={this.setRowData}
+              />
             )}
             {viewFilesModal && (
               <Modal

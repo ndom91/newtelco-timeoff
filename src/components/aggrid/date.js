@@ -1,13 +1,19 @@
 import React, { Component } from 'react'
-import { format, isValid } from 'date-fns'
 
 export default class DateField extends Component {
   render () {
+    const props = this.props
+    const value = this.props.value
+    if (props.column.colId === 'dateJoined') console.log(props)
     let dateTime
-    if (this.props.value && isValid(new Date(this.props.value))) {
-      dateTime = format(new Date(this.props.value), 'dd.MM.yyyy')
+    if (props.value && !isNaN(Date.parse(props.value))) {
+      const dateAr = value.split('.')
+      const day = dateAr[0]
+      const month = dateAr[1]
+      const year = dateAr[2]
+      dateTime = `${day}.${month}.${year}`
     } else {
-      dateTime = this.props.value
+      dateTime = props.value
     }
     return (
       <span>

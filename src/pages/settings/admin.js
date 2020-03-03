@@ -40,8 +40,7 @@ import {
   FormGroup,
   ControlLabel,
   Row,
-  Col,
-  Loader
+  Col
 } from 'rsuite'
 import {
   faPencilAlt,
@@ -450,7 +449,8 @@ class Wrapper extends React.Component {
         ],
         context: { componentParent: this },
         frameworkComponents: {
-          dateShort: DateField
+          dateShort: DateField,
+          dateEditor: DateField
         },
         rowSelection: 'multiple',
         paginationPageSize: 10,
@@ -603,7 +603,7 @@ class Wrapper extends React.Component {
         let updateCount = 0
         let addCount = 0
         let newUsers = []
-        let updateUsers = []
+        const updateUsers = []
         // check for updates to users (fname, lname, team)
         if (dbUsers.length > 0) {
           dbUsers.forEach(user => {
@@ -979,11 +979,16 @@ class Wrapper extends React.Component {
   handleCellEdit = (params) => {
     const id = params.data.id
     const daysRemaining = params.data.daysAvailable
-    const dateJoined = params.data.dateJoined
+    // const dateJoined = params.data.dateJoined
     const host = window.location.host
     const protocol = window.location.protocol
 
-    fetch(`${protocol}//${host}/api/settings/user/edit?id=${id}&daysRemaining=${encodeURIComponent(daysRemaining)}&dateJoined=${encodeURIComponent(moment(new Date(dateJoined)).format('YYYY-MM-DD'))}`, {
+    const date = params.data.dateJoined.split('.')
+    const day = date[0]
+    const month = date[1]
+    const year = date[2]
+
+    fetch(`${protocol}//${host}/api/settings/user/edit?id=${id}&daysRemaining=${encodeURIComponent(daysRemaining)}&dateJoined=${encodeURIComponent(`${year}-${month}-${day}`)}`, {
       method: 'get'
     })
       .then(resp => resp.json())

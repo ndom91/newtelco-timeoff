@@ -55,7 +55,7 @@ const NavToggle = ({ expand, onChange, token, handleSignOut, toggleHelpModal }) 
   )
 }
 class SidebarNT extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       settings: {
@@ -66,7 +66,7 @@ class SidebarNT extends React.Component {
     }
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const protocol = window.location.protocol
     const host = window.location.host
     const companyInfo = JSON.parse(window.localStorage.getItem('company'))
@@ -121,7 +121,7 @@ class SidebarNT extends React.Component {
     }
   }
 
-  render() {
+  render () {
     const {
       openHelpModal,
       team
@@ -217,34 +217,11 @@ class SidebarNT extends React.Component {
               </Dropdown>
               {this.props.admin
                 ? (
-                  <>
-                    <Dropdown
-                      eventKey='5'
-                      trigger='hover'
-                      title='Settings'
-                      icon={<Icon icon='cog' />}
-                      placement='rightStart'
-                      active={typeof window !== 'undefined' && Router.pathname.includes('settings')}
-                    >
-                      <Link
-                        href={{
-                          pathname: '/settings/admin',
-                          query: {
-                            admin: this.props.admin
-                          }
-                        }}
-                        as='/settings/admin'
-                        passHref
-                      >
-                        <Dropdown.Item
-                          eventKey='5-2'
-                          active={typeof window !== 'undefined' && Router.pathname === '/settings/admin'}
-                        >
-                          Admin
-                        </Dropdown.Item>
-                      </Link>
-                    </Dropdown>
-                  </>
+                  <Link passHref href='/settings/admin'>
+                    <Nav.Item eventKey='5' active={this.pageActive('/settings/admin')} icon={<Icon icon='cog' />}>
+                      Admin
+                    </Nav.Item>
+                  </Link>
                 ) : (
                   null
                 )}
