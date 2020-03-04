@@ -13,6 +13,7 @@ import {
   Modal
 } from 'rsuite'
 import NTLogo from '../../../public/static/img/newtelco_letters.svg'
+import * as S from '../heroicons'
 
 const NavToggle = ({ expand, onChange, token, handleSignOut, toggleHelpModal }) => {
   return (
@@ -55,7 +56,7 @@ const NavToggle = ({ expand, onChange, token, handleSignOut, toggleHelpModal }) 
   )
 }
 class SidebarNT extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       settings: {
@@ -66,7 +67,7 @@ class SidebarNT extends React.Component {
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const protocol = window.location.protocol
     const host = window.location.host
     const companyInfo = JSON.parse(window.localStorage.getItem('company'))
@@ -121,7 +122,7 @@ class SidebarNT extends React.Component {
     }
   }
 
-  render () {
+  render() {
     const {
       openHelpModal,
       team
@@ -165,17 +166,17 @@ class SidebarNT extends React.Component {
           <Sidenav.Body>
             <Nav>
               <Link passHref href='/'>
-                <Nav.Item eventKey='1' active={this.pageActive('/')} icon={<Icon icon='area-chart' />}>
+                <Nav.Item eventKey='1' active={this.pageActive('/')} icon={<S.Dashboard width='22' />}>
                   Dashboard
                 </Nav.Item>
               </Link>
               <Link passHref href='/new'>
-                <Nav.Item eventKey='3' active={this.pageActive('/new')} icon={<Icon icon='plus' />}>
+                <Nav.Item eventKey='3' active={this.pageActive('/new')} icon={<S.New width='22' />}>
                   New Request
                 </Nav.Item>
               </Link>
               <Link passHref href='/user'>
-                <Nav.Item eventKey='2' active={this.pageActive('/user')} icon={<Icon icon='user' />}>
+                <Nav.Item eventKey='2' active={this.pageActive('/user')} icon={<S.User width='22' />}>
                   {/* {this.props.user.substr(0, this.props.user.indexOf('@'))} */}
                   My Requests
                 </Nav.Item>
@@ -184,7 +185,7 @@ class SidebarNT extends React.Component {
                 eventKey='4'
                 trigger='hover'
                 title='Team'
-                icon={<Icon icon='group' />}
+                icon={<S.Team width='22' />}
                 placement='rightStart'
                 active={typeof window !== 'undefined' && Router.pathname.includes('team')}
               >
@@ -218,7 +219,7 @@ class SidebarNT extends React.Component {
               {this.props.admin
                 ? (
                   <Link passHref href='/settings/admin'>
-                    <Nav.Item eventKey='5' active={this.pageActive('/settings/admin')} icon={<Icon icon='cog' />}>
+                    <Nav.Item eventKey='5' active={this.pageActive('/settings/admin')} icon={<S.Settings width='22' />}>
                       Admin
                     </Nav.Item>
                   </Link>

@@ -44,8 +44,6 @@ export default class App extends React.Component {
       email: '',
       session: this.props.session
     }
-    this.handleEmailChange = this.handleEmailChange.bind(this)
-    this.handleSignInSubmit = this.handleSignInSubmit.bind(this)
   }
 
   animateText = () => {
@@ -76,13 +74,13 @@ export default class App extends React.Component {
       .catch(err => console.error(err))
   }
 
-  handleEmailChange (event) {
+  handleEmailChange = (event) => {
     this.setState({
       email: event.target.value
     })
   }
 
-  handleSignInSubmit (event) {
+  handleSignInSubmit = (event) => {
     event.preventDefault()
 
     if (!this.state.email) return
@@ -232,7 +230,7 @@ export class LinkAccounts extends React.Component {
         <div style={{ display: 'inline', marginTop: '10px' }}>
           <Link href='/'>
             <Button appearance='primary' type='submit' style={{ width: '48%' }}>
-                    Back
+              Back
             </Button>
           </Link>
           {
@@ -253,7 +251,7 @@ export class LinkAccount extends React.Component {
         <form style={{ display: 'inline', marginLeft: '10px' }} method='post' action={`/auth/oauth/${this.props.provider.toLowerCase()}/unlink`}>
           <input name='_csrf' type='hidden' value={this.props.session.csrfToken} />
           <Button appearance='secondary' type='submit' style={{ width: '48%' }}>
-              Unlink from {this.props.provider}
+            Unlink from {this.props.provider}
           </Button>
         </form>
       )

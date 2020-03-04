@@ -1,7 +1,7 @@
 import response from './responseMessages'
 const db = require('../../../lib/db')
 const escape = require('sql-template-strings')
-// require("dotenv").config({ path: "./.env" });
+require('dotenv').config({ path: './.env' })
 
 module.exports = async (req, res) => {
   const approvalHash = req.query.h
