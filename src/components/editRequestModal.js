@@ -79,11 +79,21 @@ const EditModal = props => {
     const host = window.location.host
     const protocol = window.location.protocol
 
+    const oldData = props.rowData
+    const updateIndex = oldData.findIndex(entry => entry.id === editData.id)
+    const oldFiles = JSON.parse(oldData[updateIndex].files)
+    console.log(oldFiles, files)
+    const newFiles = oldFiles.concat(files)
+    console.log(newFiles)
+    // console.log(typeof oldFiles, oldFiles, oldFiles[0])
+    // files.forEach(file => oldFiles.push(file))
+    // console.log(typeof files, files)
+
     fetch(`${protocol}//${host}/api/user/entries/update`, {
       method: 'POST',
       body: JSON.stringify({
         editData: editData,
-        files: files
+        files: newFiles
       }),
       headers: {
         'X-CSRF-TOKEN': props.session.csrfToken
@@ -94,9 +104,15 @@ const EditModal = props => {
         if (data.updateQuery.affectedRows === 1) {
           const oldData = props.rowData
           const updateIndex = oldData.findIndex(entry => entry.id === editData.id)
+          const oldFiles = JSON.parse(oldData[updateIndex].files)
+          files.forEach(file => oldFiles.push(file))
+
+          console.log(oldData[updateIndex])
+          console.log(oldFiles)
+          console.log(files)
 
           oldData[updateIndex].note = editData.note
-          oldData[updateIndex].files = JSON.stringify(files)
+          oldData[updateIndex].files = JSON.stringify(oldFiles)
           if (!fieldsDisabled) {
             oldData[updateIndex].fromDate = moment(editData.from).toISOString()
             oldData[updateIndex].toDate = moment(editData.to).toISOString()
@@ -114,7 +130,7 @@ const EditModal = props => {
           Alert.success('Update Success')
         } else {
           Alert.error('Update Failed')
-          this.toggleEditModal()
+          props.toggleEditModal()
         }
       })
       .catch(err => console.error(err))

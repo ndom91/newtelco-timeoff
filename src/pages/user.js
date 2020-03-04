@@ -36,7 +36,7 @@ import {
 const moment = extendMoment(Moment)
 
 class Wrapper extends React.Component {
-  static async getInitialProps ({ res, req, query }) {
+  static async getInitialProps({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -52,7 +52,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     const thisYear = new Date().getFullYear()
 
@@ -262,7 +262,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const host = window.location.host
     const protocol = window.location.protocol
     const user = this.props.session.user.email
@@ -378,6 +378,12 @@ class Wrapper extends React.Component {
   }
 
   toggleConfirmDeleteModal = () => {
+    if (this.state.openConfirmDeleteModal) {
+      this.setState({
+        openConfirmDeleteModal: !this.state.openConfirmDeleteModal,
+      })
+      return
+    }
     if (this.gridApi) {
       const selectedRow = this.gridApi.getSelectedRows()
       if (!selectedRow[0]) {
@@ -489,14 +495,23 @@ class Wrapper extends React.Component {
     }
   }
 
-  toggleViewFilesModal = (files) => {
-    this.setState({
-      viewFilesModal: !this.state.viewFilesModal,
-      viewFiles: files
-    })
+  toggleViewFilesModal = (id) => {
+    if (typeof id !== 'number') {
+      this.setState({
+        viewFilesModal: !this.state.viewFilesModal
+      })
+    } else {
+      const data = this.state.rowData
+      const i = data.findIndex(entry => entry.id === id)
+      const files = data[i].files || []
+      this.setState({
+        viewFilesModal: !this.state.viewFilesModal,
+        viewFiles: JSON.parse(files)
+      })
+    }
   }
 
-  render () {
+  render() {
     const {
       gridOptions,
       rowData,
@@ -625,7 +640,7 @@ class Wrapper extends React.Component {
                 show={viewFilesModal}
                 onHide={this.toggleViewFilesModal}
                 style={{
-                  width: '350px'
+                  width: '550px'
                 }}
               >
                 <Modal.Header>
@@ -637,13 +652,14 @@ class Wrapper extends React.Component {
                       return (
                         <li className='view-file-list-item' key={index}>
                           <div className='view-file-item'>
-                            {file.resource_type === 'pdf' && (
-                              <Icon size='lg' style={{ marginRight: '10px' }} icon='file-pdffo' />
-                            )}
-                            {file.resource_type === 'image' && (
+                            {file.format === 'pdf' ? (
+                              <Icon size='lg' style={{ marginRight: '10px' }} icon='file-pdf-o' />
+                            ) : ['png', 'jpg', 'bmp', 'gif'].includes(file.format) ? (
                               <Icon size='lg' style={{ marginRight: '10px' }} icon='file-image-o' />
-                            )}
-                            <a className='view-file-link' href={file.url}>{file.original_filename}</a>
+                            ) : (
+                                  <Icon size='lg' style={{ marginRight: '10px' }} icon='file-o' />
+                                )}
+                            <a target='_blank' rel='noopener noreferrer' className='view-file-link' title={file.name} href={file.url}>{file.original_filename}.{file.format}</a>
                           </div>
                         </li>
                       )
@@ -713,9 +729,11 @@ class Wrapper extends React.Component {
               font-size: 20px;
             }
             .view-file-link {
-              position: absolute;
-              left: 50%;
-              transform: translateX(-50%);
+              margin-left: 10px;
+              max-width: 320px;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              overflow: hidden;
             }
             .view-file-link::before {
               content: '';

@@ -5,12 +5,12 @@ import {
 } from 'rsuite'
 
 export default class ViewFiles extends React.Component {
-  render() {
+  render () {
     if (this.props.data.files) {
       const files = JSON.parse(this.props.data.files)
       if (files.length > 0) {
         return (
-          <span onClick={() => this.props.viewFiles(files)} className='file-icon'>
+          <span onClick={() => this.props.viewFiles(this.props.data.id)} className='file-icon'>
             <IconButton size='sm' icon={<Icon icon='download' />} appearance='ghost'>
               Files
             </IconButton>
