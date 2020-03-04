@@ -18,7 +18,8 @@ module.exports = async (req, res) => {
       console.log('ERROR: ' + JSON.stringify(err))
       return
     }
-    res.status(200).json({ memberAdmin: true, results: groups })
+    const adminResult = groups.find(group => group.cn === 'Mangement' || group.cn === 'AdminGroup')
+    res.status(200).json({ memberAdmin: typeof adminResult !== 'undefined', results: groups })
 
     // if (groups.users.find(u => u.cn === user)) {
     //   res.status(200).json({ memberAdmin: true, results: results })
