@@ -32,7 +32,6 @@ Company Time-Off Management Application
 ## 🤝 Contributors
 
 ![Nico Domino](https://avatars1.githubusercontent.com/u/7415984?s=64&v=1)  
-Nico Domino \<ndomino@newtelco.de\>
 
 ### 📝 License
 

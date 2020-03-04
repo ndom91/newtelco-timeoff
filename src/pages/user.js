@@ -36,7 +36,7 @@ import {
 const moment = extendMoment(Moment)
 
 class Wrapper extends React.Component {
-  static async getInitialProps({ res, req, query }) {
+  static async getInitialProps ({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -52,7 +52,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor(props) {
+  constructor (props) {
     super(props)
     const thisYear = new Date().getFullYear()
 
@@ -262,7 +262,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const host = window.location.host
     const protocol = window.location.protocol
     const user = this.props.session.user.email
@@ -496,7 +496,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  render() {
+  render () {
     const {
       gridOptions,
       rowData,
@@ -632,13 +632,23 @@ class Wrapper extends React.Component {
                   <Modal.Title>View Files</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                  {viewFiles && viewFiles.map((file, index) => {
-                    return (
-                      <div className='view-file-item' key={index}>
-                        <a href={file.url}>{file.name}</a>
-                      </div>
-                    )
-                  })}
+                  <ul className='view-file-list'>
+                    {viewFiles && viewFiles.map((file, index) => {
+                      return (
+                        <li className='view-file-list-item' key={index}>
+                          <div className='view-file-item'>
+                            {file.resource_type === 'pdf' && (
+                              <Icon size='lg' style={{ marginRight: '10px' }} icon='file-pdffo' />
+                            )}
+                            {file.resource_type === 'image' && (
+                              <Icon size='lg' style={{ marginRight: '10px' }} icon='file-image-o' />
+                            )}
+                            <a className='view-file-link' href={file.url}>{file.original_filename}</a>
+                          </div>
+                        </li>
+                      )
+                    })}
+                  </ul>
                 </Modal.Body>
               </Modal>
             )}
@@ -685,6 +695,37 @@ class Wrapper extends React.Component {
               padding: 10px;
               display: flex;
               flex-wrap: wrap;
+            }
+            .view-file-list {
+              list-style: none;
+            }
+            .view-file-list-item {
+              padding: 15px;
+              border: 1px solid #d6d6d6;
+              border-radius: 5px;
+              margin: 5px;
+              width: 85%;
+            }
+            .view-file-item {
+              display: flex;
+              align-items: center;
+              justify-content: flex-start;
+              font-size: 20px;
+            }
+            .view-file-link {
+              position: absolute;
+              left: 50%;
+              transform: translateX(-50%);
+            }
+            .view-file-link::before {
+              content: '';
+              display: inline-block;
+              height: 32px;
+              width: 5px;
+              border-left: 1px solid #d6d6d6;
+              top: 0px;
+              left: -7px;
+              position: absolute;
             }
             .edit-file-item {
               padding: 10px;
