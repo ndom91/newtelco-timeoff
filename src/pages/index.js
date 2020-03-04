@@ -5,6 +5,7 @@ import Layout from '../components/layout/index'
 import Router from 'next/router'
 import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../components/requiredLogin'
+import DashStat from '../components/dashstat'
 import Subheader from '../components/content-subheader'
 import { Container, Content, Panel, Notification } from 'rsuite'
 
@@ -13,7 +14,7 @@ const Calendar = dynamic(() => import('../components/calendar'), {
 })
 
 class Wrapper extends React.Component {
-  static async getInitialProps ({ res, req, query }) {
+  static async getInitialProps({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -36,7 +37,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       returnTo: props.returnTo
@@ -59,7 +60,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  componentDidMount () {
+  componentDidMount() {
     if (typeof window !== 'undefined') {
       let params
       if (this.props.returnTo && !window.location.search) {
@@ -103,7 +104,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  render () {
+  render() {
     if (this.props.session.user) {
       return (
         <Layout
@@ -115,13 +116,50 @@ class Wrapper extends React.Component {
               header='Absence Management'
               subheader='Current Vacations'
             />
+            <div className='stat-wrapper'>
+              <Panel >
+                <DashStat value='4' label='Days Earned' />
+              </Panel>
+              <Panel >
+                <DashStat value='12' label='Days Carried Over' />
+              </Panel>
+              <Panel >
+                <DashStat value='7' label='Days Used' />
+              </Panel>
+              <Panel >
+                <DashStat value='16' label='Days Left' />
+              </Panel>
+            </div>
             <Panel bordered>
               <Content>
                 <Calendar />
               </Content>
             </Panel>
           </Container>
-          {/* <style jsx>{``}</style> */}
+          <style jsx>{`
+            .stat-wrapper {
+              display: flex;
+              justify-content: space-around;
+            } 
+            :global(.stat-wrapper > .rs-panel) {
+              max-width: 300px;
+              margin: 15px;
+              box-shadow: 0 5px 10px rgba(0,0,0,0.25);
+            } 
+            :global(.stat-wrapper > .rs-panel:nth-child(1)) {
+              background-color: #064789 !important;
+            }
+            :global(.stat-wrapper > .rs-panel:nth-child(2)) {
+              background-color: #592941 !important;
+            }
+            :global(.stat-wrapper > .rs-panel:nth-child(3)) {
+              background-color: #427AA1 !important;
+            }
+            :global(.stat-wrapper > .rs-panel:nth-child(4)) {
+              background-color: #A5BE00 !important;
+            }
+            `}
+          </style>
         </Layout>
       )
     } else {
