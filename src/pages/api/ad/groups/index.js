@@ -19,7 +19,7 @@ module.exports = async (req, res) => {
     }
 
     if (results.users.find(u => u.cn === user)) {
-      res.status(200).json({ memberAdmin: true })
+      res.status(200).json({ memberAdmin: true, results: results })
     } else {
       res.status(201).json({ memberAdmin: false, results: results })
     }

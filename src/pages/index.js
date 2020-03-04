@@ -3,17 +3,17 @@ import dynamic from 'next/dynamic'
 import fetch from 'isomorphic-unfetch'
 import Layout from '../components/layout/index'
 import Router from 'next/router'
-import {NextAuth} from 'next-auth/client'
+import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../components/requiredLogin'
 import Subheader from '../components/content-subheader'
-import {Container, Content, Panel, Notification} from 'rsuite'
+import { Container, Content, Panel, Notification } from 'rsuite'
 
 const Calendar = dynamic(() => import('../components/calendar'), {
   ssr: false
 })
 
 class Wrapper extends React.Component {
-  static async getInitialProps({res, req, query}) {
+  static async getInitialProps ({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -26,12 +26,12 @@ class Wrapper extends React.Component {
     }
     if (req) {
       return {
-        session: await NextAuth.init({req}),
+        session: await NextAuth.init({ req }),
         returnTo: req.session.returnTo
       }
     } else {
       return {
-        session: await NextAuth.init({req})
+        session: await NextAuth.init({ req })
       }
     }
   }
@@ -47,7 +47,7 @@ class Wrapper extends React.Component {
     Notification.info({
       title: header,
       duration: 5000,
-      description: <div className="notify-body">{text}</div>
+      description: <div className='notify-body'>{text}</div>
     })
   }
 
@@ -55,7 +55,7 @@ class Wrapper extends React.Component {
     Notification.warning({
       title: header,
       duration: 5000,
-      description: <div className="notify-body">{text}</div>
+      description: <div className='notify-body'>{text}</div>
     })
   }
 
@@ -108,7 +108,8 @@ class Wrapper extends React.Component {
       return (
         <Layout
           user={this.props.session.user.email}
-          token={this.props.session.csrfToken}>
+          token={this.props.session.csrfToken}
+        >
           <Container>
             <Subheader
               header='Absence Management'
@@ -120,7 +121,7 @@ class Wrapper extends React.Component {
               </Content>
             </Panel>
           </Container>
-          <style jsx>{``}</style>
+          {/* <style jsx>{``}</style> */}
         </Layout>
       )
     } else {
