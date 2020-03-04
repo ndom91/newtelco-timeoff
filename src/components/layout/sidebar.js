@@ -13,6 +13,7 @@ import {
   Modal
 } from 'rsuite'
 import NTLogo from '../../../public/static/img/newtelco_letters.svg'
+import NTLogoL from '../../../public/static/img/newtelco.svg'
 import * as S from '../heroicons'
 
 const NavToggle = ({ expand, onChange, token, handleSignOut, toggleHelpModal }) => {
@@ -152,8 +153,7 @@ class SidebarNT extends React.Component {
                   alignItems: 'center'
                 }}
               >
-                <img src={NTLogo} alt='Logo' className='header-img' style={{ height: '48px', width: '48px', marginTop: '0px', marginLeft: '-5px', marginRight: '10px' }} />
-                Newtelco
+                <img src={NTLogoL} alt='Logo' style={{ height: '48px', width: '188px', marginTop: '0px', marginLeft: '5px', marginRight: '10px' }} />
               </span>
             )}
           </div>
@@ -186,7 +186,6 @@ class SidebarNT extends React.Component {
                 trigger='hover'
                 title='Team'
                 icon={<S.Team width='22' />}
-                placement='rightStart'
                 active={typeof window !== 'undefined' && Router.pathname.includes('team')}
               >
                 <Link passHref href='/team/dashboard'>
