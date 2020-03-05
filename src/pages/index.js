@@ -40,7 +40,13 @@ class Wrapper extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      returnTo: props.returnTo
+      returnTo: props.returnTo,
+      dashboard: {
+        thisYear: 0,
+        total: 0,
+        spent: 0,
+        available: 0
+      }
     }
   }
 
@@ -101,10 +107,33 @@ class Wrapper extends React.Component {
           this.notifyWarn('Error Responding to Request')
         }
       }
+      const host = window.location.host
+      const protocol = window.location.protocol
+      fetch(
+        `${protocol}//${host}/api/user/entries/dashboard?u=${encodeURIComponent(this.props.session.user.email)}`
+      )
+        .then((resp) => resp.json())
+        .then((data) => {
+          if (data.userEntries[0]) {
+            const user = data.userEntries[0]
+            this.setState({
+              dashboard: {
+                thisYear: user.jahresurlaubInsgesamt || 0,
+                total: user.restjahresurlaubInsgesamt || 0,
+                spent: user.jahresUrlaubAusgegeben || 0,
+                available: user.resturlaubJAHR || 0
+              }
+            })
+          }
+        })
+        .catch((err) => console.error(err))
     }
   }
 
   render () {
+    const {
+      dashboard
+    } = this.state
     if (this.props.session.user) {
       return (
         <Layout
@@ -118,16 +147,16 @@ class Wrapper extends React.Component {
             />
             <div className='stat-wrapper'>
               <Panel>
-                <DashStat value='4' label='Earned This Year' />
+                <DashStat value={dashboard.thisYear} label='Earned this Year' />
               </Panel>
               <Panel>
-                <DashStat value='12' label='From Last Year' />
+                <DashStat value={dashboard.total} label='Total Available' />
               </Panel>
               <Panel>
-                <DashStat value='7' label='Days Used' />
+                <DashStat value={dashboard.spent} label='Spent this Year' />
               </Panel>
               <Panel>
-                <DashStat value='16' label='Days Leftover' />
+                <DashStat value={dashboard.available} label='Total Available' />
               </Panel>
             </div>
             <Panel bordered>
@@ -140,9 +169,12 @@ class Wrapper extends React.Component {
             .stat-wrapper {
               display: flex;
               justify-content: space-around;
+              max-height: 160px;
+              margin-bottom: 20px;
             } 
             :global(.stat-wrapper > .rs-panel) {
               width: 260px;
+              max-height: 150px;
               margin: 15px;
               border-radius: 20px;
               background: #ffffff;

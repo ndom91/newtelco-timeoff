@@ -49,7 +49,7 @@ import {
 const { Column, HeaderCell, Cell } = Table
 
 class Wrapper extends React.Component {
-  static async getInitialProps({ res, req, query }) {
+  static async getInitialProps ({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -65,7 +65,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor(props) {
+  constructor (props) {
     super(props)
 
     this.state = {
@@ -156,7 +156,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const host = window.location.host
     const protocol = window.location.protocol
     const tutorial = window.localStorage.getItem('tut')
@@ -502,7 +502,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  render() {
+  render () {
     const {
       vaca,
       availableManagers,
@@ -827,7 +827,7 @@ class Wrapper extends React.Component {
             padding: 10px !important;
             background-color: #bfbfbf40;
             border-radius: 10px;
-            border: 5px solid #67b246bf;
+            border: 3px solid #67b246bf;
           }
           :global(.__floater.__floater__open) {
             z-index: 1000 !important;
