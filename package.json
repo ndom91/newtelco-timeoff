@@ -1,6 +1,6 @@
 {
   "name": "company-timeoff",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Absence Management Application",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "dev:inspect": "NODE_OPTIONS='--inspect' NODE_ENV=development node index.js",
     "ci": "npm build",
     "build": "next build",
-    "start": "NODE_ENV=production node index.js",
+    "start": "PORT=7666 NODE_ENV=production node index.js",
     "start:nt": "PORT=7666 node index.js",
     "export": "next build && next export"
   },
