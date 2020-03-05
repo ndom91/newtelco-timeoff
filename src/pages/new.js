@@ -19,7 +19,8 @@ import {
   faUser,
   faHistory,
   faAngleRight,
-  faAngleLeft
+  faAngleLeft,
+  faExclamationCircle
 } from '@fortawesome/free-solid-svg-icons'
 import {
   Container,
@@ -668,6 +669,14 @@ class Wrapper extends React.Component {
                         <ControlLabel>Note</ControlLabel>
                         <Input componentClass='textarea' rows={3} placeholder='Optional Note' onChange={this.handleNotesChange} style={{ width: isMobile ? '240px' : '320px' }} />
                       </FormGroup>
+                      {vaca.type === 'sick' && (
+                        <FormGroup>
+                          <ControlLabel className='sick-warning'>
+                            <FontAwesomeIcon icon={faExclamationCircle} width='5.5rem' style={{ margin: '10px' }} />
+                            When submitting a sick notice, don't forget to submit a doctors note now, or later in your personal dashboard by editing this request.
+                          </ControlLabel>
+                        </FormGroup>
+                      )}
                       <FormGroup>
                         <ControlLabel className='filedrop-label'>
                           Documents
@@ -812,6 +821,13 @@ class Wrapper extends React.Component {
             :global(textarea.rs-input) {
               min-width: unset;
             }
+          }
+          :global(.sick-warning) {
+            display: flex !important;
+            padding: 10px !important;
+            background-color: #bfbfbf40;
+            border-radius: 10px;
+            border: 5px solid #67b246bf;
           }
           :global(.__floater.__floater__open) {
             z-index: 1000 !important;
