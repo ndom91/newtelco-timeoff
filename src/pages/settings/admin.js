@@ -5,6 +5,8 @@ import Router from 'next/router'
 import moment from 'moment-timezone'
 import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../../components/requiredLogin'
+import EditModal from '../../components/editRequestModal'
+import DeleteModal from '../../components/deleteRequestModal'
 import { AgGridReact } from 'ag-grid-react'
 import 'ag-grid-community/dist/styles/ag-grid.css'
 import 'ag-grid-community/dist/styles/ag-theme-material.css'
@@ -31,7 +33,6 @@ import {
   ButtonToolbar,
   Notification,
   Modal,
-  Alert,
   Panel,
   SelectPicker,
   Table,
@@ -50,7 +51,7 @@ import {
 const { Column, HeaderCell, Cell } = Table
 
 class Wrapper extends React.Component {
-  static async getInitialProps({ res, req, query }) {
+  static async getInitialProps ({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -73,7 +74,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor(props) {
+  constructor (props) {
     super(props)
     const thisYear = new Date().getFullYear()
     this.state = {
@@ -459,7 +460,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const selectUserList = []
     const userAdmin = JSON.parse(window.localStorage.getItem('mA'))
     this.props.users.userList.forEach(user => {
@@ -562,6 +563,22 @@ class Wrapper extends React.Component {
     })
   }
 
+  notifyError = (header, text) => {
+    Notification.error({
+      title: header,
+      duration: 3000,
+      description: <div className='notify-body'>{text}</div>
+    })
+  }
+
+  notifySuccess = (header, text) => {
+    Notification.success({
+      title: header,
+      duration: 3000,
+      description: <div className='notify-body'>{text}</div>
+    })
+  }
+
   handleAllUserTypeChange = (selection) => {
     const host = window.location.host
     const protocol = window.location.protocol
@@ -590,7 +607,7 @@ class Wrapper extends React.Component {
       .then(res => res.json())
       .then(data => {
         if (data.status === 500) {
-          Alert.error('Error connecting to LDAP Server')
+          this.notifyError('Error', 'Error connecting to LDAP Server')
           return
         }
         const adUsers = []
@@ -642,7 +659,7 @@ class Wrapper extends React.Component {
           this.setState({
             adLoading: false
           })
-          Alert.success('Users up-to-date with LDAP')
+          this.notifySuccess('Success', 'Users up-to-date with LDAP')
         }
       })
       .catch(err => console.error(err))
@@ -679,12 +696,12 @@ class Wrapper extends React.Component {
               showSyncModal: false
             })
             if (this.gridApi) { this.gridApi.refreshCells() }
-            Alert.success(`Successfully added ${newUsersToDb.length} users`, 5000)
+            this.notifySuccess('Success', `Successfully added ${newUsersToDb.length} users`, 5000)
           } else {
             this.setState({
               showSyncModal: false
             })
-            Alert.warn(`Error adding ${newUsersToDb.length} - ${data.error}`)
+            this.notifyWarn('Warning', `Error adding ${newUsersToDb.length} - ${data.error}`)
           }
         })
         .catch(err => console.error(err))
@@ -721,12 +738,12 @@ class Wrapper extends React.Component {
               showSyncModal: false
             })
             if (this.gridApi) { this.gridApi.refreshCells() }
-            Alert.success(`Successfully updated ${updateUsers.length} users`, 5000)
+            this.notifySuccess('Success', `Successfully updated ${updateUsers.length} users`, 5000)
           } else {
             this.setState({
               showSyncModal: false
             })
-            Alert.warn(`Error updating ${updateUsers.length} - ${data.error}`)
+            this.notifyWarn('Warning', `Error updating ${updateUsers.length} - ${data.error}`)
           }
         })
         .catch(err => console.error(err))
@@ -771,7 +788,7 @@ class Wrapper extends React.Component {
       const params = {
         allColumns: true,
         fileName: `${username}_timeoff_${moment(new Date()).format('YYYYMMDD')}.csv`,
-        columnSeparator: ','
+        columnSeparator: ';'
       }
       this.personalGridApi.exportDataAsCsv(params)
     }
@@ -799,7 +816,7 @@ class Wrapper extends React.Component {
       const params = {
         allColumns: true,
         fileName: `newtelco_allUsers_timeoff_${moment(new Date()).format('YYYYMMDD')}.csv`,
-        columnSeparator: ','
+        columnSeparator: ';'
       }
       this.allGridApi.exportDataAsCsv(params)
     }
@@ -878,8 +895,7 @@ class Wrapper extends React.Component {
           this.setState({
             managerRowData: managers
           })
-          // this.notifyInfo('Manager Removed')
-          Alert.info('Manager Removed')
+          this.notifyInfo('Manager Removed')
         }
       })
       .catch(err => console.error(err))
@@ -937,8 +953,7 @@ class Wrapper extends React.Component {
             openManagerEditModal: !this.state.openManagerEditModal,
             managerRowData: managers
           })
-          // this.notifyInfo('Manager Info Saved')
-          Alert.info('Manager Info Saved')
+          this.notifyInfo('Manager Info Saved')
         }
       })
       .catch(err => console.error(err))
@@ -969,8 +984,7 @@ class Wrapper extends React.Component {
             openManagerAddModal: !this.state.openManagerAddModal,
             managerRowData: managers
           })
-          // this.notifyInfo('Manager Added')
-          Alert.info('Manager Added')
+          this.notifyInfo('Manager Added')
         }
       })
       .catch(err => console.error(err))
@@ -994,11 +1008,9 @@ class Wrapper extends React.Component {
       .then(resp => resp.json())
       .then(data => {
         if (data.userUpdate.affectedRows === 1) {
-          // this.notifyInfo('User Info Saved')
-          Alert.info('User Info Saved')
+          this.notifyInfo('User Info Saved')
         } else {
-          // this.notifyWarn('Error Saving User Info')
-          Alert.error('Error Saving user Info')
+          this.notifyError('Error Saving User Info')
         }
       })
       .catch(err => console.error(err))
@@ -1008,7 +1020,7 @@ class Wrapper extends React.Component {
     if (this.allGridApi) {
       const selectedRow = this.allGridApi.getSelectedRows()
       if (!selectedRow[0]) {
-        Alert.info('Please select a row')
+        this.notifyWarn('Please select a row')
         return
       }
       const request = selectedRow[0]
@@ -1092,9 +1104,9 @@ class Wrapper extends React.Component {
       .then(res => res.json())
       .then(data => {
         if (data.deleteQuery.affectedRows > 0) {
-          Alert.success('Request Deleted')
+          this.notifySuccess('Request Deleted')
         } else {
-          Alert.error('Error Deleting Request')
+          this.notifyError('Error Deleting Request')
         }
         const newRowData = this.state.allRowData.filter(row => row.id !== deleteId)
         this.setState({
@@ -1310,7 +1322,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  render() {
+  render () {
     const {
       gridOptions,
       rowData,

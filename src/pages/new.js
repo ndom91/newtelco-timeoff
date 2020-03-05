@@ -42,8 +42,7 @@ import {
   Modal,
   Notification,
   HelpBlock,
-  Table,
-  Alert
+  Table
 } from 'rsuite'
 
 const { Column, HeaderCell, Cell } = Table
@@ -127,7 +126,23 @@ class Wrapper extends React.Component {
   notifyInfo = (header, text) => {
     Notification.info({
       title: header,
-      duration: 2000,
+      duration: 3000,
+      description: <div className='notify-body'>{text}</div>
+    })
+  }
+
+  notifyError = (header, text) => {
+    Notification.error({
+      title: header,
+      duration: 3000,
+      description: <div className='notify-body'>{text}</div>
+    })
+  }
+
+  notifySuccess = (header, text) => {
+    Notification.success({
+      title: header,
+      duration: 3000,
       description: <div className='notify-body'>{text}</div>
     })
   }
@@ -135,7 +150,7 @@ class Wrapper extends React.Component {
   notifyWarn = (header, text) => {
     Notification.warning({
       title: header,
-      duration: 2000,
+      duration: 3000,
       description: <div className='notify-body'>{text}</div>
     })
   }
@@ -415,14 +430,12 @@ class Wrapper extends React.Component {
               })
             }
             if (data1.code === 200 && data.code === 200) {
-              // this.notifyInfo('Request Successfully Sent')
-              Alert.success('Request Successfully Sent')
+              this.notifySuccess('Success', 'Request Successfully Sent')
               this.setState({
                 successfullySent: true
               })
             } else if (data.code === 500) {
-              // this.notifyWarn(`Error sending message - ${data.msg}`)
-              Alert.error(`Error sending message - ${data.msg}`)
+              this.notifyError('Error sending message', `${data.msg}`)
             }
           })
           .catch(err => console.error(err))
@@ -762,11 +775,11 @@ class Wrapper extends React.Component {
               <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
                 <ButtonToolbar style={{ width: '100%' }}>
                   <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-                    <Button onClick={this.handleSubmit} style={{ width: '33%', fontSize: '16px' }} appearance='primary'>
-                      Confirm
-                    </Button>
                     <Button onClick={this.toggleSubmitModal} style={{ width: '33%', fontSize: '16px' }} appearance='default'>
                       Cancel
+                    </Button>
+                    <Button onClick={this.handleSubmit} style={{ width: '33%', fontSize: '16px' }} appearance='primary'>
+                      Confirm
                     </Button>
                   </ButtonGroup>
                 </ButtonToolbar>

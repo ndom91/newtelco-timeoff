@@ -27,7 +27,6 @@ import {
   ButtonGroup,
   Panel,
   Icon,
-  Alert,
   Modal,
   Notification,
   SelectPicker
@@ -262,6 +261,22 @@ class Wrapper extends React.Component {
     })
   }
 
+  notifyError = (header, text) => {
+    Notification.error({
+      title: header,
+      duration: 3000,
+      description: <div className='notify-body'>{text}</div>
+    })
+  }
+
+  notifySuccess = (header, text) => {
+    Notification.success({
+      title: header,
+      duration: 3000,
+      description: <div className='notify-body'>{text}</div>
+    })
+  }
+
   componentDidMount() {
     const host = window.location.host
     const protocol = window.location.protocol
@@ -380,7 +395,7 @@ class Wrapper extends React.Component {
   toggleConfirmDeleteModal = () => {
     if (this.state.openConfirmDeleteModal) {
       this.setState({
-        openConfirmDeleteModal: !this.state.openConfirmDeleteModal,
+        openConfirmDeleteModal: !this.state.openConfirmDeleteModal
       })
       return
     }
@@ -424,28 +439,6 @@ class Wrapper extends React.Component {
       })
     }
   }
-
-  // handleSubmitDelete = () => {
-  //   const deleteId = this.state.toDelete
-  //   const host = window.location.host
-  //   const protocol = window.location.protocol
-  //   fetch(`${protocol}//${host}/api/user/entries/delete?id=${deleteId}`)
-  //     .then(res => res.json())
-  //     .then(data => {
-  //       if (data.deleteQuery.affectedRows > 0) {
-  //         this.notifyInfo('Request Deleted')
-  //       } else {
-  //         this.notifyWarn('Error Deleting Request')
-  //       }
-  //       const newRowData = this.state.rowData.filter(row => row.id !== deleteId)
-  //       this.setState({
-  //         rowData: newRowData,
-  //         openConfirmDeleteModal: !this.state.openConfirmDeleteModal
-  //       })
-  //       this.gridApi.refreshCells()
-  //     })
-  //     .catch(err => console.error(err))
-  // }
 
   toggleEditModal = () => {
     if (this.gridApi) {
@@ -592,36 +585,6 @@ class Wrapper extends React.Component {
                 setRowData={this.setRowData}
                 rowData={this.state.rowData}
               />
-              // <Modal enforceFocus size='sm' backdrop show={openConfirmDeleteModal} onHide={this.toggleConfirmDeleteModal} style={{ marginTop: '150px' }}>
-              //   <Modal.Header>
-              //     <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>Confirm Submit</Modal.Title>
-              //   </Modal.Header>
-              //   <Modal.Body>
-              //     <span style={{ textAlign: 'center', display: 'block', fontWeight: '600' }}>Are you sure you want to delete this request?</span>
-              //     <Table showHeader={false} autoHeight bordered={false} data={confirmDeleteData} style={{ margin: '20px 50px' }}>
-              //       <Column width={200} align='left'>
-              //         <HeaderCell>Field: </HeaderCell>
-              //         <Cell dataKey='title' />
-              //       </Column>
-              //       <Column width={250} align='left'>
-              //         <HeaderCell>Value: </HeaderCell>
-              //         <Cell dataKey='value' />
-              //       </Column>
-              //     </Table>
-              //   </Modal.Body>
-              //   <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
-              //     <ButtonToolbar style={{ width: '100%' }}>
-              //       <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-              //         <Button onClick={this.toggleConfirmDeleteModal} style={{ width: '33%', fontSize: '16px' }} appearance='default'>
-              //           Cancel
-              //         </Button>
-              //         <Button onClick={this.handleSubmitDelete} style={{ width: '33%', fontSize: '16px' }} appearance='primary'>
-              //           Confirm
-              //         </Button>
-              //       </ButtonGroup>
-              //     </ButtonToolbar>
-              //   </Modal.Footer>
-              // </Modal>
             )}
             {openEditModal && (
               <EditModal

@@ -11,16 +11,17 @@ const DashStat = props => {
             flex-direction: column;
             align-items: center;
             justify-content: space-around;
+            font-family: 'Roboto';
           }
           .stat-value {
             font-size: 5rem;
             font-weight: 600;
-            color: #fff;
+            color: #585858;
           }
           .stat-label {
             font-size: 1.5rem;
-            font-weight: 200;
-            color: #fff;
+            font-weight: 100;
+            color: #585858;
           }
       `}
       </style>

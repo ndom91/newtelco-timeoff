@@ -2,6 +2,9 @@ import response from './responseMessages'
 const db = require('../../../lib/db')
 const escape = require('sql-template-strings')
 require('dotenv').config({ path: './.env' })
+const { google } = require('googleapis')
+
+const key = require('../../../../serviceacct2.json')
 
 module.exports = async (req, res) => {
   const approvalHash = req.query.h
@@ -23,7 +26,7 @@ module.exports = async (req, res) => {
   const nodemailerDirectTransport = require('nodemailer-direct-transport')
 
   const checkApprovalHash = await db.query(escape`
-    SELECT id, name, email, fromDate, toDate, approval_hash FROM vacations WHERE approval_hash LIKE ${approvalHash}
+    SELECT id, name, email, DATE_FORMAT(toDate, \"%Y-%m-%d\") as toGoogle,  DATE_FORMAT(fromDate, \"%Y-%m-%d\") as fromGoogle, fromDate, toDate, submitted_datetime, manager, approval_datetime, approval_hash FROM vacations WHERE approval_hash LIKE ${approvalHash}
   `)
 
   if (checkApprovalHash[0].id) {
@@ -31,10 +34,17 @@ module.exports = async (req, res) => {
     let actionLabel
     let approvalValue
     const name = checkApprovalHash[0].name
+    const manager = checkApprovalHash[0].manager
     const toDate = new Date(checkApprovalHash[0].toDate).toLocaleDateString(
       'de-DE'
     )
     const fromDate = new Date(checkApprovalHash[0].fromDate).toLocaleDateString(
+      'de-DE'
+    )
+    const submittedOn = new Date(checkApprovalHash[0].submitted_datetime).toLocaleString(
+      'de-DE'
+    )
+    const approvedOn = new Date(checkApprovalHash[0].approval_datetime).toLocaleString(
       'de-DE'
     )
     const email = checkApprovalHash[0].email
@@ -43,6 +53,68 @@ module.exports = async (req, res) => {
       mailBody = response.approval_body
       actionLabel = 'Approved'
       approvalValue = '2'
+      const jwtClient = new google.auth.JWT(
+        key.client_email,
+        null,
+        key.private_key,
+        ['https://www.googleapis.com/auth/calendar'])
+
+      jwtClient.authorize(function (err, tokens) {
+        if (err) {
+          console.log(err)
+        } else {
+          console.log('Successfully connected!')
+        }
+      })
+
+      // const toMonth = new Date(checkApprovalHash[0].toDate).getMonth()
+      // const toDay = new Date(checkApprovalHash[0].toDate).getDay()
+      // const toYear = new Date(checkApprovalHash[0].toDate).getFullYear()
+
+      // const toDateGoogle = `${toYear}-${toMonth}-${toDay}`
+
+      // const fromMonth = new Date(checkApprovalHash[0].fromDate).getMonth()
+      // const fromDayRaw = new Date(checkApprovalHash[0].fromDate)
+      // const fromDayRaw2 = fromDayRaw.setDate(fromDayRaw.getDate() + 1)
+      // const fromDay = new Date(fromDayRaw2).getDay()
+      // const fromYear = new Date(checkApprovalHash[0].fromDate).getFullYear()
+
+      // const fromDateGoogle = `${fromYear}-${fromMonth}-${fromDay}`
+
+      console.log(checkApprovalHash[0].fromDate, checkApprovalHash[0].toDate)
+
+      var event = {
+        summary: name,
+        location: '',
+        description: `Submitted On: ${submittedOn}
+
+Manager: ${manager}
+Approved On: ${approvedOn}
+
+https://vacation.newtelco.de`,
+        start: {
+          date: checkApprovalHash[0].fromGoogle,
+          timeZone: 'Europe/Berlin'
+        },
+        end: {
+          date: checkApprovalHash[0].toGoogle,
+          timeZone: 'Europe/Berlin'
+        }
+      }
+      const calendar = google.calendar('v3')
+      calendar.events.insert({
+        auth: jwtClient,
+        calendarId: process.env.GOOGLE_CAL_ID,
+        resource: event
+      }, function (err, response) {
+        if (err) {
+          console.log('The API returned an error: ' + err)
+          return
+        }
+        if (response.data.status !== 'confirmed') {
+          console.error(`Event not added to cal - ${response}`)
+        }
+      })
     } else if (action === 'd') {
       mailBody = response.denied_body
       actionLabel = 'Denied'

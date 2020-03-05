@@ -15,3 +15,5 @@ db_backup
 report.*.json
 node_modules/*
 tmp/
+googleApiConfig.json
+serviceacct2.json

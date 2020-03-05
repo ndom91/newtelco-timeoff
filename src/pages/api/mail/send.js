@@ -43,18 +43,11 @@ module.exports = async (req, res) => {
         from: 'device@newtelco.de',
         subject: `[NT] New Absence - ${name}`,
         html: mailBody
-        // attachments: [
-        //   {
-        //     name: fileName,
-        //     path: `./tmp/${fileName}`
-        //   }
-        // ]
       }, (err, info) => {
         if (err) {
           console.error('Error sending email to ' + name, err)
           res.status(500).json({ code: 500, msg: err })
         }
-        // put approvalHash in DB
         res.status(200).json({ code: 200, msg: info })
       })
   }

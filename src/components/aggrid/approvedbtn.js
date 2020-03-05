@@ -2,14 +2,30 @@ import React, { Component } from 'react'
 import fetch from 'isomorphic-unfetch'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
-import { Button, ButtonGroup, ButtonToolbar, Tag, Alert } from 'rsuite'
+import { Button, ButtonGroup, ButtonToolbar, Tag, Notification } from 'rsuite'
 
 export default class ApprovedBtn extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       approval: 0
     }
+  }
+
+  notifyError = (header, text) => {
+    Notification.error({
+      title: header,
+      duration: 3000,
+      description: <div className='notify-body'>{text}</div>
+    })
+  }
+
+  notifySuccess = (header, text) => {
+    Notification.success({
+      title: header,
+      duration: 3000,
+      description: <div className='notify-body'>{text}</div>
+    })
   }
 
   handleApproveRequest = data => {
@@ -24,7 +40,7 @@ export default class ApprovedBtn extends Component {
           this.setState({
             approval: 2
           })
-          Alert.success('Request Approved')
+          this.notifySuccess('Request Approved')
         }
       })
       .catch(err => console.error(err))
@@ -42,13 +58,13 @@ export default class ApprovedBtn extends Component {
           this.setState({
             approval: 1
           })
-          Alert.success('Request Denied')
+          this.notifySuccess('Request Denied')
         }
       })
       .catch(err => console.error(err))
   };
 
-  render () {
+  render() {
     const {
       approval
     } = this.state

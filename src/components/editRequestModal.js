@@ -15,8 +15,24 @@ import {
   ControlLabel,
   DatePicker,
   InputNumber,
-  Alert
+  Notification
 } from 'rsuite'
+
+const notifySuccess = (header, text) => {
+  Notification.success({
+    title: header,
+    duration: 2000,
+    description: <div className='notify-body'>{text}</div>
+  })
+}
+
+const notifyError = (header, text) => {
+  Notification.error({
+    title: header,
+    duration: 3000,
+    description: <div className='notify-body'>{text}</div>
+  })
+}
 
 const EditModal = props => {
   const openEditModal = props.open
@@ -127,9 +143,9 @@ const EditModal = props => {
           props.setRowData(oldData)
           props.toggleEditModal()
           props.gridApi.refreshCells()
-          Alert.success('Update Success')
+          notifySuccess('Update Success')
         } else {
-          Alert.error('Update Failed')
+          notifyError('Update Failed')
           props.toggleEditModal()
         }
       })

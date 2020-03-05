@@ -51,6 +51,8 @@
     "emoji-mart": "^2.11.2",
     "express-session": "^1.17.0",
     "formidable": "^1.2.1",
+    "google-auth-library": "^5.10.1",
+    "googleapis": "^47.0.0",
     "isomorphic-unfetch": "^3.0.0",
     "less": "^3.10.3",
     "moment-range": "^4.0.2",
