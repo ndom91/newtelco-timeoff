@@ -14,7 +14,7 @@ const Calendar = dynamic(() => import('../components/calendar'), {
 })
 
 class Wrapper extends React.Component {
-  static async getInitialProps ({ res, req, query }) {
+  static async getInitialProps({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -37,13 +37,13 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       returnTo: props.returnTo,
       dashboard: {
+        lastYear: 0,
         thisYear: 0,
-        total: 0,
         spent: 0,
         available: 0
       }
@@ -66,7 +66,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  componentDidMount () {
+  componentDidMount() {
     if (typeof window !== 'undefined') {
       let params
       if (this.props.returnTo && !window.location.search) {
@@ -118,8 +118,8 @@ class Wrapper extends React.Component {
             const user = data.userEntries[0]
             this.setState({
               dashboard: {
+                lastYear: user.resturlaubVorjahr || 0,
                 thisYear: user.jahresurlaubInsgesamt || 0,
-                total: user.restjahresurlaubInsgesamt || 0,
                 spent: user.jahresUrlaubAusgegeben || 0,
                 available: user.resturlaubJAHR || 0
               }
@@ -130,7 +130,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  render () {
+  render() {
     const {
       dashboard
     } = this.state
@@ -147,10 +147,10 @@ class Wrapper extends React.Component {
             />
             <div className='stat-wrapper'>
               <Panel>
-                <DashStat value={dashboard.thisYear} label='Earned this Year' />
+                <DashStat value={dashboard.lastYear} label='From Last Year' />
               </Panel>
               <Panel>
-                <DashStat value={dashboard.total} label='Total Available' />
+                <DashStat value={dashboard.thisYear} label='Earned this Year' />
               </Panel>
               <Panel>
                 <DashStat value={dashboard.spent} label='Spent this Year' />
