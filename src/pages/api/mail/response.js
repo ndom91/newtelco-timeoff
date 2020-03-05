@@ -97,6 +97,7 @@ https://vacation.newtelco.de`,
           return
         }
         if (response.data.status !== 'confirmed') {
+          // TODO: Get Cal ID and save to DB for editting later
           console.error(`Event not added to cal - ${response}`)
         }
       })

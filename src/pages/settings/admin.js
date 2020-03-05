@@ -6,7 +6,6 @@ import moment from 'moment-timezone'
 import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../../components/requiredLogin'
 import EditModal from '../../components/editRequestModal'
-import DeleteModal from '../../components/deleteRequestModal'
 import { AgGridReact } from 'ag-grid-react'
 import 'ag-grid-community/dist/styles/ag-grid.css'
 import 'ag-grid-community/dist/styles/ag-theme-material.css'
@@ -51,7 +50,7 @@ import {
 const { Column, HeaderCell, Cell } = Table
 
 class Wrapper extends React.Component {
-  static async getInitialProps ({ res, req, query }) {
+  static async getInitialProps({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -74,7 +73,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     const thisYear = new Date().getFullYear()
     this.state = {
@@ -89,9 +88,24 @@ class Wrapper extends React.Component {
       openManagerEditModal: false,
       openManagerAddModal: false,
       openConfirmDeleteModal: false,
+      openAdminEditModal: false,
       viewFilesModals: false,
       admin: props.admin,
       adLoading: false,
+      editData: {
+        from: '',
+        to: '',
+        lastYear: '',
+        thisYear: '',
+        spent: '',
+        total: '',
+        requested: '',
+        remaining: '',
+        id: '',
+        note: '',
+        approved: '',
+        type: ''
+      },
       allUserType: 'vacation',
       allUsers: [],
       allRowData: [],
@@ -216,6 +230,11 @@ class Wrapper extends React.Component {
           }, {
             headerName: 'Manager',
             field: 'manager',
+            width: 160
+          }, {
+            headerName: 'Notes',
+            field: 'note',
+            tooltipField: 'note',
             width: 160
           }, {
             headerName: 'View Files',
@@ -370,6 +389,11 @@ class Wrapper extends React.Component {
             field: 'manager',
             width: 160
           }, {
+            headerName: 'Notes',
+            field: 'note',
+            tooltipField: 'note',
+            width: 160
+          }, {
             headerName: 'Approved',
             field: 'approved',
             width: 120,
@@ -460,7 +484,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const selectUserList = []
     const userAdmin = JSON.parse(window.localStorage.getItem('mA'))
     this.props.users.userList.forEach(user => {
@@ -1322,7 +1346,74 @@ class Wrapper extends React.Component {
     })
   }
 
-  render () {
+  setEditData = (files, data) => {
+    if (!data) {
+      this.setState({
+        files: files
+      })
+    } else {
+      this.setState({
+        editData: data,
+        files: files
+      })
+    }
+  }
+
+  setRowData = (data) => {
+    this.setState({
+      allRowData: data
+    })
+  }
+
+  toggleAdminEditModal = () => {
+    if (this.allGridApi) {
+      const host = window.location.host
+      const protocol = window.location.protocol
+      const selectedRow = this.allGridApi.getSelectedRows()
+      if (!selectedRow[0]) {
+        this.notifyInfo('Please select a row to edit')
+        return
+      }
+      const request = selectedRow[0]
+      this.setState({
+        loadingFiles: true,
+        editAvailable: true
+      })
+      const rawFrom = request.fromDate.split('.')
+      const rawTo = request.toDate.split('.')
+      const tableData = {
+        from: `${rawFrom[2]}-${rawFrom[1]}-${rawFrom[0]}`,
+        to: `${rawTo[2]}-${rawTo[1]}-${rawTo[0]}`,
+        lastYear: request.resturlaubVorjahr,
+        thisYear: request.jahresurlaubInsgesamt,
+        spent: request.jahresUrlaubAusgegeben,
+        total: request.restjahresurlaubInsgesamt,
+        requested: request.beantragt,
+        remaining: request.resturlaubJAHR,
+        id: request.id,
+        note: request.note,
+        approved: request.approved,
+        type: request.type && request.type[0].toUpperCase() + request.type.substring(1)
+      }
+      fetch(`${protocol}//${host}/api/mail/file?id=${request.id}`)
+        .then(data => data.json())
+        .then(data => {
+          let files = []
+          if (data.files[0].files.length !== 0) {
+            files = JSON.parse(data.files[0].files)
+          }
+          this.setState({
+            editData: tableData,
+            files: files,
+            loadingFiles: false,
+            openAdminEditModal: !this.state.openAdminEditModal
+          })
+        })
+        .catch(err => console.error(err))
+    }
+  }
+
+  render() {
     const {
       gridOptions,
       rowData,
@@ -1345,6 +1436,8 @@ class Wrapper extends React.Component {
       viewFilesModal,
       viewFiles,
       openConfirmDeleteModal,
+      openAdminEditModal,
+      editData,
       confirmDeleteData,
       adLoading
     } = this.state
@@ -1481,6 +1574,9 @@ class Wrapper extends React.Component {
                           />
                         </span>
                         <span>
+                          <IconButton style={{ marginRight: '10px' }} icon={<Icon icon='pencil' />} appearance='ghost' onClick={this.toggleAdminEditModal}>
+                            Edit
+                          </IconButton>
                           <IconButton style={{ marginRight: '10px' }} icon={<Icon icon='trash' />} appearance='ghost' onClick={this.handleDeleteFromAllModal}>
                             Delete
                           </IconButton>
@@ -1809,6 +1905,18 @@ class Wrapper extends React.Component {
               </Modal.Footer>
             </Modal>
           )}
+          {openAdminEditModal && (
+            <EditModal
+              open={openAdminEditModal}
+              data={editData}
+              rowData={allRowData}
+              gridApi={this.allGridApi}
+              setEditData={this.setEditData}
+              toggleEditModal={this.toggleAdminEditModal}
+              session={this.props.session}
+              setRowData={this.setRowData}
+            />
+          )}
           <style jsx>{`
             @media screen and (max-width: 500px) {
               :global(.wrapper) {
@@ -1932,7 +2040,7 @@ class Wrapper extends React.Component {
               transition: box-shadow 250ms ease-in-out;
             }
             :global(.rs-btn-ghost:hover) {
-              box-shadow: 0px 3px 10px #67b24659;
+              box-shadow: 0px 3px 5px rgba(0,0,0,0.15);
             }
             :global(.accordion__button:focus) {
               outline: none;
