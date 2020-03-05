@@ -1,4 +1,5 @@
 import response from './responseMessages'
+import moment from 'moment-timezone'
 const db = require('../../../lib/db')
 const escape = require('sql-template-strings')
 require('dotenv').config({ path: './.env' })
@@ -67,23 +68,7 @@ module.exports = async (req, res) => {
         }
       })
 
-      // const toMonth = new Date(checkApprovalHash[0].toDate).getMonth()
-      // const toDay = new Date(checkApprovalHash[0].toDate).getDay()
-      // const toYear = new Date(checkApprovalHash[0].toDate).getFullYear()
-
-      // const toDateGoogle = `${toYear}-${toMonth}-${toDay}`
-
-      // const fromMonth = new Date(checkApprovalHash[0].fromDate).getMonth()
-      // const fromDayRaw = new Date(checkApprovalHash[0].fromDate)
-      // const fromDayRaw2 = fromDayRaw.setDate(fromDayRaw.getDate() + 1)
-      // const fromDay = new Date(fromDayRaw2).getDay()
-      // const fromYear = new Date(checkApprovalHash[0].fromDate).getFullYear()
-
-      // const fromDateGoogle = `${fromYear}-${fromMonth}-${fromDay}`
-
-      console.log(checkApprovalHash[0].fromDate, checkApprovalHash[0].toDate)
-
-      var event = {
+      const event = {
         summary: name,
         location: '',
         description: `Submitted On: ${submittedOn}
@@ -97,7 +82,7 @@ https://vacation.newtelco.de`,
           timeZone: 'Europe/Berlin'
         },
         end: {
-          date: checkApprovalHash[0].toGoogle,
+          date: moment(checkApprovalHash[0].toGoogle).add(1, 'days').format('YYYY-MM-DD'),
           timeZone: 'Europe/Berlin'
         }
       }

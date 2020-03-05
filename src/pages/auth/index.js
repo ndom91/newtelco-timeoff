@@ -30,7 +30,7 @@ import {
 import Wrapper from './wrapper'
 
 export default class App extends React.Component {
-  static async getInitialProps ({ req }) {
+  static async getInitialProps({ req }) {
     return {
       session: await NextAuth.init({ req }),
       linkedAccounts: await NextAuth.linked({ req }),
@@ -38,7 +38,7 @@ export default class App extends React.Component {
     }
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       email: '',
@@ -58,7 +58,7 @@ export default class App extends React.Component {
     })
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.animateText()
     const host = window.location.host
     const protocol = window.location.protocol
@@ -94,7 +94,7 @@ export default class App extends React.Component {
       })
   }
 
-  render () {
+  render() {
     if (this.props.session.user) {
       return (
         <Wrapper>
@@ -112,7 +112,7 @@ export default class App extends React.Component {
             <Content className='login-content-wrapper'>
               <FlexboxGrid justify='center' className='login-grid-wrapper'>
                 <NewtelcoSvg />
-                <FlexboxGrid.Item componentClass={Col} md={8} lg={8}>
+                <FlexboxGrid.Item componentClass={Col} md={8} lg={6}>
                   <Panel header={<h3 className='login-text-header'>Vacation Login</h3>} bordered>
                     <Form fluid id='signin' method='post' action='/auth/email/signin' onSubmit={this.handleSignInSubmit}>
                       <input name='_csrf' type='hidden' value={this.state.session.csrfToken} />
@@ -124,7 +124,7 @@ export default class App extends React.Component {
                       <Divider />
                       <FormGroup>
                         <ButtonToolbar>
-                          <Button appearance='subtle' id='submitButton' type='submit' style={{ width: '50%' }} className='btn btn-outline-success' disabled>Sign In</Button>
+                          <Button appearance='subtle' id='submitButton' type='submit' style={{ height: '50px', fontSize: '1.1rem', width: '50%' }} className='btn btn-outline-success' disabled>Sign In</Button>
                           <SignInButtons providers={this.props.providers} />
                         </ButtonToolbar>
                       </FormGroup>
@@ -223,7 +223,7 @@ export default class App extends React.Component {
 }
 
 export class LinkAccounts extends React.Component {
-  render () {
+  render() {
     return (
       <Panel header={<h3 className='login-text-header'>Link Accounts</h3>} bordered>
         <p style={{ marginTop: '20px', marginBottom: '20px' }}>You are signed in as <span style={{ fontWeight: '600' }}>{this.props.session.user.email}</span>.</p>
@@ -245,7 +245,7 @@ export class LinkAccounts extends React.Component {
 }
 
 export class LinkAccount extends React.Component {
-  render () {
+  render() {
     if (this.props.linked === true) {
       return (
         <form style={{ display: 'inline', marginLeft: '10px' }} method='post' action={`/auth/oauth/${this.props.provider.toLowerCase()}/unlink`}>
@@ -268,14 +268,14 @@ export class LinkAccount extends React.Component {
 }
 
 export class SignInButtons extends React.Component {
-  render () {
+  render() {
     return (
       <>
         {
           Object.keys(this.props.providers).map((provider, i) => {
             return (
               <a key={i} className='btn btn-block btn-outline-secondary' href={this.props.providers[provider].signin}>
-                <Button style={{ width: '48%', display: 'inline-flex', alignItems: 'center', justifyContent: 'space-around' }} className='google-signin-btn' appearance='primary'>
+                <Button style={{ width: '48%', height: '50px', fontSize: '1.1rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'space-around' }} className='google-signin-btn' appearance='primary'>
                   <FontAwesomeIcon icon={faGoogle} width='1em' style={{ float: 'left', color: 'secondary' }} />
                   Sign in with {provider}
                 </Button>
