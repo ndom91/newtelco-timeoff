@@ -12,7 +12,7 @@ module.exports = async (req, res) => {
   const mail = req.query.m
   const user = mail.substr(0, mail.lastIndexOf('@'))
   // ad.getGroupMembershipForUser(user, function (err, groups) {
-  ad.getUsersForGroup('AdminGroup', function (err, groups) {
+  ad.getUsersForGroup('VacationAdmins', function (err, groups) {
     if (err) {
       console.log('ERROR: ' + JSON.stringify(err))
       return
