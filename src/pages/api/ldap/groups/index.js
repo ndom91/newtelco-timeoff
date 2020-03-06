@@ -12,12 +12,12 @@ module.exports = async (req, res) => {
   const mail = req.query.m
   const user = mail.substr(0, mail.lastIndexOf('@'))
   // ad.getGroupMembershipForUser(user, function (err, groups) {
-  ad.getUsersForGroup('VacationAdmins', function (err, groups) {
+  ad.getUsersForGroup('VacationAdmins', function (err, users) {
     if (err) {
       console.log('ERROR: ' + JSON.stringify(err))
       return
     }
-    const adminResult = groups.find(group => group.cn === 'Management' || group.cn === 'AdminGroup')
-    res.status(200).json({ memberAdmin: typeof adminResult !== 'undefined', results: groups })
+    // const adminResult = users.find(group => group.cn === 'Management' || group.cn === 'AdminGroup')
+    res.status(200).json({ memberAdmin: typeof adminResult !== 'undefined', results: users })
   })
 }
