@@ -10,7 +10,7 @@ Alert.config({
 })
 
 class Layout extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       expand: true,
@@ -20,7 +20,7 @@ class Layout extends React.Component {
     }
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const protocol = window.location.protocol
     const host = window.location.host
     const companyInfo = JSON.parse(window.localStorage.getItem('company'))
@@ -82,7 +82,7 @@ class Layout extends React.Component {
           })
           .catch(err => console.error(err))
       !userAdmin &&
-        fetch(`${protocol}//${host}/api/ad/groups?m=${this.props.user}`)
+        fetch(`${protocol}//${host}/api/ldap/groups?m=${this.props.user}`)
           .then(res => res.json())
           .then(data => {
             if (data.memberAdmin) {
@@ -118,7 +118,7 @@ class Layout extends React.Component {
     return string.charAt(0).toUpperCase() + string.slice(1)
   };
 
-  render() {
+  render () {
     return (
       <>
         <img
