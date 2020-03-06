@@ -49,7 +49,7 @@ import {
 const { Column, HeaderCell, Cell } = Table
 
 class Wrapper extends React.Component {
-  static async getInitialProps ({ res, req, query }) {
+  static async getInitialProps({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -65,7 +65,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
 
     this.state = {
@@ -156,7 +156,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const host = window.location.host
     const protocol = window.location.protocol
     const tutorial = window.localStorage.getItem('tut')
@@ -431,12 +431,12 @@ class Wrapper extends React.Component {
               })
             }
             if (data1.code === 200 && data.code === 200) {
-              this.notifySuccess('Success', 'Request Successfully Sent')
+              this.notifySuccess('Request Successfully Sent')
               this.setState({
                 successfullySent: true
               })
             } else if (data.code === 500) {
-              this.notifyError('Error sending message', `${data.msg}`)
+              this.notifyError(`Error - ${data.msg}`)
             }
           })
           .catch(err => console.error(err))
@@ -502,7 +502,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  render () {
+  render() {
     const {
       vaca,
       availableManagers,

@@ -98,17 +98,17 @@ const EditModal = props => {
     const oldData = props.rowData
     const updateIndex = oldData.findIndex(entry => entry.id === editData.id)
     const oldFiles = JSON.parse(oldData[updateIndex].files)
-    console.log(oldFiles, files)
     const newFiles = oldFiles.concat(files)
-    console.log(newFiles)
-    // console.log(typeof oldFiles, oldFiles, oldFiles[0])
-    // files.forEach(file => oldFiles.push(file))
-    // console.log(typeof files, files)
+
+    const toSubmitData = editData
+    toSubmitData.from = moment(editData.from).format('YYYY-MM-DD')
+    toSubmitData.to = moment(editData.to).format('YYYY-MM-DD')
+    console.log(toSubmitData)
 
     fetch(`${protocol}//${host}/api/user/entries/update`, {
       method: 'POST',
       body: JSON.stringify({
-        editData: editData,
+        editData: toSubmitData,
         files: newFiles
       }),
       headers: {
@@ -123,15 +123,15 @@ const EditModal = props => {
           const oldFiles = JSON.parse(oldData[updateIndex].files)
           files.forEach(file => oldFiles.push(file))
 
-          console.log(oldData[updateIndex])
-          console.log(oldFiles)
-          console.log(files)
+          // console.log(oldData[updateIndex])
+          // console.log(oldFiles)
+          // console.log(files)
 
           oldData[updateIndex].note = editData.note
           oldData[updateIndex].files = JSON.stringify(oldFiles)
           if (!fieldsDisabled) {
-            oldData[updateIndex].fromDate = moment(editData.from).toISOString()
-            oldData[updateIndex].toDate = moment(editData.to).toISOString()
+            oldData[updateIndex].fromDate = moment(editData.from).format('DD.MM.YYYY')
+            oldData[updateIndex].toDate = moment(editData.to).format('DD.MM.YYYY')
             oldData[updateIndex].resturlaubVorjahr = editData.lastYear
             oldData[updateIndex].resturlaubJAHR = editData.remaining
             oldData[updateIndex].beantragt = editData.requested
@@ -257,7 +257,7 @@ const EditModal = props => {
                   alignItems: 'center'
                 }}
               >
-                <ControlLabel>Note</ControlLabel>
+                <ControlLabel style={{ textAlign: 'center' }}>Note</ControlLabel>
                 <Input
                   name='note'
                   onChange={handleNoteChange}
@@ -307,21 +307,17 @@ const EditModal = props => {
         :global(.stacked-input > .rs-control-label) {
           width: 100% !important;
           text-align: center !important;
-          font-size: 18px !important;
         }
         :global(.rs-control-label) {
-          font-size: 18px !important;
+          font-size: 18px !mportant;
         }
         :global(.stacked-input > .rs-input-group) {
           max-width: 220px !important;
-          font-size: 1.1rem !important;
         }
         :global(.stacked-input .rs-input) {
-          font-size: 1.1rem;
           text-align: center;
         }
         :global(.stacked-input .rs-input-group-addon) {
-          font-size: 17px;
         }
         `}
       </style>

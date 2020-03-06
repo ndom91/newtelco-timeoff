@@ -88,10 +88,26 @@ class Wrapper extends React.Component {
       openManagerEditModal: false,
       openManagerAddModal: false,
       openConfirmDeleteModal: false,
+      openConfirmPersonalDeleteModal: false,
       openAdminEditModal: false,
+      openPersonalEditModal: false,
       viewFilesModals: false,
       admin: props.admin,
       adLoading: false,
+      personalEditData: {
+        from: '',
+        to: '',
+        lastYear: '',
+        thisYear: '',
+        spent: '',
+        total: '',
+        requested: '',
+        remaining: '',
+        id: '',
+        note: '',
+        approved: '',
+        type: ''
+      },
       editData: {
         from: '',
         to: '',
@@ -1040,6 +1056,87 @@ class Wrapper extends React.Component {
       .catch(err => console.error(err))
   }
 
+  j
+  handleDeleteFromPersonalModal = () => {
+    if (this.personalGridApi) {
+      const selectedRow = this.personalGridApi.getSelectedRows()
+      if (!selectedRow[0]) {
+        this.notifyWarn('Please select a row')
+        return
+      }
+      const request = selectedRow[0]
+      let tableData = []
+      if (request.type === 'sick') {
+        tableData = [
+          {
+            title: 'Colleague',
+            value: request.name
+          },
+          {
+            title: 'From',
+            value: request.fromDate
+          },
+          {
+            title: 'To',
+            value: request.toDate
+          },
+          {
+            title: 'Manager',
+            value: request.manager
+          },
+          {
+            title: 'Type',
+            value: request.type.charAt(0).toUpperCase() + request.type.slice(1)
+          },
+          {
+            title: 'Submitted On',
+            value: moment(request.submitted_datetime).format('DD.MM.YYYY HH:mm')
+          }
+        ]
+      } else {
+        tableData = [
+          {
+            title: 'Colleague',
+            value: request.name
+          },
+          {
+            title: 'From',
+            value: request.fromDate
+          },
+          {
+            title: 'To',
+            value: request.toDate
+          },
+          {
+            title: 'Manager',
+            value: request.manager
+          },
+          {
+            title: 'Type',
+            value: request.type.charAt(0).toUpperCase() + request.type.slice(1)
+          },
+          {
+            title: 'Requested Days',
+            value: request.beantragt
+          },
+          {
+            title: 'Remaining Days',
+            value: request.resturlaubJAHR
+          },
+          {
+            title: 'Submitted On',
+            value: moment(request.submitted_datetime).format('DD.MM.YYYY HH:mm')
+          }
+        ]
+      }
+      this.setState({
+        openConfirmPersonalDeleteModal: !this.state.openConfirmPersonalDeleteModal,
+        confirmPersonalDeleteData: tableData,
+        personalToDelete: request.id || 0
+      })
+    }
+  }
+
   handleDeleteFromAllModal = () => {
     if (this.allGridApi) {
       const selectedRow = this.allGridApi.getSelectedRows()
@@ -1118,6 +1215,28 @@ class Wrapper extends React.Component {
         toDelete: request.id || 0
       })
     }
+  }
+
+  handleSubmitPersonalDelete = () => {
+    const deleteId = this.state.personalToDelete
+    const host = window.location.host
+    const protocol = window.location.protocol
+    fetch(`${protocol}//${host}/api/user/entries/delete?id=${deleteId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.deleteQuery.affectedRows > 0) {
+          this.notifySuccess('Request Deleted')
+        } else {
+          this.notifyError('Error Deleting Request')
+        }
+        const newRowData = this.state.personalRowData.filter(row => row.id !== deleteId)
+        this.setState({
+          personalRowData: newRowData,
+          openConfirmPersonalDeleteModal: !this.state.openConfirmPersonalDeleteModal
+        })
+        this.allGridApi.refreshCells()
+      })
+      .catch(err => console.error(err))
   }
 
   handleSubmitDelete = () => {
@@ -1346,6 +1465,25 @@ class Wrapper extends React.Component {
     })
   }
 
+  setPersonalEditData = (files, data) => {
+    if (!data) {
+      this.setState({
+        files: files
+      })
+    } else {
+      this.setState({
+        personalEditData: data,
+        files: files
+      })
+    }
+  }
+
+  setPersonalRowData = (data) => {
+    this.setState({
+      personalRowData: data
+    })
+  }
+
   setEditData = (files, data) => {
     if (!data) {
       this.setState({
@@ -1363,6 +1501,54 @@ class Wrapper extends React.Component {
     this.setState({
       allRowData: data
     })
+  }
+
+  togglePersonalEditModal = () => {
+    if (this.personalGridApi) {
+      const host = window.location.host
+      const protocol = window.location.protocol
+      const selectedRow = this.personalGridApi.getSelectedRows()
+      if (!selectedRow[0]) {
+        this.notifyInfo('Please select a row to edit')
+        return
+      }
+      const request = selectedRow[0]
+      this.setState({
+        loadingFiles: true,
+        editAvailable: true
+      })
+      const rawFrom = request.fromDate.split('.')
+      const rawTo = request.toDate.split('.')
+      const tableData = {
+        from: `${rawFrom[2]}-${rawFrom[1]}-${rawFrom[0]}`,
+        to: `${rawTo[2]}-${rawTo[1]}-${rawTo[0]}`,
+        lastYear: request.resturlaubVorjahr,
+        thisYear: request.jahresurlaubInsgesamt,
+        spent: request.jahresUrlaubAusgegeben,
+        total: request.restjahresurlaubInsgesamt,
+        requested: request.beantragt,
+        remaining: request.resturlaubJAHR,
+        id: request.id,
+        note: request.note,
+        approved: request.approved,
+        type: request.type && request.type[0].toUpperCase() + request.type.substring(1)
+      }
+      fetch(`${protocol}//${host}/api/mail/file?id=${request.id}`)
+        .then(data => data.json())
+        .then(data => {
+          let files = []
+          if (data.files[0].files.length !== 0) {
+            files = JSON.parse(data.files[0].files)
+          }
+          this.setState({
+            personalEditData: tableData,
+            files: files,
+            loadingFiles: false,
+            openPersonalEditModal: !this.state.openPersonalEditModal
+          })
+        })
+        .catch(err => console.error(err))
+    }
   }
 
   toggleAdminEditModal = () => {
@@ -1436,9 +1622,13 @@ class Wrapper extends React.Component {
       viewFilesModal,
       viewFiles,
       openConfirmDeleteModal,
+      openConfirmPersonalDeleteModal,
       openAdminEditModal,
+      openPersonalEditModal,
       editData,
+      personalEditData,
       confirmDeleteData,
+      confirmPersonalDeleteData,
       adLoading
     } = this.state
 
@@ -1611,9 +1801,19 @@ class Wrapper extends React.Component {
                             style={{ width: '300px' }}
                           />
                         </span>
-                        <IconButton icon={<Icon icon='export' />} appearance='ghost' onClick={this.handlePersonalGridExport}>
-                          Export
-                        </IconButton>
+                        <ButtonToolbar>
+                          <ButtonGroup>
+                            <IconButton icon={<Icon icon='pencil' />} appearance='primary' onClick={this.togglePersonalEditModal}>
+                              Edit
+                            </IconButton>
+                            <IconButton icon={<Icon icon='trash' />} appearance='ghost' onClick={this.handleDeleteFromPersonalModal}>
+                              Delete
+                            </IconButton>
+                            <IconButton icon={<Icon icon='export' />} appearance='ghost' onClick={this.handlePersonalGridExport}>
+                              Export
+                            </IconButton>
+                          </ButtonGroup>
+                        </ButtonToolbar>
                       </Header>
                       <Content className='user-grid-wrapper'>
                         <div className='ag-theme-material user-grid person-grid'>
@@ -1877,6 +2077,38 @@ class Wrapper extends React.Component {
               </Modal.Body>
             </Modal>
           )}
+          {openConfirmPersonalDeleteModal && (
+            <Modal enforceFocus size='sm' backdrop show={openConfirmPersonalDeleteModal} onHide={this.handleDeleteFromPersonalModal} style={{ marginTop: '150px' }}>
+              <Modal.Header>
+                <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>Confirm Submit</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <span style={{ textAlign: 'center', display: 'block', fontWeight: '600' }}>Are you sure you want to delete this request?</span>
+                <Table showHeader={false} height={confirmPersonalDeleteData.length * 50} bordered={false} data={confirmPersonalDeleteData} style={{ margin: '20px 50px' }}>
+                  <Column width={200} align='left'>
+                    <HeaderCell>Field: </HeaderCell>
+                    <Cell dataKey='title' />
+                  </Column>
+                  <Column width={250} align='left'>
+                    <HeaderCell>Value: </HeaderCell>
+                    <Cell dataKey='value' />
+                  </Column>
+                </Table>
+              </Modal.Body>
+              <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
+                <ButtonToolbar style={{ width: '100%' }}>
+                  <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+                    <Button onClick={this.handleDeleteFromPersonalModal} style={{ width: '33%', fontSize: '16px' }} appearance='default'>
+                      Cancel
+                    </Button>
+                    <Button onClick={this.handleSubmitPersonalDelete} style={{ width: '33%', fontSize: '16px' }} appearance='primary'>
+                      Confirm
+                    </Button>
+                  </ButtonGroup>
+                </ButtonToolbar>
+              </Modal.Footer>
+            </Modal>
+          )}
           {openConfirmDeleteModal && (
             <Modal enforceFocus size='sm' backdrop show={openConfirmDeleteModal} onHide={this.handleDeleteFromAllModal} style={{ marginTop: '150px' }}>
               <Modal.Header>
@@ -1908,6 +2140,18 @@ class Wrapper extends React.Component {
                 </ButtonToolbar>
               </Modal.Footer>
             </Modal>
+          )}
+          {openPersonalEditModal && (
+            <EditModal
+              open={openPersonalEditModal}
+              data={personalEditData}
+              rowData={personalRowData}
+              gridApi={this.personalGridApi}
+              setEditData={this.setPersonalEditData}
+              toggleEditModal={this.togglePersonalEditModal}
+              session={this.props.session}
+              setRowData={this.setPersonalRowData}
+            />
           )}
           {openAdminEditModal && (
             <EditModal

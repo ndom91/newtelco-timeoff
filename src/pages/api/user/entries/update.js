@@ -12,8 +12,8 @@ module.exports = async (req, res) => {
   const requested = editData.requested
   const remaining = editData.remaining
   const id = editData.id
-  const from = moment.parseZone(editData.from).utc().format('YYYY-MM-DD HH:mm:ss')
-  const to = moment.parseZone(editData.to).utc().format('YYYY-MM-DD HH:mm:ss')
+  const from = moment.parseZone(editData.from).utc().format('YYYY-MM-DD')
+  const to = moment.parseZone(editData.to).utc().format('YYYY-MM-DD')
   const notes = editData.note
   const files = JSON.stringify(body.files)
   const approved = editData.approved

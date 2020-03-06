@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
 
 export default class DateField extends Component {
-  render () {
+  render() {
     const props = this.props
     const value = this.props.value
-    if (props.column.colId === 'dateJoined') console.log(props)
     let dateTime
     if (props.value && !isNaN(Date.parse(props.value))) {
       const dateAr = value.split('.')
