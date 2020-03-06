@@ -50,7 +50,7 @@ import {
 const { Column, HeaderCell, Cell } = Table
 
 class Wrapper extends React.Component {
-  static async getInitialProps({ res, req, query }) {
+  static async getInitialProps ({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -73,7 +73,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor(props) {
+  constructor (props) {
     super(props)
     const thisYear = new Date().getFullYear()
     this.state = {
@@ -484,7 +484,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const selectUserList = []
     const userAdmin = JSON.parse(window.localStorage.getItem('mA'))
     this.props.users.userList.forEach(user => {
@@ -1413,7 +1413,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  render() {
+  render () {
     const {
       gridOptions,
       rowData,
@@ -1574,15 +1574,19 @@ class Wrapper extends React.Component {
                           />
                         </span>
                         <span>
-                          <IconButton style={{ marginRight: '10px' }} icon={<Icon icon='pencil' />} appearance='ghost' onClick={this.toggleAdminEditModal}>
-                            Edit
-                          </IconButton>
-                          <IconButton style={{ marginRight: '10px' }} icon={<Icon icon='trash' />} appearance='ghost' onClick={this.handleDeleteFromAllModal}>
-                            Delete
-                          </IconButton>
-                          <IconButton icon={<Icon icon='export' />} appearance='ghost' onClick={this.handleAllGridExport}>
-                            Export
-                          </IconButton>
+                          <ButtonToolbar>
+                            <ButtonGroup>
+                              <IconButton icon={<Icon icon='pencil' />} appearance='primary' onClick={this.toggleAdminEditModal}>
+                                Edit
+                              </IconButton>
+                              <IconButton icon={<Icon icon='trash' />} appearance='ghost' onClick={this.handleDeleteFromAllModal}>
+                                Delete
+                              </IconButton>
+                              <IconButton icon={<Icon icon='export' />} appearance='ghost' onClick={this.handleAllGridExport}>
+                                Export
+                              </IconButton>
+                            </ButtonGroup>
+                          </ButtonToolbar>
                         </span>
                       </Header>
                       <Content className='user-grid-wrapper'>
