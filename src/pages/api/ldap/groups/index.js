@@ -10,14 +10,18 @@ module.exports = async (req, res) => {
   const ad = new ActiveDirectory(config)
 
   const mail = req.query.m
-  const user = mail.substr(0, mail.lastIndexOf('@'))
-  ad.getGroupMembershipForUser(user, function (err, users) {
-    // ad.getUsersForGroup('cn=VacationAdmins,ou=Frankfurt,dc=newtelco,dc=local', function (err, users) {
+  ad.find('(memberOf=cn=VacationAdmins,ou=frankfurt,dc=newtelco,dc=local)', function (err, results) {
     if (err) {
       console.log('ERROR: ' + JSON.stringify(err))
       return
     }
-    // const adminResult = users.find(group => group.cn === 'Management' || group.cn === 'AdminGroup')
-    res.status(200).json({ memberAdmin: typeof adminResult !== 'undefined', results: users })
+    if (results.users) {
+      const member = results.users.find(user => user.mail === mail)
+      if (member.mail) {
+        res.status(200).json({ memberAdmin: true, results: results })
+      } else {
+        res.status(200).json({ memberAdmin: false, results: results })
+      }
+    }
   })
 }

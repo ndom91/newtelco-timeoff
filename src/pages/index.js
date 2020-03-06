@@ -14,7 +14,7 @@ const Calendar = dynamic(() => import('../components/calendar'), {
 })
 
 class Wrapper extends React.Component {
-  static async getInitialProps({ res, req, query }) {
+  static async getInitialProps ({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -37,7 +37,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       returnTo: props.returnTo,
@@ -66,7 +66,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  componentDidMount() {
+  componentDidMount () {
     if (typeof window !== 'undefined') {
       let params
       if (this.props.returnTo && !window.location.search) {
@@ -109,28 +109,30 @@ class Wrapper extends React.Component {
       }
       const host = window.location.host
       const protocol = window.location.protocol
-      fetch(
-        `${protocol}//${host}/api/user/entries/dashboard?u=${encodeURIComponent(this.props.session.user.email)}`
-      )
-        .then((resp) => resp.json())
-        .then((data) => {
-          if (data.userEntries[0]) {
-            const user = data.userEntries[0]
-            this.setState({
-              dashboard: {
-                lastYear: user.resturlaubVorjahr || 0,
-                thisYear: user.jahresurlaubInsgesamt || 0,
-                spent: user.jahresUrlaubAusgegeben || 0,
-                available: user.resturlaubJAHR || 0
-              }
-            })
-          }
-        })
-        .catch((err) => console.error(err))
+      if (this.props.session) {
+        fetch(
+          `${protocol}//${host}/api/user/entries/dashboard?u=${encodeURIComponent(this.props.session.user.email)}`
+        )
+          .then((resp) => resp.json())
+          .then((data) => {
+            if (data.userEntries[0]) {
+              const user = data.userEntries[0]
+              this.setState({
+                dashboard: {
+                  lastYear: user.resturlaubVorjahr || 0,
+                  thisYear: user.jahresurlaubInsgesamt || 0,
+                  spent: user.jahresUrlaubAusgegeben || 0,
+                  available: user.resturlaubJAHR || 0
+                }
+              })
+            }
+          })
+          .catch((err) => console.error(err))
+      }
     }
   }
 
-  render() {
+  render () {
     const {
       dashboard
     } = this.state
