@@ -82,6 +82,7 @@ class Wrapper extends React.Component {
       message: 'Please click or drop file',
       tutorialComplete: false,
       uploadedFiles: [],
+      availableUsers: [],
       vaca: {
         name: props.session.user.name,
         email: props.session.user.email,
@@ -207,13 +208,28 @@ class Wrapper extends React.Component {
         })
       })
       .catch(err => console.error(err))
+
+    fetch(`${protocol}//${host}/api/user/list`)
+      .then(res => res.json())
+      .then(data => {
+        const availableUsers = []
+        data.userList.forEach(m => {
+          m.email && availableUsers.push({ label: `${m.fname} ${m.lname}`, value: m.email })
+        })
+        this.setState({
+          availableUsers
+        })
+      })
+      .catch(err => console.error(err))
   }
 
   handleNameChange = (value) => {
+    const user = this.state.availableUsers.find(u => u.value === value)
     this.setState({
       vaca: {
         ...this.state.vaca,
-        name: value
+        name: user.label,
+        email: value
       }
     })
   }
@@ -544,7 +560,7 @@ class Wrapper extends React.Component {
                     >
                       <FormGroup>
                         <ControlLabel>Name</ControlLabel>
-                        <FormControl name='name' onChange={this.handleNameChange} value={vaca.name} style={{ width: '320px' }} />
+                        <SelectPicker name='name' onChange={this.handleNameChange} defaultValue={vaca.email} data={this.state.availableUsers} style={{ width: '320px' }} />
                       </FormGroup>
                       <FormGroup>
                         <ControlLabel>Email</ControlLabel>
