@@ -1,8 +1,21 @@
 import React from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  faHistory,
+  faClock,
+  faCoins,
+  faPiggyBank
+} from '@fortawesome/free-solid-svg-icons'
 
 const DashStat = props => {
   return (
     <div className='stat-wrapper'>
+      <div className='icon-wrapper'>
+        {props.type === 'lastYear' && <FontAwesomeIcon icon={faHistory} width='2.6rem' color='#eaeaea' />}
+        {props.type === 'thisYear' && <FontAwesomeIcon icon={faClock} width='2.6rem' color='#eaeaea' />}
+        {props.type === 'spent' && <FontAwesomeIcon icon={faCoins} width='2.6rem' color='#eaeaea' />}
+        {props.type === 'available' && <FontAwesomeIcon icon={faPiggyBank} width='2.6rem' color='#eaeaea' />}
+      </div>
       <div className='stat-label'>{props.label}</div>
       <div className='stat-value'>{props.value}</div>
       <style jsx> {`

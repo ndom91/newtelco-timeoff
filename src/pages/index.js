@@ -14,7 +14,7 @@ const Calendar = dynamic(() => import('../components/calendar'), {
 })
 
 class Wrapper extends React.Component {
-  static async getInitialProps ({ res, req, query }) {
+  static async getInitialProps({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -37,7 +37,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       returnTo: props.returnTo,
@@ -66,7 +66,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  componentDidMount () {
+  componentDidMount() {
     if (typeof window !== 'undefined') {
       let params
       if (this.props.returnTo && !window.location.search) {
@@ -132,7 +132,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  render () {
+  render() {
     const {
       dashboard
     } = this.state
@@ -149,16 +149,16 @@ class Wrapper extends React.Component {
             />
             <div className='stat-wrapper'>
               <Panel>
-                <DashStat value={dashboard.lastYear} label='From Last Year' />
+                <DashStat value={dashboard.lastYear} type='lastYear' label='From Last Year' />
               </Panel>
               <Panel>
-                <DashStat value={dashboard.thisYear} label='Earned this Year' />
+                <DashStat value={dashboard.thisYear} type='thisYear' label='Earned this Year' />
               </Panel>
               <Panel>
-                <DashStat value={dashboard.spent} label='Spent this Year' />
+                <DashStat value={dashboard.spent} type='spent' label='Spent this Year' />
               </Panel>
               <Panel>
-                <DashStat value={dashboard.available} label='Total Available' />
+                <DashStat value={dashboard.available} type='available' label='Total Available' />
               </Panel>
             </div>
             <Panel bordered>
