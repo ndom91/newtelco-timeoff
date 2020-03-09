@@ -163,128 +163,139 @@ const EditModal = props => {
             <BarLoader width={80} height={3} color='#575757' loading={loading} />
           </div>
         ) : (
-          <Form layout='horizontal'>
-            <div
-              style={{
-                border: '1px solid #ececec',
-                borderRadius: '10px',
-                padding: '20px',
-                width: '80%',
-                margin: '0 auto',
-                marginBottom: '20px'
-              }}
-            >
-              <FormGroup className='stacked-input'>
-                <ControlLabel>Type</ControlLabel>
-                <Input name='type' disabled value={editData.type} style={{ width: '300px' }} />
-              </FormGroup>
-              <FormGroup className='stacked-input'>
-                <ControlLabel>Days from Last Year</ControlLabel>
-                <InputNumber postfix='days' min={0} name='daysLastYear' inputMode='numeric' disabled={fieldsDisabled} onChange={handleLastYearChange} value={editData.lastYear} />
-              </FormGroup>
-              <FormGroup className='stacked-input'>
-                <ControlLabel>Days from this Year</ControlLabel>
-                <InputNumber postfix='days' min={0} name='daysThisYear' inputMode='numeric' disabled={fieldsDisabled} onChange={handleThisYearChange} value={editData.thisYear} />
-              </FormGroup>
-              <FormGroup className='stacked-input'>
-                <ControlLabel>Days spent this Year</ControlLabel>
-                <InputNumber postfix='days' min={0} name='daysSpent' inputMode='numeric' disabled={fieldsDisabled} onChange={handleTotalSpentChange} value={editData.spent} />
-              </FormGroup>
-              <FormGroup className='stacked-input'>
-                <ControlLabel>Total Days Available</ControlLabel>
-                <InputNumber postfix='days' min={0} name='totalDaysAvailable' inputMode='numeric' disabled={fieldsDisabled} onChange={handleTotalAvailableChange} value={editData.total} />
-              </FormGroup>
-              <FormGroup className='stacked-input'>
-                <ControlLabel>Requested Days</ControlLabel>
-                <InputNumber postfix='days' min={0} name='requestedDays' inputMode='numeric' disabled={fieldsDisabled} onChange={handleRequestedChange} value={editData.requested} />
-              </FormGroup>
-              <FormGroup className='stacked-input'>
-                <ControlLabel>Days Remaining this Year</ControlLabel>
-                <InputNumber postfix='days' min={0} name='remainingDays' inputMode='numeric' disabled={fieldsDisabled} onChange={handleRemainingChange} value={editData.remaining} />
-              </FormGroup>
-            </div>
-            <FormGroup
-              style={{
-                display: 'flex',
-                justifyContent: 'space-around',
-                backgroundColor: '#ececec82',
-                borderRadius: '10px',
-                padding: '20px',
-                width: '80%',
-                margin: '0 auto',
-                marginBottom: '30px'
-              }}
-            >
+            <Form layout='horizontal'>
               <div
                 style={{
+                  border: '1px solid #ececec',
+                  borderRadius: '10px',
+                  padding: '20px',
+                  width: '90%',
+                  margin: '0 auto',
+                  marginBottom: '20px',
                   display: 'flex',
-                  flexDirection: 'column',
-                  maxWidth: '40%',
-                  alignItems: 'center',
-                  justifyContent: 'center'
+                  flexWrap: 'wrap',
+                  flex: '1 1'
                 }}
               >
-                <ControlLabel style={{ textAlign: 'center' }}>From</ControlLabel>
-                <DatePicker showWeekNumbers oneTap name='from' type='date' onChange={handleFromDateChange} value={editData.from} disabled={fieldsDisabled} />
+                <FormGroup className='stacked-input' style={{ width: '400px' }}>
+                  <ControlLabel>Type</ControlLabel>
+                  <Input name='type' disabled value={editData.type} />
+                </FormGroup>
+                <FormGroup className='stacked-input'>
+                  <div className='input-number'>1</div>
+                  <ControlLabel>Days from Last Year</ControlLabel>
+                  <InputNumber postfix='days' min={0} name='daysLastYear' inputMode='numeric' disabled={fieldsDisabled} onChange={handleLastYearChange} value={editData.lastYear} />
+                </FormGroup>
+                <FormGroup className='stacked-input'>
+                  <div className='input-number'>2</div>
+                  <ControlLabel>Days from this Year</ControlLabel>
+                  <InputNumber postfix='days' min={0} name='daysThisYear' inputMode='numeric' disabled={fieldsDisabled} onChange={handleThisYearChange} value={editData.thisYear} />
+                </FormGroup>
+                <FormGroup className='stacked-input'>
+                  <div className='input-number'>3</div>
+                  <ControlLabel>Days spent this Year</ControlLabel>
+                  <InputNumber postfix='days' min={0} name='daysSpent' inputMode='numeric' disabled={fieldsDisabled} onChange={handleTotalSpentChange} value={editData.spent} />
+                </FormGroup>
+                <FormGroup className='stacked-input'>
+                  <div className='input-number'>4</div>
+                  <ControlLabel>Total Days Available</ControlLabel>
+                  <InputNumber postfix='days' min={0} name='totalDaysAvailable' inputMode='numeric' disabled={fieldsDisabled} onChange={handleTotalAvailableChange} value={editData.total} />
+                </FormGroup>
+                <FormGroup className='stacked-input'>
+                  <div className='input-number'>5</div>
+                  <ControlLabel>Requested Days</ControlLabel>
+                  <InputNumber postfix='days' min={0} name='requestedDays' inputMode='numeric' disabled={fieldsDisabled} onChange={handleRequestedChange} value={editData.requested} />
+                </FormGroup>
+                <FormGroup className='stacked-input'>
+                  <div className='input-number'>6</div>
+                  <ControlLabel>Days Remaining this Year</ControlLabel>
+                  <InputNumber postfix='days' min={0} name='remainingDays' inputMode='numeric' disabled={fieldsDisabled} onChange={handleRemainingChange} value={editData.remaining} />
+                </FormGroup>
               </div>
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  maxWidth: '40%',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-              >
-                <ControlLabel style={{ textAlign: 'center' }}>To</ControlLabel>
-                <DatePicker showWeekNumbers oneTap name='to' type='date' onChange={handleToDateChange} value={editData.to} disabled={fieldsDisabled} />
-              </div>
-            </FormGroup>
-            <div
-              style={{
-                border: '1px solid #ececec',
-                borderRadius: '10px',
-                padding: '20px',
-                width: '80%',
-                margin: '0 auto',
-                marginBottom: '20px'
-              }}
-            >
               <FormGroup
                 style={{
                   display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center'
+                  justifyContent: 'space-around',
+                  backgroundColor: '#ececec82',
+                  borderRadius: '10px',
+                  padding: '20px',
+                  width: '90%',
+                  margin: '0 auto',
+                  marginBottom: '30px'
                 }}
               >
-                <ControlLabel style={{ textAlign: 'center' }}>Note</ControlLabel>
-                <Input
-                  name='note'
-                  onChange={handleNoteChange}
-                  value={editData.note || ''}
-                  componentClass='textarea'
-                  rows={3}
-                  style={{ width: '100%', resize: 'auto' }}
-                />
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    maxWidth: '40%',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <ControlLabel style={{ textAlign: 'center' }}>From</ControlLabel>
+                  <DatePicker showWeekNumbers oneTap name='from' type='date' onChange={handleFromDateChange} value={editData.from} disabled={fieldsDisabled} />
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    maxWidth: '40%',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <ControlLabel style={{ textAlign: 'center' }}>To</ControlLabel>
+                  <DatePicker showWeekNumbers oneTap name='to' type='date' onChange={handleToDateChange} value={editData.to} disabled={fieldsDisabled} />
+                </div>
               </FormGroup>
-              <FormGroup
+              <div
                 style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center'
+                  border: '1px solid #ececec',
+                  borderRadius: '10px',
+                  padding: '20px',
+                  width: '90%',
+                  margin: '0 auto',
+                  marginBottom: '20px'
                 }}
               >
-                <Panel style={{ maxWidth: '300px', boxShadow: 'none' }}>
-                  <UploadFile
-                    email={props.session.user.email}
-                    csrfToken={props.session.csrfToken}
-                    handleFileUploadSuccess={onFileUploadSuccess}
+                <FormGroup
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    margin: '0 auto',
+                    width: '400px'
+                  }}
+                >
+                  <ControlLabel style={{ textAlign: 'center' }}>Note</ControlLabel>
+                  <Input
+                    name='note'
+                    onChange={handleNoteChange}
+                    value={editData.note || ''}
+                    componentClass='textarea'
+                    rows={3}
+                    style={{ width: '100%', resize: 'auto' }}
                   />
-                </Panel>
-              </FormGroup>
-            </div>
-          </Form>
-        )}
+                </FormGroup>
+                <FormGroup
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center'
+                  }}
+                >
+                  <Panel style={{ maxWidth: '300px', boxShadow: 'none' }}>
+                    <UploadFile
+                      email={props.session.user.email}
+                      csrfToken={props.session.csrfToken}
+                      handleFileUploadSuccess={onFileUploadSuccess}
+                    />
+                  </Panel>
+                </FormGroup>
+              </div>
+            </Form>
+          )}
       </Modal.Body>
       <Modal.Footer style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
         <ButtonToolbar style={{ width: '100%' }}>
@@ -300,13 +311,25 @@ const EditModal = props => {
       </Modal.Footer>
       <style jsx>{`
         :global(.stacked-input) {
+          position: relative;
           display: flex;
           flex-direction: column;
-          align-items: center;
+          align-items: flex-start;
+          width: 180px;
+          margin: 10px 20px !important;
+        }
+        .input-number {
+          position: absolute;
+          top: -15px;
+          left: -15px;
+          opacity: 0.15;
+          font-size: 3rem;
+          font-weight: 600;
+          z-index: 1;
         }
         :global(.stacked-input > .rs-control-label) {
           width: 100% !important;
-          text-align: center !important;
+          text-align: left !important;
         }
         :global(.rs-control-label) {
           font-size: 18px !mportant;
