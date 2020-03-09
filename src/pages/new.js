@@ -72,11 +72,12 @@ class Wrapper extends React.Component {
       openConfirmModal: false,
       confirmText: '',
       successfullySent: false,
-      sideBar: -255,
       calcSideBar: -30,
       uploading: false,
       loaded: 0,
       hideHistory: false,
+      showSidebar: false,
+      showCalc: false,
       joyrideRun: true,
       message: 'Please click or drop file',
       tutorialComplete: false,
@@ -445,35 +446,28 @@ class Wrapper extends React.Component {
   }
 
   showTimeCalculator = () => {
-    const {
-      calcSideBar
-    } = this.state
+    this.setState({
+      showCalc: !this.state.showCalc
+    })
+    // const {
+    //   calcSideBar
+    // } = this.state
 
-    if (calcSideBar === -30) {
-      this.setState({
-        calcSideBar: -240
-      })
-    } else {
-      this.setState({
-        calcSideBar: -30
-      })
-    }
+    // if (calcSideBar === -30) {
+    //   this.setState({
+    //     calcSideBar: -240
+    //   })
+    // } else {
+    //   this.setState({
+    //     calcSideBar: -30
+    //   })
+    // }
   }
 
   showLastRequestSidebar = () => {
-    const {
-      sideBar
-    } = this.state
-
-    if (sideBar === -255) {
-      this.setState({
-        sideBar: -20
-      })
-    } else {
-      this.setState({
-        sideBar: -255
-      })
-    }
+    this.setState({
+      showSidebar: !this.state.showSidebar
+    })
   }
 
   onFileUploadSuccess = (files) => {
@@ -509,8 +503,8 @@ class Wrapper extends React.Component {
       openConfirmModal,
       confirmTableData,
       successfullySent,
-      sideBar,
-      calcSideBar,
+      showSidebar,
+      showCalc,
       lastRequest,
       hideHistory,
       tutSteps,
@@ -592,39 +586,45 @@ class Wrapper extends React.Component {
                           }
                         >
                           <FormGroup className='history-input-wrapper'>
+                            <div className='input-number'>1</div>
                             <ControlLabel>Days from Last Year</ControlLabel>
-                            <InputNumber min={0} size='lg' postfix='days' value={vaca.lastYear} onChange={this.handleLastYearChange} />
                             <HelpBlock tooltip>Days which you have transfered with you from last year</HelpBlock>
+                            <InputNumber min={0} size='lg' postfix='days' value={vaca.lastYear} onChange={this.handleLastYearChange} />
                           </FormGroup>
                           <FormGroup className='history-input-wrapper'>
+                            <div className='input-number'>2</div>
                             <ControlLabel>Days from this Year</ControlLabel>
                             <InputNumber min={0} size='lg' postfix='days' name='daysThisYear' onChange={this.handleThisYearChange} value={vaca.thisYear} />
                             <HelpBlock tooltip>Days which you have earned this year</HelpBlock>
                           </FormGroup>
                           <FormGroup className='history-input-wrapper'>
+                            <div className='input-number'>3</div>
                             <ControlLabel>Days spent This Year</ControlLabel>
                             <InputNumber min={0} size='lg' postfix='days' name='daysSpentThisYear' onChange={this.handleSpentThisYearChange} value={vaca.spentThisYear} />
                             <HelpBlock tooltip>Days which you have already used up this year</HelpBlock>
                           </FormGroup>
                           <FormGroup className='history-input-wrapper'>
+                            <div className='input-number'>4</div>
                             <ControlLabel>Total Days Available</ControlLabel>
                             <InputNumber min={0} size='lg' postfix='days' name='totalDaysAvailable' onChange={this.handleTotalAvailableChange} value={vaca.total} />
-                            <HelpBlock tooltip>The sum of the first two fields minus the third</HelpBlock>
+                            <HelpBlock tooltip>Days from last year + days from this year - days already spent this year</HelpBlock>
                           </FormGroup>
                           <FormGroup className='history-input-wrapper'>
+                            <div className='input-number'>5</div>
                             <ControlLabel>Requested Days</ControlLabel>
                             <InputNumber min={0} size='lg' postfix='days' name='requestedDays' onChange={this.handleRequestedChange} value={vaca.requested} />
                             <HelpBlock tooltip>Number of day(s) you need off. <br /> Half days = '0.5'</HelpBlock>
                           </FormGroup>
                           <FormGroup className='history-input-wrapper'>
+                            <div className='input-number'>6</div>
                             <ControlLabel>Days Remaining</ControlLabel>
                             <InputNumber min={0} size='lg' postfix='days' name='remainingDays' onChange={this.handleRemainingChange} value={vaca.remaining} />
-                            <HelpBlock tooltip>Number of remaining days after subtracting requested from total available</HelpBlock>
+                            <HelpBlock tooltip>Numnber of total available days minus total requested days</HelpBlock>
                           </FormGroup>
                         </Panel>
                       </PanelGroup>
                     </Panel>
-                    <div className='calc-sidebar'>
+                    <div className={`${showCalc ? 'active' : ''} calc-sidebar `}>
                       <Calculator />
                       <div className='sidebar-button' onClick={this.showTimeCalculator}>
                         <div className='calc-btn' style={{ marginLeft: '10px', right: '2px', top: '110px', position: 'absolute', color: 'secondary' }}>
@@ -635,7 +635,7 @@ class Wrapper extends React.Component {
                             distance='20'
                             offset='-23'
                           >
-                            <FontAwesomeIcon className='calc-btn' icon={calcSideBar === -30 ? faAngleRight : faAngleLeft} width='2em' />
+                            <FontAwesomeIcon className='calc-btn' icon={!showCalc ? faAngleRight : faAngleLeft} width='2em' />
                           </Tooltip>
                         </div>
                       </div>
@@ -677,7 +677,7 @@ class Wrapper extends React.Component {
                           </ControlLabel>
                         </FormGroup>
                       )}
-                      <FormGroup>
+                      <FormGroup style={{ marginBottom: '20px' }}>
                         <ControlLabel className='filedrop-label'>
                           Documents
                         </ControlLabel>
@@ -706,7 +706,7 @@ class Wrapper extends React.Component {
               </Form>
             </Content>
           </Container>
-          <div className='last-request-sidebar'>
+          <div className={`${this.state.showSidebar ? 'active' : ''} last-request-sidebar`}>
             <Panel className='last-request-panel' header='Last Request' style={{ boxShadow: 'none' }}>
               <FormGroup>
                 <ControlLabel>Submitted</ControlLabel>
@@ -755,7 +755,7 @@ class Wrapper extends React.Component {
                   position='right'
                   sticky
                 >
-                  <FontAwesomeIcon className='last-btn' icon={sideBar === -255 ? faAngleRight : faAngleLeft} width='2em' />
+                  <FontAwesomeIcon className='last-btn' icon={!showSidebar ? faAngleRight : faAngleLeft} width='2em' />
                 </Tooltip>
               </div>
             </div>
@@ -845,7 +845,7 @@ class Wrapper extends React.Component {
           }
           .last-request-sidebar {
             position: absolute;
-            left: ${this.state.sideBar}px;
+            left: -255px;
             top: 200px;
             height: 740px;
             width: 300px;
@@ -854,23 +854,51 @@ class Wrapper extends React.Component {
             box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
             transition: left 250ms ease-in-out;
           }
+          .last-request-sidebar.active {
+            left: -20px !important;
+          }
           :global(.last-request-sidebar .rs-form-group) {
             margin-bottom: 10px !important;
           }
           .calc-sidebar {
             position: absolute;
-            right: ${this.state.calcSideBar}px;
+            right: -30px;
             top: 100px;
             height: 280px;
             width: 250px;
             border-radius: 10px;
             background-color: #fff;
             box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
-            transition: left 250ms ease-in-out;
+            transition: right 250ms ease-in-out;
             z-index: -1;
+          }
+          .calc-sidebar.active {
+            right: -240px;
           }
           :global(.history-input-wrapper) {
             display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 300px !important;
+            margin: 15px 10px !important;
+            position: relative;
+          }
+          .input-number {
+            position: absolute;
+            top: -25px;
+            left: -15px;
+            opacity: 0.1;
+            font-size: 3rem;
+            font-weight: 600;
+            z-index: 1;
+          }
+          :global(.history-input-wrapper .rs-help-block) {
+            position: absolute;
+            top: 0;
+            right: 10px;
+          }
+          :global(.rs-form-group) {
+            margin-bottom: 15px;
           }
           :global(.upload-file) {
             display: inline-block;
@@ -891,6 +919,9 @@ class Wrapper extends React.Component {
             margin-left: 40px;
             margin-top: 5px;
             color: #575757 !important;
+          }
+          :global(.calc-panel-body) {
+            margin-bottom: 0px !important;
           }
           :global(.calc-button:hover) {
             cursor: pointer;
