@@ -214,6 +214,8 @@ class Wrapper extends React.Component {
       .then(data => {
         const availableUsers = []
         data.userList.forEach(m => {
+          if (m.email === 'device@newtelco.de') return
+          if (m.email === 'jcleese@newtelco.de') return
           m.email && availableUsers.push({ label: `${m.fname} ${m.lname}`, value: m.email })
         })
         this.setState({
@@ -635,7 +637,7 @@ class Wrapper extends React.Component {
                             <div className='input-number'>6</div>
                             <ControlLabel>Days Remaining</ControlLabel>
                             <InputNumber min={0} size='lg' postfix='days' name='remainingDays' onChange={this.handleRemainingChange} value={vaca.remaining} />
-                            <HelpBlock tooltip>Numnber of total available days minus total requested days</HelpBlock>
+                            <HelpBlock tooltip>Number of total available days minus total requested days</HelpBlock>
                           </FormGroup>
                         </Panel>
                       </PanelGroup>
