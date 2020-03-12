@@ -124,7 +124,7 @@ export default class App extends React.Component {
                       <Divider />
                       <FormGroup>
                         <ButtonToolbar>
-                          <Button appearance='subtle' id='submitButton' type='submit' style={{ height: '40px', fontSize: '1.05rem', width: '50%' }} className='btn btn-outline-success' disabled>Sign In</Button>
+                          <Button appearance='subtle' id='submitButton' type='submit' style={{ height: '40px', fontSize: '0.9rem', width: '30%' }} className='btn btn-outline-success' disabled>Sign In</Button>
                           <SignInButtons providers={this.props.providers} />
                         </ButtonToolbar>
                       </FormGroup>
@@ -275,9 +275,9 @@ export class SignInButtons extends React.Component {
           Object.keys(this.props.providers).map((provider, i) => {
             return (
               <a key={i} className='btn btn-block btn-outline-secondary' href={this.props.providers[provider].signin}>
-                <Button style={{ width: '48%', height: '40px', fontSize: '1.05rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'space-around' }} className='google-signin-btn' appearance='primary'>
-                  <FontAwesomeIcon icon={faGoogle} width='1.2em' style={{ float: 'left', color: 'secondary', marginRight: '5px' }} />
-                  Sign in with {provider}
+                <Button style={{ width: '58%', height: '40px', fontSize: '0.9rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'space-between' }} className='google-signin-btn' appearance='primary'>
+                  <FontAwesomeIcon icon={faGoogle} width='1.2em' style={{ width: '1.2rem', height: '1.2rem', color: 'secondary', marginRight: '5px' }} />
+                  <span>Sign in with {provider}</span>
                 </Button>
               </a>
             )

@@ -219,11 +219,32 @@ class SidebarNT extends React.Component {
               </Dropdown>
               {this.props.admin
                 ? (
-                  <Link passHref href='/settings/admin'>
-                    <Nav.Item eventKey='5' active={this.pageActive('/settings/admin')} icon={<S.Settings width='22' />}>
-                      Admin
-                    </Nav.Item>
-                  </Link>
+                  <Dropdown
+                    eventKey='5'
+                    trigger='hover'
+                    title='Admin'
+                    icon={<S.Settings width='22' />}
+                    placement='rightStart'
+                    activeKey={typeof window !== 'undefined' && Router.pathname.includes('settings')}
+                    active={typeof window !== 'undefined' && Router.pathname.includes('settings')}
+                  >
+                    <Link passHref href='/settings/admin'>
+                      <Dropdown.Item
+                        eventKey='5-1'
+                        active={this.pageActive('/settings/admin')}
+                      >
+                        Settings
+                      </Dropdown.Item>
+                    </Link>
+                    <Link passHref href='/settings/reports'>
+                      <Dropdown.Item
+                        eventKey='5-2'
+                        active={typeof window !== 'undefined' && Router.pathname === '/settings/reports'}
+                      >
+                        Reports
+                      </Dropdown.Item>
+                    </Link>
+                  </Dropdown>
                 ) : (
                   null
                 )}
