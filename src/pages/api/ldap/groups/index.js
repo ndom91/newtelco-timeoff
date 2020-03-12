@@ -17,7 +17,7 @@ module.exports = async (req, res) => {
     }
     if (results.users) {
       const member = results.users.find(user => user.mail === mail)
-      if (member.mail) {
+      if (member && member.mail) {
         res.status(200).json({ memberAdmin: true, results: results })
       } else {
         res.status(200).json({ memberAdmin: false, results: results })
