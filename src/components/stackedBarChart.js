@@ -4,7 +4,7 @@ import moment from 'moment-timezone'
 import Chart from 'react-apexcharts'
 
 class StackedBarChart extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     const MONTHS = () => {
       const months = []
@@ -16,10 +16,6 @@ class StackedBarChart extends React.Component {
       }
       return months
     }
-<<<<<<< HEAD
-=======
-    console.log(MONTHS())
->>>>>>> e48834c34420062bfed2bfdac9b09d12956c0fa4
     this.state = {
       series: [],
       options: {
@@ -64,7 +60,7 @@ class StackedBarChart extends React.Component {
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const host = window.location.host
     const protocol = window.location.protocol
     fetch(`${protocol}//${host}/api/report/stackedbarchart`)
@@ -113,7 +109,7 @@ class StackedBarChart extends React.Component {
       .catch(err => console.error(err))
   }
 
-  render () {
+  render() {
     const {
       options,
       series
