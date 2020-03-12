@@ -16,7 +16,6 @@ import {
   Notification,
   Panel,
   SelectPicker,
-  Table,
   FormGroup,
   ControlLabel,
   Row,
@@ -27,7 +26,7 @@ const ResponsiveSwarmPlot = React.lazy(() => import('../../components/swarmplot'
 const StackedBarChart = React.lazy(() => import('../../components/stackedBarChart'))
 
 class Wrapper extends React.Component {
-  static async getInitialProps ({ res, req, query }) {
+  static async getInitialProps({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -44,7 +43,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       allMonths: [],
@@ -53,7 +52,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const userAdmin = JSON.parse(window.localStorage.getItem('mA'))
     const allYears = []
     const yearNow = moment().format('YYYY')
@@ -311,7 +310,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  render () {
+  render() {
     const {
       allMonths,
       allYears
@@ -322,13 +321,43 @@ class Wrapper extends React.Component {
         <Layout user={this.props.session.user.email} token={this.props.session.csrfToken}>
           <Container className='settings-admin-container'>
             <Subheader header='Administration' subheader='Reports' />
-            <Row className='settings-admin-row'>
-              <Col style={{ width: '30%' }} className='settings-admin-col-2'>
-                <Panel bordered className='person-panel-body reports-panel'>
-                  <Header className='user-content-header reports-header'>
-                    <h4>Reports</h4>
+            <Row style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Col className='settings-admin-col-2'>
+                <Panel bordered className='person-panel-body'>
+                  <Header style={{ marginBottom: '20px' }} className='user-content-header'>
+                    <h4>Last 6 Months</h4>
                   </Header>
                   <Panel bordered style={{ boxShadow: 'none' }}>
+                    <div style={{ height: '300px', width: '100%' }}>
+                      <React.Suspense fallback={<div />}>
+                        <StackedBarChart />
+                      </React.Suspense>
+                    </div>
+                  </Panel>
+                </Panel>
+              </Col>
+              <Col className='settings-admin-col-2'>
+                <Panel bordered className='person-panel-body'>
+                  <Header style={{ marginBottom: '20px' }} className='user-content-header'>
+                    <h4>Last Year</h4>
+                  </Header>
+                  <Panel bordered style={{ boxShadow: 'none' }}>
+                    <div style={{ height: '300px', width: '100%' }}>
+                      <React.Suspense fallback={<div />}>
+                        <ResponsiveSwarmPlot />
+                      </React.Suspense>
+                    </div>
+                  </Panel>
+                </Panel>
+              </Col>
+            </Row>
+            <Row className='settings-admin-row'>
+              <Col className='settings-admin-col-1'>
+                <Panel bordered className='person-panel-body reports-panel'>
+                  <Header style={{ marginBottom: '20px' }}>
+                    <h4>Reports</h4>
+                  </Header>
+                  <Panel className='reports-panel-body' bordered style={{ boxShadow: 'none' }}>
                     <Panel style={{ boxShadow: 'none' }}>
                       <FormGroup>
                         <ControlLabel>Monthly</ControlLabel>
@@ -360,7 +389,7 @@ class Wrapper extends React.Component {
                     <hr className='reports-hr' />
                     <Panel style={{ boxShadow: 'none' }}>
                       <FormGroup>
-                        <ControlLabel>Year-end left-over</ControlLabel>
+                        <ControlLabel>Year-end Remaining</ControlLabel>
                         <SelectPicker
                           onChange={this.handleYearTDReportSelectChange}
                           data={allYears}
@@ -372,36 +401,6 @@ class Wrapper extends React.Component {
                         </IconButton>
                       </FormGroup>
                     </Panel>
-                  </Panel>
-                </Panel>
-              </Col>
-              <Col style={{ width: '70%' }} className='settings-admin-col-2'>
-                <Panel bordered className='person-panel-body'>
-                  <Header style={{ marginBottom: '20px' }} className='user-content-header'>
-                    <h4>Charts</h4>
-                  </Header>
-                  <Panel bordered style={{ boxShadow: 'none' }}>
-                    <div style={{ height: '300px', width: '100%' }}>
-                      <React.Suspense fallback={<div />}>
-                        <ResponsiveSwarmPlot />
-                      </React.Suspense>
-                    </div>
-                  </Panel>
-                </Panel>
-              </Col>
-            </Row>
-            <Row>
-              <Col style={{ width: '100%' }} className='settings-admin-col-2'>
-                <Panel bordered className='person-panel-body'>
-                  <Header style={{ marginBottom: '20px' }} className='user-content-header'>
-                    <h4>Charts</h4>
-                  </Header>
-                  <Panel bordered style={{ boxShadow: 'none' }}>
-                    <div style={{ height: '300px', width: '100%' }}>
-                      <React.Suspense fallback={<div />}>
-                        <StackedBarChart />
-                      </React.Suspense>
-                    </div>
                   </Panel>
                 </Panel>
               </Col>
@@ -419,10 +418,10 @@ class Wrapper extends React.Component {
                 flex-direction: column;
               }
               :global(.settings-admin-col-2) {
-                width: 100% !important;
+                width: 100%;
               }
               :global(.settings-admin-col-1) {
-                width: 100% !important;
+                width: 100%;
               }
               :global(.person-panel-body .rs-panel-body) {
                 padding: 20px !important;
@@ -439,41 +438,27 @@ class Wrapper extends React.Component {
                 }
               }
             }
-            :global(.rs-table-cell-group-fixed-right) {
-              right: 80px !important;
-              left: unset !important;
+            :global(.rs-row) {
+              padding: 10px;
+            }
+            :global(.rs-col) {
+              padding: 10px;
             }
             :global(.table-tab-list) {
               margin-bottom: 20px;
               padding-left: 0px !important;
             }
-            :global(.reports-header) {
-              padding-top: 10px;
-              padding-left: 20px;
-              padding-bottom: 20px;
-            }
-            :global(.rs-panel-default .rs-panel-body .rs-panel-default) {
-              margin-top: 0px;
-            }
-            :global(.reports-panel) {
-              padding: 10px;
-            }
-            :global(.reports-panel .rs-panel-body) {
-              padding: 20px !important;
-            }
-            :global(.reports-panel .rs-panel) {
-              margin-top: 20px;
-            }
-            :global(.reports-panel .rs-form-group) {
-              margin: 10px;
-            }
-            :global(.reports-panel .rs-picker-select) {
-              margin: 10px 0;
-              width: 100%;
+            :global(.reports-panel-body > .rs-panel-body) {
+              display: flex;
             }
             .reports-hr {
-              width: 80%;
+              height: 100px;
+              width: 2px;
               margin: 0 auto;
+              border-left: 1px solid #eaeaea;
+            }
+            :global(.rs-form-group > *) {
+              margin: 5px;
             }
             :global(.table-tab-list .react-tabs__tab) {
               padding: 10px;
@@ -496,35 +481,11 @@ class Wrapper extends React.Component {
               align-items: flex-start;
               justify-content: space-around;
             }
-            :global(.settings-admin-col-1) {
-               margin: 10px;
-            }
             :global(.settings-admin-col-2) {
-               display: inline-block;
-               width: 50%;
-               margin: 10px;
+              flex: 2;
             }
-            :global(.manager-user-wrapper > div) {
-              width: 100%; 
-            }
-            :global(.manager-user-wrapper) {
-              display: flex;
-              flex-wrap: nowrap;
-            }
-            :global(.accordion__heading) {
-              background-color: #ececec;
-              padding: 15px;
-              border-radius: 5px;
-              margin-top: 10px;
-            }
-            :global(.accordion__heading:hover) {
-              cursor: pointer;
-            }
-            :global(.user-content-header) {
-              display: flex;
-              width: 100%;
-              justify-content: space-between;
-              margin-bottom: 20px;
+            :global(.settings-admin-col-1) {
+              flex:1;
             }
             :global(.rs-btn-ghost) {
               transition: box-shadow 250ms ease-in-out;
@@ -532,26 +493,11 @@ class Wrapper extends React.Component {
             :global(.rs-btn-ghost:hover) {
               box-shadow: 0px 3px 5px rgba(0,0,0,0.15);
             }
-            :global(.accordion__button:focus) {
-              outline: none;
-            }
             :global(.user-content-header:focus) {
               outline: none;
             }
-            :global(.user-grid-wrapper) {
-              height: 50vh;
-            }
-            :global(.user-grid) {
-              height: 50vh;
-            }
             :global(.person-grid) { 
               margin-bottom: 20px;
-            }
-            :global(.person-panel-body .rs-panel-body) {
-              padding: 40px;
-            }
-            :global(.row-awaitingResponse) {
-              background-color: transparent;
             }
             :global(.section-header) {
               font-size: 1.3rem;
