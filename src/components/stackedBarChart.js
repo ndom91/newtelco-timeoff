@@ -6,20 +6,18 @@ import Chart from 'react-apexcharts'
 class StackedBarChart extends React.Component {
   constructor (props) {
     super(props)
+    const MONTHS = () => {
+      const months = []
+      const dateStart = moment()
+      const dateEnd = moment().subtract(6, 'month')
+      while (dateEnd.diff(dateStart, 'months') <= 0) {
+        months.push(`${dateStart.format('MMM')} ${dateStart.format('YYYY')}`)
+        dateStart.subtract(1, 'month')
+      }
+      return months
+    }
     this.state = {
-      series: [{
-        name: 'PRODUCT A',
-        data: [44, 55, 41, 67, 22, 43]
-      }, {
-        name: 'PRODUCT B',
-        data: [13, 23, 20, 8, 13, 27]
-      }, {
-        name: 'PRODUCT C',
-        data: [11, 17, 15, 15, 21, 14]
-      }, {
-        name: 'PRODUCT D',
-        data: [21, 7, 25, 13, 22, 8]
-      }],
+      series: [],
       options: {
         chart: {
           type: 'bar',
@@ -48,10 +46,8 @@ class StackedBarChart extends React.Component {
           }
         },
         xaxis: {
-          type: 'datetime',
-          categories: ['01/01/2011 GMT', '01/02/2011 GMT', '01/03/2011 GMT', '01/04/2011 GMT',
-            '01/05/2011 GMT', '01/06/2011 GMT'
-          ]
+          type: 'category',
+          categories: MONTHS()
         },
         legend: {
           position: 'right',
@@ -61,20 +57,52 @@ class StackedBarChart extends React.Component {
           opacity: 1
         }
       }
-
     }
   }
 
   componentDidMount () {
     const host = window.location.host
     const protocol = window.location.protocol
-    const year = moment().format('YYYY') - 1
-    fetch(`${protocol}//${host}/api/report/swarmplot?y=${year}`)
+    fetch(`${protocol}//${host}/api/report/stackedbarchart`)
       .then(res => res.json())
       .then(data => {
         if (data.query) {
+          const teamSeries = []
+          const series = []
+          const teams = Array.from(new Set(data.query.map(obj => JSON.stringify(({ group: obj.group }))))).map(JSON.parse)
+          teams.forEach(team => {
+            const teamData = data.query
+              .filter(vaca => vaca.group === team.group)
+              .sort((a, b) => {
+                // if (a.year > b.year) return -1
+                // else if (a.year < b.year) return 1
+                // else {
+                //   if (a.month > b.month) return -1
+                //   else if (a.month < b.month) return 1
+                //   else return 0
+                // }
+                return (a.year > b.year)
+                  ? -1
+                  : (a.year < b.year)
+                    ? 1
+                    : (a.month > b.month)
+                      ? -1
+                      : (a.month < b.month)
+                        ? 1
+                        : 0
+              })
+            teamSeries.push(teamData)
+          })
+          teamSeries.forEach(team => {
+            const data = team.map(team => team.count)
+            series.push({ data: data, name: team[0].group })
+          })
+          const newXAxis = teamSeries[0].map(month => `${month.month} ${month.year}`)
+          const options = this.state.options
+          options.xaxis.categories = newXAxis
           this.setState({
-            plotData: data.query
+            series: series,
+            options: options
           })
         }
       })
@@ -86,9 +114,7 @@ class StackedBarChart extends React.Component {
       options,
       series
     } = this.state
-    return (
-      <Chart options={options} series={series} type='bar' width={500} height={320} />
-    )
+    return <Chart options={options} series={series} type='bar' width={600} height={320} />
   }
 }
 
