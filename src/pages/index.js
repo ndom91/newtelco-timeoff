@@ -8,6 +8,7 @@ import RequireLogin from '../components/requiredLogin'
 import DashStat from '../components/dashstat'
 import Subheader from '../components/content-subheader'
 import { Container, Content, Panel, Notification } from 'rsuite'
+import { motion } from 'framer-motion'
 
 const Calendar = dynamic(() => import('../components/calendar'), {
   ssr: false
@@ -133,6 +134,9 @@ class Wrapper extends React.Component {
   }
 
   render() {
+    const list = { hidden: { opacity: 1 } }
+    const item = { hidden: { y: [-50, 0], opacity: [0, 1] } }
+
     const {
       dashboard
     } = this.state
@@ -147,20 +151,37 @@ class Wrapper extends React.Component {
               header='Absence Management'
               subheader='Current Vacations'
             />
-            <div className='stat-wrapper'>
-              <Panel>
-                <DashStat value={dashboard.lastYear} type='lastYear' label='From Last Year' />
-              </Panel>
-              <Panel>
-                <DashStat value={dashboard.thisYear} type='thisYear' label='Earned this Year' />
-              </Panel>
-              <Panel>
-                <DashStat value={dashboard.spent} type='spent' label='Spent this Year' />
-              </Panel>
-              <Panel>
-                <DashStat value={dashboard.available} type='available' label='Total Available' />
-              </Panel>
-            </div>
+            <motion.div
+              initial
+              staggerChildren
+              animate='hidden'
+              transition={{
+                ease: 'easeIn', duration: 2, staggerChildren: 0.15
+              }}
+              variants={list}
+              className='stat-wrapper'
+            >
+              <motion.div variants={item} whileHover={{ scale: 1.03 }}>
+                <Panel className='stat-panel'>
+                  <DashStat value={dashboard.lastYear} type='lastYear' label='From Last Year' />
+                </Panel>
+              </motion.div>.
+              <motion.div variants={item} whileHover={{ scale: 1.03 }}>
+                <Panel className='stat-panel'>
+                  <DashStat value={dashboard.thisYear} type='thisYear' label='Earned this Year' />
+                </Panel>
+              </motion.div>.
+              <motion.div variants={item} whileHover={{ scale: 1.03 }}>
+                <Panel className='stat-panel'>
+                  <DashStat value={dashboard.spent} type='spent' label='Spent this Year' />
+                </Panel>
+              </motion.div>
+              <motion.div variants={item} whileHover={{ scale: 1.03 }}>
+                <Panel className='stat-panel'>
+                  <DashStat value={dashboard.available} type='available' label='Total Available' />
+                </Panel>
+              </motion.div>
+            </motion.div>
             <Panel bordered>
               <Content>
                 <Calendar />
@@ -168,15 +189,17 @@ class Wrapper extends React.Component {
             </Panel>
           </Container>
           <style jsx>{`
-            .stat-wrapper {
+            :global(.stat-wrapper) {
               display: flex;
               justify-content: space-around;
               max-height: 160px;
-              margin-bottom: 20px;
+              margin-bottom: 40px;
+              list-style: none;
             } 
-            :global(.stat-wrapper > .rs-panel) {
+            :global(.stat-wrapper .rs-panel) {
               width: 260px;
-              max-height: 150px;
+              max-width: 250px;
+              max-height: 135px;
               margin: 15px;
               border-radius: 20px;
               background: #ffffff;

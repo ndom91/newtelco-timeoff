@@ -14,6 +14,8 @@ import UploadFile from '../components/uploadfile'
 import uuid from 'v4-uuid'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Joyride, { STATUS } from 'react-joyride'
+import Lottie from 'react-lottie'
+import animationData from '../style/lottie-success.json'
 import {
   faCalendarAlt,
   faUser,
@@ -43,8 +45,11 @@ import {
   Modal,
   Notification,
   HelpBlock,
-  Table
+  Table,
+  Animation
 } from 'rsuite'
+
+const { Slide } = Animation
 
 const { Column, HeaderCell, Cell } = Table
 
@@ -70,6 +75,7 @@ class Wrapper extends React.Component {
 
     this.state = {
       openConfirmModal: false,
+      confirmed: false,
       confirmText: '',
       successfullySent: false,
       calcSideBar: -30,
@@ -446,11 +452,15 @@ class Wrapper extends React.Component {
           .then(data => {
             if (this.state.openConfirmModal) {
               this.setState({
-                openConfirmModal: !this.state.openConfirmModal
+                confirmed: true
               })
+              setTimeout(() => {
+                this.setState({
+                  openConfirmModal: !this.state.openConfirmModal
+                })
+              }, 3000)
             }
             if (data1.code === 200 && data.code === 200) {
-              this.notifySuccess('Request Successfully Sent')
               this.setState({
                 successfullySent: true
               })
@@ -523,12 +533,22 @@ class Wrapper extends React.Component {
       successfullySent,
       showSidebar,
       showCalc,
+      confirmed,
       lastRequest,
       hideHistory,
       tutSteps,
       joyrideRun,
       isMobile
     } = this.state
+
+    const successOptions = {
+      loop: false,
+      autoplay: true,
+      animationData: animationData,
+      rendererSettings: {
+        preserveAspectRatio: 'xMidYMid slice'
+      }
+    }
 
     if (this.props.session.user) {
       return (
@@ -779,39 +799,60 @@ class Wrapper extends React.Component {
             </div>
           </div>
           {openConfirmModal && (
-            <Modal enforceFocus size='sm' backdrop show={openConfirmModal} onHide={this.toggleSubmitModal} style={{ marginTop: '150px' }}>
-              <Modal.Header>
-                <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>Confirm Submit</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <span style={{ textAlign: 'center', display: 'block', fontWeight: '600' }}>Are you sure you want to submit the following absence request?</span>
-                <Table showHeader={false} height={200} bordered={false} data={confirmTableData} style={{ margin: '20px 50px' }}>
-                  <Column width={200} align='left'>
-                    <HeaderCell>Field: </HeaderCell>
-                    <Cell dataKey='title' />
-                  </Column>
-                  <Column width={250} align='left'>
-                    <HeaderCell>Value: </HeaderCell>
-                    <Cell dataKey='value' />
-                  </Column>
-                </Table>
-                {hideHistory && (
-                  <span style={{ textAlign: 'center', display: 'block', maxWidth: '80%', margin: '40px auto 20px auto' }}>You have selected to submit an absence which does not require approval - instead we will send out a notification to your chosen manager and team group email address.</span>
-                )}
-              </Modal.Body>
-              <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
-                <ButtonToolbar style={{ width: '100%' }}>
-                  <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-                    <Button onClick={this.toggleSubmitModal} style={{ width: '33%', fontSize: '16px' }} appearance='default'>
-                      Cancel
-                    </Button>
-                    <Button onClick={this.handleSubmit} style={{ width: '33%', fontSize: '16px' }} appearance='primary'>
-                      Confirm
-                    </Button>
-                  </ButtonGroup>
-                </ButtonToolbar>
-              </Modal.Footer>
-            </Modal>
+            <Slide in={openConfirmModal} placement='top' exitingClassName='modal-out'>
+              <Modal enforceFocus size='sm' backdrop show={openConfirmModal} onHide={this.toggleSubmitModal} style={{ marginTop: '150px' }}>
+                <Modal.Header>
+                  {!confirmed && (
+                    <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>Confirm Submit</Modal.Title>
+                  )}
+                </Modal.Header>
+                <Modal.Body>
+                  {!confirmed
+                    ? (
+                      <>
+                        <span style={{ textAlign: 'center', display: 'block', fontWeight: '600' }}>Are you sure you want to submit the following absence request?</span>
+                        <Table showHeader={false} height={200} bordered={false} data={confirmTableData} style={{ margin: '20px 50px' }}>
+                          <Column width={200} align='left'>
+                            <HeaderCell>Field: </HeaderCell>
+                            <Cell dataKey='title' />
+                          </Column>
+                          <Column width={250} align='left'>
+                            <HeaderCell>Value: </HeaderCell>
+                            <Cell dataKey='value' />
+                          </Column>
+                        </Table>
+                        {hideHistory && (
+                          <span style={{ textAlign: 'center', display: 'block', maxWidth: '80%', margin: '40px auto 20px auto' }}>You have selected to submit an absence which does not require approval - instead we will send out a notification to your chosen manager and team group email address.</span>
+                        )}
+                      </>
+                    ) : (
+                      <div className='confirmation-wrapper'>
+                        <Lottie
+                          options={successOptions}
+                          height={300}
+                          width={300}
+                        />
+                      </div>
+                    )}
+                </Modal.Body>
+                <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
+                  <ButtonToolbar style={{ width: '100%' }}>
+                    <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+                      {!confirmed && (
+                        <>
+                          <Button onClick={this.toggleSubmitModal} style={{ width: '33%', fontSize: '16px' }} appearance='default'>
+                            Cancel
+                          </Button>
+                          <Button onClick={this.handleSubmit} style={{ width: '33%', fontSize: '16px' }} appearance='primary'>
+                            Confirm
+                          </Button>
+                        </>
+                      )}
+                    </ButtonGroup>
+                  </ButtonToolbar>
+                </Modal.Footer>
+              </Modal>
+            </Slide>
           )}
           <style jsx>{`
           @media screen and (max-width: 500px) {
@@ -877,6 +918,15 @@ class Wrapper extends React.Component {
           }
           :global(.last-request-sidebar .rs-form-group) {
             margin-bottom: 10px !important;
+          }
+          .confirmation-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 250ms ease-in-out;
           }
           .calc-sidebar {
             position: absolute;
