@@ -1132,6 +1132,7 @@ class Wrapper extends React.Component {
         return
       }
       const request = selectedRow[0]
+      console.log(request)
       let tableData = []
       if (request.type === 'sick') {
         tableData = [
@@ -1141,11 +1142,11 @@ class Wrapper extends React.Component {
           },
           {
             title: 'From',
-            value: moment(request.fromDate).format('DD.MM.YYYY')
+            value: request.fromDate
           },
           {
             title: 'To',
-            value: moment(request.toDate).format('DD.MM.YYYY')
+            value: request.toDate
           },
           {
             title: 'Manager',
@@ -1168,11 +1169,11 @@ class Wrapper extends React.Component {
           },
           {
             title: 'From',
-            value: moment(request.fromDate).format('DD.MM.YYYY')
+            value: request.fromDate
           },
           {
             title: 'To',
-            value: moment(request.toDate).format('DD.MM.YYYY')
+            value: request.toDate
           },
           {
             title: 'Manager',

@@ -15,7 +15,8 @@ import uuid from 'v4-uuid'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Joyride, { STATUS } from 'react-joyride'
 import Lottie from 'react-lottie'
-import animationData from '../style/lottie-success.json'
+import lottieSuccess from '../style/lottie-success.json'
+import lottieError from '../style/error-icon.json'
 import {
   faCalendarAlt,
   faUser,
@@ -54,7 +55,7 @@ const { Slide } = Animation
 const { Column, HeaderCell, Cell } = Table
 
 class Wrapper extends React.Component {
-  static async getInitialProps({ res, req, query }) {
+  static async getInitialProps ({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -70,7 +71,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor(props) {
+  constructor (props) {
     super(props)
 
     this.state = {
@@ -78,6 +79,7 @@ class Wrapper extends React.Component {
       confirmed: false,
       confirmText: '',
       successfullySent: false,
+      sendSuccess: false,
       calcSideBar: -30,
       uploading: false,
       loaded: 0,
@@ -164,7 +166,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const host = window.location.host
     const protocol = window.location.protocol
     const tutorial = window.localStorage.getItem('tut')
@@ -452,7 +454,8 @@ class Wrapper extends React.Component {
           .then(data => {
             if (this.state.openConfirmModal) {
               this.setState({
-                confirmed: true
+                confirmed: true,
+                sendSuccess: data.code === 200
               })
               setTimeout(() => {
                 this.setState({
@@ -524,7 +527,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  render() {
+  render () {
     const {
       vaca,
       availableManagers,
@@ -534,6 +537,7 @@ class Wrapper extends React.Component {
       showSidebar,
       showCalc,
       confirmed,
+      sendSuccess,
       lastRequest,
       hideHistory,
       tutSteps,
@@ -544,7 +548,16 @@ class Wrapper extends React.Component {
     const successOptions = {
       loop: false,
       autoplay: true,
-      animationData: animationData,
+      animationData: lottieSuccess,
+      rendererSettings: {
+        preserveAspectRatio: 'xMidYMid slice'
+      }
+    }
+
+    const errorOptions = {
+      loop: false,
+      autoplay: true,
+      animationData: lottieError,
       rendererSettings: {
         preserveAspectRatio: 'xMidYMid slice'
       }
@@ -826,13 +839,23 @@ class Wrapper extends React.Component {
                         )}
                       </>
                     ) : (
-                      <div className='confirmation-wrapper'>
-                        <Lottie
-                          options={successOptions}
-                          height={300}
-                          width={300}
-                        />
-                      </div>
+                      sendSuccess ? (
+                        <div className='confirmation-wrapper'>
+                          <Lottie
+                            options={successOptions}
+                            height={300}
+                            width={300}
+                          />
+                        </div>
+                      ) : (
+                        <div className='confirmation-wrapper'>
+                          <Lottie
+                            options={errorOptions}
+                            height={300}
+                            width={300}
+                          />
+                        </div>
+                      )
                     )}
                 </Modal.Body>
                 <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
@@ -925,7 +948,6 @@ class Wrapper extends React.Component {
             justify-content: center;
             width: 100%;
             height: 100%;
-            opacity: 0;
             transition: opacity 250ms ease-in-out;
           }
           .calc-sidebar {
