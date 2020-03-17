@@ -7,7 +7,7 @@ import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../../components/requiredLogin'
 import Subheader from '../../components/content-subheader'
 import 'react-tabs/style/react-tabs.css'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   Container,
   Header,
@@ -22,8 +22,12 @@ import {
   Col
 } from 'rsuite'
 
-const ResponsiveSwarmPlot = React.lazy(() => import('../../components/swarmplot'))
-const StackedBarChart = React.lazy(() => import('../../components/stackedBarChart'))
+const ResponsiveSwarmPlot = React.lazy(() =>
+  import('../../components/swarmplot')
+)
+const StackedBarChart = React.lazy(() =>
+  import('../../components/stackedBarChart')
+)
 
 class Wrapper extends React.Component {
   static async getInitialProps({ res, req, query }) {
@@ -63,7 +67,9 @@ class Wrapper extends React.Component {
     const allMonths = []
     const monthNow = moment()
     for (let i = 0; i < 12; i++) {
-      const monthNowLoop = moment(monthNow).subtract(i, 'months').format('MMMM YYYY')
+      const monthNowLoop = moment(monthNow)
+        .subtract(i, 'months')
+        .format('MMMM YYYY')
       allMonths.push({ value: monthNowLoop, label: monthNowLoop })
     }
 
@@ -80,7 +86,7 @@ class Wrapper extends React.Component {
       duration: 2000,
       description: <div className='notify-body'>{text}</div>
     })
-  }
+  };
 
   notifyWarn = (header, text) => {
     Notification.warning({
@@ -88,7 +94,7 @@ class Wrapper extends React.Component {
       duration: 2000,
       description: <div className='notify-body'>{text}</div>
     })
-  }
+  };
 
   notifyError = (header, text) => {
     Notification.error({
@@ -96,7 +102,7 @@ class Wrapper extends React.Component {
       duration: 3000,
       description: <div className='notify-body'>{text}</div>
     })
-  }
+  };
 
   notifySuccess = (header, text) => {
     Notification.success({
@@ -104,10 +110,11 @@ class Wrapper extends React.Component {
       duration: 3000,
       description: <div className='notify-body'>{text}</div>
     })
-  }
+  };
 
-  convertToCSV = (objArray) => {
-    const array = typeof objArray !== 'object' ? JSON.parse(objArray) : objArray
+  convertToCSV = objArray => {
+    const array =
+      typeof objArray !== 'object' ? JSON.parse(objArray) : objArray
     let str = ''
 
     for (let i = 0; i < array.length; i++) {
@@ -119,7 +126,7 @@ class Wrapper extends React.Component {
       str += '"' + line + '"\r\n'
     }
     return str
-  }
+  };
 
   exportCSVFile = (headers, items, fileTitle) => {
     if (headers) {
@@ -143,7 +150,7 @@ class Wrapper extends React.Component {
         document.body.removeChild(link)
       }
     }
-  }
+  };
 
   handleMonthReportExport = () => {
     const host = window.location.host
@@ -169,9 +176,13 @@ class Wrapper extends React.Component {
             to: moment(data.toDate).format('DD.MM.YYYY'),
             manager: data.manager,
             note: data.note,
-            submitted: moment(data.submitted_datetime).format('DD.MM.YYYY HH:mm'),
+            submitted: moment(data.submitted_datetime).format(
+              'DD.MM.YYYY HH:mm'
+            ),
             submittedBy: data.submitted_by,
-            approvedDateTime: moment(data.approval_datetime).format('DD.MM.YYYY HH:mm')
+            approvedDateTime: moment(data.approval_datetime).format(
+              'DD.MM.YYYY HH:mm'
+            )
           })
         })
         const headers = {
@@ -193,15 +204,21 @@ class Wrapper extends React.Component {
           submittedBy: 'Submmitted By',
           approvedDateTime: 'Approved Date/Time'
         }
-        this.exportCSVFile(headers, exportData, `${date.month}${date.year}_vacation_export`)
+        this.exportCSVFile(
+          headers,
+          exportData,
+          `${date.month}${date.year}_vacation_export`
+        )
       })
-  }
+  };
 
-  handleMonthReportSelectChange = (selection) => {
+  handleMonthReportSelectChange = selection => {
     const monthName = selection.split(' ')[0]
     const year = selection.split(' ')[1]
     const month = {
-      month: moment().month(monthName).format('MM'),
+      month: moment()
+        .month(monthName)
+        .format('MM'),
       year: year
     }
     this.setState({
@@ -210,7 +227,7 @@ class Wrapper extends React.Component {
         month: month
       }
     })
-  }
+  };
 
   handleYearReportExport = () => {
     const host = window.location.host
@@ -236,9 +253,13 @@ class Wrapper extends React.Component {
             to: moment(data.toDate).format('DD.MM.YYYY'),
             manager: data.manager,
             note: data.note,
-            submitted: moment(data.submitted_datetime).format('DD.MM.YYYY HH:mm'),
+            submitted: moment(data.submitted_datetime).format(
+              'DD.MM.YYYY HH:mm'
+            ),
             submittedBy: data.submitted_by,
-            approvedDateTime: moment(data.approval_datetime).format('DD.MM.YYYY HH:mm')
+            approvedDateTime: moment(data.approval_datetime).format(
+              'DD.MM.YYYY HH:mm'
+            )
           })
         })
         const headers = {
@@ -262,16 +283,16 @@ class Wrapper extends React.Component {
         }
         this.exportCSVFile(headers, exportData, `${year}_vacation_export`)
       })
-  }
+  };
 
-  handleYearReportSelectChange = (selection) => {
+  handleYearReportSelectChange = selection => {
     this.setState({
       reportSelection: {
         ...this.state.reportSelection,
         year: selection
       }
     })
-  }
+  };
 
   handleYearTDReportExport = () => {
     const host = window.location.host
@@ -287,7 +308,9 @@ class Wrapper extends React.Component {
             name: data.name,
             email: data.email,
             remaining: data.resturlaubJAHR,
-            submitted: moment(data.submitted_datetime).format('DD.MM.YYYY HH:mm')
+            submitted: moment(data.submitted_datetime).format(
+              'DD.MM.YYYY HH:mm'
+            )
           })
         })
         const headers = {
@@ -299,32 +322,35 @@ class Wrapper extends React.Component {
         }
         this.exportCSVFile(headers, exportData, `${year}_daysLeftOver_export`)
       })
-  }
+  };
 
-  handleYearTDReportSelectChange = (selection) => {
+  handleYearTDReportSelectChange = selection => {
     this.setState({
       reportSelection: {
         ...this.state.reportSelection,
         ytd: selection
       }
     })
-  }
+  };
 
   render() {
-    const {
-      allMonths,
-      allYears
-    } = this.state
+    const { allMonths, allYears } = this.state
 
     if (this.props.session.user && this.state.admin) {
       return (
-        <Layout user={this.props.session.user.email} token={this.props.session.csrfToken}>
+        <Layout
+          user={this.props.session.user.email}
+          token={this.props.session.csrfToken}
+        >
           <Container className='settings-admin-container'>
             <Subheader header='Administration' subheader='Reports' />
             <Row style={{ display: 'flex', justifyContent: 'space-between' }}>
               <Col className='settings-admin-col-2'>
                 <Panel bordered className='person-panel-body'>
-                  <Header style={{ marginBottom: '20px' }} className='user-content-header'>
+                  <Header
+                    style={{ marginBottom: '20px' }}
+                    className='user-content-header'
+                  >
                     <h4>Last 6 Months</h4>
                   </Header>
                   <Panel bordered style={{ boxShadow: 'none' }}>
@@ -338,7 +364,10 @@ class Wrapper extends React.Component {
               </Col>
               <Col className='settings-admin-col-2'>
                 <Panel bordered className='person-panel-body'>
-                  <Header style={{ marginBottom: '20px' }} className='user-content-header'>
+                  <Header
+                    style={{ marginBottom: '20px' }}
+                    className='user-content-header'
+                  >
                     <h4>Last Year</h4>
                   </Header>
                   <Panel bordered style={{ boxShadow: 'none' }}>
@@ -357,7 +386,11 @@ class Wrapper extends React.Component {
                   <Header style={{ marginBottom: '20px' }}>
                     <h4>Reports</h4>
                   </Header>
-                  <Panel className='reports-panel-body' bordered style={{ boxShadow: 'none' }}>
+                  <Panel
+                    className='reports-panel-body'
+                    bordered
+                    style={{ boxShadow: 'none' }}
+                  >
                     <Panel style={{ boxShadow: 'none' }}>
                       <FormGroup>
                         <ControlLabel>Monthly</ControlLabel>
@@ -365,8 +398,14 @@ class Wrapper extends React.Component {
                           onChange={this.handleMonthReportSelectChange}
                           data={allMonths}
                           placeholder='Please Select a month'
+                          placement='topStart'
                         />
-                        <IconButton block icon={<Icon icon='export' />} appearance='ghost' onClick={this.handleMonthReportExport}>
+                        <IconButton
+                          block
+                          icon={<Icon icon='export' />}
+                          appearance='ghost'
+                          onClick={this.handleMonthReportExport}
+                        >
                           Export
                         </IconButton>
                       </FormGroup>
@@ -380,8 +419,14 @@ class Wrapper extends React.Component {
                           data={allYears}
                           placeholder='Please select a year'
                           searchable={false}
+                          placement='topStart'
                         />
-                        <IconButton block icon={<Icon icon='export' />} appearance='ghost' onClick={this.handleYearReportExport}>
+                        <IconButton
+                          block
+                          icon={<Icon icon='export' />}
+                          appearance='ghost'
+                          onClick={this.handleYearReportExport}
+                        >
                           Export
                         </IconButton>
                       </FormGroup>
@@ -395,8 +440,14 @@ class Wrapper extends React.Component {
                           data={allYears}
                           placeholder='Please select a year'
                           searchable={false}
+                          placement='topStart'
                         />
-                        <IconButton block icon={<Icon icon='export' />} appearance='ghost' onClick={this.handleYearTDReportExport}>
+                        <IconButton
+                          block
+                          icon={<Icon icon='export' />}
+                          appearance='ghost'
+                          onClick={this.handleYearTDReportExport}
+                        >
                           Export
                         </IconButton>
                       </FormGroup>
@@ -406,116 +457,120 @@ class Wrapper extends React.Component {
               </Col>
             </Row>
           </Container>
-          <style jsx>{`
-            @media screen and (max-width: 500px) {
-              :global(.wrapper) {
-                width: 100%;
+          <style jsx>
+            {`
+              @media screen and (max-width: 500px) {
+                :global(.wrapper) {
+                  width: 100%;
+                }
+                :global(.settings-admin-container) {
+                  width: 80%;
+                }
+                :global(.settings-admin-row) {
+                  flex-direction: column;
+                }
+                :global(.settings-admin-col-2) {
+                  width: 100%;
+                }
+                :global(.settings-admin-col-1) {
+                  width: 100%;
+                }
+                :global(.person-panel-body .rs-panel-body) {
+                  padding: 20px !important;
+                }
               }
-              :global(.settings-admin-container) {
-                width: 80%;
+              :global(.loading) {
+                animation: rotating 1.5s linear infinite;
+                @keyframes rotating {
+                  from {
+                    transform: rotate(0deg);
+                  }
+                  to {
+                    transform: rotate(360deg);
+                  }
+                }
+              }
+              :global(.rs-row) {
+                padding: 10px;
+              }
+              :global(.rs-col) {
+                padding: 10px;
+              }
+              :global(.table-tab-list) {
+                margin-bottom: 20px;
+                padding-left: 0px !important;
+              }
+              :global(.reports-panel-body > .rs-panel-body) {
+                display: flex;
+              }
+              .reports-hr {
+                height: 100px;
+                width: 2px;
+                margin: 0 auto;
+                border-left: 1px solid #eaeaea;
+              }
+              :global(.rs-form-group > *) {
+                margin: 5px;
+              }
+              :global(.table-tab-list .react-tabs__tab) {
+                padding: 10px;
+                transition: border 250ms ease-in-out;
+              }
+              :global(.react-tabs__tab--selected) {
+                border: 1px solid #67b246 !important;
+                color: #67b246 !important;
+                border-radius: 10px !important;
+              }
+              :global(.react-tabs__tab:focus) {
+                box-shadow: 0 0 5px #67b246;
+                border-color: #67b246;
+              }
+              :global(.settings-admin-container > .rs-panel) {
+                margin: 10px;
               }
               :global(.settings-admin-row) {
-                flex-direction: column;
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-around;
               }
               :global(.settings-admin-col-2) {
-                width: 100%;
+                flex: 2;
               }
               :global(.settings-admin-col-1) {
-                width: 100%;
+                flex: 1;
               }
-              :global(.person-panel-body .rs-panel-body) {
-                padding: 20px !important;
+              :global(.rs-btn-ghost) {
+                transition: box-shadow 250ms ease-in-out;
               }
-            }
-            :global(.loading) {
-              animation: rotating 1.5s linear infinite;
-              @keyframes rotating {
-                from {
-                  transform: rotate(0deg);
-                }
-                to {
-                  transform: rotate(360deg);
-                }
+              :global(.rs-btn-ghost:hover) {
+                box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.15);
               }
-            }
-            :global(.rs-row) {
-              padding: 10px;
-            }
-            :global(.rs-col) {
-              padding: 10px;
-            }
-            :global(.table-tab-list) {
-              margin-bottom: 20px;
-              padding-left: 0px !important;
-            }
-            :global(.reports-panel-body > .rs-panel-body) {
-              display: flex;
-            }
-            .reports-hr {
-              height: 100px;
-              width: 2px;
-              margin: 0 auto;
-              border-left: 1px solid #eaeaea;
-            }
-            :global(.rs-form-group > *) {
-              margin: 5px;
-            }
-            :global(.table-tab-list .react-tabs__tab) {
-              padding: 10px;
-              transition: border 250ms ease-in-out;
-            }
-            :global(.react-tabs__tab--selected) {
-              border: 1px solid #67B246 !important;
-              color: #67b246 !important;
-              border-radius: 10px !important;
-            }
-            :global(.react-tabs__tab:focus) {
-              box-shadow: 0 0 5px #67B246;
-              border-color: #67B246;
-            }
-            :global(.settings-admin-container > .rs-panel) {
-              margin: 10px;
-            }
-            :global(.settings-admin-row) {
-              display: flex;
-              align-items: flex-start;
-              justify-content: space-around;
-            }
-            :global(.settings-admin-col-2) {
-              flex: 2;
-            }
-            :global(.settings-admin-col-1) {
-              flex:1;
-            }
-            :global(.rs-btn-ghost) {
-              transition: box-shadow 250ms ease-in-out;
-            }
-            :global(.rs-btn-ghost:hover) {
-              box-shadow: 0px 3px 5px rgba(0,0,0,0.15);
-            }
-            :global(.user-content-header:focus) {
-              outline: none;
-            }
-            :global(.person-grid) { 
-              margin-bottom: 20px;
-            }
-            :global(.section-header) {
-              font-size: 1.3rem;
-              display: flex;
-              margin-bottom: 20px;
-            }
-            :global(.rs-table) {
-              max-width: 100%;
-            }
-            :global(.manager-btn) {
-              line-height: 1.0;
-              padding-top: 7px !important;
-              transition: box-shadow 250ms ease-in-out;
-            }
-            :global(.manager-btn:hover) {
-              box-shadow: 0 2px 0 rgba(247, 130, 130,.11), 0 4px 8px rgba(247, 130, 130,.12), 0 10px 10px rgba(247, 130, 130,.06), 0 7px 70px rgba(247, 130, 130,.1);
-            }
-          `}
+              :global(.user-content-header:focus) {
+                outline: none;
+              }
+              :global(.person-grid) {
+                margin-bottom: 20px;
+              }
+              :global(.section-header) {
+                font-size: 1.3rem;
+                display: flex;
+                margin-bottom: 20px;
+              }
+              :global(.rs-table) {
+                max-width: 100%;
+              }
+              :global(.manager-btn) {
+                line-height: 1;
+                padding-top: 7px !important;
+                transition: box-shadow 250ms ease-in-out;
+              }
+              :global(.manager-btn:hover) {
+                box-shadow: 0 2px 0 rgba(247, 130, 130, 0.11),
+                  0 4px 8px rgba(247, 130, 130, 0.12),
+                  0 10px 10px rgba(247, 130, 130, 0.06),
+                  0 7px 70px rgba(247, 130, 130, 0.1);
+              }
+            `}
           </style>
         </Layout>
       )
