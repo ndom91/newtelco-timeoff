@@ -4,7 +4,7 @@ prisma.yml
 .next
 .vscode
 out
-.env
+.env*
 oauth*.json
 serviceacct.json
 ecosystem.config.js.og
@@ -16,4 +16,4 @@ report.*.json
 node_modules/*
 tmp/
 googleApiConfig.json
-serviceacct2.json
+serviceacct*

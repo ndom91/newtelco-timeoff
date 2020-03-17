@@ -9,12 +9,13 @@ Company Time-Off Management Application
 ## ⚛️ Features
 
 - Management Confirmation via Email for each request
-- Export Lists / Reports to Excel 
+- Export Lists / Reports to Excel
 - Active Directory User Sync
 - Multiple Absence types (Sick, Vacation, Maternity, etc.)
 - Customizable Company / Color / Logo
 - Company Overview / Team Overview
 - Team Chat
+- Admin Dashboard incl. Report Exports
 
 ## ⚙️ Setup
 
@@ -31,7 +32,7 @@ Company Time-Off Management Application
 
 ## 🤝 Contributors
 
-![Nico Domino](https://avatars1.githubusercontent.com/u/7415984?s=64&v=1)  
+![Nico Domino](https://avatars1.githubusercontent.com/u/7415984?s=64&v=1)
 
 ### 📝 License
 
