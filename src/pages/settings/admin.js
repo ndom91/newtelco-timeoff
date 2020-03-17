@@ -49,7 +49,7 @@ import {
 const { Column, HeaderCell, Cell } = Table
 
 class Wrapper extends React.Component {
-  static async getInitialProps({ res, req, query }) {
+  static async getInitialProps ({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -72,7 +72,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor(props) {
+  constructor (props) {
     super(props)
     const thisYear = new Date().getFullYear()
     this.state = {
@@ -498,7 +498,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const selectUserList = []
     const userAdmin = JSON.parse(window.localStorage.getItem('mA'))
     this.props.users.userList.forEach(user => {
@@ -1132,7 +1132,6 @@ class Wrapper extends React.Component {
         return
       }
       const request = selectedRow[0]
-      console.log(request)
       let tableData = []
       if (request.type === 'sick') {
         tableData = [
@@ -1383,7 +1382,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  render() {
+  render () {
     const {
       gridOptions,
       rowData,
