@@ -18,15 +18,15 @@ module.exports = async (req, res) => {
   const files = JSON.stringify(body.files)
   const approved = editData.approved
 
-  let updateQuery
-  if (approved == 0) {
-    updateQuery = await db.query(escape`
+  // let updateQuery
+  // if (approved == 0) {
+  const updateQuery = await db.query(escape`
       UPDATE vacations SET resturlaubVorjahr = ${lastYear}, jahresurlaubInsgesamt = ${thisYear}, jahresUrlaubAusgegeben = ${spentThisYear}, restjahresurlaubInsgesamt = ${total}, beantragt = ${requested}, resturlaubJAHR = ${remaining}, files = ${files}, fromDate = ${from}, toDate = ${to}, note = ${notes} WHERE id LIKE ${id}
   `)
-  } else {
-    updateQuery = await db.query(escape`
-  UPDATE vacations SET note = ${notes}, files = ${files} WHERE id LIKE ${id}
-  `)
-  }
+  // } else {
+  //   updateQuery = await db.query(escape`
+  // UPDATE vacations SET note = ${notes}, files = ${files} WHERE id LIKE ${id}
+  // `)
+  // }
   res.status(200).json({ updateQuery, body, from, to })
 }

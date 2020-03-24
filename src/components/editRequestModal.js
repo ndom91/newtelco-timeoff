@@ -95,15 +95,20 @@ const EditModal = props => {
     const host = window.location.host
     const protocol = window.location.protocol
 
-    const oldData = props.rowData
-    const updateIndex = oldData.findIndex(entry => entry.id === editData.id)
-    const oldFiles = JSON.parse(oldData[updateIndex].files)
-    const newFiles = oldFiles.concat(files)
+    const selectedRow = props.gridApi.getSelectedRows()
+    const oldData = selectedRow[0]
+    let oldFiles = ''
+    if (oldData.files !== '') {
+      oldFiles = JSON.parse(oldData.files)
+    }
+    let newFiles = oldFiles
+    if (files.length > 0) {
+      newFiles = oldFiles.concat(JSON.stringify(files))
+    }
 
     const toSubmitData = editData
     toSubmitData.from = moment(editData.from).format('YYYY-MM-DD')
     toSubmitData.to = moment(editData.to).format('YYYY-MM-DD')
-    console.log(toSubmitData)
 
     fetch(`${protocol}//${host}/api/user/entries/update`, {
       method: 'POST',
@@ -120,15 +125,9 @@ const EditModal = props => {
         if (data.updateQuery.affectedRows === 1) {
           const oldData = props.rowData
           const updateIndex = oldData.findIndex(entry => entry.id === editData.id)
-          const oldFiles = JSON.parse(oldData[updateIndex].files)
-          files.forEach(file => oldFiles.push(file))
-
-          // console.log(oldData[updateIndex])
-          // console.log(oldFiles)
-          // console.log(files)
 
           oldData[updateIndex].note = editData.note
-          oldData[updateIndex].files = JSON.stringify(oldFiles)
+          oldData[updateIndex].files = JSON.stringify(newFiles)
           if (!fieldsDisabled) {
             oldData[updateIndex].fromDate = moment(editData.from).format('DD.MM.YYYY')
             oldData[updateIndex].toDate = moment(editData.to).format('DD.MM.YYYY')
@@ -234,7 +233,7 @@ const EditModal = props => {
                 }}
               >
                 <ControlLabel style={{ textAlign: 'center' }}>From</ControlLabel>
-                <DatePicker showWeekNumbers oneTap name='from' type='date' onChange={handleFromDateChange} value={editData.from} disabled={fieldsDisabled} />
+                <DatePicker showWeekNumbers oneTap name='from' type='date' onChange={handleFromDateChange} value={new Date(editData.from)} disabled={fieldsDisabled} />
               </div>
               <div
                 style={{
@@ -246,7 +245,7 @@ const EditModal = props => {
                 }}
               >
                 <ControlLabel style={{ textAlign: 'center' }}>To</ControlLabel>
-                <DatePicker showWeekNumbers oneTap name='to' type='date' onChange={handleToDateChange} value={editData.to} disabled={fieldsDisabled} />
+                <DatePicker showWeekNumbers oneTap name='to' type='date' onChange={handleToDateChange} value={new Date(editData.to)} disabled={fieldsDisabled} />
               </div>
             </FormGroup>
             <div
