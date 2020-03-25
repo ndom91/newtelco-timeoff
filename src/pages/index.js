@@ -15,7 +15,7 @@ const Calendar = dynamic(() => import('../components/calendar'), {
 })
 
 class Wrapper extends React.Component {
-  static async getInitialProps({ res, req, query }) {
+  static async getInitialProps ({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -38,7 +38,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       returnTo: props.returnTo,
@@ -67,7 +67,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  componentDidMount() {
+  componentDidMount () {
     if (typeof window !== 'undefined') {
       let params
       if (this.props.returnTo && !window.location.search) {
@@ -133,7 +133,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  render() {
+  render () {
     const list = { hidden: { opacity: 1 } }
     const item = { hidden: { y: [-50, 0], opacity: [0, 1] } }
 
@@ -165,12 +165,12 @@ class Wrapper extends React.Component {
                 <Panel className='stat-panel'>
                   <DashStat value={dashboard.lastYear} type='lastYear' label='From Last Year' />
                 </Panel>
-              </motion.div>.
+              </motion.div>
               <motion.div variants={item} whileHover={{ scale: 1.03 }}>
                 <Panel className='stat-panel'>
                   <DashStat value={dashboard.thisYear} type='thisYear' label='Earned this Year' />
                 </Panel>
-              </motion.div>.
+              </motion.div>
               <motion.div variants={item} whileHover={{ scale: 1.03 }}>
                 <Panel className='stat-panel'>
                   <DashStat value={dashboard.spent} type='spent' label='Spent this Year' />
