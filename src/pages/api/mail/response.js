@@ -16,7 +16,6 @@ module.exports = async (req, res) => {
     req.session.save(err => {
       if (err) console.error(err)
       req.session.returnTo = req._parsedUrl.query
-      // console.log('Session Before Redirect: ', req.session)
       res.redirect('/')
     })
     return
@@ -27,7 +26,7 @@ module.exports = async (req, res) => {
   const nodemailerDirectTransport = require('nodemailer-direct-transport')
 
   const checkApprovalHash = await db.query(escape`
-    SELECT id, name, email, DATE_FORMAT(toDate, \"%Y-%m-%d\") as toGoogle,  DATE_FORMAT(fromDate, \"%Y-%m-%d\") as fromGoogle, fromDate, toDate, submitted_datetime, manager, approval_datetime, approval_hash FROM vacations WHERE approval_hash LIKE ${approvalHash}
+    SELECT id, name, email, DATE_FORMAT(toDate, \"%Y-%m-%d\") as toGoogle,  DATE_FORMAT(fromDate, \"%Y-%m-%d\") as fromGoogle, fromDate, toDate, submitted_datetime, manager, approval_hash FROM vacations WHERE approval_hash LIKE ${approvalHash}
   `)
 
   if (checkApprovalHash[0].id) {
@@ -36,18 +35,10 @@ module.exports = async (req, res) => {
     let approvalValue
     const name = checkApprovalHash[0].name
     const manager = checkApprovalHash[0].manager
-    const toDate = new Date(checkApprovalHash[0].toDate).toLocaleDateString(
-      'de-DE'
-    )
-    const fromDate = new Date(checkApprovalHash[0].fromDate).toLocaleDateString(
-      'de-DE'
-    )
-    const submittedOn = new Date(checkApprovalHash[0].submitted_datetime).toLocaleString(
-      'de-DE'
-    )
-    const approvedOn = new Date(checkApprovalHash[0].approval_datetime).toLocaleString(
-      'de-DE'
-    )
+    const toDate = new Date(checkApprovalHash[0].toDate).toLocaleDateString('de-DE')
+    const fromDate = new Date(checkApprovalHash[0].fromDate).toLocaleDateString('de-DE')
+    const submittedOn = new Date(checkApprovalHash[0].submitted_datetime).toLocaleString('de-DE')
+    const approvedOn = new Date().toLocaleString('de-DE')
     const email = checkApprovalHash[0].email
 
     if (action === 'a') {
@@ -62,9 +53,7 @@ module.exports = async (req, res) => {
 
       jwtClient.authorize(function (err, tokens) {
         if (err) {
-          console.log(err)
-        } else {
-          console.log('Successfully connected!')
+          console.error(`Error: ${err}`)
         }
       })
 
@@ -93,12 +82,14 @@ https://vacation.newtelco.de`,
         resource: event
       }, function (err, response) {
         if (err) {
-          console.log('The API returned an error: ' + err)
+          console.error(`Calendar Insert Error: ${err}`)
           return
         }
-        if (response.data.status !== 'confirmed') {
-          // TODO: Get Cal ID and save to DB for editting later
-          console.error(`Event not added to cal - ${response}`)
+        if (response.data.status === 'confirmed') {
+          const gCalId = response.data.id
+          db.query(escape`
+            UPDATE vacations SET gcal = ${gCalId} WHERE approval_hash LIKE ${approvalHash} 
+          `)
         }
       })
     } else if (action === 'd') {
@@ -129,7 +120,7 @@ https://vacation.newtelco.de`,
       })
     }
 
-    const updateApproval = await db.query(escape`
+    await db.query(escape`
       UPDATE vacations SET approved = ${approvalValue}, approval_datetime = ${new Date()
         .toISOString()
         .slice(0, 19)
