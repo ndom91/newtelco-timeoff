@@ -183,32 +183,32 @@ const EditModal = props => {
               <FormGroup className='stacked-input'>
                 <div className='input-number'>1</div>
                 <ControlLabel>Days from Last Year</ControlLabel>
-                <InputNumber postfix='days' min={0} name='daysLastYear' inputMode='numeric' disabled={fieldsDisabled} onChange={handleLastYearChange} value={editData.lastYear} />
+                <InputNumber postfix='days' min={0} step='0.1' name='daysLastYear' inputMode='numeric' disabled={fieldsDisabled} onChange={handleLastYearChange} value={editData.lastYear} />
               </FormGroup>
               <FormGroup className='stacked-input'>
                 <div className='input-number'>2</div>
                 <ControlLabel>Days from this Year</ControlLabel>
-                <InputNumber postfix='days' min={0} name='daysThisYear' inputMode='numeric' disabled={fieldsDisabled} onChange={handleThisYearChange} value={editData.thisYear} />
+                <InputNumber postfix='days' min={0} step='0.1' name='daysThisYear' inputMode='numeric' disabled={fieldsDisabled} onChange={handleThisYearChange} value={editData.thisYear} />
               </FormGroup>
               <FormGroup className='stacked-input'>
                 <div className='input-number'>3</div>
                 <ControlLabel>Days spent this Year</ControlLabel>
-                <InputNumber postfix='days' min={0} name='daysSpent' inputMode='numeric' disabled={fieldsDisabled} onChange={handleTotalSpentChange} value={editData.spent} />
+                <InputNumber postfix='days' min={0} step='0.1' name='daysSpent' inputMode='numeric' disabled={fieldsDisabled} onChange={handleTotalSpentChange} value={editData.spent} />
               </FormGroup>
               <FormGroup className='stacked-input'>
                 <div className='input-number'>4</div>
                 <ControlLabel>Total Days Available</ControlLabel>
-                <InputNumber postfix='days' min={0} name='totalDaysAvailable' inputMode='numeric' disabled={fieldsDisabled} onChange={handleTotalAvailableChange} value={editData.total} />
+                <InputNumber postfix='days' min={0} step='0.1' name='totalDaysAvailable' inputMode='numeric' disabled={fieldsDisabled} onChange={handleTotalAvailableChange} value={editData.total} />
               </FormGroup>
               <FormGroup className='stacked-input'>
                 <div className='input-number'>5</div>
                 <ControlLabel>Requested Days</ControlLabel>
-                <InputNumber postfix='days' min={0} name='requestedDays' inputMode='numeric' disabled={fieldsDisabled} onChange={handleRequestedChange} value={editData.requested} />
+                <InputNumber postfix='days' min={0} step='0.1' name='requestedDays' inputMode='numeric' disabled={fieldsDisabled} onChange={handleRequestedChange} value={editData.requested} />
               </FormGroup>
               <FormGroup className='stacked-input'>
                 <div className='input-number'>6</div>
                 <ControlLabel>Days Remaining this Year</ControlLabel>
-                <InputNumber postfix='days' min={0} name='remainingDays' inputMode='numeric' disabled={fieldsDisabled} onChange={handleRemainingChange} value={editData.remaining} />
+                <InputNumber postfix='days' min={0} step='0.1' name='remainingDays' inputMode='numeric' disabled={fieldsDisabled} onChange={handleRemainingChange} value={editData.remaining} />
               </FormGroup>
             </div>
             <FormGroup
