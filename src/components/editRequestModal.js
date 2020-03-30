@@ -11,6 +11,7 @@ import {
   Modal,
   Form,
   Input,
+  InputGroup,
   FormGroup,
   ControlLabel,
   DatePicker,
@@ -183,32 +184,62 @@ const EditModal = props => {
               <FormGroup className='stacked-input'>
                 <div className='input-number'>1</div>
                 <ControlLabel>Days from Last Year</ControlLabel>
-                <InputNumber postfix='days' min={0} step='0.1' name='daysLastYear' inputMode='numeric' disabled={fieldsDisabled} onChange={handleLastYearChange} value={editData.lastYear} />
+                <InputGroup>
+                  <Input min={0} step='0.5' name='daysLastYear' type='number' disabled={fieldsDisabled} onChange={handleLastYearChange} value={editData.lastYear} />
+                  <InputGroup.Addon>
+                      days
+                  </InputGroup.Addon>
+                </InputGroup>
               </FormGroup>
               <FormGroup className='stacked-input'>
                 <div className='input-number'>2</div>
                 <ControlLabel>Days from this Year</ControlLabel>
-                <InputNumber postfix='days' min={0} step='0.1' name='daysThisYear' inputMode='numeric' disabled={fieldsDisabled} onChange={handleThisYearChange} value={editData.thisYear} />
+                <InputGroup>
+                  <Input type='number' min={0.0} step={0.5} name='daysThisYear' disabled={fieldsDisabled} onChange={handleThisYearChange} value={editData.thisYear} />
+                  <InputGroup.Addon>
+                      days
+                  </InputGroup.Addon>
+                </InputGroup>
               </FormGroup>
               <FormGroup className='stacked-input'>
                 <div className='input-number'>3</div>
                 <ControlLabel>Days spent this Year</ControlLabel>
-                <InputNumber postfix='days' min={0} step='0.1' name='daysSpent' inputMode='numeric' disabled={fieldsDisabled} onChange={handleTotalSpentChange} value={editData.spent} />
+                <InputGroup>
+                  <Input min={0} step='0.5' name='daysSpent' type='number' disabled={fieldsDisabled} onChange={handleTotalSpentChange} value={editData.spent} />
+                  <InputGroup.Addon>
+                      days
+                  </InputGroup.Addon>
+                </InputGroup>
               </FormGroup>
               <FormGroup className='stacked-input'>
                 <div className='input-number'>4</div>
                 <ControlLabel>Total Days Available</ControlLabel>
-                <InputNumber postfix='days' min={0} step='0.1' name='totalDaysAvailable' inputMode='numeric' disabled={fieldsDisabled} onChange={handleTotalAvailableChange} value={editData.total} />
+                <InputGroup>
+                  <Input min={0} step='0.5' name='totalDaysAvailable' type='number' disabled={fieldsDisabled} onChange={handleTotalAvailableChange} value={editData.total} />
+                  <InputGroup.Addon>
+                      days
+                  </InputGroup.Addon>
+                </InputGroup>
               </FormGroup>
               <FormGroup className='stacked-input'>
                 <div className='input-number'>5</div>
                 <ControlLabel>Requested Days</ControlLabel>
-                <InputNumber postfix='days' min={0} step='0.1' name='requestedDays' inputMode='numeric' disabled={fieldsDisabled} onChange={handleRequestedChange} value={editData.requested} />
+                <InputGroup>
+                  <Input min={0} step='0.5' name='requestedDays' type='number' disabled={fieldsDisabled} onChange={handleRequestedChange} value={editData.requested} />
+                  <InputGroup.Addon>
+                      days
+                  </InputGroup.Addon>
+                </InputGroup>
               </FormGroup>
               <FormGroup className='stacked-input'>
                 <div className='input-number'>6</div>
                 <ControlLabel>Days Remaining this Year</ControlLabel>
-                <InputNumber postfix='days' min={0} step='0.1' name='remainingDays' inputMode='numeric' disabled={fieldsDisabled} onChange={handleRemainingChange} value={editData.remaining} />
+                <InputGroup>
+                  <Input min={0} step='0.5' name='remainingDays' type='number' disabled={fieldsDisabled} onChange={handleRemainingChange} value={editData.remaining} />
+                  <InputGroup.Addon>
+                      days
+                  </InputGroup.Addon>
+                </InputGroup>
               </FormGroup>
             </div>
             <FormGroup
