@@ -570,6 +570,7 @@ class Wrapper extends React.Component {
                     rowData={rowData}
                     onGridReady={this.handleGridReady}
                     animateRows
+                    pagination
                     onFirstDataRendered={this.onFirstDataRendered.bind(this)}
                   />
                 </div>
@@ -643,7 +644,7 @@ class Wrapper extends React.Component {
               height: 100%;
             }
             :global(.user-grid) {
-              height: 100%;
+              height: 95%;
             }
             :global(.row-awaitingResponse) {
               background-color: transparent;
