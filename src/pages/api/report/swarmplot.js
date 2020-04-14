@@ -8,7 +8,7 @@ module.exports = async (req, res) => {
       from vacations
       left join users
       on vacations.email = users.email
-      where year(fromDate) = ${year} or year(toDate) = ${year}
+      where (year(fromDate) = ${year} or year(toDate) = ${year})
       and vacations.type = 'vacation'
       and vacations.disabled = 0
       and vacations.id is not null

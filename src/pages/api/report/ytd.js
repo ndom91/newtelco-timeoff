@@ -9,7 +9,7 @@ module.exports = async (req, res) => {
       WHERE id IN (
           SELECT MAX(id)
           FROM vacations 
-          WHERE YEAR(fromDate) = ${year} OR YEAR(toDate) = ${year} AND type = 'vacation' AND approved = '2' AND disabled = '0'
+          WHERE (YEAR(fromDate) = ${year} OR YEAR(toDate) = ${year}) AND type = 'vacation' AND approved = '2' AND disabled = '0'
           GROUP BY email
       )
   `)
