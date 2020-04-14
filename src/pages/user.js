@@ -35,7 +35,7 @@ import {
 const moment = extendMoment(Moment)
 
 class Wrapper extends React.Component {
-  static async getInitialProps({ res, req, query }) {
+  static async getInitialProps ({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -51,7 +51,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor(props) {
+  constructor (props) {
     super(props)
     const thisYear = new Date().getFullYear()
 
@@ -277,7 +277,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const host = window.location.host
     const protocol = window.location.protocol
     const user = this.props.session.user.email
@@ -505,7 +505,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  render() {
+  render () {
     const {
       gridOptions,
       rowData,
@@ -621,8 +621,8 @@ class Wrapper extends React.Component {
                             ) : ['png', 'jpg', 'bmp', 'gif'].includes(file.format) ? (
                               <Icon size='lg' style={{ marginRight: '10px' }} icon='file-image-o' />
                             ) : (
-                                  <Icon size='lg' style={{ marginRight: '10px' }} icon='file-o' />
-                                )}
+                              <Icon size='lg' style={{ marginRight: '10px' }} icon='file-o' />
+                            )}
                             <a target='_blank' rel='noopener noreferrer' className='view-file-link' title={file.name} href={file.url}>{file.original_filename}.{file.format}</a>
                           </div>
                         </li>

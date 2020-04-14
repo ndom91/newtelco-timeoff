@@ -14,6 +14,7 @@ import {
 } from 'rsuite'
 import NTLogo from '../../../public/static/img/newtelco_letters.svg'
 import NTLogoL from '../../../public/static/img/newtelco.svg'
+import NDOLogo from '../../../public/static/img/ndo-gray.png'
 import * as S from '../heroicons'
 
 const NavToggle = ({ expand, onChange, token, handleSignOut, toggleHelpModal }) => {
@@ -57,7 +58,7 @@ const NavToggle = ({ expand, onChange, token, handleSignOut, toggleHelpModal }) 
   )
 }
 class SidebarNT extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       settings: {
@@ -68,7 +69,7 @@ class SidebarNT extends React.Component {
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const protocol = window.location.protocol
     const host = window.location.host
     const companyInfo = JSON.parse(window.localStorage.getItem('company'))
@@ -123,7 +124,7 @@ class SidebarNT extends React.Component {
     }
   }
 
-  render () {
+  render() {
     const {
       openHelpModal,
       team
@@ -258,7 +259,21 @@ class SidebarNT extends React.Component {
           </Modal.Header>
           <Modal.Body>
             <p>
-              {'Created by Nico Domino <yo@ndo.dev> 2019 - 2020'}
+              <div style={{ display: 'flex', justifyContent: 'space-around', marginBottom: '20px' }}>
+                <img width='64' src={NDOLogo} alt='Newtelco Logo Gray' />
+                <div style={{ width: '150px', lineHeight: '1.4rem' }}>
+                  {'Nico Domino'}
+                  <br />
+                  <b>ndomino[at]newtelco.de</b>
+                  <br />
+                  2019-2020 ©
+                </div>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-around', position: 'absolute', width: '100%', bottom: '0' }}>
+                <span><a href='https://newtelco.com/legal-notice/'>Legal</a></span>
+                <span><a href='https://newtelco.com/data-privacy-policy/'>Privacy</a></span>
+                <span><a href='https://opensource.org/licenses/mit-license.php'>MIT License</a></span>
+              </div>
             </p>
           </Modal.Body>
           <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
