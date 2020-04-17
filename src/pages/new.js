@@ -55,7 +55,7 @@ const { Slide } = Animation
 const { Column, HeaderCell, Cell } = Table
 
 class Wrapper extends React.Component {
-  static async getInitialProps ({ res, req, query }) {
+  static async getInitialProps({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -71,7 +71,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
 
     this.state = {
@@ -91,6 +91,7 @@ class Wrapper extends React.Component {
       tutorialComplete: false,
       uploadedFiles: [],
       availableUsers: [],
+      disableDaysInput: false,
       vaca: {
         name: props.session.user.name,
         email: props.session.user.email,
@@ -166,7 +167,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const host = window.location.host
     const protocol = window.location.protocol
     const tutorial = window.localStorage.getItem('tut')
@@ -231,6 +232,26 @@ class Wrapper extends React.Component {
         })
       })
       .catch(err => console.error(err))
+
+    fetch(`${protocol}//${host}/api/user/entries/new?email=${email}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log(data)
+        const lastRequest = data.newestEntry[0]
+        let existingData = this.state.vaca
+        existingData = {
+          ...existingData,
+          lastYear: lastRequest.resturlaubVorjahr,
+          thisYear: lastRequest.jahresurlaubInsgesamt,
+          spentThisYear: parseFloat(lastRequest.jahresUrlaubAusgegeben) + parseFloat(lastRequest.beantragt),
+          total: lastRequest.resturlaubJAHR
+        }
+        this.setState({
+          vaca: existingData,
+          disableDaysInput: true
+        })
+      })
+      .catch(err => console.error(err))
   }
 
   handleNameChange = (value) => {
@@ -290,12 +311,22 @@ class Wrapper extends React.Component {
   }
 
   handleRequestedChange = (value) => {
-    this.setState({
-      vaca: {
-        ...this.state.vaca,
-        requested: value
-      }
-    })
+    if (this.state.disableDaysInput) {
+      this.setState({
+        vaca: {
+          ...this.state.vaca,
+          requested: parseFloat(value),
+          remaining: parseFloat(this.state.vaca.total) - parseFloat(value)
+        }
+      })
+    } else {
+      this.setState({
+        vaca: {
+          ...this.state.vaca,
+          requested: value
+        }
+      })
+    }
   }
 
   handleRemainingChange = (value) => {
@@ -480,19 +511,6 @@ class Wrapper extends React.Component {
     this.setState({
       showCalc: !this.state.showCalc
     })
-    // const {
-    //   calcSideBar
-    // } = this.state
-
-    // if (calcSideBar === -30) {
-    //   this.setState({
-    //     calcSideBar: -240
-    //   })
-    // } else {
-    //   this.setState({
-    //     calcSideBar: -30
-    //   })
-    // }
   }
 
   showLastRequestSidebar = () => {
@@ -527,7 +545,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  render () {
+  render() {
     const {
       vaca,
       availableManagers,
@@ -542,7 +560,8 @@ class Wrapper extends React.Component {
       hideHistory,
       tutSteps,
       joyrideRun,
-      isMobile
+      isMobile,
+      disableDaysInput
     } = this.state
 
     const successOptions = {
@@ -640,24 +659,24 @@ class Wrapper extends React.Component {
                             <div className='input-number'>1</div>
                             <ControlLabel>Days from Last Year</ControlLabel>
                             <HelpBlock tooltip>Days which you have transfered with you from last year</HelpBlock>
-                            <InputNumber min={0} size='lg' postfix='days' value={vaca.lastYear} onChange={this.handleLastYearChange} />
+                            <InputNumber min={0} size='lg' postfix='days' value={vaca.lastYear} onChange={this.handleLastYearChange} disabled={disableDaysInput} />
                           </FormGroup>
                           <FormGroup className='history-input-wrapper'>
                             <div className='input-number'>2</div>
                             <ControlLabel>Days from this Year</ControlLabel>
-                            <InputNumber min={0} size='lg' postfix='days' name='daysThisYear' onChange={this.handleThisYearChange} value={vaca.thisYear} />
+                            <InputNumber min={0} size='lg' postfix='days' name='daysThisYear' onChange={this.handleThisYearChange} value={vaca.thisYear} disabled={disableDaysInput} />
                             <HelpBlock tooltip>Days which you have earned this year</HelpBlock>
                           </FormGroup>
                           <FormGroup className='history-input-wrapper'>
                             <div className='input-number'>3</div>
                             <ControlLabel>Days spent This Year</ControlLabel>
-                            <InputNumber min={0} size='lg' postfix='days' name='daysSpentThisYear' onChange={this.handleSpentThisYearChange} value={vaca.spentThisYear} />
+                            <InputNumber min={0} size='lg' postfix='days' name='daysSpentThisYear' onChange={this.handleSpentThisYearChange} value={vaca.spentThisYear} disabled={disableDaysInput} />
                             <HelpBlock tooltip>Days which you have already used up this year</HelpBlock>
                           </FormGroup>
                           <FormGroup className='history-input-wrapper'>
                             <div className='input-number'>4</div>
                             <ControlLabel>Total Days Available</ControlLabel>
-                            <InputNumber min={0} size='lg' postfix='days' name='totalDaysAvailable' onChange={this.handleTotalAvailableChange} value={vaca.total} />
+                            <InputNumber min={0} size='lg' postfix='days' name='totalDaysAvailable' onChange={this.handleTotalAvailableChange} value={vaca.total} disabled={disableDaysInput} />
                             <HelpBlock tooltip>Days from last year + days from this year - days already spent this year</HelpBlock>
                           </FormGroup>
                           <FormGroup className='history-input-wrapper'>
@@ -669,7 +688,7 @@ class Wrapper extends React.Component {
                           <FormGroup className='history-input-wrapper'>
                             <div className='input-number'>6</div>
                             <ControlLabel>Days Remaining</ControlLabel>
-                            <InputNumber min={0} size='lg' postfix='days' name='remainingDays' onChange={this.handleRemainingChange} value={vaca.remaining} />
+                            <InputNumber min={0} size='lg' postfix='days' name='remainingDays' onChange={this.handleRemainingChange} value={vaca.remaining} disabled={disableDaysInput} />
                             <HelpBlock tooltip>Number of total available days minus total requested days</HelpBlock>
                           </FormGroup>
                         </Panel>
@@ -848,14 +867,14 @@ class Wrapper extends React.Component {
                           />
                         </div>
                       ) : (
-                        <div className='confirmation-wrapper'>
-                          <Lottie
-                            options={errorOptions}
-                            height={300}
-                            width={300}
-                          />
-                        </div>
-                      )
+                          <div className='confirmation-wrapper'>
+                            <Lottie
+                              options={errorOptions}
+                              height={300}
+                              width={300}
+                            />
+                          </div>
+                        )
                     )}
                 </Modal.Body>
                 <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
