@@ -905,6 +905,7 @@ class Wrapper extends React.Component {
   }
 
   toggleViewFilesModal = (files) => {
+    console.log(files)
     this.setState({
       viewFilesModal: !this.state.viewFilesModal,
       viewFiles: files
@@ -1733,10 +1734,10 @@ class Wrapper extends React.Component {
                 <Modal.Title>View Files</Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                {viewFiles && viewFiles.map((file, index) => {
+                {Array.isArray(viewFiles) && viewFiles.map((file, index) => {
                   return (
                     <div className='view-file-item' key={index}>
-                      <a href={file.url}>{file.name}</a>
+                      <a target='_blank' rel='noopener noreferrer' title='attachment Url' href={file.url}>{file.name}</a>
                     </div>
                   )
                 })}
