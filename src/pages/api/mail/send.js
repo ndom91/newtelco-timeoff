@@ -7,9 +7,7 @@ require('dotenv').config({ path: './.env' })
 
 module.exports = async (req, res) => {
   const body = JSON.parse(req.body)
-  // const to = new Date(body.to).toLocaleDateString('de-DE')
   const to = format(new Date(body.to), 'dd.MM.yyyy')
-  // const from = new Date(body.from).toLocaleDateString('de-DE')
   const from = format(new Date(body.from), 'dd.MM.yyyy')
   const manager = body.manager
   const type = body.type.charAt(0).toUpperCase() + body.type.slice(1)
@@ -20,9 +18,6 @@ module.exports = async (req, res) => {
   const note = body.note
   let mailBody = mail
   const files = body.files
-
-  console.log('send.js')
-  console.log(from, to)
 
   const sendMail = (manager, mailBody, name) => {
     const nodemailer = require('nodemailer')
