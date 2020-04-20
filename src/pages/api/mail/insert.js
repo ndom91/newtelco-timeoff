@@ -23,6 +23,10 @@ module.exports = async (req, res) => {
   const approvalHash = body.ah
   const files = JSON.stringify(body.files)
 
+  console.log('insert.js')
+  console.log(dateFromISO, dateFrom)
+  console.log(dateToISO, dateTo)
+
   let insertAbsence
   if (type === 'sick' || type === 'trip') {
     insertAbsence = await db.query(escape`

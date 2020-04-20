@@ -18,6 +18,9 @@ module.exports = async (req, res) => {
   let mailBody = mail
   const files = body.files
 
+  console.log('send.js')
+  console.log(from, to)
+
   const sendMail = (manager, mailBody, name) => {
     const nodemailer = require('nodemailer')
     const nodemailerSmtpTransport = require('nodemailer-smtp-transport')
