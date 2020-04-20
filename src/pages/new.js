@@ -55,7 +55,7 @@ const { Slide } = Animation
 const { Column, HeaderCell, Cell } = Table
 
 class Wrapper extends React.Component {
-  static async getInitialProps({ res, req, query }) {
+  static async getInitialProps ({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -71,7 +71,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor(props) {
+  constructor (props) {
     super(props)
 
     this.state = {
@@ -167,7 +167,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const host = window.location.host
     const protocol = window.location.protocol
     const tutorial = window.localStorage.getItem('tut')
@@ -355,6 +355,7 @@ class Wrapper extends React.Component {
   }
 
   handleDateChange = (value) => {
+    console.log(value)
     this.setState({
       vaca: {
         ...this.state.vaca,
@@ -545,7 +546,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  render() {
+  render () {
     const {
       vaca,
       availableManagers,
@@ -867,14 +868,14 @@ class Wrapper extends React.Component {
                           />
                         </div>
                       ) : (
-                          <div className='confirmation-wrapper'>
-                            <Lottie
-                              options={errorOptions}
-                              height={300}
-                              width={300}
-                            />
-                          </div>
-                        )
+                        <div className='confirmation-wrapper'>
+                          <Lottie
+                            options={errorOptions}
+                            height={300}
+                            width={300}
+                          />
+                        </div>
+                      )
                     )}
                 </Modal.Body>
                 <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
