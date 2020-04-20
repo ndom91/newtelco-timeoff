@@ -2,12 +2,15 @@ import fetch from 'isomorphic-unfetch'
 import mail from './requestMessage'
 const db = require('../../../lib/db')
 const escape = require('sql-template-strings')
+const { format } = require('date-fns')
 require('dotenv').config({ path: './.env' })
 
 module.exports = async (req, res) => {
   const body = JSON.parse(req.body)
-  const to = new Date(body.to).toLocaleDateString('de-DE')
-  const from = new Date(body.from).toLocaleDateString('de-DE')
+  // const to = new Date(body.to).toLocaleDateString('de-DE')
+  const to = format(new Date(body.to), 'dd.MM.yyyy')
+  // const from = new Date(body.from).toLocaleDateString('de-DE')
+  const from = format(new Date(body.from), 'dd.MM.yyyy')
   const manager = body.manager
   const type = body.type.charAt(0).toUpperCase() + body.type.slice(1)
   const name = body.name

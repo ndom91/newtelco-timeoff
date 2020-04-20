@@ -1,5 +1,6 @@
 const db = require('../../../lib/db')
 const escape = require('sql-template-strings')
+const { format } = require('date-fns')
 
 module.exports = async (req, res) => {
   const body = JSON.parse(req.body)
@@ -13,10 +14,12 @@ module.exports = async (req, res) => {
   const requested = vaca.requested
   const remaining = vaca.remaining
   const type = vaca.type
-  const dateFromISO = new Date(vaca.dateFrom)
-  const dateFrom = new Date(dateFromISO.getTime() - (dateFromISO.getTimezoneOffset() * 60000)).toISOString().split('T')[0]
-  const dateToISO = new Date(vaca.dateTo)
-  const dateTo = new Date(dateToISO.getTime() - (dateToISO.getTimezoneOffset() * 60000)).toISOString().split('T')[0]
+  // const dateFromISO = new Date(vaca.dateFrom)
+  // const dateFrom = new Date(dateFromISO.getTime() - (dateFromISO.getTimezoneOffset() * 60000)).toISOString().split('T')[0]
+  const dateFrom = format(new Date(vaca.dateFrom), 'yyyy-MM-dd')
+  // const dateToISO = new Date(vaca.dateTo)
+  // const dateTo = new Date(dateToISO.getTime() - (dateToISO.getTimezoneOffset() * 60000)).toISOString().split('T')[0]
+  const dateTo = format(new Date(vaca.dateTo), 'yyyy-MM-dd')
   const manager = vaca.manager
   const submittedBy = email.substring(0, email.lastIndexOf('@'))
   const note = vaca.notes
@@ -24,8 +27,8 @@ module.exports = async (req, res) => {
   const files = JSON.stringify(body.files)
 
   console.log('insert.js')
-  console.log(dateFromISO, dateFrom)
-  console.log(dateToISO, dateTo)
+  console.log(dateFrom)
+  console.log(dateTo)
 
   let insertAbsence
   if (type === 'sick' || type === 'trip') {
