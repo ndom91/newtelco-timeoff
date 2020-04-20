@@ -14,6 +14,7 @@ import UploadFile from '../components/uploadfile'
 import uuid from 'v4-uuid'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Joyride, { STATUS } from 'react-joyride'
+import { format } from 'date-fns'
 import Lottie from 'react-lottie'
 import lottieSuccess from '../style/lottie-success.json'
 import lottieError from '../style/error-icon.json'
@@ -55,7 +56,7 @@ const { Slide } = Animation
 const { Column, HeaderCell, Cell } = Table
 
 class Wrapper extends React.Component {
-  static async getInitialProps ({ res, req, query }) {
+  static async getInitialProps({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -71,7 +72,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
 
     this.state = {
@@ -167,7 +168,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const host = window.location.host
     const protocol = window.location.protocol
     const tutorial = window.localStorage.getItem('tut')
@@ -359,8 +360,8 @@ class Wrapper extends React.Component {
     this.setState({
       vaca: {
         ...this.state.vaca,
-        dateFrom: value[0],
-        dateTo: value[1]
+        dateFrom: format(new Date(value[0]), 'MM/dd/yyyy'),
+        dateTo: format(new Date(value[1]), 'MM/dd/yyyy')
       }
     })
   }
@@ -546,7 +547,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  render () {
+  render() {
     const {
       vaca,
       availableManagers,
@@ -868,14 +869,14 @@ class Wrapper extends React.Component {
                           />
                         </div>
                       ) : (
-                        <div className='confirmation-wrapper'>
-                          <Lottie
-                            options={errorOptions}
-                            height={300}
-                            width={300}
-                          />
-                        </div>
-                      )
+                          <div className='confirmation-wrapper'>
+                            <Lottie
+                              options={errorOptions}
+                              height={300}
+                              width={300}
+                            />
+                          </div>
+                        )
                     )}
                 </Modal.Body>
                 <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
