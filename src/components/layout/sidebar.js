@@ -58,7 +58,7 @@ const NavToggle = ({ expand, onChange, token, handleSignOut, toggleHelpModal }) 
   )
 }
 class SidebarNT extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       settings: {
@@ -69,7 +69,7 @@ class SidebarNT extends React.Component {
     }
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const protocol = window.location.protocol
     const host = window.location.host
     const companyInfo = JSON.parse(window.localStorage.getItem('company'))
@@ -124,7 +124,7 @@ class SidebarNT extends React.Component {
     }
   }
 
-  render() {
+  render () {
     const {
       openHelpModal,
       team

@@ -30,7 +30,7 @@ import {
 import Wrapper from './wrapper'
 
 export default class App extends React.Component {
-  static async getInitialProps({ req }) {
+  static async getInitialProps ({ req }) {
     return {
       session: await NextAuth.init({ req }),
       linkedAccounts: await NextAuth.linked({ req }),
@@ -38,7 +38,7 @@ export default class App extends React.Component {
     }
   }
 
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       email: '',
@@ -58,7 +58,7 @@ export default class App extends React.Component {
     })
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.animateText()
     const host = window.location.host
     const protocol = window.location.protocol
@@ -94,7 +94,7 @@ export default class App extends React.Component {
       })
   }
 
-  render() {
+  render () {
     if (this.props.session.user) {
       return (
         <Wrapper>
@@ -222,7 +222,7 @@ export default class App extends React.Component {
 }
 
 export class LinkAccounts extends React.Component {
-  render() {
+  render () {
     return (
       <Panel header={<h3 className='login-text-header'>Link Accounts</h3>} bordered>
         <p style={{ marginTop: '20px', marginBottom: '20px' }}>You are signed in as <span style={{ fontWeight: '600' }}>{this.props.session.user.email}</span>.</p>
@@ -244,7 +244,7 @@ export class LinkAccounts extends React.Component {
 }
 
 export class LinkAccount extends React.Component {
-  render() {
+  render () {
     if (this.props.linked === true) {
       return (
         <form style={{ display: 'inline', marginLeft: '10px' }} method='post' action={`/auth/oauth/${this.props.provider.toLowerCase()}/unlink`}>
@@ -267,7 +267,7 @@ export class LinkAccount extends React.Component {
 }
 
 export class SignInButtons extends React.Component {
-  render() {
+  render () {
     return (
       <>
         {

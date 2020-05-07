@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
 export default class DateField extends Component {
-  render() {
+  render () {
     const props = this.props
     const value = this.props.value
     let dateTime

@@ -264,7 +264,6 @@ class Wrapper extends React.Component {
       .then(data => {
         const lastEntry = data.newestEntry[0]
         if (lastEntry) {
-          console.log(lastEntry)
           const lastRequest = {
             ...lastEntry,
             lastYear: lastEntry.resturlaubVorjahr,
@@ -389,7 +388,6 @@ class Wrapper extends React.Component {
   }
 
   handleDateChange = (value) => {
-    console.log(value)
     this.setState({
       vaca: {
         ...this.state.vaca,

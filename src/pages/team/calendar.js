@@ -130,8 +130,7 @@ class Wrapper extends React.Component {
                     }}
                   >
                     <BarLoader width={80} height={3} color='#575757' loading={loading} />
-                  </div>
-                }
+                  </div>}
               </Content>
             </Panel>
           </Container>

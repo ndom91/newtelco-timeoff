@@ -8,7 +8,7 @@ import {
 import '../../style/newtelco-rsuite.less'
 
 export default class extends React.Component {
-  static async getInitialProps({ query }) {
+  static async getInitialProps ({ query }) {
     return {
       action: query.action || null,
       type: query.type || null,
@@ -16,7 +16,7 @@ export default class extends React.Component {
     }
   }
 
-  render() {
+  render () {
     if (this.props.action === 'signin' && this.props.type === 'oauth') {
       return (
         <Wrapper>
