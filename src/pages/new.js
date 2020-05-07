@@ -271,6 +271,7 @@ class Wrapper extends React.Component {
             thisYear: lastEntry.jahresurlaubInsgesamt,
             spentThisYear: parseFloat(lastEntry.jahresUrlaubAusgegeben || 0) + parseFloat(lastEntry.beantragt),
             total: lastEntry.resturlaubJAHR,
+            requested: 0,
             remaining: lastEntry.resturlaubJAHR,
             name: user.label,
             email: email
@@ -348,8 +349,8 @@ class Wrapper extends React.Component {
       this.setState({
         vaca: {
           ...this.state.vaca,
-          requested: parseFloat(value),
-          remaining: parseFloat(this.state.vaca.total) - parseFloat(value)
+          requested: parseFloat(value || 0.0),
+          remaining: parseFloat(this.state.vaca.total) - parseFloat(value || 0.0)
         }
       })
     } else {
@@ -421,15 +422,15 @@ class Wrapper extends React.Component {
       vaca: {
         name: this.props.session.user.name,
         email: this.props.session.user.email,
-        lastYear: '',
-        thisYear: '',
-        total: '',
-        requested: '',
-        remaining: '',
-        type: '',
-        dateFrom: '',
-        dateTo: '',
-        manager: ''
+        lastYear: 0,
+        thisYear: 0,
+        total: 0,
+        requested: 0,
+        remaining: 0,
+        type: 0,
+        dateFrom: 0,
+        dateTo: 0,
+        manager: 0
       }
     })
   }
@@ -716,8 +717,11 @@ class Wrapper extends React.Component {
                           <FormGroup className='history-input-wrapper'>
                             <div className='input-number'>5</div>
                             <ControlLabel>Requested Days</ControlLabel>
-                            <InputNumber min={0} size='lg' postfix='days' name='requestedDays' onChange={this.handleRequestedChange} value={vaca.requested} />
+                            <InputNumber step={0.5} size='lg' postfix='days' name='requestedDays' onChange={this.handleRequestedChange} value={vaca.requested} />
                             <HelpBlock tooltip>Number of day(s) you need off. <br /> Half days = '0.5'</HelpBlock>
+                          </FormGroup>
+                          <FormGroup style={{ margin: '5px 20px 30px 20px', color: '#a7a7a7' }}>
+                            <small>Remember, do not count weekends or <a target='_blank' rel='noopener noreferrer' href='https://www.officeholidays.com/countries/germany/2020'>German Federal Holidays</a> in your number of requested days.</small>
                           </FormGroup>
                           <FormGroup className='history-input-wrapper'>
                             <div className='input-number'>6</div>
