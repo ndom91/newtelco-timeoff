@@ -116,12 +116,12 @@ export default class App extends React.Component {
                   <Panel header={<h3 className='login-text-header'>Vacation Login</h3>} bordered>
                     <Form fluid id='signin' method='post' action='/auth/email/signin' onSubmit={this.handleSignInSubmit}>
                       <input name='_csrf' type='hidden' value={this.state.session.csrfToken} />
-                      <FormGroup>
+                      {/* <FormGroup>
                         <ControlLabel style={{ display: 'inline' }}>Email Address</ControlLabel>
                         <HelpBlock style={{ marginTop: '-1px' }} tooltip>Not Required with Google Login</HelpBlock>
                         <FormControl style={{ width: '100%', marginTop: '10px' }} name='email' type='text' value={this.state.email} onChange={formValue => { this.setState({ email: formValue }) }} placeholder='jcleese@newtelco.de' />
                       </FormGroup>
-                      <Divider />
+                      <Divider /> */}
                       <FormGroup>
                         <ButtonToolbar>
                           <SignInButtons providers={this.props.providers} />
@@ -161,8 +161,8 @@ export default class App extends React.Component {
               margin: 100px 0 50px 0;
             } 
             :global(.rs-panel-heading) {
-              background-color: #67b246;
-              color: #fff;
+              background-color: #e8e8e8;
+              color: #a7a7a7;
             }
             :global(.rs-panel-body) {
               background-color: #fff;
@@ -192,9 +192,6 @@ export default class App extends React.Component {
             }
             :global(.login-text-header) {
               font-weight: 100;
-            }
-            :global(.login-header-wrapper) {
-
             }
             :global(.login-content-wrapper) {
               background-color: transparent;
