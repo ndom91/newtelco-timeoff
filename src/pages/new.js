@@ -56,7 +56,7 @@ const { Slide } = Animation
 const { Column, HeaderCell, Cell } = Table
 
 class Wrapper extends React.Component {
-  static async getInitialProps({ res, req, query }) {
+  static async getInitialProps ({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -72,7 +72,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor(props) {
+  constructor (props) {
     super(props)
 
     this.state = {
@@ -168,7 +168,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const host = window.location.host
     const protocol = window.location.protocol
     const tutorial = window.localStorage.getItem('tut')
@@ -204,11 +204,11 @@ class Wrapper extends React.Component {
       .then(data => {
         const newRequest = {
           lastYear: data.lastRequest[0].resturlaubVorjahr || 0,
-          thisYear: data.lastRequest[0].jahresurlaubInsgesamt,
-          spentThisYear: data.lastRequest[0].jahresUrlaubAusgegeben,
-          total: data.lastRequest[0].restjahresurlaubInsgesamt,
-          requested: data.lastRequest[0].beantragt,
-          remaining: data.lastRequest[0].resturlaubJAHR,
+          thisYear: data.lastRequest[0].jahresurlaubInsgesamt || 0,
+          spentThisYear: data.lastRequest[0].jahresUrlaubAusgegeben || 0,
+          total: data.lastRequest[0].restjahresurlaubInsgesamt || 0,
+          requested: data.lastRequest[0].beantragt || 0,
+          remaining: data.lastRequest[0].resturlaubJAHR || 0,
           from: moment(data.lastRequest[0].fromDate).format('DD.MM.YYYY'),
           to: moment(data.lastRequest[0].toDate).format('DD.MM.YYYY'),
           submitted: moment(data.lastRequest[0].submitted_datetime).format('DD.MM.YYYY HH:mm')
@@ -219,7 +219,7 @@ class Wrapper extends React.Component {
       })
       .catch(err => console.error(err))
 
-    fetch(`${protocol}//${host}/api/user/list`)
+    fetch('/api/user/list')
       .then(res => res.json())
       .then(data => {
         const availableUsers = []
@@ -234,36 +234,68 @@ class Wrapper extends React.Component {
       })
       .catch(err => console.error(err))
 
-    fetch(`${protocol}//${host}/api/user/entries/new?email=${email}`)
+    fetch(`/api/user/entries/new?email=${email}`)
       .then(res => res.json())
       .then(data => {
-        console.log(data)
         const lastRequest = data.newestEntry[0]
-        let existingData = this.state.vaca
-        existingData = {
-          ...existingData,
-          lastYear: lastRequest.resturlaubVorjahr,
-          thisYear: lastRequest.jahresurlaubInsgesamt,
-          spentThisYear: parseFloat(lastRequest.jahresUrlaubAusgegeben) + parseFloat(lastRequest.beantragt),
-          total: lastRequest.resturlaubJAHR
+        if (lastRequest) {
+          let existingData = this.state.vaca
+          existingData = {
+            ...existingData,
+            lastYear: lastRequest.resturlaubVorjahr,
+            thisYear: lastRequest.jahresurlaubInsgesamt,
+            spentThisYear: parseFloat(lastRequest.jahresUrlaubAusgegeben || 0) + parseFloat(lastRequest.beantragt),
+            total: lastRequest.resturlaubJAHR,
+            remaining: lastRequest.resturlaubJAHR
+          }
+          this.setState({
+            vaca: existingData,
+            disableDaysInput: true
+          })
         }
-        this.setState({
-          vaca: existingData,
-          disableDaysInput: true
-        })
       })
       .catch(err => console.error(err))
   }
 
-  handleNameChange = (value) => {
-    const user = this.state.availableUsers.find(u => u.value === value)
-    this.setState({
-      vaca: {
-        ...this.state.vaca,
-        name: user.label,
-        email: value
-      }
-    })
+  handleNameChange = (email) => {
+    const user = this.state.availableUsers.find(u => u.value === email)
+    fetch(`/api/user/entries/new?email=${email}`)
+      .then(res => res.json())
+      .then(data => {
+        const lastEntry = data.newestEntry[0]
+        if (lastEntry) {
+          console.log(lastEntry)
+          const lastRequest = {
+            ...lastEntry,
+            lastYear: lastEntry.resturlaubVorjahr,
+            thisYear: lastEntry.jahresurlaubInsgesamt,
+            spentThisYear: parseFloat(lastEntry.jahresUrlaubAusgegeben || 0) + parseFloat(lastEntry.beantragt),
+            total: lastEntry.resturlaubJAHR,
+            remaining: lastEntry.resturlaubJAHR,
+            name: user.label,
+            email: email
+          }
+          this.setState({
+            vaca: lastRequest,
+            disableDaysInput: true
+          })
+        } else {
+          this.setState({
+            disableDaysInput: false,
+            vaca: {
+              lastYear: 0,
+              thisYear: 0,
+              spentThisYear: 0,
+              total: 0,
+              requested: 0,
+              remaining: 0,
+              name: user.label,
+              email: email
+            }
+          })
+        }
+      })
+      .catch(err => console.error(err))
   }
 
   handleEmailChange = (value) => {
@@ -547,7 +579,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  render() {
+  render () {
     const {
       vaca,
       availableManagers,
@@ -679,7 +711,7 @@ class Wrapper extends React.Component {
                             <div className='input-number'>4</div>
                             <ControlLabel>Total Days Available</ControlLabel>
                             <InputNumber min={0} size='lg' postfix='days' name='totalDaysAvailable' onChange={this.handleTotalAvailableChange} value={vaca.total} disabled={disableDaysInput} />
-                            <HelpBlock tooltip>Days from last year + days from this year - days already spent this year</HelpBlock>
+                            <HelpBlock tooltip>Days from last year (1) + days from this year (2) - days already spent this year(3)</HelpBlock>
                           </FormGroup>
                           <FormGroup className='history-input-wrapper'>
                             <div className='input-number'>5</div>
@@ -699,7 +731,7 @@ class Wrapper extends React.Component {
                     <div className={`${showCalc ? 'active' : ''} calc-sidebar `}>
                       <Calculator />
                       <div className='sidebar-button' onClick={this.showTimeCalculator}>
-                        <div className='calc-btn' style={{ marginLeft: '10px', right: '2px', top: '110px', position: 'absolute', color: 'secondary' }}>
+                        <div className='calc-btn' style={{ marginLeft: '10px', right: '5px', top: '110px', position: 'absolute', color: 'secondary' }}>
                           <Tooltip
                             title='Calculator for Days Available'
                             position='right'
@@ -707,7 +739,7 @@ class Wrapper extends React.Component {
                             distance='20'
                             offset='-23'
                           >
-                            <FontAwesomeIcon className='calc-btn' icon={!showCalc ? faAngleRight : faAngleLeft} width='2em' />
+                            <FontAwesomeIcon className='calc-btn' icon={!showCalc ? faAngleRight : faAngleLeft} width='1.5em' />
                           </Tooltip>
                         </div>
                       </div>
@@ -818,7 +850,7 @@ class Wrapper extends React.Component {
               </FormGroup>
             </Panel>
             <div className='sidebar-button' onClick={this.showLastRequestSidebar}>
-              <div style={{ marginLeft: '10px', right: '10px', top: '325px', position: 'absolute', color: 'secondary' }}>
+              <div style={{ marginLeft: '10px', right: '13px', top: '325px', position: 'absolute', color: 'secondary' }}>
                 <Tooltip
                   title='View Last Request Details'
                   trigger='mouseenter'
@@ -827,7 +859,7 @@ class Wrapper extends React.Component {
                   position='right'
                   sticky
                 >
-                  <FontAwesomeIcon className='last-btn' icon={!showSidebar ? faAngleRight : faAngleLeft} width='2em' />
+                  <FontAwesomeIcon className='last-btn' icon={!showSidebar ? faAngleRight : faAngleLeft} width='1.5em' />
                 </Tooltip>
               </div>
             </div>
@@ -869,14 +901,14 @@ class Wrapper extends React.Component {
                           />
                         </div>
                       ) : (
-                          <div className='confirmation-wrapper'>
-                            <Lottie
-                              options={errorOptions}
-                              height={300}
-                              width={300}
-                            />
-                          </div>
-                        )
+                        <div className='confirmation-wrapper'>
+                          <Lottie
+                            options={errorOptions}
+                            height={300}
+                            width={300}
+                          />
+                        </div>
+                      )
                     )}
                 </Modal.Body>
                 <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>

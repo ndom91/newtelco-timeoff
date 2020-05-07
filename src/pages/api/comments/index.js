@@ -6,7 +6,6 @@ module.exports = async (req, res) => {
   const comments = await db.query(`
     SELECT id, user, page, datetime, active, FROM_BASE64(body) as body FROM discussion WHERE page LIKE '${team}' AND active LIKE 1 ORDER BY datetime DESC LIMIT ${count} 
   `)
-  console.log(comments)
   const resp = []
   comments.forEach(async comment => {
     const user = comment.user

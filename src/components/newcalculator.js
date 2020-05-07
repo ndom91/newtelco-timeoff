@@ -2,7 +2,7 @@ import React from 'react'
 import { Form, Radio, RadioGroup, Panel, FormGroup, InputNumber } from 'rsuite'
 
 export default class Calculator extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       curYears: 0,
@@ -48,16 +48,22 @@ export default class Calculator extends React.Component {
     console.log(value)
     if (value === 'years') {
       this.setState({
-        displayCalc: 'years'
+        displayCalc: 'years',
+        daysAvailable: 0,
+        curMonths: 0,
+        curYears: 0
       })
     } else if (value === 'months') {
       this.setState({
-        displayCalc: 'months'
+        displayCalc: 'months',
+        daysAvailable: 0,
+        curMonths: 0,
+        curYears: 0
       })
     }
   }
 
-  render() {
+  render () {
     const {
       curMonths,
       curYears,
@@ -86,17 +92,17 @@ export default class Calculator extends React.Component {
                 </Panel>
               </FormGroup>
             ) : (
-                <FormGroup>
-                  <InputNumber name='years' inputMode='numeric' className='calc-input' onChange={this.handleYearsChange} value={curYears} min={0} postfix='years' />
-                  <Panel bordered style={{ boxShadow: 'none', height: '40px', marginTop: '15px', width: '170px', fontWeight: '300' }}>
-                    {curYears !== 0 && (
-                      <span className='days-available'>
-                        {`${daysAvailable} days earned`}
-                      </span>
-                    )}
-                  </Panel>
-                </FormGroup>
-              )}
+              <FormGroup>
+                <InputNumber name='years' inputMode='numeric' className='calc-input' onChange={this.handleYearsChange} value={curYears} min={0} postfix='years' />
+                <Panel bordered style={{ boxShadow: 'none', height: '40px', marginTop: '15px', width: '170px', fontWeight: '300' }}>
+                  {curYears !== 0 && (
+                    <span className='days-available'>
+                      {`${daysAvailable} days earned`}
+                    </span>
+                  )}
+                </Panel>
+              </FormGroup>
+            )}
           </Form>
         </Panel>
         <style jsx>{`
