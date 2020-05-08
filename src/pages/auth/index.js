@@ -12,10 +12,6 @@ import anime from 'animejs'
 import '../../style/newtelco-rsuite.less'
 import VacaPattern from '../../../public/static/img/vacation_pattern.svg'
 import {
-  Divider,
-  ControlLabel,
-  FormControl,
-  HelpBlock,
   Container,
   Content,
   Footer,
@@ -116,12 +112,6 @@ export default class App extends React.Component {
                   <Panel header={<h3 className='login-text-header'>Vacation Login</h3>} bordered>
                     <Form fluid id='signin' method='post' action='/auth/email/signin' onSubmit={this.handleSignInSubmit}>
                       <input name='_csrf' type='hidden' value={this.state.session.csrfToken} />
-                      {/* <FormGroup>
-                        <ControlLabel style={{ display: 'inline' }}>Email Address</ControlLabel>
-                        <HelpBlock style={{ marginTop: '-1px' }} tooltip>Not Required with Google Login</HelpBlock>
-                        <FormControl style={{ width: '100%', marginTop: '10px' }} name='email' type='text' value={this.state.email} onChange={formValue => { this.setState({ email: formValue }) }} placeholder='jcleese@newtelco.de' />
-                      </FormGroup>
-                      <Divider /> */}
                       <FormGroup>
                         <ButtonToolbar>
                           <SignInButtons providers={this.props.providers} />

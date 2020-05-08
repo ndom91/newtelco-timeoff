@@ -55,6 +55,7 @@
     "googleapis": "^47.0.0",
     "isomorphic-unfetch": "^3.0.0",
     "less": "^3.11.1",
+    "logrocket": "^1.0.7",
     "moment-range": "^4.0.2",
     "moment-timezone": "^0.5.28",
     "nedb": "^1.8.0",
