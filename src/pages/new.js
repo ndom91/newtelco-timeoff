@@ -635,36 +635,32 @@ class Wrapper extends React.Component {
                   }}
                   callback={this.handleJoyrideCallback}
                 />
-                <Panel bordered>
-                  <PanelGroup style={{ maxWidth: '700px' }}>
-                    <Panel
-                      bordered style={{ position: 'relative' }} header={
-                        <h4 className='form-section-heading' style={{ position: 'relative' }}>
-                          User
-                          <FontAwesomeIcon icon={faUser} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
-                        </h4>
-                      }
-                    >
-                      <FormGroup>
-                        <ControlLabel>Name</ControlLabel>
-                        <SelectPicker name='name' onChange={this.handleNameChange} defaultValue={vaca.email} data={this.state.availableUsers} style={{ width: '320px' }} />
-                      </FormGroup>
-                      <FormGroup>
-                        <ControlLabel>Email</ControlLabel>
-                        <FormControl name='email' inputMode='email' autoComplete='email' onChange={this.handleEmailChange} value={vaca.email} style={{ width: '320px' }} />
-                      </FormGroup>
-                      <FormGroup>
-                        <ControlLabel>Type of Absence</ControlLabel>
-                        <RadioGroup onChange={this.handleTypeChange} name='radioList' inline appearance='picker' defaultValue='vacation' className='absence-select' style={{ width: isMobile ? '250px' : '320px' }}>
-                          <Radio value='vacation'>Vacation</Radio>
-                          <Radio value='sick'>Illness</Radio>
-                          <Radio value='trip'>Trip</Radio>
-                          <Radio value='moving'>Moving</Radio>
-                          <Radio value='other'>Other</Radio>
-                        </RadioGroup>
-                      </FormGroup>
-                    </Panel>
-                  </PanelGroup>
+                <Panel
+                  bordered style={{ position: 'relative' }} header={
+                    <h4 className='form-section-heading' style={{ position: 'relative' }}>
+                      User
+                      <FontAwesomeIcon icon={faUser} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
+                    </h4>
+                  }
+                >
+                  <FormGroup>
+                    <ControlLabel>Name</ControlLabel>
+                    <SelectPicker name='name' onChange={this.handleNameChange} defaultValue={vaca.email} data={this.state.availableUsers} style={{ width: '320px' }} />
+                  </FormGroup>
+                  <FormGroup>
+                    <ControlLabel>Email</ControlLabel>
+                    <FormControl name='email' inputMode='email' autoComplete='email' onChange={this.handleEmailChange} value={vaca.email} style={{ width: '320px' }} />
+                  </FormGroup>
+                  <FormGroup>
+                    <ControlLabel>Type of Absence</ControlLabel>
+                    <RadioGroup onChange={this.handleTypeChange} name='radioList' inline appearance='picker' defaultValue='vacation' className='absence-select' style={{ width: isMobile ? '250px' : '320px' }}>
+                      <Radio value='vacation'>Vacation</Radio>
+                      <Radio value='sick'>Illness</Radio>
+                      <Radio value='trip'>Trip</Radio>
+                      <Radio value='moving'>Moving</Radio>
+                      <Radio value='other'>Other</Radio>
+                    </RadioGroup>
+                  </FormGroup>
                 </Panel>
                 <CSSTransition
                   in={!hideHistory}
@@ -676,59 +672,54 @@ class Wrapper extends React.Component {
                     style={{ position: 'relative', overflow: 'visible', zIndex: '3', marginBottom: '20px' }}
                   >
                     <Panel
-                      style={{ position: 'relative', overflow: 'visible', zIndex: '3' }}
                       bordered
+                      style={{ padding: '10px' }}
+                      header={
+                        <h4 className='form-section-heading' style={{ position: 'relative' }}>
+                          History
+                          <FontAwesomeIcon icon={faHistory} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
+                        </h4>
+                      }
                     >
-                      <PanelGroup>
-                        <Panel
-                          bordered header={
-                            <h4 className='form-section-heading' style={{ position: 'relative' }}>
-                              History
-                              <FontAwesomeIcon icon={faHistory} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
-                            </h4>
-                          }
-                        >
-                          <FormGroup className='history-input-wrapper'>
-                            <div className='input-number'>1</div>
-                            <ControlLabel>Days from Last Year</ControlLabel>
-                            <HelpBlock tooltip>Days which you have transfered with you from last year</HelpBlock>
-                            <InputNumber min={0} size='lg' postfix='days' value={vaca.lastYear} onChange={this.handleLastYearChange} disabled={disableDaysInput} />
-                          </FormGroup>
-                          <FormGroup className='history-input-wrapper'>
-                            <div className='input-number'>2</div>
-                            <ControlLabel>Days from this Year</ControlLabel>
-                            <InputNumber min={0} size='lg' postfix='days' name='daysThisYear' onChange={this.handleThisYearChange} value={vaca.thisYear} disabled={disableDaysInput} />
-                            <HelpBlock tooltip>Days which you have earned this year</HelpBlock>
-                          </FormGroup>
-                          <FormGroup className='history-input-wrapper'>
-                            <div className='input-number'>3</div>
-                            <ControlLabel>Days spent This Year</ControlLabel>
-                            <InputNumber min={0} size='lg' postfix='days' name='daysSpentThisYear' onChange={this.handleSpentThisYearChange} value={vaca.spentThisYear} disabled={disableDaysInput} />
-                            <HelpBlock tooltip>Days which you have already used up this year</HelpBlock>
-                          </FormGroup>
-                          <FormGroup className='history-input-wrapper'>
-                            <div className='input-number'>4</div>
-                            <ControlLabel>Total Days Available</ControlLabel>
-                            <InputNumber min={0} size='lg' postfix='days' name='totalDaysAvailable' onChange={this.handleTotalAvailableChange} value={vaca.total} disabled={disableDaysInput} />
-                            <HelpBlock tooltip>Days from last year (1) + days from this year (2) - days already spent this year(3)</HelpBlock>
-                          </FormGroup>
-                          <FormGroup className='history-input-wrapper'>
-                            <div className='input-number'>5</div>
-                            <ControlLabel>Requested Days</ControlLabel>
-                            <InputNumber step={0.5} size='lg' postfix='days' name='requestedDays' onChange={this.handleRequestedChange} value={vaca.requested} />
-                            <HelpBlock tooltip>Number of day(s) you need off. <br /> Half days = '0.5'</HelpBlock>
-                          </FormGroup>
-                          <FormGroup style={{ margin: '5px 20px 30px 20px', color: '#a7a7a7' }}>
-                            <small>Remember, do not count weekends or <a target='_blank' rel='noopener noreferrer' href='https://www.officeholidays.com/countries/germany/2020'>German Federal Holidays</a> in your number of requested days.</small>
-                          </FormGroup>
-                          <FormGroup className='history-input-wrapper'>
-                            <div className='input-number'>6</div>
-                            <ControlLabel>Days Remaining</ControlLabel>
-                            <InputNumber min={0} size='lg' postfix='days' name='remainingDays' onChange={this.handleRemainingChange} value={vaca.remaining} disabled={disableDaysInput} />
-                            <HelpBlock tooltip>Number of total available days minus total requested days</HelpBlock>
-                          </FormGroup>
-                        </Panel>
-                      </PanelGroup>
+                      <FormGroup className='history-input-wrapper'>
+                        <div className='input-number'>1</div>
+                        <ControlLabel>Days from Last Year</ControlLabel>
+                        <HelpBlock tooltip>Days which you have transfered with you from last year</HelpBlock>
+                        <InputNumber min={0} size='lg' postfix='days' value={vaca.lastYear} onChange={this.handleLastYearChange} disabled={disableDaysInput} />
+                      </FormGroup>
+                      <FormGroup className='history-input-wrapper'>
+                        <div className='input-number'>2</div>
+                        <ControlLabel>Days from this Year</ControlLabel>
+                        <InputNumber min={0} size='lg' postfix='days' name='daysThisYear' onChange={this.handleThisYearChange} value={vaca.thisYear} disabled={disableDaysInput} />
+                        <HelpBlock tooltip>Days which you have earned this year</HelpBlock>
+                      </FormGroup>
+                      <FormGroup className='history-input-wrapper'>
+                        <div className='input-number'>3</div>
+                        <ControlLabel>Days spent This Year</ControlLabel>
+                        <InputNumber min={0} size='lg' postfix='days' name='daysSpentThisYear' onChange={this.handleSpentThisYearChange} value={vaca.spentThisYear} disabled={disableDaysInput} />
+                        <HelpBlock tooltip>Days which you have already used up this year</HelpBlock>
+                      </FormGroup>
+                      <FormGroup className='history-input-wrapper'>
+                        <div className='input-number'>4</div>
+                        <ControlLabel>Total Days Available</ControlLabel>
+                        <InputNumber min={0} size='lg' postfix='days' name='totalDaysAvailable' onChange={this.handleTotalAvailableChange} value={vaca.total} disabled={disableDaysInput} />
+                        <HelpBlock tooltip>Days from last year (1) + days from this year (2) - days already spent this year(3)</HelpBlock>
+                      </FormGroup>
+                      <FormGroup className='history-input-wrapper'>
+                        <div className='input-number'>5</div>
+                        <ControlLabel>Requested Days</ControlLabel>
+                        <InputNumber step={0.5} size='lg' postfix='days' name='requestedDays' onChange={this.handleRequestedChange} value={vaca.requested} />
+                        <HelpBlock tooltip>Number of day(s) you need off. <br /> Half days = '0.5'</HelpBlock>
+                      </FormGroup>
+                      <FormGroup style={{ margin: '5px 20px 30px 20px', color: '#a7a7a7' }}>
+                        <small>Remember, do not count weekends or <a target='_blank' rel='noopener noreferrer' href='https://www.officeholidays.com/countries/germany/2020'>German Federal Holidays</a> in your number of requested days.</small>
+                      </FormGroup>
+                      <FormGroup className='history-input-wrapper'>
+                        <div className='input-number'>6</div>
+                        <ControlLabel>Days Remaining</ControlLabel>
+                        <InputNumber min={0} size='lg' postfix='days' name='remainingDays' onChange={this.handleRemainingChange} value={vaca.remaining} disabled={disableDaysInput} />
+                        <HelpBlock tooltip>Number of total available days minus total requested days</HelpBlock>
+                      </FormGroup>
                     </Panel>
                     <div className={`${showCalc ? 'active' : ''} calc-sidebar `}>
                       <Calculator />
@@ -748,66 +739,64 @@ class Wrapper extends React.Component {
                     </div>
                   </div>
                 </CSSTransition>
-                <Panel bordered>
-                  <PanelGroup>
-                    <Panel
-                      bordered header={
-                        <h4 className='form-section-heading' style={{ position: 'relative' }}>
-                          Dates
-                          <FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
-                        </h4>
-                      }
+                <Panel
+                  bordered
+                  style={{ padding: '10px' }}
+                  header={
+                    <h4 className='form-section-heading' style={{ position: 'relative' }}>
+                      Dates
+                      <FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
+                    </h4>
+                  }
+                >
+                  <FormGroup>
+                    <ControlLabel>On which days?</ControlLabel>
+                    <DateRangePicker
+                      placement='top'
+                      style={{ width: 320 }}
+                      showWeekNumbers
+                      onChange={this.handleDateChange}
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <ControlLabel>Manager</ControlLabel>
+                    <SelectPicker data={availableManagers} onChange={this.handleManagerChange} style={{ width: '320px' }} />
+                  </FormGroup>
+                  <FormGroup>
+                    <ControlLabel>Note</ControlLabel>
+                    <Input componentClass='textarea' rows={3} placeholder='Optional Note' onChange={this.handleNotesChange} style={{ width: isMobile ? '240px' : '320px' }} />
+                  </FormGroup>
+                  {vaca.type === 'sick' && (
+                    <FormGroup>
+                      <ControlLabel className='sick-warning'>
+                        <FontAwesomeIcon icon={faExclamationCircle} width='5.5rem' style={{ margin: '10px' }} />
+                        When submitting a sick notice, don't forget to submit a doctors note now, or later in your personal dashboard by editing this request.
+                      </ControlLabel>
+                    </FormGroup>
+                  )}
+                  <FormGroup style={{ marginBottom: '20px' }}>
+                    <ControlLabel className='filedrop-label'>
+                      Documents
+                    </ControlLabel>
+                    <div
+                      className='upload-file'
                     >
-                      <FormGroup>
-                        <ControlLabel>On which days?</ControlLabel>
-                        <DateRangePicker
-                          placement='top'
-                          style={{ width: 320 }}
-                          showWeekNumbers
-                          onChange={this.handleDateChange}
-                        />
-                      </FormGroup>
-                      <FormGroup>
-                        <ControlLabel>Manager</ControlLabel>
-                        <SelectPicker data={availableManagers} onChange={this.handleManagerChange} style={{ width: '320px' }} />
-                      </FormGroup>
-                      <FormGroup>
-                        <ControlLabel>Note</ControlLabel>
-                        <Input componentClass='textarea' rows={3} placeholder='Optional Note' onChange={this.handleNotesChange} style={{ width: isMobile ? '240px' : '320px' }} />
-                      </FormGroup>
-                      {vaca.type === 'sick' && (
-                        <FormGroup>
-                          <ControlLabel className='sick-warning'>
-                            <FontAwesomeIcon icon={faExclamationCircle} width='5.5rem' style={{ margin: '10px' }} />
-                            When submitting a sick notice, don't forget to submit a doctors note now, or later in your personal dashboard by editing this request.
-                          </ControlLabel>
-                        </FormGroup>
-                      )}
-                      <FormGroup style={{ marginBottom: '20px' }}>
-                        <ControlLabel className='filedrop-label'>
-                          Documents
-                        </ControlLabel>
-                        <div
-                          className='upload-file'
-                        >
-                          <UploadFile
-                            email={this.props.session.user.email}
-                            csrfToken={this.props.session.csrfToken}
-                            handleFileUploadSuccess={this.onFileUploadSuccess}
-                            successfullySent={successfullySent}
-                          />
-                        </div>
-                      </FormGroup>
-                      <FormGroup>
-                        <ButtonToolbar style={{ paddingLeft: '0px' }}>
-                          <ButtonGroup style={{ width: isMobile ? '240px' : '320px' }}>
-                            <Button style={{ width: '50%' }} onClick={this.handleClear} appearance='default'>Clear</Button>
-                            <Button style={{ width: '50%' }} onClick={this.toggleSubmitModal} disabled={successfullySent} appearance='primary'>Submit</Button>
-                          </ButtonGroup>
-                        </ButtonToolbar>
-                      </FormGroup>
-                    </Panel>
-                  </PanelGroup>
+                      <UploadFile
+                        email={this.props.session.user.email}
+                        csrfToken={this.props.session.csrfToken}
+                        handleFileUploadSuccess={this.onFileUploadSuccess}
+                        successfullySent={successfullySent}
+                      />
+                    </div>
+                  </FormGroup>
+                  <FormGroup>
+                    <ButtonToolbar style={{ paddingLeft: '0px' }}>
+                      <ButtonGroup style={{ width: isMobile ? '240px' : '320px' }}>
+                        <Button style={{ width: '50%' }} onClick={this.handleClear} appearance='default'>Clear</Button>
+                        <Button style={{ width: '50%' }} onClick={this.toggleSubmitModal} disabled={successfullySent} appearance='primary'>Submit</Button>
+                      </ButtonGroup>
+                    </ButtonToolbar>
+                  </FormGroup>
                 </Panel>
               </Form>
             </Content>
