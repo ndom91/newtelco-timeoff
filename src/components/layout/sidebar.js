@@ -54,7 +54,6 @@ const NavToggle = ({ expand, onChange, token, handleSignOut, toggleHelpModal }) 
           </Nav.Item>
         </Nav>
       </Navbar.Body>
-      <noscript><img src="https://analytics.newtelco.dev/ingress/1a00ef94-c309-4171-8ba6-184263f2693c/pixel.gif"></noscript> <script src="https://analytics.newtelco.dev/ingress/1a00ef94-c309-4171-8ba6-184263f2693c/script.js"></script>
     </Navbar>
   )
 }

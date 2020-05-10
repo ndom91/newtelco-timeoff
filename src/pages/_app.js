@@ -48,7 +48,9 @@ export default class AppWrapper extends App {
           <link rel='manifest' href='/manifest.json' />
           <link rel='mask-icon' href='/static/icons/safari-pinned-tab.svg' color='#5bbad5' />
           <link rel='shortcut icon' id='favicon' href='/static/img/favicon/favicon.ico' />
+          <script src='https://analytics.newtelco.dev/ingress/1a00ef94-c309-4171-8ba6-184263f2693c/script.js' />
         </Head>
+        <noscript><img src='https://analytics.newtelco.dev/ingress/1a00ef94-c309-4171-8ba6-184263f2693c/pixel.gif' /></noscript>
         <Component {...pageProps} />
         <style jsx global>{`
           body,
