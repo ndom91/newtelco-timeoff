@@ -636,7 +636,9 @@ class Wrapper extends React.Component {
                   callback={this.handleJoyrideCallback}
                 />
                 <Panel
-                  bordered style={{ position: 'relative' }} header={
+                  bordered
+                  style={{ position: 'relative', padding: '10px' }}
+                  header={
                     <h4 className='form-section-heading' style={{ position: 'relative' }}>
                       User
                       <FontAwesomeIcon icon={faUser} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
