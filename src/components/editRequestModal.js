@@ -38,7 +38,7 @@ const notifyError = (header, text) => {
 const EditModal = props => {
   const openEditModal = props.open
   const [loading, setLoading] = useState(false)
-  const [fieldsDisabled, setEditable] = useState(false)
+  const [fieldsDisabled, setEditable] = useState(props.fieldsDisabled || false)
   const [editData, setData] = useState([''])
   const [files, setFiles] = useState([])
 
@@ -153,7 +153,7 @@ const EditModal = props => {
   }
 
   return (
-    <Modal enforceFocus size='sm' backdrop show={openEditModal} onHide={props.toggleEditModal} style={{ marginTop: '40px' }}>
+    <Modal enforceFocus size='sm' backdrop show={openEditModal} onHide={props.toggleEditModal} style={{ marginTop: '20px' }}>
       <Modal.Header>
         <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>Edit Request</Modal.Title>
       </Modal.Header>

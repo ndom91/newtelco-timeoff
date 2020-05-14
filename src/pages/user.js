@@ -482,7 +482,8 @@ class Wrapper extends React.Component {
             editData: tableData,
             files: files,
             loadingFiles: false,
-            openEditModal: !this.state.openEditModal
+            openEditModal: !this.state.openEditModal,
+            editAvailable: this.state.editAvailable
           })
         })
         .catch(err => console.error(err))
@@ -597,6 +598,7 @@ class Wrapper extends React.Component {
                 toggleEditModal={this.toggleEditModal}
                 session={this.props.session}
                 setRowData={this.setRowData}
+                fieldsDisabled={this.state.editAvailable}
               />
             )}
             {viewFilesModal && (
