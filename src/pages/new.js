@@ -859,7 +859,7 @@ class Wrapper extends React.Component {
           </div>
           {openConfirmModal && (
             <Slide in={openConfirmModal} placement='top' exitingClassName='modal-out'>
-              <Modal enforceFocus size='sm' backdrop show={openConfirmModal} onHide={this.toggleSubmitModal} style={{ marginTop: '150px' }}>
+              <Modal enforceFocus size='sm' backdrop show={openConfirmModal} onHide={this.toggleSubmitModal} style={{ marginTop: '80px' }}>
                 <Modal.Header>
                   {!confirmed && (
                     <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>Confirm Submit</Modal.Title>

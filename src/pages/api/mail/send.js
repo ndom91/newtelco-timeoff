@@ -60,9 +60,9 @@ module.exports = async (req, res) => {
   } else {
     mailBody = mailBody.replace('[TYPE]', `${type} Request`)
   }
-  mailBody = mailBody.replace('[NAME]', name)
+  // mailBody = mailBody.replace('[NAME]', name)
   if (note) {
-    mailBody = mailBody.replace('[NOTE]', `<br><h3>Note:</h3>${note}`)
+    mailBody = mailBody.replace('[NOTE]', `<h2>Note:</h2><p>${note}<p>`)
   } else {
     mailBody = mailBody.replace('[NOTE]', '')
   }
@@ -116,8 +116,9 @@ module.exports = async (req, res) => {
           })
       })
   } else {
-    const headerText = 'Please approve or deny this request below. This user will be notified via email of your decision.'
-    const approvalButtons = `<table cellpadding="10" cellmargin="0" border="0" height="60" width="178" style="border-collapse: collapse; border:5px solid #ff3232"> <tr><td bgcolor="#ff3232" valign="middle" align="center" width="174"> <div style="font-size: 24px; color: #ffffff; line-height: 1; font-weight: 700; margin: 0; padding: 0; mso-table-lspace:0; mso-table-rspace:0;"><a href="${process.env.SERVER_URL}/api/mail/response?h=${approvalHash}&a=d" style="text-decoration: none; color: #ffffff; border: 0; font-family: Arial, arial, sans-serif; mso-table-lspace:0; mso-table-rspace:0;" border="0">Deny</a> </div></td></tr></table></td><td align="center" style="border-top: 5px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;"><table cellpadding="10" cellmargin="0" border="0" height="60" width="178" style="border-collapse: collapse; border:5px solid #67B246"> <tr><td bgcolor="#67B246" valign="middle" align="center" width="174"> <div style="font-size: 24px; color: #ffffff; line-height: 1; font-weight: 700; margin: 0; padding: 0; mso-table-lspace:0; mso-table-rspace:0;"><a href="${process.env.SERVER_URL}/api/mail/response?h=${approvalHash}&a=a" style="text-decoration: none; color: #ffffff; border: 0; font-family: Arial, arial, sans-serif; mso-table-lspace:0; mso-table-rspace:0;" border="0">Approve</a> </div></td></tr></table>`
+    const headerText = `Please approve or deny this new ${type} request from <b>${name}</b>.<br /><br /> This user will be notified via email of your decision and upon approval the calendar entry will be created.`
+    const approvalButtons = `<table border="0" cellpadding="0" cellspacing="30" role="presentation"> <tr> <td align="center" class="hover-bg-green-600" style="background-color: #67B246; border-radius: 3px;" bgcolor="#67B246"> <a href="${process.env.SERVER_URL}/api/mail/response?h=${approvalHash}&a=a" target="_blank" class="all-font-sans hover-border-green-600" style="border: 1px solid #67B246; border-radius: 2px; display: inline-block; font-size: 20px; padding: 15px 25px; color: #ffffff; text-decoration: none;">Approve</a> </td> <td align="center" class="hover-bg-red-600" style="background-color: #fa2147; border-radius: 3px;" bgcolor="#fa2147"> <a href="${process.env.SERVER_URL}/api/mail/response?h=${approvalHash}&a=d" target="_blank" class="all-font-sans hover-border-red-600" style="border: 1px solid #fa2147; border-radius: 2px; display: inline-block; font-size: 20px; padding: 15px 25px; color: #ffffff; text-decoration: none;">Deny</a> </td> </tr> </table>`
+    // const old = `<table cellpadding="10" cellmargin="0" border="0" height="60" width="178" style="border-collapse: collapse; border:5px solid #ff3232"> <tr><td bgcolor="#ff3232" valign="middle" align="center" width="174"> <div style="font-size: 24px; color: #ffffff; line-height: 1; font-weight: 700; margin: 0; padding: 0; mso-table-lspace:0; mso-table-rspace:0;"><a href="${process.env.SERVER_URL}/api/mail/response?h=${approvalHash}&a=d" style="text-decoration: none; color: #ffffff; border: 0; font-family: Arial, arial, sans-serif; mso-table-lspace:0; mso-table-rspace:0;" border="0">Deny</a> </div></td></tr></table></td><td align="center" style="border-top: 5px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;"><table cellpadding="10" cellmargin="0" border="0" height="60" width="178" style="border-collapse: collapse; border:5px solid #67B246"> <tr><td bgcolor="#67B246" valign="middle" align="center" width="174"> <div style="font-size: 24px; color: #ffffff; line-height: 1; font-weight: 700; margin: 0; padding: 0; mso-table-lspace:0; mso-table-rspace:0;"><a href="${process.env.SERVER_URL}/api/mail/response?h=${approvalHash}&a=a" style="text-decoration: none; color: #ffffff; border: 0; font-family: Arial, arial, sans-serif; mso-table-lspace:0; mso-table-rspace:0;" border="0">Approve</a> </div></td></tr></table>`
     mailBody = mailBody.replace('[APPROVAL_BUTTONS]', approvalButtons)
     mailBody = mailBody.replace('[SICKBODY]', '')
     mailBody = mailBody.replace('[HEADER_TEXT]', headerText)
