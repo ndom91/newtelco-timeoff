@@ -490,18 +490,21 @@ class Wrapper extends React.Component {
     }
   }
 
-  toggleViewFilesModal = (id) => {
-    if (typeof id !== 'number') {
+  toggleViewFilesModal = (files) => {
+    if (files === null) {
       this.setState({
         viewFilesModal: !this.state.viewFilesModal
       })
     } else {
-      const data = this.state.rowData
-      const i = data.findIndex(entry => entry.id === id)
-      const files = data[i].files || []
+      // const data = this.state.rowData
+      // const i = data.findIndex(entry => entry.id === id)
+      // const files = data[i].files || []
+      // console.log(files)
+      const viewFiles = typeof files === 'string' ? JSON.parse(files) : files
+      console.log(viewFiles)
       this.setState({
         viewFilesModal: !this.state.viewFilesModal,
-        viewFiles: JSON.parse(JSON.parse(files))
+        viewFiles: viewFiles
       })
     }
   }
@@ -604,10 +607,7 @@ class Wrapper extends React.Component {
             {viewFilesModal && (
               <Modal
                 show={viewFilesModal}
-                onHide={this.toggleViewFilesModal}
-                style={{
-                  width: '550px'
-                }}
+                onHide={() => this.toggleViewFilesModal(null)}
               >
                 <Modal.Header>
                   <Modal.Title>View Files</Modal.Title>
@@ -618,14 +618,40 @@ class Wrapper extends React.Component {
                       return (
                         <li className='view-file-list-item' key={index}>
                           <div className='view-file-item'>
-                            {file.format === 'pdf' ? (
-                              <Icon size='lg' style={{ marginRight: '10px' }} icon='file-pdf-o' />
-                            ) : ['png', 'jpg', 'bmp', 'gif'].includes(file.format) ? (
-                              <Icon size='lg' style={{ marginRight: '10px' }} icon='file-image-o' />
+                            {file.name ? (
+                              file.name.includes('pdf') ? (
+                                <>
+                                  <Icon size='lg' style={{ marginRight: '10px' }} icon='file-pdf-o' /><a target='_blank' rel='noopener noreferrer' className='view-file-link' title={file.name} href={file.url}>{file.name}</a>
+                                </>
+                              ) : ['png', 'jpg', 'bmp', 'gif'].includes(file.format) ? (
+                                <>
+                                  <Icon size='lg' style={{ marginRight: '10px' }} icon='file-image-o' />
+                                  <a target='_blank' rel='noopener noreferrer' className='view-file-link' title={file.name} href={file.url}>{file.name}</a>
+                                </>
+                              ) : (
+                                <>
+                                  <Icon size='lg' style={{ marginRight: '10px' }} icon='file-o' />
+                                  <a target='_blank' rel='noopener noreferrer' className='view-file-link' title={file.name} href={file.url}>{file.name}</a>
+                                </>
+                              )
                             ) : (
-                              <Icon size='lg' style={{ marginRight: '10px' }} icon='file-o' />
+                              file.format === 'pdf' ? (
+                                <>
+                                  <Icon size='lg' style={{ marginRight: '10px' }} icon='file-pdf-o' />
+                                  <a target='_blank' rel='noopener noreferrer' className='view-file-link' title={file.name} href={file.url}>{file.name}.{file.format}</a>
+                                </>
+                              ) : ['png', 'jpg', 'bmp', 'gif'].includes(file.format) ? (
+                                <>
+                                  <Icon size='lg' style={{ marginRight: '10px' }} icon='file-image-o' />
+                                  <a target='_blank' rel='noopener noreferrer' className='view-file-link' title={file.name} href={file.url}>{file.name}.{file.format}</a>
+                                </>
+                              ) : (
+                                <>
+                                  <Icon size='lg' style={{ marginRight: '10px' }} icon='file-o' />
+                                  <a target='_blank' rel='noopener noreferrer' className='view-file-link' title={file.name} href={file.url}>{file.name}.{file.format}</a>)
+                                      </>
+                              )
                             )}
-                            <a target='_blank' rel='noopener noreferrer' className='view-file-link' title={file.name} href={file.url}>{file.original_filename}.{file.format}</a>
                           </div>
                         </li>
                       )

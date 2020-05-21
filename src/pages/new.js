@@ -10,7 +10,8 @@ import { CSSTransition } from 'react-transition-group'
 import Calculator from '../components/newcalculator'
 import { Tooltip } from 'react-tippy'
 import 'react-tippy/dist/tippy.css'
-import UploadFile from '../components/uploadfile'
+// import UploadFile from '../components/uploadfile'
+import Upload from '../components/upload'
 import uuid from 'v4-uuid'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Joyride, { STATUS } from 'react-joyride'
@@ -552,17 +553,9 @@ class Wrapper extends React.Component {
     })
   }
 
-  onFileUploadSuccess = (files) => {
+  onFileUploadSuccess = (id, fileName, fileUrl) => {
     const uploadedFiles = [...this.state.uploadedFiles]
-
-    if (Array.isArray(files)) {
-      files.forEach(file => {
-        uploadedFiles.push({ id: file.public_id, url: file.url, name: file.original_filename })
-      })
-    } else {
-      uploadedFiles.push({ id: files.public_id, url: files.url, name: files.original_filename })
-    }
-
+    uploadedFiles.push({ id: id, url: fileUrl, name: fileName })
     this.setState({
       uploadedFiles
     })
@@ -783,12 +776,15 @@ class Wrapper extends React.Component {
                     <div
                       className='upload-file'
                     >
-                      <UploadFile
+                      <Upload
+                        handleFileUploadSuccess={this.onFileUploadSuccess}
+                      />
+                      {/* <UploadFile
                         email={this.props.session.user.email}
                         csrfToken={this.props.session.csrfToken}
                         handleFileUploadSuccess={this.onFileUploadSuccess}
                         successfullySent={successfullySent}
-                      />
+                      /> */}
                     </div>
                   </FormGroup>
                   <FormGroup>

@@ -10,7 +10,7 @@ import {
 import NewtelcoSvg from '../../components/newtelcosvg'
 import anime from 'animejs'
 import '../../style/newtelco-rsuite.less'
-import VacaPattern from '../../../public/static/img/vacation_pattern.svg'
+// import VacaPattern from '../../../public/static/img/vacation_pattern.svg'
 import {
   Container,
   Content,
@@ -24,6 +24,7 @@ import {
   Col
 } from 'rsuite'
 import Wrapper from './wrapper'
+import './index.css'
 
 export default class App extends React.Component {
   static async getInitialProps ({ req }) {
@@ -45,7 +46,7 @@ export default class App extends React.Component {
   animateText = () => {
     anime({
       targets: '.path0, .path1',
-      strokeDashoffset: [anime.setDashoffset, 2],
+      strokeDashoffset: [anime.setDashoffset, 3],
       easing: 'easeInOutSine',
       duration: 3500,
       delay: function (el, i) { return i * 250 },
@@ -103,13 +104,13 @@ export default class App extends React.Component {
     } else {
       return (
         <div className='show-fake-browser login-page'>
-          <img src={VacaPattern} className='vacation-background' />
+          {/* <img src={Taieri} className='vacation-background' /> */}
           <Container className='login-wrapper'>
             <Content className='login-content-wrapper'>
               <FlexboxGrid justify='center' className='login-grid-wrapper'>
                 <NewtelcoSvg />
-                <FlexboxGrid.Item componentClass={Col} md={8} lg={6}>
-                  <Panel header={<h3 className='login-text-header'>Vacation Login</h3>} bordered>
+                <FlexboxGrid.Item componentClass={Col} colspan={3} lg={6} md={7} sm={10} xs={18}>
+                  <Panel header={<h3 className='login-text-header'>Login</h3>} bordered>
                     <Form fluid id='signin' method='post' action='/auth/email/signin' onSubmit={this.handleSignInSubmit}>
                       <input name='_csrf' type='hidden' value={this.state.session.csrfToken} />
                       <FormGroup>
@@ -193,6 +194,8 @@ export default class App extends React.Component {
               padding: 10px 30px;
               align-items: center;
               background-color: #e4e4e4;
+              font-family: 'Roboto', Helvetica;
+              font-weight: 300;
             }
             :global(a.btn-outline-secondary:hover) {
               text-decoration: none;
@@ -261,9 +264,9 @@ export class SignInButtons extends React.Component {
           Object.keys(this.props.providers).map((provider, i) => {
             return (
               <a key={i} className='btn btn-block btn-outline-secondary' href={this.props.providers[provider].signin}>
-                <Button style={{ width: '100%', height: '40px', fontSize: '0.9rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'space-around' }} className='google-signin-btn' appearance='primary'>
-                  <FontAwesomeIcon icon={faGoogle} width='1.2em' style={{ width: '1.2rem', height: '1.2rem', color: 'secondary', marginRight: '5px' }} />
-                  <span>Sign in with {provider}</span>
+                <Button style={{ width: '100%', height: '40px', fontSize: '0.9rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'space-between', margin: '10px 0', padding: '0 50px' }} className='google-signin-btn' appearance='primary'>
+                  <FontAwesomeIcon icon={faGoogle} width='1.2em' style={{ width: '1.2rem', height: '1.2rem', color: 'secondary', marginRight: '5px', flexGrow: '1' }} />
+                  <span style={{ flexGrow: '4' }}>Sign in with {provider}</span>
                 </Button>
               </a>
             )
