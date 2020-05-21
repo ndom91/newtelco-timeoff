@@ -49,7 +49,7 @@ import {
 const { Column, HeaderCell, Cell } = Table
 
 class Wrapper extends React.Component {
-  static async getInitialProps ({ res, req, query }) {
+  static async getInitialProps({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -72,7 +72,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     const thisYear = new Date().getFullYear()
     this.state = {
@@ -498,7 +498,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const selectUserList = []
     const userAdmin = JSON.parse(window.localStorage.getItem('mA'))
     this.props.users.userList.forEach(user => {
@@ -1387,7 +1387,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  render () {
+  render() {
     const {
       gridOptions,
       rowData,
@@ -1687,9 +1687,6 @@ class Wrapper extends React.Component {
             <Modal
               show={openManagerAddModal}
               onHide={this.toggleManagerAddModal}
-              style={{
-                width: '350px'
-              }}
             >
               <Modal.Header>
                 <Modal.Title>Add Manager</Modal.Title>
@@ -1730,9 +1727,6 @@ class Wrapper extends React.Component {
             <Modal
               show={viewFilesModal}
               onHide={this.toggleViewFilesModal}
-              style={{
-                width: '350px'
-              }}
             >
               <Modal.Header>
                 <Modal.Title>View Files</Modal.Title>
@@ -1749,7 +1743,7 @@ class Wrapper extends React.Component {
             </Modal>
           )}
           {openConfirmPersonalDeleteModal && (
-            <Modal enforceFocus size='sm' backdrop show={openConfirmPersonalDeleteModal} onHide={this.handleDeleteFromPersonalModal} style={{ marginTop: '150px' }}>
+            <Modal enforceFocus size='sm' backdrop show={openConfirmPersonalDeleteModal} onHide={this.handleDeleteFromPersonalModal} style={{ marginTop: '50px' }}>
               <Modal.Header>
                 <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>Confirm Submit</Modal.Title>
               </Modal.Header>
@@ -1781,7 +1775,7 @@ class Wrapper extends React.Component {
             </Modal>
           )}
           {openConfirmDeleteModal && (
-            <Modal enforceFocus size='sm' backdrop show={openConfirmDeleteModal} onHide={this.handleDeleteFromAllModal} style={{ marginTop: '150px' }}>
+            <Modal enforceFocus size='sm' backdrop show={openConfirmDeleteModal} onHide={this.handleDeleteFromAllModal} style={{ marginTop: '50px' }}>
               <Modal.Header>
                 <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>Confirm Submit</Modal.Title>
               </Modal.Header>
