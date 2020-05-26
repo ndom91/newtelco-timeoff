@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model discussion {
+  active   Boolean   @default(true)
+  body     String?
+  datetime DateTime? @default(now())
+  id       Int       @default(autoincrement()) @id
+  page     String?
+  user     Int?
+}
+
+model managers {
+  email String
+  id    Int    @default(autoincrement()) @id
+  name  String
+  team  Int?
+}
+
+model oncall {
+  fromDate DateTime
+  id       Int      @default(autoincrement()) @id
+  title    String?
+  toDate   DateTime
+  type     String
+  user     Int?
+}
+
+model settings {
+  address     String?
+  companyName String?
+  id          Int     @default(autoincrement()) @id
+  url         String?
+}
+
+model teams {
+  address String?
+  id      Int     @default(autoincrement()) @id
+  manager Int?
+  name    String?
+}
+
+model users {
+  dateJoined    DateTime?
+  daysAvailable Float?
+  email         String?
+  fname         String?
+  id            Int         @default(autoincrement()) @id
+  lname         String?
+  team          users_team?
+}
+
+model vacations {
+  approval_datetime         DateTime?
+  approval_hash             String?
+  approved                  Boolean?        @default(false)
+  beantragt                 Float?
+  disabled                  Boolean         @default(false)
+  email                     String
+  files                     String?
+  fromDate                  DateTime
+  gcal                      String?
+  id                        Int             @default(autoincrement()) @id
+  jahresUrlaubAusgegeben    String?
+  jahresurlaubInsgesamt     Float?
+  manager                   String          @default("nhartmann@newtelco.de")
+  name                      String
+  note                      String?
+  restjahresurlaubInsgesamt Float?
+  resturlaubJAHR            Float?
+  resturlaubVorjahr         Float?
+  submitted_by              String
+  submitted_datetime        DateTime
+  toDate                    DateTime
+  type                      vacations_type? @default(vacation)
+}
+
+enum users_team {
+  Technik
+  Sales
+  Order
+  Billing
+  Marketing
+  Empfang
+  Management
+}
+
+enum vacations_type {
+  vacation
+  trip
+  moving
+  sick
+  other
+}

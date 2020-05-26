@@ -37,6 +37,7 @@
     "@material-ui/core": "^4.9.13",
     "@material-ui/icons": "^4.9.1",
     "@nivo/swarmplot": "^0.61.1",
+    "@prisma/client": "^2.0.0-beta.6",
     "@toast-ui/react-calendar": "^1.0.5",
     "@zeit/next-css": "^1.0.1",
     "@zeit/next-less": "^1.0.1",
@@ -91,6 +92,7 @@
     "v4-uuid": "^1.1.0"
   },
   "devDependencies": {
+    "@prisma/cli": "^2.0.0-beta.6",
     "ag-grid-community": "^22.1.1",
     "ag-grid-react": "^22.1.1",
     "babel-eslint": "^10.1.0",

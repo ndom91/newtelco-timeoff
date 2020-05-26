@@ -1,6 +1,4 @@
 node_modules/
-prisma/
-prisma.yml
 .next
 .vscode
 out
