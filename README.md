@@ -19,14 +19,14 @@ Company Time-Off Management Application
 
 ## ⚙️  Setup
 
-1. Clone the repo `git clone https://github.com/ndom91/timeoff`
+1. Clone the repo `git clone https://github.com/newtelco/timeoff`
 2. Install dependencies `npm i`
 3. Run `npm start`
 4. For more permanent instances, I recommend [`forever`](https://www.npmjs.com/package/forever) or [`pm2`](https://pm2.io) to manage the process.
 
 ## 👷 Contributing
 
-1. Clone the repo `git clone https://github.com/ndom91/timeoff`
+1. Clone the repo `git clone https://github.com/newtelco/timeoff`
 2. Install dependencies `npm i`
 3. Start Dev Environment `npm run dev`
 
@@ -34,7 +34,7 @@ Company Time-Off Management Application
 
 ![Nico Domino](https://avatars1.githubusercontent.com/u/7415984?s=64&v=1)
 
-### 📝 License
+## 📝 License
 
 MIT
 
