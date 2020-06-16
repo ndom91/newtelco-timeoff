@@ -1325,7 +1325,8 @@ class Wrapper extends React.Component {
         .then(data => data.json())
         .then(data => {
           let files = []
-          if (data.files[0].files.length !== 0) {
+          console.log(data)
+          if (data.files[0].files && data.files[0].files.length !== 0) {
             files = JSON.parse(data.files[0].files)
           }
           this.setState({
