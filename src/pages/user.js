@@ -1,7 +1,6 @@
 import React from 'react'
 import Layout from '../components/layout/index'
 import Router from 'next/router'
-import fetch from 'isomorphic-unfetch'
 import Moment from 'moment-timezone'
 import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../components/requiredLogin'

@@ -1,5 +1,4 @@
 import React from 'react'
-import fetch from 'isomorphic-unfetch'
 import Moment from 'moment-timezone'
 import { extendMoment } from 'moment-range'
 import CalendarHeatmap from 'reactjs-calendar-heatmap'

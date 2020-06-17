@@ -1,5 +1,4 @@
 import React from 'react'
-import fetch from 'isomorphic-unfetch'
 import moment from 'moment-timezone'
 import { Alert } from 'rsuite'
 import {

@@ -1,5 +1,4 @@
 import React from 'react'
-import fetch from 'isomorphic-unfetch'
 import {
   Button,
   ButtonToolbar,

@@ -1,14 +1,13 @@
 import React, { Component } from 'react'
-import fetch from 'isomorphic-unfetch'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { Button, ButtonGroup, ButtonToolbar, Tag, Notification } from 'rsuite'
 
 export default class ApprovedBtn extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
-      approval: 0
+      approval: 0,
     }
   }
 
@@ -16,7 +15,7 @@ export default class ApprovedBtn extends Component {
     Notification.error({
       title: header,
       duration: 3000,
-      description: <div className='notify-body'>{text}</div>
+      description: <div className='notify-body'>{text}</div>,
     })
   }
 
@@ -24,7 +23,7 @@ export default class ApprovedBtn extends Component {
     Notification.success({
       title: header,
       duration: 3000,
-      description: <div className='notify-body'>{text}</div>
+      description: <div className='notify-body'>{text}</div>,
     })
   }
 
@@ -38,13 +37,13 @@ export default class ApprovedBtn extends Component {
       .then(data => {
         if (data.code === 200) {
           this.setState({
-            approval: 2
+            approval: 2,
           })
           this.notifySuccess('Request Approved')
         }
       })
       .catch(err => console.error(err))
-  };
+  }
 
   handleDenyRequest = () => {
     const approvalHash = this.props.data.approval_hash
@@ -56,18 +55,16 @@ export default class ApprovedBtn extends Component {
       .then(data => {
         if (data.code === 200) {
           this.setState({
-            approval: 1
+            approval: 1,
           })
           this.notifySuccess('Request Denied')
         }
       })
       .catch(err => console.error(err))
-  };
+  }
 
-  render () {
-    const {
-      approval
-    } = this.state
+  render() {
+    const { approval } = this.state
 
     if (this.props.data.type === 'sick') {
       return (
@@ -109,7 +106,7 @@ export default class ApprovedBtn extends Component {
                 height: '24px',
                 color: '#f78282',
                 borderColor: '#f78282',
-                paddingTop: '3px'
+                paddingTop: '3px',
               }}
               size='sm'
               appearance='ghost'

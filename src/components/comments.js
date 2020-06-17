@@ -1,5 +1,4 @@
 import React from 'react'
-import fetch from 'isomorphic-unfetch'
 import Comment from './comment'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import BarLoader from 'react-spinners/ClipLoader'

@@ -1,5 +1,4 @@
 import React from 'react'
-import fetch from 'isomorphic-unfetch'
 import Layout from '../../components/layout/index'
 import Router from 'next/router'
 import moment from 'moment-timezone'

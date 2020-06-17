@@ -45,7 +45,6 @@ export default class Calculator extends React.Component {
   }
 
   handleLengthChange = value => {
-    console.log(value)
     if (value === 'years') {
       this.setState({
         displayCalc: 'years',
@@ -97,7 +96,7 @@ export default class Calculator extends React.Component {
               1-12 Months
             </Radio>
           </RadioGroup>
-          <Form>
+          <div>
             {displayCalc === 'months' ? (
               <FormGroup>
                 <InputNumber
@@ -155,7 +154,7 @@ export default class Calculator extends React.Component {
                 </Panel>
               </FormGroup>
             )}
-          </Form>
+          </div>
         </Panel>
         <style jsx>
           {`

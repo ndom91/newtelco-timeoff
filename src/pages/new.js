@@ -1,6 +1,5 @@
 import React from 'react'
 import Layout from '../components/layout/index'
-import fetch from 'isomorphic-unfetch'
 import Router from 'next/router'
 import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../components/requiredLogin'
@@ -8,8 +7,6 @@ import Subheader from '../components/content-subheader'
 import moment from 'moment'
 import { CSSTransition } from 'react-transition-group'
 import Calculator from '../components/newcalculator'
-import { Tooltip } from 'react-tippy'
-import 'react-tippy/dist/tippy.css'
 import Upload from '../components/upload'
 import uuid from 'v4-uuid'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -49,6 +46,8 @@ import {
   HelpBlock,
   Table,
   Animation,
+  Tooltip,
+  Whisper,
 } from 'rsuite'
 
 const { Slide } = Animation
@@ -857,19 +856,17 @@ class Wrapper extends React.Component {
                             color: 'secondary',
                           }}
                         >
-                          <Tooltip
-                            title='Calculator for Days Available'
-                            position='right'
-                            trigger='mouseenter'
-                            distance='20'
-                            offset='-23'
+                          <Whisper
+                            speaker={
+                              <Tooltip>Calculator for Days Available</Tooltip>
+                            }
                           >
                             <FontAwesomeIcon
                               className='calc-btn'
                               icon={!showCalc ? faAngleRight : faAngleLeft}
                               width='1.5em'
                             />
-                          </Tooltip>
+                          </Whisper>
                         </div>
                       </div>
                     </div>
@@ -1030,20 +1027,13 @@ class Wrapper extends React.Component {
                   color: 'secondary',
                 }}
               >
-                <Tooltip
-                  title='View Last Request Details'
-                  trigger='mouseenter'
-                  distance='15'
-                  offset='-23'
-                  position='right'
-                  sticky
-                >
+                <Whisper speaker={<Tooltip>Last Request</Tooltip>}>
                   <FontAwesomeIcon
                     className='last-btn'
                     icon={!showSidebar ? faAngleRight : faAngleLeft}
                     width='1.5em'
                   />
-                </Tooltip>
+                </Whisper>
               </div>
             </div>
           </div>

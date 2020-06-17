@@ -1,26 +1,25 @@
 import React from 'react'
-import fetch from 'isomorphic-unfetch'
 import SidebarNT from './sidebar'
 import '../../style/newtelco-rsuite.less'
 import VacaPattern from '../../../public/static/img/vacation_pattern.svg'
 import { Container, Content, Alert } from 'rsuite'
 
 Alert.config({
-  duration: 4000
+  duration: 4000,
 })
 
 class Layout extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       expand: true,
       settings: {
-        companyName: ''
-      }
+        companyName: '',
+      },
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const protocol = window.location.protocol
     const host = window.location.host
     const companyInfo = JSON.parse(window.localStorage.getItem('company'))
@@ -35,8 +34,8 @@ class Layout extends React.Component {
           ...this.state.settings,
           companyName: companyInfo.companyName,
           team: userTeam.team,
-          admin: userAdmin
-        }
+          admin: userAdmin,
+        },
       })
     } else if (!companyInfo || !userTeam || !userAdmin) {
       !companyInfo &&
@@ -51,8 +50,8 @@ class Layout extends React.Component {
               this.setState({
                 settings: {
                   ...this.state.settings,
-                  companyName: data.companyInfo[0].companyName
-                }
+                  companyName: data.companyInfo[0].companyName,
+                },
               })
             }
           })
@@ -75,8 +74,8 @@ class Layout extends React.Component {
               this.setState({
                 settings: {
                   ...this.state.settings,
-                  team: data.user[0].team
-                }
+                  team: data.user[0].team,
+                },
               })
             }
           })
@@ -91,15 +90,15 @@ class Layout extends React.Component {
             this.setState({
               settings: {
                 ...this.state.settings,
-                admin: data.memberAdmin
-              }
+                admin: data.memberAdmin,
+              },
             })
           })
           .catch(err => console.error(err))
     }
     if (typeof window !== 'undefined' && window.innerWidth < 600) {
       this.setState({
-        expand: false
+        expand: false,
       })
     }
   }
@@ -107,18 +106,18 @@ class Layout extends React.Component {
   onToggle = () => {
     window.localStorage.setItem('layout-expand', !this.state.expand)
     this.setState({
-      expand: !this.state.expand
+      expand: !this.state.expand,
     })
-  };
+  }
 
   capitalizeFirstLetter = string => {
     if (string === '') {
       return 'Dashboard'
     }
     return string.charAt(0).toUpperCase() + string.slice(1)
-  };
+  }
 
-  render () {
+  render() {
     return (
       <>
         <img
@@ -128,7 +127,7 @@ class Layout extends React.Component {
             position: 'absolute',
             height: '100%',
             width: '100%',
-            zIndex: '-10'
+            zIndex: '-10',
           }}
         />
         <div className='show-fake-browser sidebar-page wrapper'>

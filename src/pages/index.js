@@ -1,6 +1,5 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
-import fetch from 'isomorphic-unfetch'
 import Layout from '../components/layout/index'
 import Router from 'next/router'
 import { NextAuth } from 'next-auth/client'

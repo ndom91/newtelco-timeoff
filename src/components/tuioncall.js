@@ -3,7 +3,6 @@ import Calendar from '@toast-ui/react-calendar'
 import 'tui-calendar/dist/tui-calendar.css'
 import 'tui-date-picker/dist/tui-date-picker.css'
 import 'tui-time-picker/dist/tui-time-picker.css'
-import fetch from 'isomorphic-unfetch'
 import { Container, Header, IconButton, ButtonGroup, Icon } from 'rsuite'
 
 // https://github.com/nhn/toast-ui.react-calendar
