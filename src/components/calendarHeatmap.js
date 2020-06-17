@@ -7,14 +7,14 @@ import CalendarHeatmap from 'reactjs-calendar-heatmap'
 const moment = extendMoment(Moment)
 
 class Calendar extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
-      heatmapData: []
+      heatmapData: [],
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const host = window.location.host
     const protocol = window.location.protocol
     const user = this.props.user
@@ -24,7 +24,7 @@ class Calendar extends React.Component {
         if (data.userEntries) {
           const heatmap = []
           this.setState({
-            rowData: data.userEntries
+            rowData: data.userEntries,
           })
           data.userEntries.forEach(entry => {
             const from = moment(entry.from)
@@ -36,35 +36,39 @@ class Calendar extends React.Component {
             // https://www.npmjs.com/package/reactjs-calendar-heatmap
           })
           this.setState({
-            heatmapData: heatmap
+            heatmapData: heatmap,
           })
         }
       })
       .catch(err => console.error(err))
   }
 
-  render () {
-    const {
-      heatmapData
-    } = this.state
+  render() {
+    const { heatmapData } = this.state
 
-    var hData = [{
-      date: '2016-01-01',
-      total: 17164,
-      details: [{
-        name: 'Project 1',
-        date: '2016-01-01 12:30:45',
-        value: 9192
-      }, {
-        name: 'Project 2',
-        date: '2016-01-01 13:37:00',
-        value: 6753
-      }, {
-        name: 'Project N',
-        date: '2016-01-01 17:52:41',
-        value: 1219
-      }]
-    }]
+    var hData = [
+      {
+        date: '2016-01-01',
+        total: 17164,
+        details: [
+          {
+            name: 'Project 1',
+            date: '2016-01-01 12:30:45',
+            value: 9192,
+          },
+          {
+            name: 'Project 2',
+            date: '2016-01-01 13:37:00',
+            value: 6753,
+          },
+          {
+            name: 'Project N',
+            date: '2016-01-01 17:52:41',
+            value: 1219,
+          },
+        ],
+      },
+    ]
 
     return (
       <CalendarHeatmap

@@ -19,18 +19,18 @@ import { Container, Header, IconButton, ButtonGroup, Icon } from 'rsuite'
 // https://github.com/remotelock/react-week-scheduler
 
 class TuiCalendar extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.calendarRef = React.createRef()
 
     this.state = {
       teamSchedules: [],
       currentView: 'month',
-      schedules: []
+      schedules: [],
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const host = window.location.host
     const protocol = window.location.protocol
     fetch(`${protocol}//${host}/api/team/oncall`)
@@ -38,23 +38,30 @@ class TuiCalendar extends React.Component {
       .then(data => {
         if (data.userEntries) {
           this.setState({
-            rowData: data.userEntries
+            rowData: data.userEntries,
           })
           window.gridApi && window.gridApi.refreshCells()
         }
       })
       .catch(err => console.error(err))
     const calendarInstance = this.calendarRef.current.getInstance()
-    const monthHeader = this.getMonthHeader(calendarInstance.getDateRangeStart(), calendarInstance.getDateRangeEnd())
+    const monthHeader = this.getMonthHeader(
+      calendarInstance.getDateRangeStart(),
+      calendarInstance.getDateRangeEnd()
+    )
     this.setState({
       currentDateView: calendarInstance.getDate(),
-      monthHeader
+      monthHeader,
     })
   }
 
   getMonthHeader = (dateA, dateB) => {
-    const monthA = new Date(dateA._date).toLocaleString('default', { month: 'long' })
-    const monthB = new Date(dateB._date).toLocaleString('default', { month: 'long' })
+    const monthA = new Date(dateA._date).toLocaleString('default', {
+      month: 'long',
+    })
+    const monthB = new Date(dateB._date).toLocaleString('default', {
+      month: 'long',
+    })
     if (monthA === monthB) {
       return monthA
     } else {
@@ -63,20 +70,18 @@ class TuiCalendar extends React.Component {
   }
 
   handleToggleView = () => {
-    const {
-      currentView
-    } = this.state
+    const { currentView } = this.state
 
     const calendarInstance = this.calendarRef.current.getInstance()
     if (currentView === 'month') {
       calendarInstance.changeView('week', true)
       this.setState({
-        currentView: 'week'
+        currentView: 'week',
       })
     } else {
       calendarInstance.changeView('month', true)
       this.setState({
-        currentView: 'month'
+        currentView: 'month',
       })
     }
   }
@@ -90,28 +95,34 @@ class TuiCalendar extends React.Component {
     const calendarInstance = this.calendarRef.current.getInstance()
     console.log(calendarInstance)
     calendarInstance.next()
-    const monthHeader = this.getMonthHeader(calendarInstance.getDateRangeStart(), calendarInstance.getDateRangeEnd())
+    const monthHeader = this.getMonthHeader(
+      calendarInstance.getDateRangeStart(),
+      calendarInstance.getDateRangeEnd()
+    )
     this.setState({
       currentDateView: calendarInstance.getDate(),
-      monthHeader
+      monthHeader,
     })
   }
 
   handleCalendarPrev = () => {
     const calendarInstance = this.calendarRef.current.getInstance()
-    const monthHeader = this.getMonthHeader(calendarInstance.getDateRangeStart(), calendarInstance.getDateRangeEnd())
+    const monthHeader = this.getMonthHeader(
+      calendarInstance.getDateRangeStart(),
+      calendarInstance.getDateRangeEnd()
+    )
     calendarInstance.prev()
     this.setState({
       currentDateView: calendarInstance.getDate(),
-      monthHeader
+      monthHeader,
     })
   }
 
-  handleScheduleClick = (data) => {
+  handleScheduleClick = data => {
     console.log(data)
   }
 
-  handleScheduleAdd = (data) => {
+  handleScheduleAdd = data => {
     console.log(data)
     const startTime = data.start
     const endTime = data.end
@@ -124,25 +135,22 @@ class TuiCalendar extends React.Component {
       category: 'On Call',
       start: startTime,
       end: endTime,
-      isAllDay: isAllDay
+      isAllDay: isAllDay,
     }
 
     const calendarInstance = this.calendarRef.current.getInstance()
     calendarInstance.createSchedules([schedule])
   }
 
-  render () {
-    const {
-      currentView,
-      monthHeader
-    } = this.state
+  render() {
+    const { currentView, monthHeader } = this.state
 
     return (
       <Container>
         <Header className='calendar-header'>
           <span
             style={{
-              fontSize: '24px'
+              fontSize: '24px',
             }}
           >
             {monthHeader}
@@ -196,7 +204,7 @@ class TuiCalendar extends React.Component {
         </Header>
         <Calendar
           style={{
-            zIndex: '9999'
+            zIndex: '9999',
           }}
           ref={this.calendarRef}
           calendars={[
@@ -204,20 +212,20 @@ class TuiCalendar extends React.Component {
               id: '069',
               name: 'Driving',
               bgColor: '#67B246',
-              borderColor: '#9e5fff'
+              borderColor: '#9e5fff',
             },
             {
               id: '070',
               name: 'On-Call',
               bgColor: '#efefef',
-              borderColor: '#9e5fff'
-            }
+              borderColor: '#9e5fff',
+            },
           ]}
           height='100%'
           month={{
             startDayOfWeek: 0,
             narrowWeekend: true,
-            visibleWeeksCount: 3
+            visibleWeeksCount: 3,
           }}
           taskView={false}
           // scheduleView={['allday']}
@@ -227,8 +235,8 @@ class TuiCalendar extends React.Component {
             {
               timezoneOffset: 60,
               displayLabel: 'GMT+01:00',
-              tooltip: 'Berlin'
-            }
+              tooltip: 'Berlin',
+            },
           ]}
           onBeforeCreateSchedule={this.handleScheduleAdd}
           onBeforeUpdateSchedule={this.handleScheduleAdd}
@@ -252,7 +260,8 @@ class TuiCalendar extends React.Component {
           // }}
           // schedules={this.state.schedules}
         />
-        <style jsx global>{`
+        <style jsx global>
+          {`
             .calendar-header {
               width: 100%;
               display: flex;

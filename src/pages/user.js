@@ -29,17 +29,17 @@ import {
   Icon,
   Modal,
   Notification,
-  SelectPicker
+  SelectPicker,
 } from 'rsuite'
 
 const moment = extendMoment(Moment)
 
 class Wrapper extends React.Component {
-  static async getInitialProps ({ res, req, query }) {
+  static async getInitialProps({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
-          Location: '/auth'
+          Location: '/auth',
         })
         res.end()
       } else {
@@ -47,11 +47,11 @@ class Wrapper extends React.Component {
       }
     }
     return {
-      session: await NextAuth.init({ req })
+      session: await NextAuth.init({ req }),
     }
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     const thisYear = new Date().getFullYear()
 
@@ -77,7 +77,7 @@ class Wrapper extends React.Component {
         id: '',
         note: '',
         approved: '',
-        type: ''
+        type: '',
       },
       gridOptions: {
         defaultColDef: {
@@ -85,47 +85,53 @@ class Wrapper extends React.Component {
           sortable: true,
           filter: true,
           selectable: false,
-          editable: false
+          editable: false,
         },
         columnDefs: [
           {
             headerName: 'ID',
             field: 'id',
             hide: true,
-            sort: { direction: 'asc', priority: 0 }
-          }, {
+            sort: { direction: 'asc', priority: 0 },
+          },
+          {
             headerName: 'Submitted',
             cellRenderer: 'dateTimeShort',
             field: 'submitted_datetime',
-            width: 160
-          }, {
+            width: 160,
+          },
+          {
             headerName: 'Type',
             field: 'type',
             cellRenderer: 'uppercase',
-            width: 100
-          }, {
+            width: 100,
+          },
+          {
             headerName: 'From',
             field: 'fromDate',
             tooltipField: 'fromDate',
             cellRenderer: 'dateShort',
-            width: 100
-          }, {
+            width: 100,
+          },
+          {
             headerName: 'To',
             field: 'toDate',
             tooltipField: 'toDate',
             cellRenderer: 'dateShort',
-            width: 100
-          }, {
+            width: 100,
+          },
+          {
             headerName: 'Days from Last Year',
             field: 'resturlaubVorjahr',
             cellStyle: {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '100%'
+              height: '100%',
             },
-            width: 180
-          }, {
+            width: 180,
+          },
+          {
             headerName: 'Days Earned this Year',
             field: 'jahresurlaubInsgesamt',
             tooltipField: 'jahresurlaubInsgesamt',
@@ -133,9 +139,10 @@ class Wrapper extends React.Component {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '100%'
-            }
-          }, {
+              height: '100%',
+            },
+          },
+          {
             headerName: 'Days spent this Year',
             field: 'jahresUrlaubAusgegeben',
             tooltipField: 'jahresUrlaubAusgegeben',
@@ -143,9 +150,10 @@ class Wrapper extends React.Component {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '100%'
-            }
-          }, {
+              height: '100%',
+            },
+          },
+          {
             headerName: 'Total Days Available',
             field: 'restjahresurlaubInsgesamt',
             width: 160,
@@ -153,60 +161,68 @@ class Wrapper extends React.Component {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '100%'
-            }
-          }, {
+              height: '100%',
+            },
+          },
+          {
             headerName: 'Requested Days',
             field: 'beantragt',
             cellStyle: {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '100%'
+              height: '100%',
             },
-            width: 160
-          }, {
+            width: 160,
+          },
+          {
             headerName: `Days Remaining ${thisYear}`,
             field: 'resturlaubJAHR',
             cellStyle: {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '100%'
+              height: '100%',
             },
-            width: 180
-          }, {
+            width: 180,
+          },
+          {
             headerName: 'Notes',
             field: 'note',
-            width: 160
-          }, {
+            width: 160,
+          },
+          {
             headerName: 'Manager',
             field: 'manager',
-            width: 160
-          }, {
+            width: 160,
+          },
+          {
             headerName: 'Approval Date/Time',
             field: 'approval_datetime',
             cellRenderer: 'dateTimeShort',
-            width: 160
-          }, {
+            width: 160,
+          },
+          {
             headerName: 'Submitted By',
             field: 'submitted_by',
-            width: 140
-          }, {
+            width: 140,
+          },
+          {
             headerName: 'View Files',
             width: 160,
             cellRenderer: 'viewfiles',
             cellRendererParams: {
-              viewFiles: this.toggleViewFilesModal
+              viewFiles: this.toggleViewFilesModal,
             },
             cellStyle: {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
               height: '100%',
-              border: 'none'
-            }
-          }, {
+              border: 'none',
+            },
+          },
+          {
             headerName: 'Approved',
             field: 'approved',
             width: 120,
@@ -216,9 +232,9 @@ class Wrapper extends React.Component {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '100%'
-            }
-          }
+              height: '100%',
+            },
+          },
         ],
         context: { componentParent: this },
         frameworkComponents: {
@@ -227,7 +243,7 @@ class Wrapper extends React.Component {
           approved: ApprovedField,
           uppercase: Uppercase,
           type: TypeField,
-          viewfiles: ViewFiles
+          viewfiles: ViewFiles,
         },
         rowSelection: 'multiple',
         paginationPageSize: 10,
@@ -239,9 +255,9 @@ class Wrapper extends React.Component {
               return true
             }
             return false
-          }
-        }
-      }
+          },
+        },
+      },
     }
   }
 
@@ -249,7 +265,7 @@ class Wrapper extends React.Component {
     Notification.info({
       title: header,
       duration: 2000,
-      description: <div className='notify-body'>{text}</div>
+      description: <div className='notify-body'>{text}</div>,
     })
   }
 
@@ -257,7 +273,7 @@ class Wrapper extends React.Component {
     Notification.warning({
       title: header,
       duration: 2000,
-      description: <div className='notify-body'>{text}</div>
+      description: <div className='notify-body'>{text}</div>,
     })
   }
 
@@ -265,7 +281,7 @@ class Wrapper extends React.Component {
     Notification.error({
       title: header,
       duration: 3000,
-      description: <div className='notify-body'>{text}</div>
+      description: <div className='notify-body'>{text}</div>,
     })
   }
 
@@ -273,11 +289,11 @@ class Wrapper extends React.Component {
     Notification.success({
       title: header,
       duration: 3000,
-      description: <div className='notify-body'>{text}</div>
+      description: <div className='notify-body'>{text}</div>,
     })
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const host = window.location.host
     const protocol = window.location.protocol
     const user = this.props.session.user.email
@@ -287,7 +303,7 @@ class Wrapper extends React.Component {
         if (data.userEntries) {
           // const heatmap = []
           this.setState({
-            rowData: data.userEntries
+            rowData: data.userEntries,
           })
           // data.userEntries.forEach(entry => {
           //   const from = moment(entry.from)
@@ -318,7 +334,7 @@ class Wrapper extends React.Component {
         'beantragt',
         'resturlaubJAHR',
         'approved',
-        'approval_datetime'
+        'approval_datetime',
       ]
       if (type === 'sick') {
         sickHideColumns.forEach(column => {
@@ -335,19 +351,19 @@ class Wrapper extends React.Component {
   setEditData = (files, data) => {
     if (!data) {
       this.setState({
-        files: files
+        files: files,
       })
     } else {
       this.setState({
         editData: data,
-        files: files
+        files: files,
       })
     }
   }
 
-  setRowData = (data) => {
+  setRowData = data => {
     this.setState({
-      rowData: data
+      rowData: data,
     })
   }
 
@@ -367,14 +383,16 @@ class Wrapper extends React.Component {
       const username = email.substr(0, email.lastIndexOf('@'))
       const params = {
         allColumns: true,
-        fileName: `${username}_timeoff_${moment(new Date()).format('YYYYMMDD')}.csv`,
-        columnSeparator: ','
+        fileName: `${username}_timeoff_${moment(new Date()).format(
+          'YYYYMMDD'
+        )}.csv`,
+        columnSeparator: ',',
       }
       this.gridApi.exportDataAsCsv(params)
     }
   }
 
-  handleTypeChange = (selection) => {
+  handleTypeChange = selection => {
     const host = window.location.host
     const protocol = window.location.protocol
     const user = this.props.session.user.email
@@ -385,7 +403,7 @@ class Wrapper extends React.Component {
         if (data.userEntries) {
           this.setState({
             rowData: data.userEntries,
-            gridType: type
+            gridType: type,
           })
           window.gridApi && window.gridApi.refreshCells()
         }
@@ -396,7 +414,7 @@ class Wrapper extends React.Component {
   toggleConfirmDeleteModal = () => {
     if (this.state.openConfirmDeleteModal) {
       this.setState({
-        openConfirmDeleteModal: !this.state.openConfirmDeleteModal
+        openConfirmDeleteModal: !this.state.openConfirmDeleteModal,
       })
       return
     }
@@ -410,33 +428,33 @@ class Wrapper extends React.Component {
       const tableData = [
         {
           title: 'From',
-          value: request.fromDate
+          value: request.fromDate,
         },
         {
           title: 'To',
-          value: request.toDate
+          value: request.toDate,
         },
         {
           title: 'Manager',
-          value: request.manager
+          value: request.manager,
         },
         {
           title: 'Type',
-          value: request.type.charAt(0).toUpperCase() + request.type.slice(1)
+          value: request.type.charAt(0).toUpperCase() + request.type.slice(1),
         },
         {
           title: 'Requested Days',
-          value: request.beantragt
+          value: request.beantragt,
         },
         {
           title: 'Remaining Days',
-          value: request.resturlaubJAHR
-        }
+          value: request.resturlaubJAHR,
+        },
       ]
       this.setState({
         openConfirmDeleteModal: !this.state.openConfirmDeleteModal,
         confirmDeleteData: tableData,
-        toDelete: request.id || 0
+        toDelete: request.id || 0,
       })
     }
   }
@@ -453,7 +471,7 @@ class Wrapper extends React.Component {
       const request = selectedRow[0]
       this.setState({
         loadingFiles: true,
-        editAvailable: !request.approved == 0
+        editAvailable: !request.approved == 0,
       })
       const rawFrom = request.fromDate.split('.')
       const rawTo = request.toDate.split('.')
@@ -469,7 +487,9 @@ class Wrapper extends React.Component {
         id: request.id,
         note: request.note,
         approved: request.approved,
-        type: request.type && request.type[0].toUpperCase() + request.type.substring(1)
+        type:
+          request.type &&
+          request.type[0].toUpperCase() + request.type.substring(1),
       }
       fetch(`${protocol}//${host}/api/mail/file?id=${request.id}`)
         .then(data => data.json())
@@ -483,17 +503,17 @@ class Wrapper extends React.Component {
             files: files,
             loadingFiles: false,
             openEditModal: !this.state.openEditModal,
-            editAvailable: this.state.editAvailable
+            editAvailable: this.state.editAvailable,
           })
         })
         .catch(err => console.error(err))
     }
   }
 
-  toggleViewFilesModal = (files) => {
+  toggleViewFilesModal = files => {
     if (files === null) {
       this.setState({
-        viewFilesModal: !this.state.viewFilesModal
+        viewFilesModal: !this.state.viewFilesModal,
       })
     } else {
       // const data = this.state.rowData
@@ -504,12 +524,12 @@ class Wrapper extends React.Component {
       console.log(viewFiles)
       this.setState({
         viewFilesModal: !this.state.viewFilesModal,
-        viewFiles: viewFiles
+        viewFiles: viewFiles,
       })
     }
   }
 
-  render () {
+  render() {
     const {
       gridOptions,
       rowData,
@@ -518,23 +538,24 @@ class Wrapper extends React.Component {
       openEditModal,
       editData,
       viewFilesModal,
-      viewFiles
+      viewFiles,
     } = this.state
 
     if (this.props.session.user) {
       return (
-        <Layout user={this.props.session.user.email} token={this.props.session.csrfToken}>
+        <Layout
+          user={this.props.session.user.email}
+          token={this.props.session.csrfToken}
+        >
           <Container>
             <Subheader header='User' subheader='Dashboard' />
             <Panel bordered>
               <Header className='user-content-header'>
-                <div className='section-header'>
-                  My Vacations
-                </div>
+                <div className='section-header'>My Vacations</div>
                 <div
                   style={{
                     display: 'flex',
-                    justifyContent: 'space-between'
+                    justifyContent: 'space-between',
                   }}
                 >
                   <SelectPicker
@@ -545,7 +566,7 @@ class Wrapper extends React.Component {
                       { label: 'Sick', value: 'sick' },
                       { label: 'Trip', value: 'trip' },
                       { label: 'Moving', value: 'moving' },
-                      { label: 'Other', value: 'other' }
+                      { label: 'Other', value: 'other' },
                     ]}
                     placeholder='Please Select a Type'
                     style={{ width: '200px', marginRight: '20px' }}
@@ -553,13 +574,25 @@ class Wrapper extends React.Component {
                   <span>
                     <ButtonToolbar>
                       <ButtonGroup>
-                        <IconButton icon={<Icon icon='edit' />} appearance='primary' onClick={this.toggleEditModal}>
+                        <IconButton
+                          icon={<Icon icon='edit' />}
+                          appearance='primary'
+                          onClick={this.toggleEditModal}
+                        >
                           Edit
                         </IconButton>
-                        <IconButton icon={<Icon icon='trash' />} appearance='ghost' onClick={this.toggleConfirmDeleteModal}>
+                        <IconButton
+                          icon={<Icon icon='trash' />}
+                          appearance='ghost'
+                          onClick={this.toggleConfirmDeleteModal}
+                        >
                           Delete
                         </IconButton>
-                        <IconButton icon={<Icon icon='export' />} appearance='ghost' onClick={this.handleGridExport}>
+                        <IconButton
+                          icon={<Icon icon='export' />}
+                          appearance='ghost'
+                          onClick={this.handleGridExport}
+                        >
                           Export
                         </IconButton>
                       </ButtonGroup>
@@ -614,152 +647,239 @@ class Wrapper extends React.Component {
                 </Modal.Header>
                 <Modal.Body>
                   <ul className='view-file-list'>
-                    {viewFiles && viewFiles.map((file, index) => {
-                      return (
-                        <li className='view-file-list-item' key={index}>
-                          <div className='view-file-item'>
-                            {file.name ? (
-                              file.name.includes('pdf') ? (
+                    {viewFiles &&
+                      viewFiles.map((file, index) => {
+                        return (
+                          <li className='view-file-list-item' key={index}>
+                            <div className='view-file-item'>
+                              {file.name ? (
+                                file.name.includes('pdf') ? (
+                                  <>
+                                    <Icon
+                                      size='lg'
+                                      style={{ marginRight: '10px' }}
+                                      icon='file-pdf-o'
+                                    />
+                                    <a
+                                      target='_blank'
+                                      rel='noopener noreferrer'
+                                      className='view-file-link'
+                                      title={file.name}
+                                      href={file.url}
+                                    >
+                                      {file.name}
+                                    </a>
+                                  </>
+                                ) : ['png', 'jpg', 'bmp', 'gif'].includes(
+                                    file.format
+                                  ) ? (
+                                  <>
+                                    <Icon
+                                      size='lg'
+                                      style={{ marginRight: '10px' }}
+                                      icon='file-image-o'
+                                    />
+                                    <a
+                                      target='_blank'
+                                      rel='noopener noreferrer'
+                                      className='view-file-link'
+                                      title={file.name}
+                                      href={file.url}
+                                    >
+                                      {file.name}
+                                    </a>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Icon
+                                      size='lg'
+                                      style={{ marginRight: '10px' }}
+                                      icon='file-o'
+                                    />
+                                    <a
+                                      target='_blank'
+                                      rel='noopener noreferrer'
+                                      className='view-file-link'
+                                      title={file.name}
+                                      href={file.url}
+                                    >
+                                      {file.name}
+                                    </a>
+                                  </>
+                                )
+                              ) : file.format === 'pdf' ? (
                                 <>
-                                  <Icon size='lg' style={{ marginRight: '10px' }} icon='file-pdf-o' /><a target='_blank' rel='noopener noreferrer' className='view-file-link' title={file.name} href={file.url}>{file.name}</a>
+                                  <Icon
+                                    size='lg'
+                                    style={{ marginRight: '10px' }}
+                                    icon='file-pdf-o'
+                                  />
+                                  <a
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    className='view-file-link'
+                                    title={file.name}
+                                    href={file.url}
+                                  >
+                                    {file.name}.{file.format}
+                                  </a>
                                 </>
-                              ) : ['png', 'jpg', 'bmp', 'gif'].includes(file.format) ? (
+                              ) : ['png', 'jpg', 'bmp', 'gif'].includes(
+                                  file.format
+                                ) ? (
                                 <>
-                                  <Icon size='lg' style={{ marginRight: '10px' }} icon='file-image-o' />
-                                  <a target='_blank' rel='noopener noreferrer' className='view-file-link' title={file.name} href={file.url}>{file.name}</a>
+                                  <Icon
+                                    size='lg'
+                                    style={{ marginRight: '10px' }}
+                                    icon='file-image-o'
+                                  />
+                                  <a
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    className='view-file-link'
+                                    title={file.name}
+                                    href={file.url}
+                                  >
+                                    {file.name}.{file.format}
+                                  </a>
                                 </>
                               ) : (
                                 <>
-                                  <Icon size='lg' style={{ marginRight: '10px' }} icon='file-o' />
-                                  <a target='_blank' rel='noopener noreferrer' className='view-file-link' title={file.name} href={file.url}>{file.name}</a>
+                                  <Icon
+                                    size='lg'
+                                    style={{ marginRight: '10px' }}
+                                    icon='file-o'
+                                  />
+                                  <a
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    className='view-file-link'
+                                    title={file.name}
+                                    href={file.url}
+                                  >
+                                    {file.name}.{file.format}
+                                  </a>
+                                  )
                                 </>
-                              )
-                            ) : (
-                              file.format === 'pdf' ? (
-                                <>
-                                  <Icon size='lg' style={{ marginRight: '10px' }} icon='file-pdf-o' />
-                                  <a target='_blank' rel='noopener noreferrer' className='view-file-link' title={file.name} href={file.url}>{file.name}.{file.format}</a>
-                                </>
-                              ) : ['png', 'jpg', 'bmp', 'gif'].includes(file.format) ? (
-                                <>
-                                  <Icon size='lg' style={{ marginRight: '10px' }} icon='file-image-o' />
-                                  <a target='_blank' rel='noopener noreferrer' className='view-file-link' title={file.name} href={file.url}>{file.name}.{file.format}</a>
-                                </>
-                              ) : (
-                                <>
-                                  <Icon size='lg' style={{ marginRight: '10px' }} icon='file-o' />
-                                  <a target='_blank' rel='noopener noreferrer' className='view-file-link' title={file.name} href={file.url}>{file.name}.{file.format}</a>)
-                                      </>
-                              )
-                            )}
-                          </div>
-                        </li>
-                      )
-                    })}
+                              )}
+                            </div>
+                          </li>
+                        )
+                      })}
                   </ul>
                 </Modal.Body>
               </Modal>
             )}
           </Container>
-          <style jsx>{`
-            :global(.user-content-header) {
-              display: flex;
-              width: 100%;
-              justify-content: space-between;
-              margin-bottom: 20px;
-            }
-            :global(.user-grid-wrapper) {
-              height: 100%;
-            }
-            :global(.user-grid) {
-              height: 95%;
-            }
-            :global(.row-awaitingResponse) {
-              background-color: transparent;
-            }
-            :global(.rs-container, .rs-panel-default, .rs-panel-body) {
-              height: 100%;
-            }
-            :global(.rs-input-group.rs-input-number) {
-              max-width: 300px;
-            }
-            .edit-loader-wrapper {
-              width: 100%;
-              height: 100px;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-            }
-            :global(.edit-file-wrapper) {
-              max-width: 300px;
-              min-height: 50px;
-              box-shadow: none !important;
-              display: flex;
-              justify-content: flex-start;
-              align-items: center;
-              flex-wrap: wrap;
-            }
-            :global(.edit-file-wrapper .rs-panel-body) {
-              padding: 10px;
-              display: flex;
-              flex-wrap: wrap;
-            }
-            .view-file-list {
-              list-style: none;
-            }
-            .view-file-list-item {
-              padding: 15px;
-              border: 1px solid #d6d6d6;
-              border-radius: 5px;
-              margin: 5px;
-              width: 85%;
-            }
-            .view-file-item {
-              display: flex;
-              align-items: center;
-              justify-content: flex-start;
-              font-size: 20px;
-            }
-            .view-file-link {
-              margin-left: 10px;
-              max-width: 320px;
-              white-space: nowrap;
-              text-overflow: ellipsis;
-              overflow: hidden;
-            }
-            .view-file-link::before {
-              content: '';
-              display: inline-block;
-              height: 32px;
-              width: 5px;
-              border-left: 1px solid #d6d6d6;
-              top: 0px;
-              left: -7px;
-              position: absolute;
-            }
-            .edit-file-item {
-              padding: 10px;
-              border: 1px solid #d6d6d6;
-              border-radius: 5px;
-              box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.02), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
-              margin: 5px 10px;
-            }
-            .edit-file-item:hover {
-              text-decoration: none;
-              cursor: pointer;
-              transition: all 250ms ease-in-out;
-              box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.16), 0 7px 70px rgba(90,97,105,.1);
-            }
-            :global(.section-header) {
-              font-size: 1.3rem;
-            }
-            :global(.ag-cell-label-container) {
-              width: 110%;
-            }
-            :global(.tag-wrapper) {
-              box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.16), 0 7px 70px rgba(90,97,105,.1);
-            }
-          `}
+          <style jsx>
+            {`
+              :global(.user-content-header) {
+                display: flex;
+                width: 100%;
+                justify-content: space-between;
+                margin-bottom: 20px;
+              }
+              :global(.user-grid-wrapper) {
+                height: 100%;
+              }
+              :global(.user-grid) {
+                height: 95%;
+              }
+              :global(.row-awaitingResponse) {
+                background-color: transparent;
+              }
+              :global(.rs-container, .rs-panel-default, .rs-panel-body) {
+                height: 100%;
+              }
+              :global(.rs-input-group.rs-input-number) {
+                max-width: 300px;
+              }
+              .edit-loader-wrapper {
+                width: 100%;
+                height: 100px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              }
+              :global(.edit-file-wrapper) {
+                max-width: 300px;
+                min-height: 50px;
+                box-shadow: none !important;
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                flex-wrap: wrap;
+              }
+              :global(.edit-file-wrapper .rs-panel-body) {
+                padding: 10px;
+                display: flex;
+                flex-wrap: wrap;
+              }
+              .view-file-list {
+                list-style: none;
+              }
+              .view-file-list-item {
+                padding: 15px;
+                border: 1px solid #d6d6d6;
+                border-radius: 5px;
+                margin: 5px;
+                width: 85%;
+              }
+              .view-file-item {
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                font-size: 20px;
+              }
+              .view-file-link {
+                margin-left: 10px;
+                max-width: 320px;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
+              }
+              .view-file-link::before {
+                content: '';
+                display: inline-block;
+                height: 32px;
+                width: 5px;
+                border-left: 1px solid #d6d6d6;
+                top: 0px;
+                left: -7px;
+                position: absolute;
+              }
+              .edit-file-item {
+                padding: 10px;
+                border: 1px solid #d6d6d6;
+                border-radius: 5px;
+                box-shadow: 0 2px 0 rgba(90, 97, 105, 0.11),
+                  0 4px 8px rgba(90, 97, 105, 0.02),
+                  0 10px 10px rgba(90, 97, 105, 0.06),
+                  0 7px 70px rgba(90, 97, 105, 0.1);
+                margin: 5px 10px;
+              }
+              .edit-file-item:hover {
+                text-decoration: none;
+                cursor: pointer;
+                transition: all 250ms ease-in-out;
+                box-shadow: 0 2px 0 rgba(90, 97, 105, 0.11),
+                  0 4px 8px rgba(90, 97, 105, 0.12),
+                  0 10px 10px rgba(90, 97, 105, 0.16),
+                  0 7px 70px rgba(90, 97, 105, 0.1);
+              }
+              :global(.section-header) {
+                font-size: 1.3rem;
+              }
+              :global(.ag-cell-label-container) {
+                width: 110%;
+              }
+              :global(.tag-wrapper) {
+                box-shadow: 0 2px 0 rgba(90, 97, 105, 0.11),
+                  0 4px 8px rgba(90, 97, 105, 0.12),
+                  0 10px 10px rgba(90, 97, 105, 0.16),
+                  0 7px 70px rgba(90, 97, 105, 0.1);
+              }
+            `}
           </style>
         </Layout>
       )

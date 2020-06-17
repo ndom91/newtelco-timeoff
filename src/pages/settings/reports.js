@@ -19,7 +19,7 @@ import {
   FormGroup,
   ControlLabel,
   Row,
-  Col
+  Col,
 } from 'rsuite'
 
 const ResponsiveSwarmPlot = React.lazy(() =>
@@ -34,7 +34,7 @@ class Wrapper extends React.Component {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
-          Location: '/auth'
+          Location: '/auth',
         })
         res.end()
       } else {
@@ -43,7 +43,7 @@ class Wrapper extends React.Component {
     }
     return {
       session: await NextAuth.init({ req }),
-      admin: query.admin
+      admin: query.admin,
     }
   }
 
@@ -52,7 +52,7 @@ class Wrapper extends React.Component {
     this.state = {
       allMonths: [],
       allYears: [],
-      admin: props.admin
+      admin: props.admin,
     }
   }
 
@@ -76,7 +76,7 @@ class Wrapper extends React.Component {
     this.setState({
       admin: userAdmin,
       allMonths,
-      allYears
+      allYears,
     })
   }
 
@@ -84,37 +84,36 @@ class Wrapper extends React.Component {
     Notification.info({
       title: header,
       duration: 2000,
-      description: <div className='notify-body'>{text}</div>
+      description: <div className='notify-body'>{text}</div>,
     })
-  };
+  }
 
   notifyWarn = (header, text) => {
     Notification.warning({
       title: header,
       duration: 2000,
-      description: <div className='notify-body'>{text}</div>
+      description: <div className='notify-body'>{text}</div>,
     })
-  };
+  }
 
   notifyError = (header, text) => {
     Notification.error({
       title: header,
       duration: 3000,
-      description: <div className='notify-body'>{text}</div>
+      description: <div className='notify-body'>{text}</div>,
     })
-  };
+  }
 
   notifySuccess = (header, text) => {
     Notification.success({
       title: header,
       duration: 3000,
-      description: <div className='notify-body'>{text}</div>
+      description: <div className='notify-body'>{text}</div>,
     })
-  };
+  }
 
   convertToCSV = objArray => {
-    const array =
-      typeof objArray !== 'object' ? JSON.parse(objArray) : objArray
+    const array = typeof objArray !== 'object' ? JSON.parse(objArray) : objArray
     let str = ''
 
     for (let i = 0; i < array.length; i++) {
@@ -126,7 +125,7 @@ class Wrapper extends React.Component {
       str += '"' + line + '"\r\n'
     }
     return str
-  };
+  }
 
   exportCSVFile = (headers, items, fileTitle) => {
     if (headers) {
@@ -150,7 +149,7 @@ class Wrapper extends React.Component {
         document.body.removeChild(link)
       }
     }
-  };
+  }
 
   handleMonthReportExport = () => {
     const host = window.location.host
@@ -182,7 +181,7 @@ class Wrapper extends React.Component {
             submittedBy: data.submitted_by,
             approvedDateTime: moment(data.approval_datetime).format(
               'DD.MM.YYYY HH:mm'
-            )
+            ),
           })
         })
         const headers = {
@@ -202,7 +201,7 @@ class Wrapper extends React.Component {
           note: 'Note',
           submitted: 'Submitted',
           submittedBy: 'Submmitted By',
-          approvedDateTime: 'Approved Date/Time'
+          approvedDateTime: 'Approved Date/Time',
         }
         this.exportCSVFile(
           headers,
@@ -210,24 +209,22 @@ class Wrapper extends React.Component {
           `${date.month}${date.year}_vacation_export`
         )
       })
-  };
+  }
 
   handleMonthReportSelectChange = selection => {
     const monthName = selection.split(' ')[0]
     const year = selection.split(' ')[1]
     const month = {
-      month: moment()
-        .month(monthName)
-        .format('MM'),
-      year: year
+      month: moment().month(monthName).format('MM'),
+      year: year,
     }
     this.setState({
       reportSelection: {
         ...this.state.reportSelection,
-        month: month
-      }
+        month: month,
+      },
     })
-  };
+  }
 
   handleYearReportExport = () => {
     const host = window.location.host
@@ -259,7 +256,7 @@ class Wrapper extends React.Component {
             submittedBy: data.submitted_by,
             approvedDateTime: moment(data.approval_datetime).format(
               'DD.MM.YYYY HH:mm'
-            )
+            ),
           })
         })
         const headers = {
@@ -279,20 +276,20 @@ class Wrapper extends React.Component {
           note: 'Note',
           submitted: 'Submitted',
           submittedBy: 'Submmitted By',
-          approvedDateTime: 'Approved Date/Time'
+          approvedDateTime: 'Approved Date/Time',
         }
         this.exportCSVFile(headers, exportData, `${year}_vacation_export`)
       })
-  };
+  }
 
   handleYearReportSelectChange = selection => {
     this.setState({
       reportSelection: {
         ...this.state.reportSelection,
-        year: selection
-      }
+        year: selection,
+      },
     })
-  };
+  }
 
   handleYearTDReportExport = () => {
     const host = window.location.host
@@ -310,7 +307,7 @@ class Wrapper extends React.Component {
             remaining: data.resturlaubJAHR,
             submitted: moment(data.submitted_datetime).format(
               'DD.MM.YYYY HH:mm'
-            )
+            ),
           })
         })
         const headers = {
@@ -318,20 +315,20 @@ class Wrapper extends React.Component {
           name: 'Name',
           email: 'Email',
           remaining: `Remaining from ${year}`,
-          submitted: 'Submitted On'
+          submitted: 'Submitted On',
         }
         this.exportCSVFile(headers, exportData, `${year}_daysLeftOver_export`)
       })
-  };
+  }
 
   handleYearTDReportSelectChange = selection => {
     this.setState({
       reportSelection: {
         ...this.state.reportSelection,
-        ytd: selection
-      }
+        ytd: selection,
+      },
     })
-  };
+  }
 
   render() {
     const { allMonths, allYears } = this.state

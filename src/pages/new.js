@@ -24,7 +24,7 @@ import {
   faHistory,
   faAngleRight,
   faAngleLeft,
-  faExclamationCircle
+  faExclamationCircle,
 } from '@fortawesome/free-solid-svg-icons'
 import {
   Container,
@@ -48,7 +48,7 @@ import {
   Notification,
   HelpBlock,
   Table,
-  Animation
+  Animation,
 } from 'rsuite'
 
 const { Slide } = Animation
@@ -60,7 +60,7 @@ class Wrapper extends React.Component {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
-          Location: '/auth'
+          Location: '/auth',
         })
         res.end()
       } else {
@@ -68,7 +68,7 @@ class Wrapper extends React.Component {
       }
     }
     return {
-      session: await NextAuth.init({ req })
+      session: await NextAuth.init({ req }),
     }
   }
 
@@ -106,7 +106,7 @@ class Wrapper extends React.Component {
         dateFrom: '',
         dateTo: '',
         manager: '',
-        notes: ''
+        notes: '',
       },
       lastRequest: {
         submitted: '',
@@ -117,22 +117,25 @@ class Wrapper extends React.Component {
         requested: 0,
         remaining: 0,
         from: '',
-        to: ''
+        to: '',
       },
       tutSteps: [
         {
           target: '.last-btn',
-          content: 'Click here to open the slider. There you can quickly view the details of your last request.'
+          content:
+            'Click here to open the slider. There you can quickly view the details of your last request.',
         },
         {
           target: '.calc-btn',
-          content: 'Click this slider to access the calculator for days available this year.'
+          content:
+            'Click this slider to access the calculator for days available this year.',
         },
         {
           target: '.absence-select',
-          content: 'Finally, begin by selecting the type of absence you would like to submit.'
-        }
-      ]
+          content:
+            'Finally, begin by selecting the type of absence you would like to submit.',
+        },
+      ],
     }
   }
 
@@ -140,7 +143,7 @@ class Wrapper extends React.Component {
     Notification.info({
       title: header,
       duration: 3000,
-      description: <div className='notify-body'>{text}</div>
+      description: <div className='notify-body'>{text}</div>,
     })
   }
 
@@ -148,7 +151,7 @@ class Wrapper extends React.Component {
     Notification.error({
       title: header,
       duration: 3000,
-      description: <div className='notify-body'>{text}</div>
+      description: <div className='notify-body'>{text}</div>,
     })
   }
 
@@ -156,7 +159,7 @@ class Wrapper extends React.Component {
     Notification.success({
       title: header,
       duration: 3000,
-      description: <div className='notify-body'>{text}</div>
+      description: <div className='notify-body'>{text}</div>,
     })
   }
 
@@ -164,7 +167,7 @@ class Wrapper extends React.Component {
     Notification.warning({
       title: header,
       duration: 3000,
-      description: <div className='notify-body'>{text}</div>
+      description: <div className='notify-body'>{text}</div>,
     })
   }
 
@@ -176,12 +179,12 @@ class Wrapper extends React.Component {
     if (isMobile) {
       this.setState({
         joyrideRun: false,
-        isMobile: isMobile
+        isMobile: isMobile,
       })
     } else {
       if (tutorial === 'true') {
         this.setState({
-          joyrideRun: false
+          joyrideRun: false,
         })
       }
     }
@@ -193,7 +196,7 @@ class Wrapper extends React.Component {
           managerData.push({ label: m.name, value: m.email })
         })
         this.setState({
-          availableManagers: managerData
+          availableManagers: managerData,
         })
       })
       .catch(err => console.error(err))
@@ -211,10 +214,12 @@ class Wrapper extends React.Component {
           remaining: data.lastRequest[0].resturlaubJAHR || 0,
           from: moment(data.lastRequest[0].fromDate).format('DD.MM.YYYY'),
           to: moment(data.lastRequest[0].toDate).format('DD.MM.YYYY'),
-          submitted: moment(data.lastRequest[0].submitted_datetime).format('DD.MM.YYYY HH:mm')
+          submitted: moment(data.lastRequest[0].submitted_datetime).format(
+            'DD.MM.YYYY HH:mm'
+          ),
         }
         this.setState({
-          lastRequest: newRequest
+          lastRequest: newRequest,
         })
       })
       .catch(err => console.error(err))
@@ -226,10 +231,14 @@ class Wrapper extends React.Component {
         data.userList.forEach(m => {
           if (m.email === 'device@newtelco.de') return
           if (m.email === 'jcleese@newtelco.de') return
-          m.email && availableUsers.push({ label: `${m.fname} ${m.lname}`, value: m.email })
+          m.email &&
+            availableUsers.push({
+              label: `${m.fname} ${m.lname}`,
+              value: m.email,
+            })
         })
         this.setState({
-          availableUsers
+          availableUsers,
         })
       })
       .catch(err => console.error(err))
@@ -244,20 +253,22 @@ class Wrapper extends React.Component {
             ...existingData,
             lastYear: lastRequest.resturlaubVorjahr,
             thisYear: lastRequest.jahresurlaubInsgesamt,
-            spentThisYear: parseFloat(lastRequest.jahresUrlaubAusgegeben || 0) + parseFloat(lastRequest.beantragt),
+            spentThisYear:
+              parseFloat(lastRequest.jahresUrlaubAusgegeben || 0) +
+              parseFloat(lastRequest.beantragt),
             total: lastRequest.resturlaubJAHR,
-            remaining: lastRequest.resturlaubJAHR
+            remaining: lastRequest.resturlaubJAHR,
           }
           this.setState({
             vaca: existingData,
-            disableDaysInput: true
+            disableDaysInput: true,
           })
         }
       })
       .catch(err => console.error(err))
   }
 
-  handleNameChange = (email) => {
+  handleNameChange = email => {
     const user = this.state.availableUsers.find(u => u.value === email)
     fetch(`/api/user/entries/new?email=${email}`)
       .then(res => res.json())
@@ -268,16 +279,18 @@ class Wrapper extends React.Component {
             ...lastEntry,
             lastYear: lastEntry.resturlaubVorjahr,
             thisYear: lastEntry.jahresurlaubInsgesamt,
-            spentThisYear: parseFloat(lastEntry.jahresUrlaubAusgegeben || 0) + parseFloat(lastEntry.beantragt),
+            spentThisYear:
+              parseFloat(lastEntry.jahresUrlaubAusgegeben || 0) +
+              parseFloat(lastEntry.beantragt),
             total: lastEntry.resturlaubJAHR,
             requested: 0,
             remaining: lastEntry.resturlaubJAHR,
             name: user.label,
-            email: email
+            email: email,
           }
           this.setState({
             vaca: lastRequest,
-            disableDaysInput: true
+            disableDaysInput: true,
           })
         } else {
           this.setState({
@@ -290,88 +303,89 @@ class Wrapper extends React.Component {
               requested: 0,
               remaining: 0,
               name: user.label,
-              email: email
-            }
+              email: email,
+            },
           })
         }
       })
       .catch(err => console.error(err))
   }
 
-  handleEmailChange = (value) => {
+  handleEmailChange = value => {
     this.setState({
       vaca: {
         ...this.state.vaca,
-        email: value
-      }
+        email: value,
+      },
     })
   }
 
-  handleLastYearChange = (value) => {
+  handleLastYearChange = value => {
     this.setState({
       vaca: {
         ...this.state.vaca,
-        lastYear: value
-      }
+        lastYear: value,
+      },
     })
   }
 
-  handleSpentThisYearChange = (value) => {
+  handleSpentThisYearChange = value => {
     this.setState({
       vaca: {
         ...this.state.vaca,
-        spentThisYear: value
-      }
+        spentThisYear: value,
+      },
     })
   }
 
-  handleThisYearChange = (value) => {
+  handleThisYearChange = value => {
     this.setState({
       vaca: {
         ...this.state.vaca,
-        thisYear: value
-      }
+        thisYear: value,
+      },
     })
   }
 
-  handleTotalAvailableChange = (value) => {
+  handleTotalAvailableChange = value => {
     this.setState({
       vaca: {
         ...this.state.vaca,
-        total: value
-      }
+        total: value,
+      },
     })
   }
 
-  handleRequestedChange = (value) => {
+  handleRequestedChange = value => {
     if (this.state.disableDaysInput) {
       this.setState({
         vaca: {
           ...this.state.vaca,
           requested: parseFloat(value || 0.0),
-          remaining: parseFloat(this.state.vaca.total) - parseFloat(value || 0.0)
-        }
+          remaining:
+            parseFloat(this.state.vaca.total) - parseFloat(value || 0.0),
+        },
       })
     } else {
       this.setState({
         vaca: {
           ...this.state.vaca,
-          requested: value
-        }
+          requested: value,
+        },
       })
     }
   }
 
-  handleRemainingChange = (value) => {
+  handleRemainingChange = value => {
     this.setState({
       vaca: {
         ...this.state.vaca,
-        remaining: value
-      }
+        remaining: value,
+      },
     })
   }
 
-  handleTypeChange = (value) => {
+  handleTypeChange = value => {
     let hideHistory = false
     if (value === 'sick') {
       hideHistory = true
@@ -381,37 +395,37 @@ class Wrapper extends React.Component {
     this.setState({
       vaca: {
         ...this.state.vaca,
-        type: value
+        type: value,
       },
-      hideHistory
+      hideHistory,
     })
   }
 
-  handleDateChange = (value) => {
+  handleDateChange = value => {
     this.setState({
       vaca: {
         ...this.state.vaca,
         dateFrom: format(new Date(value[0]), 'MM/dd/yyyy'),
-        dateTo: format(new Date(value[1]), 'MM/dd/yyyy')
-      }
+        dateTo: format(new Date(value[1]), 'MM/dd/yyyy'),
+      },
     })
   }
 
-  handleManagerChange = (manager) => {
+  handleManagerChange = manager => {
     this.setState({
       vaca: {
         ...this.state.vaca,
-        manager: manager
-      }
+        manager: manager,
+      },
     })
   }
 
-  handleNotesChange = (value) => {
+  handleNotesChange = value => {
     this.setState({
       vaca: {
         ...this.state.vaca,
-        notes: value
-      }
+        notes: value,
+      },
     })
   }
 
@@ -428,43 +442,47 @@ class Wrapper extends React.Component {
         type: 0,
         dateFrom: 0,
         dateTo: 0,
-        manager: 0
-      }
+        manager: 0,
+      },
     })
   }
 
   toggleSubmitModal = () => {
     if (!this.state.openConfirmModal) {
-      if (this.state.vaca.dateFrom && this.state.vaca.dateTo && this.state.vaca.manager) {
+      if (
+        this.state.vaca.dateFrom &&
+        this.state.vaca.dateTo &&
+        this.state.vaca.manager
+      ) {
         const { vaca } = this.state
         const tableData = [
           {
             title: 'From',
-            value: moment(vaca.dateFrom).format('DD.MM.YYYY')
+            value: moment(vaca.dateFrom).format('DD.MM.YYYY'),
           },
           {
             title: 'To',
-            value: moment(vaca.dateTo).format('DD.MM.YYYY')
+            value: moment(vaca.dateTo).format('DD.MM.YYYY'),
           },
           {
             title: 'Manager',
-            value: vaca.manager
+            value: vaca.manager,
           },
           {
             title: 'Type',
-            value: vaca.type.charAt(0).toUpperCase() + vaca.type.slice(1)
-          }
+            value: vaca.type.charAt(0).toUpperCase() + vaca.type.slice(1),
+          },
         ]
         this.setState({
           openConfirmModal: !this.state.openConfirmModal,
-          confirmTableData: tableData
+          confirmTableData: tableData,
         })
       } else {
         this.notifyInfo('Please complete the form')
       }
     } else {
       this.setState({
-        openConfirmModal: !this.state.openConfirmModal
+        openConfirmModal: !this.state.openConfirmModal,
       })
     }
   }
@@ -479,7 +497,7 @@ class Wrapper extends React.Component {
       type,
       email,
       name,
-      notes
+      notes,
     } = this.state.vaca
 
     const approvalHash = uuid()
@@ -489,11 +507,11 @@ class Wrapper extends React.Component {
       body: JSON.stringify({
         vaca: this.state.vaca,
         ah: approvalHash,
-        files: this.state.uploadedFiles
+        files: this.state.uploadedFiles,
       }),
       headers: {
-        'X-CSRF-TOKEN': this.props.session.csrfToken
-      }
+        'X-CSRF-TOKEN': this.props.session.csrfToken,
+      },
     })
       .then(resp => resp.json())
       .then(data1 => {
@@ -508,28 +526,28 @@ class Wrapper extends React.Component {
             note: notes,
             email: email,
             ah: approvalHash,
-            files: this.state.uploadedFiles
+            files: this.state.uploadedFiles,
           }),
           headers: {
-            'X-CSRF-TOKEN': this.props.session.csrfToken
-          }
+            'X-CSRF-TOKEN': this.props.session.csrfToken,
+          },
         })
           .then(resp => resp.json())
           .then(data => {
             if (this.state.openConfirmModal) {
               this.setState({
                 confirmed: true,
-                sendSuccess: data.code === 200
+                sendSuccess: data.code === 200,
               })
               setTimeout(() => {
                 this.setState({
-                  openConfirmModal: !this.state.openConfirmModal
+                  openConfirmModal: !this.state.openConfirmModal,
                 })
               }, 3000)
             }
             if (data1.code === 200 && data.code === 200) {
               this.setState({
-                successfullySent: true
+                successfullySent: true,
               })
             } else if (data.code === 500) {
               this.notifyError(`Error - ${data.msg}`)
@@ -542,13 +560,13 @@ class Wrapper extends React.Component {
 
   showTimeCalculator = () => {
     this.setState({
-      showCalc: !this.state.showCalc
+      showCalc: !this.state.showCalc,
     })
   }
 
   showLastRequestSidebar = () => {
     this.setState({
-      showSidebar: !this.state.showSidebar
+      showSidebar: !this.state.showSidebar,
     })
   }
 
@@ -556,7 +574,7 @@ class Wrapper extends React.Component {
     const uploadedFiles = [...this.state.uploadedFiles]
     uploadedFiles.push({ id: id, url: fileUrl, name: fileName })
     this.setState({
-      uploadedFiles
+      uploadedFiles,
     })
   }
 
@@ -586,7 +604,7 @@ class Wrapper extends React.Component {
       tutSteps,
       joyrideRun,
       isMobile,
-      disableDaysInput
+      disableDaysInput,
     } = this.state
 
     const successOptions = {
@@ -594,8 +612,8 @@ class Wrapper extends React.Component {
       autoplay: true,
       animationData: lottieSuccess,
       rendererSettings: {
-        preserveAspectRatio: 'xMidYMid slice'
-      }
+        preserveAspectRatio: 'xMidYMid slice',
+      },
     }
 
     const errorOptions = {
@@ -603,17 +621,25 @@ class Wrapper extends React.Component {
       autoplay: true,
       animationData: lottieError,
       rendererSettings: {
-        preserveAspectRatio: 'xMidYMid slice'
-      }
+        preserveAspectRatio: 'xMidYMid slice',
+      },
     }
 
     if (this.props.session.user) {
       return (
-        <Layout user={this.props.session.user.email} token={this.props.session.csrfToken}>
+        <Layout
+          user={this.props.session.user.email}
+          token={this.props.session.csrfToken}
+        >
           <Container style={{ alignItems: 'center' }}>
             <Subheader header='New Request' subheader='Create New' />
             <Content style={{ width: '410px' }}>
-              <Form className='new-request-form' layout='vertical' fluid style={{ flexDirection: 'column' }}>
+              <Form
+                className='new-request-form'
+                layout='vertical'
+                fluid
+                style={{ flexDirection: 'column' }}
+              >
                 <Joyride
                   steps={tutSteps}
                   continuous
@@ -622,8 +648,8 @@ class Wrapper extends React.Component {
                   run={joyrideRun}
                   styles={{
                     options: {
-                      zIndex: 1000
-                    }
+                      zIndex: 1000,
+                    },
                   }}
                   callback={this.handleJoyrideCallback}
                 />
@@ -631,23 +657,55 @@ class Wrapper extends React.Component {
                   bordered
                   style={{ position: 'relative', padding: '10px' }}
                   header={
-                    <h4 className='form-section-heading' style={{ position: 'relative' }}>
+                    <h4
+                      className='form-section-heading'
+                      style={{ position: 'relative' }}
+                    >
                       User
-                      <FontAwesomeIcon icon={faUser} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
+                      <FontAwesomeIcon
+                        icon={faUser}
+                        width='1em'
+                        style={{
+                          marginLeft: '10px',
+                          top: '2px',
+                          position: 'absolute',
+                          color: 'secondary',
+                        }}
+                      />
                     </h4>
                   }
                 >
                   <FormGroup>
                     <ControlLabel>Name</ControlLabel>
-                    <SelectPicker name='name' onChange={this.handleNameChange} defaultValue={vaca.email} data={this.state.availableUsers} style={{ width: '100%' }} />
+                    <SelectPicker
+                      name='name'
+                      onChange={this.handleNameChange}
+                      defaultValue={vaca.email}
+                      data={this.state.availableUsers}
+                      style={{ width: '100%' }}
+                    />
                   </FormGroup>
                   <FormGroup>
                     <ControlLabel>Email</ControlLabel>
-                    <FormControl block name='email' inputMode='email' autoComplete='email' onChange={this.handleEmailChange} value={vaca.email} />
+                    <FormControl
+                      block
+                      name='email'
+                      inputMode='email'
+                      autoComplete='email'
+                      onChange={this.handleEmailChange}
+                      value={vaca.email}
+                    />
                   </FormGroup>
                   <FormGroup>
                     <ControlLabel>Type of Absence</ControlLabel>
-                    <RadioGroup onChange={this.handleTypeChange} name='radioList' inline appearance='picker' defaultValue='vacation' className='absence-select'>
+                    <RadioGroup
+                      onChange={this.handleTypeChange}
+                      name='radioList'
+                      inline
+                      appearance='picker'
+                      defaultValue='vacation'
+                      className='absence-select'
+                    >
                       <Radio value='vacation'>Vacation</Radio>
                       <Radio value='sick'>Illness</Radio>
                       <Radio value='trip'>Trip</Radio>
@@ -663,50 +721,142 @@ class Wrapper extends React.Component {
                   unmountOnExit
                 >
                   <div
-                    style={{ position: 'relative', overflow: 'visible', zIndex: '3', marginBottom: '20px' }}
+                    style={{
+                      position: 'relative',
+                      overflow: 'visible',
+                      zIndex: '3',
+                      marginBottom: '20px',
+                    }}
                   >
                     <Panel
                       bordered
                       style={{ padding: '10px' }}
                       header={
-                        <h4 className='form-section-heading' style={{ position: 'relative' }}>
+                        <h4
+                          className='form-section-heading'
+                          style={{ position: 'relative' }}
+                        >
                           History
-                          <FontAwesomeIcon icon={faHistory} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
+                          <FontAwesomeIcon
+                            icon={faHistory}
+                            width='1em'
+                            style={{
+                              marginLeft: '10px',
+                              top: '2px',
+                              position: 'absolute',
+                              color: 'secondary',
+                            }}
+                          />
                         </h4>
                       }
                     >
                       <FormGroup className='history-input-wrapper'>
                         <ControlLabel>Days from Last Year</ControlLabel>
-                        <InputNumber min={0} size='lg' postfix='days' value={vaca.lastYear} onChange={this.handleLastYearChange} disabled={disableDaysInput} />
+                        <InputNumber
+                          min={0}
+                          size='lg'
+                          postfix='days'
+                          value={vaca.lastYear}
+                          onChange={this.handleLastYearChange}
+                          disabled={disableDaysInput}
+                        />
                       </FormGroup>
                       <FormGroup className='history-input-wrapper'>
                         <ControlLabel>Days from this Year</ControlLabel>
-                        <InputNumber min={0} size='lg' postfix='days' name='daysThisYear' onChange={this.handleThisYearChange} value={vaca.thisYear} disabled={disableDaysInput} />
+                        <InputNumber
+                          min={0}
+                          size='lg'
+                          postfix='days'
+                          name='daysThisYear'
+                          onChange={this.handleThisYearChange}
+                          value={vaca.thisYear}
+                          disabled={disableDaysInput}
+                        />
                       </FormGroup>
                       <FormGroup className='history-input-wrapper'>
                         <ControlLabel>Days spent This Year</ControlLabel>
-                        <InputNumber min={0} size='lg' postfix='days' name='daysSpentThisYear' onChange={this.handleSpentThisYearChange} value={vaca.spentThisYear} disabled={disableDaysInput} />
+                        <InputNumber
+                          min={0}
+                          size='lg'
+                          postfix='days'
+                          name='daysSpentThisYear'
+                          onChange={this.handleSpentThisYearChange}
+                          value={vaca.spentThisYear}
+                          disabled={disableDaysInput}
+                        />
                       </FormGroup>
                       <FormGroup className='history-input-wrapper'>
                         <ControlLabel>Total Days Available</ControlLabel>
-                        <InputNumber min={0} size='lg' postfix='days' name='totalDaysAvailable' onChange={this.handleTotalAvailableChange} value={vaca.total} disabled={disableDaysInput} />
+                        <InputNumber
+                          min={0}
+                          size='lg'
+                          postfix='days'
+                          name='totalDaysAvailable'
+                          onChange={this.handleTotalAvailableChange}
+                          value={vaca.total}
+                          disabled={disableDaysInput}
+                        />
                       </FormGroup>
                       <FormGroup className='history-input-wrapper'>
                         <ControlLabel>Requested Days</ControlLabel>
-                        <InputNumber step={0.5} size='lg' postfix='days' name='requestedDays' onChange={this.handleRequestedChange} value={vaca.requested} />
+                        <InputNumber
+                          step={0.5}
+                          size='lg'
+                          postfix='days'
+                          name='requestedDays'
+                          onChange={this.handleRequestedChange}
+                          value={vaca.requested}
+                        />
                       </FormGroup>
-                      <FormGroup style={{ margin: '5px 20px 30px 20px', color: '#a7a7a7' }}>
-                        <small>Remember, do not count weekends or <a target='_blank' rel='noopener noreferrer' href='https://www.officeholidays.com/countries/germany/2020'>German Federal Holidays</a> in your number of requested days.</small>
+                      <FormGroup
+                        style={{
+                          margin: '5px 20px 30px 20px',
+                          color: '#a7a7a7',
+                        }}
+                      >
+                        <small>
+                          Remember, do not count weekends or{' '}
+                          <a
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            href='https://www.officeholidays.com/countries/germany/2020'
+                          >
+                            German Federal Holidays
+                          </a>{' '}
+                          in your number of requested days.
+                        </small>
                       </FormGroup>
                       <FormGroup className='history-input-wrapper'>
                         <ControlLabel>Days Remaining</ControlLabel>
-                        <InputNumber min={0} size='lg' postfix='days' name='remainingDays' onChange={this.handleRemainingChange} value={vaca.remaining} disabled={disableDaysInput} />
+                        <InputNumber
+                          min={0}
+                          size='lg'
+                          postfix='days'
+                          name='remainingDays'
+                          onChange={this.handleRemainingChange}
+                          value={vaca.remaining}
+                          disabled={disableDaysInput}
+                        />
                       </FormGroup>
                     </Panel>
-                    <div className={`${showCalc ? 'active' : ''} calc-sidebar `}>
+                    <div
+                      className={`${showCalc ? 'active' : ''} calc-sidebar `}
+                    >
                       <Calculator />
-                      <div className='sidebar-button' onClick={this.showTimeCalculator}>
-                        <div className='calc-btn' style={{ marginLeft: '10px', right: '5px', top: '110px', position: 'absolute', color: 'secondary' }}>
+                      <div
+                        className='sidebar-button'
+                        onClick={this.showTimeCalculator}
+                      >
+                        <div
+                          className='calc-btn'
+                          style={{
+                            marginLeft: '10px',
+                            right: '5px',
+                            top: '110px',
+                            position: 'absolute',
+                            color: 'secondary',
+                          }}
+                        >
                           <Tooltip
                             title='Calculator for Days Available'
                             position='right'
@@ -714,7 +864,11 @@ class Wrapper extends React.Component {
                             distance='20'
                             offset='-23'
                           >
-                            <FontAwesomeIcon className='calc-btn' icon={!showCalc ? faAngleRight : faAngleLeft} width='1.5em' />
+                            <FontAwesomeIcon
+                              className='calc-btn'
+                              icon={!showCalc ? faAngleRight : faAngleLeft}
+                              width='1.5em'
+                            />
                           </Tooltip>
                         </div>
                       </div>
@@ -725,9 +879,21 @@ class Wrapper extends React.Component {
                   bordered
                   style={{ padding: '10px' }}
                   header={
-                    <h4 className='form-section-heading' style={{ position: 'relative' }}>
+                    <h4
+                      className='form-section-heading'
+                      style={{ position: 'relative' }}
+                    >
                       Dates
-                      <FontAwesomeIcon icon={faCalendarAlt} width='1em' style={{ marginLeft: '10px', top: '2px', position: 'absolute', color: 'secondary' }} />
+                      <FontAwesomeIcon
+                        icon={faCalendarAlt}
+                        width='1em'
+                        style={{
+                          marginLeft: '10px',
+                          top: '2px',
+                          position: 'absolute',
+                          color: 'secondary',
+                        }}
+                      />
                     </h4>
                   }
                 >
@@ -742,17 +908,32 @@ class Wrapper extends React.Component {
                   </FormGroup>
                   <FormGroup>
                     <ControlLabel>Manager</ControlLabel>
-                    <SelectPicker block data={availableManagers} onChange={this.handleManagerChange} />
+                    <SelectPicker
+                      block
+                      data={availableManagers}
+                      onChange={this.handleManagerChange}
+                    />
                   </FormGroup>
                   <FormGroup>
                     <ControlLabel>Note</ControlLabel>
-                    <Input componentClass='textarea' rows={3} placeholder='Optional Note' onChange={this.handleNotesChange} />
+                    <Input
+                      componentClass='textarea'
+                      rows={3}
+                      placeholder='Optional Note'
+                      onChange={this.handleNotesChange}
+                    />
                   </FormGroup>
                   {vaca.type === 'sick' && (
                     <FormGroup>
                       <ControlLabel className='sick-warning'>
-                        <FontAwesomeIcon icon={faExclamationCircle} width='5.5rem' style={{ margin: '10px' }} />
-                        When submitting a sick notice, don't forget to submit a doctors note now, or later in your dashboard by editing this request if sick for more than 3 days.
+                        <FontAwesomeIcon
+                          icon={faExclamationCircle}
+                          width='5.5rem'
+                          style={{ margin: '10px' }}
+                        />
+                        When submitting a sick notice, don't forget to submit a
+                        doctors note now, or later in your dashboard by editing
+                        this request if sick for more than 3 days.
                       </ControlLabel>
                     </FormGroup>
                   )}
@@ -760,9 +941,7 @@ class Wrapper extends React.Component {
                     <ControlLabel className='filedrop-label'>
                       Documents
                     </ControlLabel>
-                    <div
-                      className='upload-file'
-                    >
+                    <div className='upload-file'>
                       <Upload
                         handleFileUploadSuccess={this.onFileUploadSuccess}
                       />
@@ -770,16 +949,37 @@ class Wrapper extends React.Component {
                   </FormGroup>
                   <FormGroup>
                     <ButtonGroup justified>
-                      <Button style={{ width: '50%' }} onClick={this.handleClear} appearance='default'>Clear</Button>
-                      <Button style={{ width: '50%' }} onClick={this.toggleSubmitModal} disabled={successfullySent} appearance='primary'>Submit</Button>
+                      <Button
+                        style={{ width: '50%' }}
+                        onClick={this.handleClear}
+                        appearance='default'
+                      >
+                        Clear
+                      </Button>
+                      <Button
+                        style={{ width: '50%' }}
+                        onClick={this.toggleSubmitModal}
+                        disabled={successfullySent}
+                        appearance='primary'
+                      >
+                        Submit
+                      </Button>
                     </ButtonGroup>
                   </FormGroup>
                 </Panel>
               </Form>
             </Content>
           </Container>
-          <div className={`${this.state.showSidebar ? 'active' : ''} last-request-sidebar`}>
-            <Panel className='last-request-panel' header='Last Request' style={{ boxShadow: 'none' }}>
+          <div
+            className={`${
+              this.state.showSidebar ? 'active' : ''
+            } last-request-sidebar`}
+          >
+            <Panel
+              className='last-request-panel'
+              header='Last Request'
+              style={{ boxShadow: 'none' }}
+            >
               <FormGroup>
                 <ControlLabel>Submitted</ControlLabel>
                 <Input disabled value={lastRequest.submitted} />
@@ -817,8 +1017,19 @@ class Wrapper extends React.Component {
                 <Input disabled value={lastRequest.to} />
               </FormGroup>
             </Panel>
-            <div className='sidebar-button' onClick={this.showLastRequestSidebar}>
-              <div style={{ marginLeft: '10px', right: '13px', top: '325px', position: 'absolute', color: 'secondary' }}>
+            <div
+              className='sidebar-button'
+              onClick={this.showLastRequestSidebar}
+            >
+              <div
+                style={{
+                  marginLeft: '10px',
+                  right: '13px',
+                  top: '325px',
+                  position: 'absolute',
+                  color: 'secondary',
+                }}
+              >
                 <Tooltip
                   title='View Last Request Details'
                   trigger='mouseenter'
@@ -827,67 +1038,122 @@ class Wrapper extends React.Component {
                   position='right'
                   sticky
                 >
-                  <FontAwesomeIcon className='last-btn' icon={!showSidebar ? faAngleRight : faAngleLeft} width='1.5em' />
+                  <FontAwesomeIcon
+                    className='last-btn'
+                    icon={!showSidebar ? faAngleRight : faAngleLeft}
+                    width='1.5em'
+                  />
                 </Tooltip>
               </div>
             </div>
           </div>
           {openConfirmModal && (
-            <Slide in={openConfirmModal} placement='top' exitingClassName='modal-out'>
-              <Modal enforceFocus size='sm' backdrop show={openConfirmModal} onHide={this.toggleSubmitModal} style={{ marginTop: '80px' }}>
+            <Slide
+              in={openConfirmModal}
+              placement='top'
+              exitingClassName='modal-out'
+            >
+              <Modal
+                enforceFocus
+                size='sm'
+                backdrop
+                show={openConfirmModal}
+                onHide={this.toggleSubmitModal}
+                style={{ marginTop: '80px' }}
+              >
                 <Modal.Header>
                   {!confirmed && (
-                    <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>Confirm Submit</Modal.Title>
+                    <Modal.Title
+                      style={{ textAlign: 'center', fontSize: '24px' }}
+                    >
+                      Confirm Submit
+                    </Modal.Title>
                   )}
                 </Modal.Header>
                 <Modal.Body>
-                  {!confirmed
-                    ? (
-                      <>
-                        <span style={{ textAlign: 'center', display: 'block', fontWeight: '600' }}>Are you sure you want to submit the following absence request?</span>
-                        <Table showHeader={false} height={200} bordered={false} data={confirmTableData} style={{ margin: '20px 50px' }}>
-                          <Column width={200} align='left'>
-                            <HeaderCell>Field: </HeaderCell>
-                            <Cell dataKey='title' />
-                          </Column>
-                          <Column width={250} align='left'>
-                            <HeaderCell>Value: </HeaderCell>
-                            <Cell dataKey='value' />
-                          </Column>
-                        </Table>
-                        {hideHistory && (
-                          <span style={{ textAlign: 'center', display: 'block', maxWidth: '80%', margin: '40px auto 20px auto' }}>You have selected to submit an absence which does not require approval - instead we will send out a notification to your chosen manager and team group email address.</span>
-                        )}
-                      </>
-                    ) : (
-                      sendSuccess ? (
-                        <div className='confirmation-wrapper'>
-                          <Lottie
-                            options={successOptions}
-                            height={300}
-                            width={300}
-                          />
-                        </div>
-                      ) : (
-                          <div className='confirmation-wrapper'>
-                            <Lottie
-                              options={errorOptions}
-                              height={300}
-                              width={300}
-                            />
-                          </div>
-                        )
-                    )}
+                  {!confirmed ? (
+                    <>
+                      <span
+                        style={{
+                          textAlign: 'center',
+                          display: 'block',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Are you sure you want to submit the following absence
+                        request?
+                      </span>
+                      <Table
+                        showHeader={false}
+                        height={200}
+                        bordered={false}
+                        data={confirmTableData}
+                        style={{ margin: '20px 50px' }}
+                      >
+                        <Column width={200} align='left'>
+                          <HeaderCell>Field: </HeaderCell>
+                          <Cell dataKey='title' />
+                        </Column>
+                        <Column width={250} align='left'>
+                          <HeaderCell>Value: </HeaderCell>
+                          <Cell dataKey='value' />
+                        </Column>
+                      </Table>
+                      {hideHistory && (
+                        <span
+                          style={{
+                            textAlign: 'center',
+                            display: 'block',
+                            maxWidth: '80%',
+                            margin: '40px auto 20px auto',
+                          }}
+                        >
+                          You have selected to submit an absence which does not
+                          require approval - instead we will send out a
+                          notification to your chosen manager and team group
+                          email address.
+                        </span>
+                      )}
+                    </>
+                  ) : sendSuccess ? (
+                    <div className='confirmation-wrapper'>
+                      <Lottie
+                        options={successOptions}
+                        height={300}
+                        width={300}
+                      />
+                    </div>
+                  ) : (
+                    <div className='confirmation-wrapper'>
+                      <Lottie options={errorOptions} height={300} width={300} />
+                    </div>
+                  )}
                 </Modal.Body>
-                <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
+                <Modal.Footer
+                  style={{ display: 'flex', justifyContent: 'center' }}
+                >
                   <ButtonToolbar style={{ width: '100%' }}>
-                    <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+                    <ButtonGroup
+                      style={{
+                        width: '100%',
+                        display: 'flex',
+                        justifyContent: 'center',
+                      }}
+                    >
                       {!confirmed && (
                         <>
-                          <Button onClick={this.toggleSubmitModal} style={{ width: '33%', fontSize: '16px' }} appearance='default'>
+                          <Button
+                            onClick={this.toggleSubmitModal}
+                            style={{ width: '33%', fontSize: '16px' }}
+                            appearance='default'
+                          >
                             Cancel
                           </Button>
-                          <Button onClick={this.handleSubmit} style={{ width: '33%', fontSize: '16px' }} appearance='primary'>
+                          <Button
+                            onClick={this.handleSubmit}
+                            style={{ width: '33%', fontSize: '16px' }}
+                            appearance='primary'
+                          >
                             Confirm
                           </Button>
                         </>
@@ -898,263 +1164,275 @@ class Wrapper extends React.Component {
               </Modal>
             </Slide>
           )}
-          <style jsx>{`
-          @media screen and (max-width: 500px) {
-            :global(.last-request-sidebar) {
-              display: none;
-            }
-            :global(.calc-sidebar) {
-              display: none;
-            }
-            :global(.rs-form-control-wrapper input) {
-              max-width: 80%;
-            }
-            :global(.rs-content) {
-              width: 100%;
-            }
-            :global(.new-request-form) {
-              width: 80%;
-            }
-            :global(.rs-form-horizontal .rs-form-group .rs-control-label) {
-              width: 60% !important;
-            }
-            :global(.rs-form-control-wrapper > .rs-input-number, .rs-form-control-wrapper > .rs-input) {
-              max-width: 80% !important;
-            }
-            :global(textarea.rs-input) {
-              min-width: unset;
-            }
-          }
-          :global(.sick-warning) {
-            display: flex !important;
-            padding: 10px !important;
-            border-radius: 5px;
-            border: 1px solid #67b246bf;
-          }
-          :global(.__floater.__floater__open) {
-            z-index: 1000 !important;
-          }
-          :global(.calc-button) {
-            position: absolute;
-            right:10px;
-            top: 45%;
-            height: 55px;
-            width: 55px;
-            background-color: #fff;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
-          }
-          .last-request-sidebar {
-            position: absolute;
-            left: -255px;
-            top: 200px;
-            height: 740px;
-            width: 300px;
-            border-radius: 10px;
-            background-color: #fff;
-            box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
-            transition: left 250ms ease-in-out;
-          }
-          .last-request-sidebar.active {
-            left: -20px !important;
-          }
-          :global(.last-request-sidebar .rs-form-group) {
-            margin-bottom: 10px !important;
-          }
-          :global(.absence-select) {
-            display: flex;
-            justify-content: space-around;
-            width: 100%;
-          }
-          .confirmation-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-            transition: opacity 250ms ease-in-out;
-          }
-          .calc-sidebar {
-            position: absolute;
-            right: -30px;
-            top: 100px;
-            height: 280px;
-            width: 250px;
-            border-radius: 10px;
-            background-color: #fff;
-            box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
-            transition: right 250ms ease-in-out;
-            z-index: -1;
-          }
-          .calc-sidebar.active {
-            right: -240px;
-          }
-          :global(.history-input-wrapper) {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            margin: 15px 10px !important;
-            position: relative;
-          }
-          .input-number {
-            position: absolute;
-            top: -25px;
-            left: -15px;
-            opacity: 0.1;
-            font-size: 3rem;
-            font-weight: 600;
-            z-index: 1;
-          }
-          :global(.history-input-wrapper .rs-help-block) {
-            position: absolute;
-            top: 0;
-            right: 10px;
-          }
-          :global(.rs-form-group) {
-            margin-bottom: 15px;
-          }
-          :global(.upload-file) {
-            display: inline-block;
-            width: 100%;
-          }
-          :global(.rs-radio.rs-radio-inline) {
-            margin-left: 0px !important;
-          }
-          :global(.last-request-panel .rs-control-label) {
-            margin-left: 40px;
-          }
-          :global(.last-request-panel .rs-form-group) {
-            margin-bottom: 20px;
-          }
-          :global(.last-request-panel input) {
-            width: 60%;
-            right: 0;
-            margin-left: 40px;
-            margin-top: 5px;
-            color: #575757 !important;
-          }
-          :global(.calc-panel-body) {
-            margin-bottom: 0px !important;
-          }
-          :global(.calc-button:hover) {
-            cursor: pointer;
-           }
-          :global(.new-request-header) {
-            width: 100%;
-            text-align: center;
-          }
-          :global(.section-header-hr) {
-            width: 30%;
-            position: absolute;
-          }
-          :global(.sidebar-button:hover) {
-            cursor: pointer;
-          }
-          :global(.panel-enter) {
-            opacity: 0;
-            height: 0;
-          }
-          :global(.panel-enter-active) {
-            opacity: 1;
-            height: 622px;
-            transition: opacity 500ms, height 500ms;
-          }
-          :global(.panel-exit) {
-            opacity: 1;
-            height: 622px;
-          }
-          :global(.panel-exit-active) {
-            opacity: 0;
-            height: 0px;
-            transition: opacity 500ms, height 500ms;
-          }
-          :global(.step-enter) {
-            opacity: 0;
-          }
-          :global(.step-enter-active) {
-            opacity: 1;
-            transition: opacity 500ms;
-          }
-          :global(.step-exit) {
-            opacity: 1;
-          }
-          :global(.step-exit-active) {
-            opacity: 0;
-            transition: opacity 500ms;
-          }
-          :global(.calc-enter) {
-            opacity: 0;
-            width: 0;
-            height: 0;
-          }
-          :global(.calc-enter-active) {
-            opacity: 1;
-            width: 400px;
-            transition: opacity 500ms, width 500ms;
-          }
-          :global(.calc-exit) {
-            opacity: 1;
-            width: 400px;
-          }
-          :global(.calc-exit-active) {
-            opacity: 0;
-            width: 0;
-            transition: opacity 500ms, width 500ms;
-          }
-          :global(.section-header-hr.end) {
-            right: 0;
-            top: 20px;
-          }
-          :global(.new-request-form) {
-            display: flex;
-            justify-content: center;
-          }
-          :global(.rs-form > .rs-panel-default) {
-            margin-bottom: 20px;
-          }
-          :global(.rs-panel-group .rs-panel + .rs-panel::before) {
-            border: none;
-          }
-          :global(.filedrop-label) {
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-          }
-          :global(.filedrop-section) {
-            width: 320px;
-            float: left;
-          }
-          :global(.filedrop-section:hover) {
-            cursor: pointer;
-          }
-          :global(.rs-tooltip) {
-            max-width: 150px;
-          }
-          :global(.filedrop-target) {
-            min-height: 50px;
-            width: 100%;
-            border: 2px dashed #e5e5ea;
-            text-align: center;
-            color: #c0c0c3;
-            padding: 20px;
-            border-radius: 10px;
-          }
-          :global(.rs-form-control-wrapper > .rs-input-number, .rs-form-control-wrapper > .rs-input) {
-            width: 300px;
-          }
-          :global(.rs-panel-heading) {
-            text-align: center;
-          }
-          :global(.rs-form-horizontal .rs-form-group .rs-control-label) {
-            width: 100%;
-            text-align: left;
-            font-weight: 600;
-          }
-          :global(.rs-modal-backdrop.in) {
-            opacity: 0.8;
-          }
-        `}
+          <style jsx>
+            {`
+              @media screen and (max-width: 500px) {
+                :global(.last-request-sidebar) {
+                  display: none;
+                }
+                :global(.calc-sidebar) {
+                  display: none;
+                }
+                :global(.rs-form-control-wrapper input) {
+                  max-width: 80%;
+                }
+                :global(.rs-content) {
+                  width: 100%;
+                }
+                :global(.new-request-form) {
+                  width: 80%;
+                }
+                :global(.rs-form-horizontal .rs-form-group .rs-control-label) {
+                  width: 60% !important;
+                }
+                :global(.rs-form-control-wrapper
+                    > .rs-input-number, .rs-form-control-wrapper > .rs-input) {
+                  max-width: 80% !important;
+                }
+                :global(textarea.rs-input) {
+                  min-width: unset;
+                }
+              }
+              :global(.sick-warning) {
+                display: flex !important;
+                padding: 10px !important;
+                border-radius: 5px;
+                border: 1px solid #67b246bf;
+              }
+              :global(.__floater.__floater__open) {
+                z-index: 1000 !important;
+              }
+              :global(.calc-button) {
+                position: absolute;
+                right: 10px;
+                top: 45%;
+                height: 55px;
+                width: 55px;
+                background-color: #fff;
+                padding: 15px;
+                border-radius: 10px;
+                box-shadow: 0 2px 0 rgba(90, 97, 105, 0.11),
+                  0 4px 8px rgba(90, 97, 105, 0.12),
+                  0 10px 10px rgba(90, 97, 105, 0.06),
+                  0 7px 70px rgba(90, 97, 105, 0.1);
+              }
+              .last-request-sidebar {
+                position: absolute;
+                left: -255px;
+                top: 200px;
+                height: 740px;
+                width: 300px;
+                border-radius: 10px;
+                background-color: #fff;
+                box-shadow: 0 2px 0 rgba(90, 97, 105, 0.11),
+                  0 4px 8px rgba(90, 97, 105, 0.12),
+                  0 10px 10px rgba(90, 97, 105, 0.06),
+                  0 7px 70px rgba(90, 97, 105, 0.1);
+                transition: left 250ms ease-in-out;
+              }
+              .last-request-sidebar.active {
+                left: -20px !important;
+              }
+              :global(.last-request-sidebar .rs-form-group) {
+                margin-bottom: 10px !important;
+              }
+              :global(.absence-select) {
+                display: flex;
+                justify-content: space-around;
+                width: 100%;
+              }
+              .confirmation-wrapper {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                height: 100%;
+                transition: opacity 250ms ease-in-out;
+              }
+              .calc-sidebar {
+                position: absolute;
+                right: -30px;
+                top: 100px;
+                height: 280px;
+                width: 250px;
+                border-radius: 10px;
+                background-color: #fff;
+                box-shadow: 0 2px 0 rgba(90, 97, 105, 0.11),
+                  0 4px 8px rgba(90, 97, 105, 0.12),
+                  0 10px 10px rgba(90, 97, 105, 0.06),
+                  0 7px 70px rgba(90, 97, 105, 0.1);
+                transition: right 250ms ease-in-out;
+                z-index: -1;
+              }
+              .calc-sidebar.active {
+                right: -240px;
+              }
+              :global(.history-input-wrapper) {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                margin: 15px 10px !important;
+                position: relative;
+              }
+              .input-number {
+                position: absolute;
+                top: -25px;
+                left: -15px;
+                opacity: 0.1;
+                font-size: 3rem;
+                font-weight: 600;
+                z-index: 1;
+              }
+              :global(.history-input-wrapper .rs-help-block) {
+                position: absolute;
+                top: 0;
+                right: 10px;
+              }
+              :global(.rs-form-group) {
+                margin-bottom: 15px;
+              }
+              :global(.upload-file) {
+                display: inline-block;
+                width: 100%;
+              }
+              :global(.rs-radio.rs-radio-inline) {
+                margin-left: 0px !important;
+              }
+              :global(.last-request-panel .rs-control-label) {
+                margin-left: 40px;
+              }
+              :global(.last-request-panel .rs-form-group) {
+                margin-bottom: 20px;
+              }
+              :global(.last-request-panel input) {
+                width: 60%;
+                right: 0;
+                margin-left: 40px;
+                margin-top: 5px;
+                color: #575757 !important;
+              }
+              :global(.calc-panel-body) {
+                margin-bottom: 0px !important;
+              }
+              :global(.calc-button:hover) {
+                cursor: pointer;
+              }
+              :global(.new-request-header) {
+                width: 100%;
+                text-align: center;
+              }
+              :global(.section-header-hr) {
+                width: 30%;
+                position: absolute;
+              }
+              :global(.sidebar-button:hover) {
+                cursor: pointer;
+              }
+              :global(.panel-enter) {
+                opacity: 0;
+                height: 0;
+              }
+              :global(.panel-enter-active) {
+                opacity: 1;
+                height: 622px;
+                transition: opacity 500ms, height 500ms;
+              }
+              :global(.panel-exit) {
+                opacity: 1;
+                height: 622px;
+              }
+              :global(.panel-exit-active) {
+                opacity: 0;
+                height: 0px;
+                transition: opacity 500ms, height 500ms;
+              }
+              :global(.step-enter) {
+                opacity: 0;
+              }
+              :global(.step-enter-active) {
+                opacity: 1;
+                transition: opacity 500ms;
+              }
+              :global(.step-exit) {
+                opacity: 1;
+              }
+              :global(.step-exit-active) {
+                opacity: 0;
+                transition: opacity 500ms;
+              }
+              :global(.calc-enter) {
+                opacity: 0;
+                width: 0;
+                height: 0;
+              }
+              :global(.calc-enter-active) {
+                opacity: 1;
+                width: 400px;
+                transition: opacity 500ms, width 500ms;
+              }
+              :global(.calc-exit) {
+                opacity: 1;
+                width: 400px;
+              }
+              :global(.calc-exit-active) {
+                opacity: 0;
+                width: 0;
+                transition: opacity 500ms, width 500ms;
+              }
+              :global(.section-header-hr.end) {
+                right: 0;
+                top: 20px;
+              }
+              :global(.new-request-form) {
+                display: flex;
+                justify-content: center;
+              }
+              :global(.rs-form > .rs-panel-default) {
+                margin-bottom: 20px;
+              }
+              :global(.rs-panel-group .rs-panel + .rs-panel::before) {
+                border: none;
+              }
+              :global(.filedrop-label) {
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+              }
+              :global(.filedrop-section) {
+                width: 320px;
+                float: left;
+              }
+              :global(.filedrop-section:hover) {
+                cursor: pointer;
+              }
+              :global(.rs-tooltip) {
+                max-width: 150px;
+              }
+              :global(.filedrop-target) {
+                min-height: 50px;
+                width: 100%;
+                border: 2px dashed #e5e5ea;
+                text-align: center;
+                color: #c0c0c3;
+                padding: 20px;
+                border-radius: 10px;
+              }
+              :global(.rs-form-control-wrapper
+                  > .rs-input-number, .rs-form-control-wrapper > .rs-input) {
+                width: 300px;
+              }
+              :global(.rs-panel-heading) {
+                text-align: center;
+              }
+              :global(.rs-form-horizontal .rs-form-group .rs-control-label) {
+                width: 100%;
+                text-align: left;
+                font-weight: 600;
+              }
+              :global(.rs-modal-backdrop.in) {
+                opacity: 0.8;
+              }
+            `}
           </style>
         </Layout>
       )
