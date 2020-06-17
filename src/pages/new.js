@@ -10,7 +10,6 @@ import { CSSTransition } from 'react-transition-group'
 import Calculator from '../components/newcalculator'
 import { Tooltip } from 'react-tippy'
 import 'react-tippy/dist/tippy.css'
-// import UploadFile from '../components/uploadfile'
 import Upload from '../components/upload'
 import uuid from 'v4-uuid'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -57,7 +56,7 @@ const { Slide } = Animation
 const { Column, HeaderCell, Cell } = Table
 
 class Wrapper extends React.Component {
-  static async getInitialProps ({ res, req, query }) {
+  static async getInitialProps({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -73,7 +72,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
 
     this.state = {
@@ -169,7 +168,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const host = window.location.host
     const protocol = window.location.protocol
     const tutorial = window.localStorage.getItem('tut')
@@ -571,7 +570,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  render () {
+  render() {
     const {
       vaca,
       availableManagers,
@@ -614,7 +613,7 @@ class Wrapper extends React.Component {
           <Container style={{ alignItems: 'center' }}>
             <Subheader header='New Request' subheader='Create New' />
             <Content style={{ width: '410px' }}>
-              <Form className='new-request-form' layout='horizontal' style={{ flexDirection: 'column' }}>
+              <Form className='new-request-form' layout='vertical' fluid style={{ flexDirection: 'column' }}>
                 <Joyride
                   steps={tutSteps}
                   continuous
@@ -640,15 +639,15 @@ class Wrapper extends React.Component {
                 >
                   <FormGroup>
                     <ControlLabel>Name</ControlLabel>
-                    <SelectPicker name='name' onChange={this.handleNameChange} defaultValue={vaca.email} data={this.state.availableUsers} style={{ width: '320px' }} />
+                    <SelectPicker name='name' onChange={this.handleNameChange} defaultValue={vaca.email} data={this.state.availableUsers} style={{ width: '100%' }} />
                   </FormGroup>
                   <FormGroup>
                     <ControlLabel>Email</ControlLabel>
-                    <FormControl name='email' inputMode='email' autoComplete='email' onChange={this.handleEmailChange} value={vaca.email} style={{ width: '320px' }} />
+                    <FormControl block name='email' inputMode='email' autoComplete='email' onChange={this.handleEmailChange} value={vaca.email} />
                   </FormGroup>
                   <FormGroup>
                     <ControlLabel>Type of Absence</ControlLabel>
-                    <RadioGroup onChange={this.handleTypeChange} name='radioList' inline appearance='picker' defaultValue='vacation' className='absence-select' style={{ width: isMobile ? '250px' : '320px' }}>
+                    <RadioGroup onChange={this.handleTypeChange} name='radioList' inline appearance='picker' defaultValue='vacation' className='absence-select'>
                       <Radio value='vacation'>Vacation</Radio>
                       <Radio value='sick'>Illness</Radio>
                       <Radio value='trip'>Trip</Radio>
@@ -677,43 +676,31 @@ class Wrapper extends React.Component {
                       }
                     >
                       <FormGroup className='history-input-wrapper'>
-                        <div className='input-number'>1</div>
                         <ControlLabel>Days from Last Year</ControlLabel>
-                        <HelpBlock tooltip>Days which you have transfered with you from last year</HelpBlock>
                         <InputNumber min={0} size='lg' postfix='days' value={vaca.lastYear} onChange={this.handleLastYearChange} disabled={disableDaysInput} />
                       </FormGroup>
                       <FormGroup className='history-input-wrapper'>
-                        <div className='input-number'>2</div>
                         <ControlLabel>Days from this Year</ControlLabel>
                         <InputNumber min={0} size='lg' postfix='days' name='daysThisYear' onChange={this.handleThisYearChange} value={vaca.thisYear} disabled={disableDaysInput} />
-                        <HelpBlock tooltip>Days which you have earned this year</HelpBlock>
                       </FormGroup>
                       <FormGroup className='history-input-wrapper'>
-                        <div className='input-number'>3</div>
                         <ControlLabel>Days spent This Year</ControlLabel>
                         <InputNumber min={0} size='lg' postfix='days' name='daysSpentThisYear' onChange={this.handleSpentThisYearChange} value={vaca.spentThisYear} disabled={disableDaysInput} />
-                        <HelpBlock tooltip>Days which you have already used up this year</HelpBlock>
                       </FormGroup>
                       <FormGroup className='history-input-wrapper'>
-                        <div className='input-number'>4</div>
                         <ControlLabel>Total Days Available</ControlLabel>
                         <InputNumber min={0} size='lg' postfix='days' name='totalDaysAvailable' onChange={this.handleTotalAvailableChange} value={vaca.total} disabled={disableDaysInput} />
-                        <HelpBlock tooltip>Days from last year (1) + days from this year (2) - days already spent this year(3)</HelpBlock>
                       </FormGroup>
                       <FormGroup className='history-input-wrapper'>
-                        <div className='input-number'>5</div>
                         <ControlLabel>Requested Days</ControlLabel>
                         <InputNumber step={0.5} size='lg' postfix='days' name='requestedDays' onChange={this.handleRequestedChange} value={vaca.requested} />
-                        <HelpBlock tooltip>Number of day(s) you need off. <br /> Half days = '0.5'</HelpBlock>
                       </FormGroup>
                       <FormGroup style={{ margin: '5px 20px 30px 20px', color: '#a7a7a7' }}>
                         <small>Remember, do not count weekends or <a target='_blank' rel='noopener noreferrer' href='https://www.officeholidays.com/countries/germany/2020'>German Federal Holidays</a> in your number of requested days.</small>
                       </FormGroup>
                       <FormGroup className='history-input-wrapper'>
-                        <div className='input-number'>6</div>
                         <ControlLabel>Days Remaining</ControlLabel>
                         <InputNumber min={0} size='lg' postfix='days' name='remainingDays' onChange={this.handleRemainingChange} value={vaca.remaining} disabled={disableDaysInput} />
-                        <HelpBlock tooltip>Number of total available days minus total requested days</HelpBlock>
                       </FormGroup>
                     </Panel>
                     <div className={`${showCalc ? 'active' : ''} calc-sidebar `}>
@@ -748,24 +735,24 @@ class Wrapper extends React.Component {
                     <ControlLabel>On which days?</ControlLabel>
                     <DateRangePicker
                       placement='top'
-                      style={{ width: 320 }}
                       showWeekNumbers
+                      block
                       onChange={this.handleDateChange}
                     />
                   </FormGroup>
                   <FormGroup>
                     <ControlLabel>Manager</ControlLabel>
-                    <SelectPicker data={availableManagers} onChange={this.handleManagerChange} style={{ width: '320px' }} />
+                    <SelectPicker block data={availableManagers} onChange={this.handleManagerChange} />
                   </FormGroup>
                   <FormGroup>
                     <ControlLabel>Note</ControlLabel>
-                    <Input componentClass='textarea' rows={3} placeholder='Optional Note' onChange={this.handleNotesChange} style={{ width: isMobile ? '240px' : '320px' }} />
+                    <Input componentClass='textarea' rows={3} placeholder='Optional Note' onChange={this.handleNotesChange} />
                   </FormGroup>
                   {vaca.type === 'sick' && (
                     <FormGroup>
                       <ControlLabel className='sick-warning'>
                         <FontAwesomeIcon icon={faExclamationCircle} width='5.5rem' style={{ margin: '10px' }} />
-                        When submitting a sick notice, don't forget to submit a doctors note now, or later in your personal dashboard by editing this request.
+                        When submitting a sick notice, don't forget to submit a doctors note now, or later in your dashboard by editing this request if sick for more than 3 days.
                       </ControlLabel>
                     </FormGroup>
                   )}
@@ -779,21 +766,13 @@ class Wrapper extends React.Component {
                       <Upload
                         handleFileUploadSuccess={this.onFileUploadSuccess}
                       />
-                      {/* <UploadFile
-                        email={this.props.session.user.email}
-                        csrfToken={this.props.session.csrfToken}
-                        handleFileUploadSuccess={this.onFileUploadSuccess}
-                        successfullySent={successfullySent}
-                      /> */}
                     </div>
                   </FormGroup>
                   <FormGroup>
-                    <ButtonToolbar style={{ paddingLeft: '0px' }}>
-                      <ButtonGroup style={{ width: isMobile ? '240px' : '320px' }}>
-                        <Button style={{ width: '50%' }} onClick={this.handleClear} appearance='default'>Clear</Button>
-                        <Button style={{ width: '50%' }} onClick={this.toggleSubmitModal} disabled={successfullySent} appearance='primary'>Submit</Button>
-                      </ButtonGroup>
-                    </ButtonToolbar>
+                    <ButtonGroup justified>
+                      <Button style={{ width: '50%' }} onClick={this.handleClear} appearance='default'>Clear</Button>
+                      <Button style={{ width: '50%' }} onClick={this.toggleSubmitModal} disabled={successfullySent} appearance='primary'>Submit</Button>
+                    </ButtonGroup>
                   </FormGroup>
                 </Panel>
               </Form>
@@ -890,14 +869,14 @@ class Wrapper extends React.Component {
                           />
                         </div>
                       ) : (
-                        <div className='confirmation-wrapper'>
-                          <Lottie
-                            options={errorOptions}
-                            height={300}
-                            width={300}
-                          />
-                        </div>
-                      )
+                          <div className='confirmation-wrapper'>
+                            <Lottie
+                              options={errorOptions}
+                              height={300}
+                              width={300}
+                            />
+                          </div>
+                        )
                     )}
                 </Modal.Body>
                 <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
@@ -949,9 +928,8 @@ class Wrapper extends React.Component {
           :global(.sick-warning) {
             display: flex !important;
             padding: 10px !important;
-            background-color: #bfbfbf40;
-            border-radius: 10px;
-            border: 3px solid #67b246bf;
+            border-radius: 5px;
+            border: 1px solid #67b246bf;
           }
           :global(.__floater.__floater__open) {
             z-index: 1000 !important;
@@ -984,6 +962,11 @@ class Wrapper extends React.Component {
           :global(.last-request-sidebar .rs-form-group) {
             margin-bottom: 10px !important;
           }
+          :global(.absence-select) {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+          }
           .confirmation-wrapper {
             display: flex;
             align-items: center;
@@ -1011,7 +994,6 @@ class Wrapper extends React.Component {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            width: 300px !important;
             margin: 15px 10px !important;
             position: relative;
           }

@@ -50,10 +50,6 @@ const Comment = (props) => {
           position: relative;
           width: 90%;
           margin-bottom: 25px;
-          transition: transform 250ms ease-in-out;
-        }
-        :global(.comment-panel:hover) {
-          transform: translateY(-5px);
         }
         :global(.comment-del-btn) {
           position: absolute;

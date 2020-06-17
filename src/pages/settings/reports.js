@@ -30,7 +30,7 @@ const StackedBarChart = React.lazy(() =>
 )
 
 class Wrapper extends React.Component {
-  static async getInitialProps ({ res, req, query }) {
+  static async getInitialProps({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -47,7 +47,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       allMonths: [],
@@ -56,7 +56,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const userAdmin = JSON.parse(window.localStorage.getItem('mA'))
     const allYears = []
     const yearNow = moment().format('YYYY')
@@ -333,7 +333,7 @@ class Wrapper extends React.Component {
     })
   };
 
-  render () {
+  render() {
     const { allMonths, allYears } = this.state
 
     if (this.props.session.user && this.state.admin) {
@@ -511,7 +511,7 @@ class Wrapper extends React.Component {
               .reports-hr {
                 height: 100px;
                 width: 2px;
-                margin: 0 auto;
+                margin: auto;
                 border-left: 1px solid #eaeaea;
               }
               :global(.rs-form-group > *) {

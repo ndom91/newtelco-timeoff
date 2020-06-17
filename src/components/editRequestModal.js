@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import UploadFile from '../components/uploadfile'
+// import UploadFile from '../components/uploadfile'
+import Upload from '../components/upload'
 import BarLoader from 'react-spinners/ClipLoader'
 import fetch from 'isomorphic-unfetch'
 import moment from 'moment-timezone'
@@ -46,14 +47,8 @@ const EditModal = props => {
     setData(props.data)
   }, [])
 
-  const onFileUploadSuccess = (newFiles) => {
-    if (Array.isArray(newFiles)) {
-      newFiles.forEach(newFile => {
-        setFiles([...files, newFile])
-      })
-    } else {
-      setFiles([...files, newFiles])
-    }
+  const onFileUploadSuccess = (id, fileName, fileUrl) => {
+    setFiles([...files, { id: id, url: fileUrl, name: fileName }])
   }
 
   const handleLastYearChange = (value) => {
@@ -104,7 +99,7 @@ const EditModal = props => {
     }
     let newFiles = oldFiles
     if (files.length > 0) {
-      newFiles = oldFiles.concat(JSON.stringify(files))
+      newFiles = oldFiles.concat(files)
     }
 
     const toSubmitData = editData
@@ -163,169 +158,166 @@ const EditModal = props => {
             <BarLoader width={80} height={3} color='#575757' loading={loading} />
           </div>
         ) : (
-          <Form layout='horizontal'>
-            <div
-              style={{
-                border: '1px solid #ececec',
-                borderRadius: '10px',
-                padding: '20px',
-                width: '90%',
-                margin: '0 auto',
-                marginBottom: '20px',
-                display: 'flex',
-                flexWrap: 'wrap',
-                flex: '1 1'
-              }}
-            >
-              <FormGroup className='stacked-input' style={{ width: '400px' }}>
-                <ControlLabel>Type</ControlLabel>
-                <Input name='type' disabled value={editData.type} />
-              </FormGroup>
-              <FormGroup className='stacked-input'>
-                <div className='input-number'>1</div>
-                <ControlLabel>Days from Last Year</ControlLabel>
-                <InputGroup>
-                  <Input min={0} step='0.5' name='daysLastYear' type='number' disabled={fieldsDisabled} onChange={handleLastYearChange} value={editData.lastYear} />
-                  <InputGroup.Addon>
-                      days
-                  </InputGroup.Addon>
-                </InputGroup>
-              </FormGroup>
-              <FormGroup className='stacked-input'>
-                <div className='input-number'>2</div>
-                <ControlLabel>Days from this Year</ControlLabel>
-                <InputGroup>
-                  <Input type='number' min={0.0} step={0.5} name='daysThisYear' disabled={fieldsDisabled} onChange={handleThisYearChange} value={editData.thisYear} />
-                  <InputGroup.Addon>
-                      days
-                  </InputGroup.Addon>
-                </InputGroup>
-              </FormGroup>
-              <FormGroup className='stacked-input'>
-                <div className='input-number'>3</div>
-                <ControlLabel>Days spent this Year</ControlLabel>
-                <InputGroup>
-                  <Input min={0} step='0.5' name='daysSpent' type='number' disabled={fieldsDisabled} onChange={handleTotalSpentChange} value={editData.spent} />
-                  <InputGroup.Addon>
-                      days
-                  </InputGroup.Addon>
-                </InputGroup>
-              </FormGroup>
-              <FormGroup className='stacked-input'>
-                <div className='input-number'>4</div>
-                <ControlLabel>Total Days Available</ControlLabel>
-                <InputGroup>
-                  <Input min={0} step='0.5' name='totalDaysAvailable' type='number' disabled={fieldsDisabled} onChange={handleTotalAvailableChange} value={editData.total} />
-                  <InputGroup.Addon>
-                      days
-                  </InputGroup.Addon>
-                </InputGroup>
-              </FormGroup>
-              <FormGroup className='stacked-input'>
-                <div className='input-number'>5</div>
-                <ControlLabel>Requested Days</ControlLabel>
-                <InputGroup>
-                  <Input min={0} step='0.5' name='requestedDays' type='number' disabled={fieldsDisabled} onChange={handleRequestedChange} value={editData.requested} />
-                  <InputGroup.Addon>
-                      days
-                  </InputGroup.Addon>
-                </InputGroup>
-              </FormGroup>
-              <FormGroup className='stacked-input'>
-                <div className='input-number'>6</div>
-                <ControlLabel>Days Remaining this Year</ControlLabel>
-                <InputGroup>
-                  <Input min={0} step='0.5' name='remainingDays' type='number' disabled={fieldsDisabled} onChange={handleRemainingChange} value={editData.remaining} />
-                  <InputGroup.Addon>
-                      days
-                  </InputGroup.Addon>
-                </InputGroup>
-              </FormGroup>
-            </div>
-            <FormGroup
-              style={{
-                display: 'flex',
-                justifyContent: 'space-around',
-                backgroundColor: '#ececec82',
-                borderRadius: '10px',
-                padding: '20px',
-                width: '90%',
-                margin: '0 auto',
-                marginBottom: '30px'
-              }}
-            >
+            <Form layout='horizontal'>
               <div
                 style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  maxWidth: '40%',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-              >
-                <ControlLabel style={{ textAlign: 'center' }}>From</ControlLabel>
-                <DatePicker showWeekNumbers oneTap name='from' type='date' onChange={handleFromDateChange} value={new Date(editData.from)} disabled={fieldsDisabled} />
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  maxWidth: '40%',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-              >
-                <ControlLabel style={{ textAlign: 'center' }}>To</ControlLabel>
-                <DatePicker showWeekNumbers oneTap name='to' type='date' onChange={handleToDateChange} value={new Date(editData.to)} disabled={fieldsDisabled} />
-              </div>
-            </FormGroup>
-            <div
-              style={{
-                border: '1px solid #ececec',
-                borderRadius: '10px',
-                padding: '20px',
-                width: '90%',
-                margin: '0 auto',
-                marginBottom: '20px'
-              }}
-            >
-              <FormGroup
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
+                  border: '1px solid #ececec',
+                  borderRadius: '10px',
+                  padding: '20px',
+                  width: '90%',
                   margin: '0 auto',
-                  width: '400px'
+                  marginBottom: '20px',
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  flex: '1 1'
                 }}
               >
-                <ControlLabel style={{ textAlign: 'center' }}>Note</ControlLabel>
-                <Input
-                  name='note'
-                  onChange={handleNoteChange}
-                  value={editData.note || ''}
-                  componentClass='textarea'
-                  rows={3}
-                  style={{ width: '100%', resize: 'auto' }}
-                />
-              </FormGroup>
+                <FormGroup className='stacked-input' style={{ width: '400px' }}>
+                  <ControlLabel>Type</ControlLabel>
+                  <Input name='type' disabled value={editData.type} />
+                </FormGroup>
+                <FormGroup className='stacked-input'>
+                  <ControlLabel>Days from Last Year</ControlLabel>
+                  <InputGroup>
+                    <Input min={0} step='0.5' name='daysLastYear' type='number' disabled={fieldsDisabled} onChange={handleLastYearChange} value={editData.lastYear} />
+                    <InputGroup.Addon>
+                      days
+                  </InputGroup.Addon>
+                  </InputGroup>
+                </FormGroup>
+                <FormGroup className='stacked-input'>
+                  <ControlLabel>Days from this Year</ControlLabel>
+                  <InputGroup>
+                    <Input type='number' min={0.0} step={0.5} name='daysThisYear' disabled={fieldsDisabled} onChange={handleThisYearChange} value={editData.thisYear} />
+                    <InputGroup.Addon>
+                      days
+                  </InputGroup.Addon>
+                  </InputGroup>
+                </FormGroup>
+                <FormGroup className='stacked-input'>
+                  <ControlLabel>Days spent this Year</ControlLabel>
+                  <InputGroup>
+                    <Input min={0} step='0.5' name='daysSpent' type='number' disabled={fieldsDisabled} onChange={handleTotalSpentChange} value={editData.spent} />
+                    <InputGroup.Addon>
+                      days
+                  </InputGroup.Addon>
+                  </InputGroup>
+                </FormGroup>
+                <FormGroup className='stacked-input'>
+                  <ControlLabel>Total Days Available</ControlLabel>
+                  <InputGroup>
+                    <Input min={0} step='0.5' name='totalDaysAvailable' type='number' disabled={fieldsDisabled} onChange={handleTotalAvailableChange} value={editData.total} />
+                    <InputGroup.Addon>
+                      days
+                  </InputGroup.Addon>
+                  </InputGroup>
+                </FormGroup>
+                <FormGroup className='stacked-input'>
+                  <ControlLabel>Requested Days</ControlLabel>
+                  <InputGroup>
+                    <Input min={0} step='0.5' name='requestedDays' type='number' disabled={fieldsDisabled} onChange={handleRequestedChange} value={editData.requested} />
+                    <InputGroup.Addon>
+                      days
+                  </InputGroup.Addon>
+                  </InputGroup>
+                </FormGroup>
+                <FormGroup className='stacked-input'>
+                  <ControlLabel>Days Remaining this Year</ControlLabel>
+                  <InputGroup>
+                    <Input min={0} step='0.5' name='remainingDays' type='number' disabled={fieldsDisabled} onChange={handleRemainingChange} value={editData.remaining} />
+                    <InputGroup.Addon>
+                      days
+                  </InputGroup.Addon>
+                  </InputGroup>
+                </FormGroup>
+              </div>
               <FormGroup
                 style={{
                   display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center'
+                  justifyContent: 'space-around',
+                  border: '1px solid #ececec',
+                  borderRadius: '10px',
+                  padding: '20px',
+                  width: '90%',
+                  margin: '0 auto',
+                  marginBottom: '20px'
                 }}
               >
-                <Panel style={{ maxWidth: '300px', boxShadow: 'none' }}>
-                  <UploadFile
-                    email={props.session.user.email}
-                    csrfToken={props.session.csrfToken}
-                    handleFileUploadSuccess={onFileUploadSuccess}
-                  />
-                </Panel>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    maxWidth: '40%',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <ControlLabel style={{ textAlign: 'center' }}>From</ControlLabel>
+                  <DatePicker block showWeekNumbers oneTap name='from' type='date' onChange={handleFromDateChange} value={new Date(editData.from)} disabled={fieldsDisabled} />
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    maxWidth: '40%',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <ControlLabel style={{ textAlign: 'center' }}>To</ControlLabel>
+                  <DatePicker block showWeekNumbers oneTap name='to' type='date' onChange={handleToDateChange} value={new Date(editData.to)} disabled={fieldsDisabled} />
+                </div>
               </FormGroup>
-            </div>
-          </Form>
-        )}
+              <div
+                style={{
+                  border: '1px solid #ececec',
+                  borderRadius: '10px',
+                  padding: '20px',
+                  width: '90%',
+                  margin: '0 auto',
+                  marginBottom: '20px'
+                }}
+              >
+                <FormGroup
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    margin: '0 auto',
+                    width: '400px'
+                  }}
+                >
+                  <ControlLabel style={{ textAlign: 'center' }}>Note</ControlLabel>
+                  <Input
+                    name='note'
+                    onChange={handleNoteChange}
+                    value={editData.note || ''}
+                    componentClass='textarea'
+                    rows={3}
+                    style={{ width: '100%', resize: 'auto' }}
+                  />
+                </FormGroup>
+                <FormGroup
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center'
+                  }}
+                >
+                  <Panel style={{ width: '100%', boxShadow: 'none' }}>
+                    {/* <UploadFile
+                      email={props.session.user.email}
+                      csrfToken={props.session.csrfToken}
+                      handleFileUploadSuccess={onFileUploadSuccess}
+                    /> */}
+                    <Upload
+                      handleFileUploadSuccess={onFileUploadSuccess}
+                    />
+                  </Panel>
+                </FormGroup>
+              </div>
+            </Form>
+          )}
       </Modal.Body>
       <Modal.Footer style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
         <ButtonToolbar style={{ width: '100%' }}>

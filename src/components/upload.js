@@ -25,18 +25,16 @@ export default class Upload extends React.Component {
     this.state = {
       files: []
     }
-    console.log(props)
     this.handleFileUploadSuccess = props.handleFileUploadSuccess
   }
 
   handleInit() {
-    console.log('FilePond instance has initialised', this.pond)
+    // console.log('FilePond instance has initialised', this.pond)
   }
 
   render() {
     return (
       <div className='App'>
-        {/* Pass FilePond properties as attributes */}
         <FilePond
           ref={ref => (this.pond = ref)}
           files={this.state.files}
@@ -44,11 +42,9 @@ export default class Upload extends React.Component {
           allowFilePoster
           allowImageCrop
           allowRevert={false}
-          // server='/api'
           oninit={() => this.handleInit()}
           onupdatefiles={fileItems => {
             // Set currently active file objects to this.state
-            console.log(fileItems)
             this.setState({
               files: fileItems.map(fileItem => fileItem.file)
             })
@@ -64,9 +60,8 @@ export default class Upload extends React.Component {
                 ACL: 'public-read'
               }
               s3.putObject(params, (err, data) => {
-                if (err) console.log(err, err.stack)
+                if (err) console.error(err, err.stack)
                 else {
-                  console.log(data)
                   this.props.handleFileUploadSuccess(key, file.name, `https://nt-timeoff.fra1.digitaloceanspaces.com/${key}`)
                   load(`https://nt-timeoff.fra1.digitaloceanspaces.com/${key}`)
                 }

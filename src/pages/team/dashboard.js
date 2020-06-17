@@ -19,7 +19,7 @@ import {
 const { Column, HeaderCell, Cell } = Table
 
 class Wrapper extends React.Component {
-  static async getInitialProps ({ res, req, query }) {
+  static async getInitialProps({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
@@ -35,7 +35,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       team: [],
@@ -44,7 +44,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const protocol = window.location.protocol
     const host = window.location.host
     const team = JSON.parse(window.localStorage.getItem('userTeam'))
@@ -73,7 +73,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  render () {
+  render() {
     const {
       team,
       teamName,
@@ -147,9 +147,6 @@ class Wrapper extends React.Component {
               flex-direction: row;
               justify-content: space-around;
               padding: 10px;
-            }
-            :global(.comment-panel:hover) {
-              transform: translateY(-3px);
             }
           `}
           </style>
