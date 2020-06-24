@@ -1,5 +1,4 @@
 import React from 'react'
-import fetch from 'isomorphic-unfetch'
 import Layout from '../../components/layout/index'
 import Router from 'next/router'
 import moment from 'moment-timezone'
@@ -1327,7 +1326,8 @@ class Wrapper extends React.Component {
         .then(data => data.json())
         .then(data => {
           let files = []
-          if (data.files[0].files.length !== 0) {
+          console.log(data)
+          if (data.files[0].files && data.files[0].files.length !== 0) {
             files = JSON.parse(data.files[0].files)
           }
           this.setState({
@@ -1447,19 +1447,7 @@ class Wrapper extends React.Component {
                       width: '100%'
                     }}
                   >
-                    <Column width={200}>
-                      <HeaderCell>Name</HeaderCell>
-                      <Cell dataKey='name' />
-                    </Column>
-                    <Column width={200}>
-                      <HeaderCell>Email</HeaderCell>
-                      <Cell dataKey='email' />
-                    </Column>
-                    <Column width={200}>
-                      <HeaderCell>Team</HeaderCell>
-                      <Cell dataKey='team' />
-                    </Column>
-                    <Column width={120} fixed='right'>
+                    <Column width={120} fixed='left'>
                       <HeaderCell>Action</HeaderCell>
                       <Cell style={{ padding: '8px' }}>
                         {rowData => {
@@ -1483,6 +1471,18 @@ class Wrapper extends React.Component {
                           )
                         }}
                       </Cell>
+                    </Column>
+                    <Column width={200}>
+                      <HeaderCell>Name</HeaderCell>
+                      <Cell dataKey='name' />
+                    </Column>
+                    <Column width={200}>
+                      <HeaderCell>Email</HeaderCell>
+                      <Cell dataKey='email' />
+                    </Column>
+                    <Column width={200}>
+                      <HeaderCell>Team</HeaderCell>
+                      <Cell dataKey='team' />
                     </Column>
                   </Table>
                 </Panel>
@@ -1646,15 +1646,13 @@ class Wrapper extends React.Component {
             <Modal
               show={openManagerEditModal}
               onHide={this.toggleManagerEditModal}
-              style={{
-                width: '350px'
-              }}
+              size='xs'
             >
               <Modal.Header>
                 <Modal.Title>Edit Manager</Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                <Form>
+                <Form fluid>
                   <FormGroup>
                     <ControlLabel>Name</ControlLabel>
                     <FormControl onChange={this.handleManagerNameChange} name='name' value={activeManager.name} />
@@ -1689,12 +1687,13 @@ class Wrapper extends React.Component {
             <Modal
               show={openManagerAddModal}
               onHide={this.toggleManagerAddModal}
+              size='xs'
             >
               <Modal.Header>
                 <Modal.Title>Add Manager</Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                <Form>
+                <Form fluid>
                   <FormGroup>
                     <ControlLabel>Name</ControlLabel>
                     <FormControl onChange={this.handleManagerNameChange} name='name' value={activeManager.name} />

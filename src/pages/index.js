@@ -1,6 +1,5 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
-import fetch from 'isomorphic-unfetch'
 import Layout from '../components/layout/index'
 import Router from 'next/router'
 import { NextAuth } from 'next-auth/client'
@@ -11,15 +10,15 @@ import { Container, Content, Panel, Notification } from 'rsuite'
 import { motion } from 'framer-motion'
 
 const Calendar = dynamic(() => import('../components/calendar'), {
-  ssr: false
+  ssr: false,
 })
 
 class Wrapper extends React.Component {
-  static async getInitialProps ({ res, req, query }) {
+  static async getInitialProps({ res, req, query }) {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
-          Location: '/auth'
+          Location: '/auth',
         })
         res.end()
       } else {
@@ -29,16 +28,16 @@ class Wrapper extends React.Component {
     if (req) {
       return {
         session: await NextAuth.init({ req }),
-        returnTo: req.session.returnTo
+        returnTo: req.session.returnTo,
       }
     } else {
       return {
-        session: await NextAuth.init({ req })
+        session: await NextAuth.init({ req }),
       }
     }
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       returnTo: props.returnTo,
@@ -46,8 +45,8 @@ class Wrapper extends React.Component {
         lastYear: 0,
         thisYear: 0,
         spent: 0,
-        available: 0
-      }
+        available: 0,
+      },
     }
   }
 
@@ -55,7 +54,7 @@ class Wrapper extends React.Component {
     Notification.info({
       title: header,
       duration: 5000,
-      description: <div className='notify-body'>{text}</div>
+      description: <div className='notify-body'>{text}</div>,
     })
   }
 
@@ -63,11 +62,11 @@ class Wrapper extends React.Component {
     Notification.warning({
       title: header,
       duration: 5000,
-      description: <div className='notify-body'>{text}</div>
+      description: <div className='notify-body'>{text}</div>,
     })
   }
 
-  componentDidMount () {
+  componentDidMount() {
     if (typeof window !== 'undefined') {
       let params
       if (this.props.returnTo && !window.location.search) {
@@ -81,8 +80,8 @@ class Wrapper extends React.Component {
         fetch(
           `${protocol}//${host}/api/mail/response?h=${approvalHash}&a=${actionCode}&b=0`
         )
-          .then((resp) => resp.json())
-          .then((data) => {
+          .then(resp => resp.json())
+          .then(data => {
             const code = data.code
             const action = data.a
             if (code === 200 && action === 'a') {
@@ -93,7 +92,7 @@ class Wrapper extends React.Component {
               this.notifyWarn('Error Responding to Request')
             }
           })
-          .catch((err) => console.error(err))
+          .catch(err => console.error(err))
       } else {
         const windowUrl = window.location.search
         params = new URLSearchParams(windowUrl)
@@ -112,10 +111,12 @@ class Wrapper extends React.Component {
       const protocol = window.location.protocol
       if (this.props.session) {
         fetch(
-          `${protocol}//${host}/api/user/entries/dashboard?u=${encodeURIComponent(this.props.session.user.email)}`
+          `${protocol}//${host}/api/user/entries/dashboard?u=${encodeURIComponent(
+            this.props.session.user.email
+          )}`
         )
-          .then((resp) => resp.json())
-          .then((data) => {
+          .then(resp => resp.json())
+          .then(data => {
             if (data.userEntries[0]) {
               const user = data.userEntries[0]
               this.setState({
@@ -123,23 +124,21 @@ class Wrapper extends React.Component {
                   lastYear: user.resturlaubVorjahr || 0,
                   thisYear: user.jahresurlaubInsgesamt || 0,
                   spent: user.jahresUrlaubAusgegeben || 0,
-                  available: user.resturlaubJAHR || 0
-                }
+                  available: user.resturlaubJAHR || 0,
+                },
               })
             }
           })
-          .catch((err) => console.error(err))
+          .catch(err => console.error(err))
       }
     }
   }
 
-  render () {
+  render() {
     const list = { hidden: { opacity: 1 } }
     const item = { hidden: { y: [-50, 0], opacity: [0, 1] } }
 
-    const {
-      dashboard
-    } = this.state
+    const { dashboard } = this.state
     if (this.props.session.user) {
       return (
         <Layout
@@ -156,29 +155,47 @@ class Wrapper extends React.Component {
               staggerChildren
               animate='hidden'
               transition={{
-                ease: 'easeIn', duration: 2, staggerChildren: 0.15
+                ease: 'easeIn',
+                duration: 2,
+                staggerChildren: 0.15,
               }}
               variants={list}
               className='stat-wrapper'
             >
               <motion.div variants={item} whileHover={{ scale: 1.03 }}>
                 <Panel className='stat-panel'>
-                  <DashStat value={dashboard.lastYear} type='lastYear' label='From Last Year' />
+                  <DashStat
+                    value={dashboard.lastYear}
+                    type='lastYear'
+                    label='From Last Year'
+                  />
                 </Panel>
               </motion.div>
               <motion.div variants={item} whileHover={{ scale: 1.03 }}>
                 <Panel className='stat-panel'>
-                  <DashStat value={dashboard.thisYear} type='thisYear' label='Earned this Year' />
+                  <DashStat
+                    value={dashboard.thisYear}
+                    type='thisYear'
+                    label='Earned this Year'
+                  />
                 </Panel>
               </motion.div>
               <motion.div variants={item} whileHover={{ scale: 1.03 }}>
                 <Panel className='stat-panel'>
-                  <DashStat value={dashboard.spent} type='spent' label='Spent this Year' />
+                  <DashStat
+                    value={dashboard.spent}
+                    type='spent'
+                    label='Spent this Year'
+                  />
                 </Panel>
               </motion.div>
               <motion.div variants={item} whileHover={{ scale: 1.03 }}>
                 <Panel className='stat-panel'>
-                  <DashStat value={dashboard.available} type='available' label='Total Available' />
+                  <DashStat
+                    value={dashboard.available}
+                    type='available'
+                    label='Total Available'
+                  />
                 </Panel>
               </motion.div>
             </motion.div>
@@ -188,36 +205,36 @@ class Wrapper extends React.Component {
               </Content>
             </Panel>
           </Container>
-          <style jsx>{`
-            :global(.stat-wrapper) {
-              display: flex;
-              justify-content: space-around;
-              max-height: 160px;
-              margin-bottom: 40px;
-              list-style: none;
-            } 
-            :global(.stat-wrapper .rs-panel) {
-              width: 260px;
-              max-width: 250px;
-              max-height: 135px;
-              margin: 15px;
-              border-radius: 20px;
-              background: #ffffff;
-              box-shadow:  20px 20px 60px #d9d9d9, 
-                          -20px -20px 60px #ffffff;
-            } 
-            :global(.sstat-wrapper > .rs-panel:nth-child(1)) {
-              background-color: #358772 !important;
-            }
-            :global(.sstat-wrapper > .rs-panel:nth-child(2)) {
-              background-color: #592941 !important;
-            }
-            :global(.sstat-wrapper > .rs-panel:nth-child(3)) {
-              background-color: #CF8051 !important;
-            }
-            :global(.sstat-wrapper > .rs-panel:nth-child(4)) {
-              background-color: #C24C61 !important;
-            }
+          <style jsx>
+            {`
+              :global(.stat-wrapper) {
+                display: flex;
+                justify-content: space-around;
+                max-height: 160px;
+                margin-bottom: 40px;
+                list-style: none;
+              }
+              :global(.stat-wrapper .rs-panel) {
+                width: 260px;
+                max-width: 250px;
+                max-height: 135px;
+                margin: 15px;
+                border-radius: 20px;
+                background: #ffffff;
+                box-shadow: 20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;
+              }
+              :global(.sstat-wrapper > .rs-panel:nth-child(1)) {
+                background-color: #358772 !important;
+              }
+              :global(.sstat-wrapper > .rs-panel:nth-child(2)) {
+                background-color: #592941 !important;
+              }
+              :global(.sstat-wrapper > .rs-panel:nth-child(3)) {
+                background-color: #cf8051 !important;
+              }
+              :global(.sstat-wrapper > .rs-panel:nth-child(4)) {
+                background-color: #c24c61 !important;
+              }
             `}
           </style>
         </Layout>

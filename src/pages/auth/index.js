@@ -1,6 +1,5 @@
 import React from 'react'
 import Router from 'next/router'
-import fetch from 'isomorphic-unfetch'
 import Link from 'next/link'
 import { NextAuth } from 'next-auth/client'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'

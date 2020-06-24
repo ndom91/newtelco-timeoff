@@ -1,19 +1,18 @@
 import React from 'react'
-import fetch from 'isomorphic-unfetch'
 import {
   Button,
   ButtonToolbar,
   ButtonGroup,
   Modal,
   Table,
-  Notification
+  Notification,
 } from 'rsuite'
 
 const notifySuccess = (header, text) => {
   Notification.success({
     title: header,
     duration: 2000,
-    description: <div className='notify-body'>{text}</div>
+    description: <div className='notify-body'>{text}</div>,
   })
 }
 
@@ -21,7 +20,7 @@ const notifyError = (header, text) => {
   Notification.error({
     title: header,
     duration: 3000,
-    description: <div className='notify-body'>{text}</div>
+    description: <div className='notify-body'>{text}</div>,
   })
 }
 
@@ -50,13 +49,32 @@ const DeleteModal = props => {
   }
 
   return (
-    <Modal enforceFocus size='sm' backdrop show={props.open} onHide={props.toggleDeleteModal} style={{ marginTop: '150px' }}>
+    <Modal
+      enforceFocus
+      size='sm'
+      backdrop
+      show={props.open}
+      onHide={props.toggleDeleteModal}
+      style={{ marginTop: '150px' }}
+    >
       <Modal.Header>
-        <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>Confirm Submit</Modal.Title>
+        <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>
+          Confirm Submit
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <span style={{ textAlign: 'center', display: 'block', fontWeight: '600' }}>Are you sure you want to delete this request?</span>
-        <Table showHeader={false} autoHeight bordered={false} data={props.data} style={{ margin: '20px 50px' }}>
+        <span
+          style={{ textAlign: 'center', display: 'block', fontWeight: '600' }}
+        >
+          Are you sure you want to delete this request?
+        </span>
+        <Table
+          showHeader={false}
+          autoHeight
+          bordered={false}
+          data={props.data}
+          style={{ margin: '20px 50px' }}
+        >
           <Column width={200} align='left'>
             <HeaderCell>Field: </HeaderCell>
             <Cell dataKey='title' />
@@ -69,11 +87,21 @@ const DeleteModal = props => {
       </Modal.Body>
       <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
         <ButtonToolbar style={{ width: '100%' }}>
-          <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-            <Button onClick={props.toggleDeleteModal} style={{ width: '33%', fontSize: '16px' }} appearance='default'>
+          <ButtonGroup
+            style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
+          >
+            <Button
+              onClick={props.toggleDeleteModal}
+              style={{ width: '33%', fontSize: '16px' }}
+              appearance='default'
+            >
               Cancel
             </Button>
-            <Button onClick={handleSubmitDelete} style={{ width: '33%', fontSize: '16px' }} appearance='primary'>
+            <Button
+              onClick={handleSubmitDelete}
+              style={{ width: '33%', fontSize: '16px' }}
+              appearance='primary'
+            >
               Confirm
             </Button>
           </ButtonGroup>

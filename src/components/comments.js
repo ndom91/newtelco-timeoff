@@ -1,5 +1,4 @@
 import React from 'react'
-import fetch from 'isomorphic-unfetch'
 import Comment from './comment'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import BarLoader from 'react-spinners/ClipLoader'
@@ -11,19 +10,16 @@ import {
   Notification,
   Alert,
   ButtonGroup,
-  ButtonToolbar
+  ButtonToolbar,
 } from 'rsuite'
 // import {
 //   faPaperPlane
 // } from '@fortawesome/free-solid-svg-icons'
-import {
-  faPaperPlane,
-  faSmileWink
-} from '@fortawesome/free-regular-svg-icons'
+import { faPaperPlane, faSmileWink } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 class Comments extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       hasMore: true,
@@ -31,7 +27,7 @@ class Comments extends React.Component {
       count: 15,
       commentText: '',
       commentsLoading: true,
-      showEmoji: false
+      showEmoji: false,
     }
     // Roll your own: https://www.taniarascia.com/add-comments-to-static-site/
   }
@@ -40,7 +36,7 @@ class Comments extends React.Component {
     Notification.info({
       title: header,
       duration: 2000,
-      description: <div className='notify-body'>{text}</div>
+      description: <div className='notify-body'>{text}</div>,
     })
   }
 
@@ -48,11 +44,11 @@ class Comments extends React.Component {
     Notification.warning({
       title: header,
       duration: 2000,
-      description: <div className='notify-body'>{text}</div>
+      description: <div className='notify-body'>{text}</div>,
     })
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.fetchData()
   }
 
@@ -74,16 +70,19 @@ class Comments extends React.Component {
           newComments.unshift({
             userDetails: {
               fname: userFullname.substr(0, userFullname.lastIndexOf(' ')),
-              lname: userFullname.substr(userFullname.lastIndexOf(' '), userFullname.length),
-              email: this.props.user.email
+              lname: userFullname.substr(
+                userFullname.lastIndexOf(' '),
+                userFullname.length
+              ),
+              email: this.props.user.email,
             },
             id: data.discussionInsert.insertId,
             body: this.state.commentText,
-            datetime: new Date()
+            datetime: new Date(),
           })
           this.setState({
             items: newComments,
-            commentText: ''
+            commentText: '',
           })
         } else {
           // this.notifyWarn('Error Posting Comment')
@@ -93,7 +92,7 @@ class Comments extends React.Component {
       .catch(err => console.error(err))
   }
 
-  handleDeleteComment = (id) => {
+  handleDeleteComment = id => {
     const protocol = window.location.protocol
     const host = window.location.host
     const pageRequest = `${protocol}//${host}/api/comments/delete?id=${id}`
@@ -106,7 +105,7 @@ class Comments extends React.Component {
           const comments = this.state.items
           const remainingComments = comments.filter(com => com.id !== id)
           this.setState({
-            items: remainingComments
+            items: remainingComments,
           })
         } else {
           // this.notifyWarn('Error Deleting Comment')
@@ -116,27 +115,25 @@ class Comments extends React.Component {
       .catch(err => console.error(err))
   }
 
-  handleCommentChange = (data) => {
+  handleCommentChange = data => {
     this.setState({
-      commentText: data
+      commentText: data,
     })
   }
 
-  addEmoji = (data) => {
-    const {
-      commentText
-    } = this.state
+  addEmoji = data => {
+    const { commentText } = this.state
 
     const newCommentText = `${commentText} ${data.native}`
     this.setState({
       showEmoji: !this.state.showEmoji,
-      commentText: newCommentText
+      commentText: newCommentText,
     })
   }
 
   showEmojiPicker = () => {
     this.setState({
-      showEmoji: !this.state.showEmoji
+      showEmoji: !this.state.showEmoji,
     })
   }
 
@@ -161,19 +158,14 @@ class Comments extends React.Component {
         this.setState({
           items: returnBody,
           count: this.state.count + 15,
-          commentsLoading: false
+          commentsLoading: false,
         })
       })
       .catch(err => console.error(err))
   }
 
-  render () {
-    const {
-      hasMore,
-      items,
-      commentsLoading,
-      showEmoji
-    } = this.state
+  render() {
+    const { hasMore, items, commentsLoading, showEmoji } = this.state
 
     return (
       <div id='scrollablediv' className='comments-wrapper'>
@@ -192,10 +184,15 @@ class Comments extends React.Component {
                 height: commentsLoading ? '100px' : '0px',
                 display: 'flex',
                 justifyContent: 'center',
-                alignItems: 'center'
+                alignItems: 'center',
               }}
             >
-              <BarLoader width={80} height={3} color='#575757' loading={commentsLoading} />
+              <BarLoader
+                width={80}
+                height={3}
+                color='#575757'
+                loading={commentsLoading}
+              />
             </div>
           }
           endMessage={
@@ -205,11 +202,17 @@ class Comments extends React.Component {
           }
         >
           <div className='infinite-scroll-item-wrapper'>
-            {items.length > 0 && (
+            {items.length > 0 &&
               items.map(comment => {
-                return <Comment user={this.props.user.email} onDelete={this.handleDeleteComment} data={comment} key={comment.id} />
-              })
-            )}
+                return (
+                  <Comment
+                    user={this.props.user.email}
+                    onDelete={this.handleDeleteComment}
+                    data={comment}
+                    key={comment.id}
+                  />
+                )
+              })}
             {!commentsLoading && items.length === 0 && (
               <span
                 style={{
@@ -217,7 +220,7 @@ class Comments extends React.Component {
                   height: '60px',
                   display: 'flex',
                   justifyContent: 'center',
-                  alignItems: 'center'
+                  alignItems: 'center',
                 }}
               >
                 You could be the first to post here!
@@ -260,74 +263,76 @@ class Comments extends React.Component {
                 showPreview={false}
                 title='Emoji Picker'
                 style={{
-                  width: '425px'
+                  width: '425px',
                 }}
               />
             </div>
-          ) : (
-            null
-          )}
+          ) : null}
         </div>
-        <style jsx>{`
-          :global(.comments-wrapper) {
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            height: 100%;
-          }
-          :global(.infinite-scroll-item-wrapper) {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-          }
-          :global(.comment-input-wrapper) {
-            display: flex;
-            width: 90%;
-            justify-content: space-between;
-            align-items: center;
-            overflow-y: scroll;
-            margin: 0 auto;
-            margin-top: 25px;
-            overflow: visible;
-            position: relative;
-          }
-          :global(.rs-btn-toolbar) {
-            margin-left: 10px;
-            width: 150px;
-          }
-          :global(.emoji-picker) {
-            z-index: 999;
-            position: absolute;
-            display: inline-block;
-            top: 50px;
-          }
-          :global(.emoji-picker-btn) {
-            height: 45px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-left: 10px;
-          }
-          :global(.emoji-mart-search input) {
-            width: 75%;
-          }
-          :global(.emoji-mart-preview) {
-            display: none;
-          }
-          :global(.comment-submit-btn) {
-            height: 45px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: box-shadow 250ms ease-in-out;
-          }
-          :global(.comment-submit-btn:hover) {
-            box-shadow: 0 2px 0 rgba(90,97,105,.11), 0 4px 8px rgba(90,97,105,.12), 0 10px 10px rgba(90,97,105,.06), 0 7px 70px rgba(90,97,105,.1);
-          }
-          :global(.scrollable-div) {
-            overflow-y: scroll;
-          }
-        `}
+        <style jsx>
+          {`
+            :global(.comments-wrapper) {
+              display: flex;
+              flex-direction: column;
+              justify-content: flex-end;
+              height: 100%;
+            }
+            :global(.infinite-scroll-item-wrapper) {
+              display: flex;
+              flex-wrap: wrap;
+              justify-content: center;
+            }
+            :global(.comment-input-wrapper) {
+              display: flex;
+              width: 90%;
+              justify-content: space-between;
+              align-items: center;
+              overflow-y: scroll;
+              margin: 0 auto;
+              margin-top: 25px;
+              overflow: visible;
+              position: relative;
+            }
+            :global(.rs-btn-toolbar) {
+              margin-left: 10px;
+              width: 150px;
+            }
+            :global(.emoji-picker) {
+              z-index: 999;
+              position: absolute;
+              display: inline-block;
+              top: 50px;
+            }
+            :global(.emoji-picker-btn) {
+              height: 45px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              margin-left: 10px;
+            }
+            :global(.emoji-mart-search input) {
+              width: 75%;
+            }
+            :global(.emoji-mart-preview) {
+              display: none;
+            }
+            :global(.comment-submit-btn) {
+              height: 45px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              transition: box-shadow 250ms ease-in-out;
+            }
+            :global(.comment-submit-btn:hover) {
+              box-shadow: 0 2px 0 rgba(90, 97, 105, 0.11),
+                0 4px 8px rgba(90, 97, 105, 0.12),
+                0 10px 10px rgba(90, 97, 105, 0.06),
+                0 7px 70px rgba(90, 97, 105, 0.1);
+            }
+            :global(.scrollable-div) {
+              overflow-y: scroll;
+            }
+          `}
         </style>
       </div>
     )

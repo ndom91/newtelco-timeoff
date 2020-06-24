@@ -1,11 +1,9 @@
 import React, { Component } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faCloudUploadAlt
-} from '@fortawesome/free-solid-svg-icons'
+import { faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
 
 export default class Dropzone extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = { hightlight: false }
     this.fileInputRef = React.createRef()
@@ -16,7 +14,7 @@ export default class Dropzone extends Component {
     this.fileInputRef.current.click()
   }
 
-  fileListToArray = (list) => {
+  fileListToArray = list => {
     const array = []
     for (var i = 0; i < list.length; i++) {
       array.push(list.item(i))
@@ -24,7 +22,7 @@ export default class Dropzone extends Component {
     return array
   }
 
-  onDragOver = (e) => {
+  onDragOver = e => {
     e.preventDefault()
     if (this.props.disabled) return
     this.setState({ hightlight: true })
@@ -34,7 +32,7 @@ export default class Dropzone extends Component {
     this.setState({ hightlight: false })
   }
 
-  onDrop = (e) => {
+  onDrop = e => {
     e.preventDefault()
 
     if (this.props.disabled) return
@@ -47,7 +45,7 @@ export default class Dropzone extends Component {
     this.setState({ hightlight: false })
   }
 
-  onFilesAdded = (e) => {
+  onFilesAdded = e => {
     if (this.props.disabled) return
     const files = e.target.files
     if (this.props.onFilesAdded) {
@@ -56,7 +54,7 @@ export default class Dropzone extends Component {
     }
   }
 
-  render () {
+  render() {
     return (
       <div
         className={`Dropzone ${this.state.hightlight ? 'Highlight' : ''}`}
@@ -79,32 +77,33 @@ export default class Dropzone extends Component {
           onChange={this.onFilesAdded}
         />
         <span>Upload Files</span>
-        <style jsx>{`
-          .Dropzone {
-            height: 140px;
-            width: 140px;
-            background-color: #fff;
-            border: 3px dashed #67B246;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            font-size: 14px;
-            margin: 0 auto;
-          }
-          .Highlight {
-            background-color: rgb(188, 185, 236);
-          }
-          .FileInput {
-            display: none;
-          }
-          .Icon {
-            opacity: 0.3;
-            height: 64px;
-            width: 64px;
-          }
-        `}
+        <style jsx>
+          {`
+            .Dropzone {
+              height: 140px;
+              width: 140px;
+              background-color: #fff;
+              border: 3px dashed #67b246;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              flex-direction: column;
+              font-size: 14px;
+              margin: 0 auto;
+            }
+            .Highlight {
+              background-color: rgb(188, 185, 236);
+            }
+            .FileInput {
+              display: none;
+            }
+            .Icon {
+              opacity: 0.3;
+              height: 64px;
+              width: 64px;
+            }
+          `}
         </style>
       </div>
     )

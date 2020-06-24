@@ -1,17 +1,16 @@
 import React from 'react'
-import fetch from 'isomorphic-unfetch'
 import moment from 'moment-timezone'
 import { ResponsiveSwarmPlot } from '@nivo/swarmplot'
 
 class ResponsiveSwarmplot extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
-      plotData: []
+      plotData: [],
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const host = window.location.host
     const protocol = window.location.protocol
     const year = moment().format('YYYY') - 1
@@ -20,21 +19,26 @@ class ResponsiveSwarmplot extends React.Component {
       .then(data => {
         if (data.query) {
           this.setState({
-            plotData: data.query
+            plotData: data.query,
           })
         }
       })
       .catch(err => console.error(err))
   }
 
-  render () {
-    const {
-      plotData
-    } = this.state
+  render() {
+    const { plotData } = this.state
     return (
       <ResponsiveSwarmPlot
         data={plotData}
-        groups={['Technik', 'Order', 'Sales', 'Empfang', 'Billing', 'Marketing']}
+        groups={[
+          'Technik',
+          'Order',
+          'Sales',
+          'Empfang',
+          'Billing',
+          'Marketing',
+        ]}
         groupBy='group'
         identity='id'
         value='date'
@@ -50,15 +54,9 @@ class ResponsiveSwarmplot extends React.Component {
         borderColor={{
           from: 'color',
           modifiers: [
-            [
-              'darker',
-              0.7
-            ],
-            [
-              'opacity',
-              0.3
-            ]
-          ]
+            ['darker', 0.7],
+            ['opacity', 0.3],
+          ],
         }}
         margin={{ top: 20, right: 10, bottom: 40, left: 40 }}
         axisBottom={{
@@ -68,7 +66,7 @@ class ResponsiveSwarmplot extends React.Component {
           tickRotation: 0,
           legend: 'Teams',
           legendPosition: 'middle',
-          legendOffset: 46
+          legendOffset: 46,
         }}
         axisLeft={{
           orient: 'left',
@@ -77,7 +75,7 @@ class ResponsiveSwarmplot extends React.Component {
           tickRotation: 0,
           legend: 'Month',
           legendPosition: 'middle',
-          legendOffset: -36
+          legendOffset: -36,
         }}
         animate={false}
       />
