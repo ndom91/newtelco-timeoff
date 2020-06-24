@@ -29,4 +29,5 @@ export default class ViewFiles extends React.Component {
       return <span>N/A</span>
     }
   }
-};
+}
+

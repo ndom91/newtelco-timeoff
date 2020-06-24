@@ -253,6 +253,8 @@ class Wrapper extends React.Component {
           }, {
             headerName: 'View Files',
             width: 160,
+            field: 'files',
+            valueGetter: 'data ? JSON.stringify(JSON.parse(data.files)[0].url) : ""',
             cellRenderer: 'viewfiles',
             cellRendererParams: {
               viewFiles: this.toggleViewFilesModal
