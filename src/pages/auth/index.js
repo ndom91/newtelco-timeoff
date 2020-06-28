@@ -141,6 +141,9 @@ export default class App extends React.Component {
                 margin-right: 5px;
               }
             }
+						:global(.google-signin-btn:focus) {
+							box-shadow: 0 0 0 3px #67b24670;
+						}
             .vacation-background {
               position: absolute;
               height: 100%;
