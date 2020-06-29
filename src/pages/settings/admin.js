@@ -38,12 +38,9 @@ import {
   FormGroup,
   ControlLabel,
   Row,
-  Col
+  Col,
 } from 'rsuite'
-import {
-  faPencilAlt,
-  faTrashAlt
-} from '@fortawesome/free-solid-svg-icons'
+import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 
 const { Column, HeaderCell, Cell } = Table
 
@@ -52,7 +49,7 @@ class Wrapper extends React.Component {
     if (req && !req.user) {
       if (res) {
         res.writeHead(302, {
-          Location: '/auth'
+          Location: '/auth',
         })
         res.end()
       } else {
@@ -60,14 +57,15 @@ class Wrapper extends React.Component {
       }
     }
     const host = req ? req.headers['x-forwarded-host'] : location.host
-    const protocol = typeof window === 'undefined' ? 'http:' : window.location.protocol
+    const protocol =
+      typeof window === 'undefined' ? 'http:' : window.location.protocol
     const pageRequest = `${protocol}//${host || 'localhost:3000'}/api/user/list`
     const userRequest = await fetch(pageRequest)
     const userJson = await userRequest.json()
     return {
       session: await NextAuth.init({ req }),
       users: userJson,
-      admin: query.admin
+      admin: query.admin,
     }
   }
 
@@ -103,7 +101,7 @@ class Wrapper extends React.Component {
         id: '',
         note: '',
         approved: '',
-        type: ''
+        type: '',
       },
       editData: {
         from: '',
@@ -117,7 +115,7 @@ class Wrapper extends React.Component {
         id: '',
         note: '',
         approved: '',
-        type: ''
+        type: '',
       },
       allUserType: 'vacation',
       allUsers: [],
@@ -126,7 +124,7 @@ class Wrapper extends React.Component {
       activeManager: {
         name: '',
         team: '',
-        email: ''
+        email: '',
       },
       teamSelectData: [],
       allGridOptions: {
@@ -136,42 +134,48 @@ class Wrapper extends React.Component {
           filter: true,
           selectable: false,
           editable: false,
-          suppressSizeToFit: true
+          suppressSizeToFit: true,
         },
         columnDefs: [
           {
             headerName: 'ID',
             field: 'id',
             hide: true,
-            sort: { direction: 'asc', priority: 0 }
-          }, {
+            sort: { direction: 'asc', priority: 0 },
+          },
+          {
             headerName: 'Name',
             field: 'name',
+            pinned: 'left',
             tooltipField: 'name',
-            width: 150
-          }, {
+            width: 150,
+          },
+          {
             headerName: 'From',
             field: 'fromDate',
             tooltipField: 'fromDate',
             cellRenderer: 'dateShort',
-            width: 100
-          }, {
+            width: 100,
+          },
+          {
             headerName: 'To',
             field: 'toDate',
             tooltipField: 'toDate',
             cellRenderer: 'dateShort',
-            width: 100
-          }, {
+            width: 100,
+          },
+          {
             headerName: 'Days from Last Year',
             field: 'resturlaubVorjahr',
             cellStyle: {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '100%'
+              height: '100%',
             },
-            width: 200
-          }, {
+            width: 200,
+          },
+          {
             headerName: 'Days Earned This Year',
             field: 'jahresurlaubInsgesamt',
             tooltipField: 'jahresurlaubInsgesamt',
@@ -179,9 +183,10 @@ class Wrapper extends React.Component {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '100%'
-            }
-          }, {
+              height: '100%',
+            },
+          },
+          {
             headerName: 'Days spent this Year',
             field: 'jahresUrlaubAusgegeben',
             tooltipField: 'jahresUrlaubAusgegeben',
@@ -189,9 +194,10 @@ class Wrapper extends React.Component {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '100%'
-            }
-          }, {
+              height: '100%',
+            },
+          },
+          {
             headerName: 'Total Days Available',
             field: 'restjahresurlaubInsgesamt',
             width: 160,
@@ -199,71 +205,81 @@ class Wrapper extends React.Component {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '100%'
-            }
-          }, {
+              height: '100%',
+            },
+          },
+          {
             headerName: 'Requested Days',
             field: 'beantragt',
             cellStyle: {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '100%'
+              height: '100%',
             },
-            width: 160
-          }, {
+            width: 160,
+          },
+          {
             headerName: `Days Remaining ${thisYear}`,
             field: 'resturlaubJAHR',
             cellStyle: {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '100%'
+              height: '100%',
             },
-            width: 200
-          }, {
+            width: 200,
+          },
+          {
             headerName: 'Type',
             field: 'type',
             cellRenderer: 'uppercase',
-            width: 130
-          }, {
+            width: 130,
+          },
+          {
             headerName: 'Submitted',
             cellRenderer: 'dateTimeShort',
             field: 'submitted_datetime',
-            width: 160
-          }, {
+            width: 160,
+          },
+          {
             headerName: 'Submitted By',
             field: 'submitted_by',
-            width: 140
-          }, {
+            width: 140,
+          },
+          {
             headerName: 'Approval Date/Time',
             field: 'approval_datetime',
             cellRenderer: 'dateTimeShortApproval',
-            width: 160
-          }, {
+            width: 160,
+          },
+          {
             headerName: 'Manager',
             field: 'manager',
-            width: 160
-          }, {
+            width: 160,
+          },
+          {
             headerName: 'Notes',
             field: 'note',
             tooltipField: 'note',
-            width: 160
-          }, {
+            width: 160,
+          },
+          {
             headerName: 'View Files',
             width: 160,
             cellRenderer: 'viewfiles',
             cellRendererParams: {
-              viewFiles: this.toggleViewFilesModal
+              viewFiles: this.toggleViewFilesModal,
             },
             cellStyle: {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
               height: '100%',
-              border: 'none'
-            }
-          }, {
+              border: 'none',
+            },
+          },
+          {
             headerName: 'Approved',
             field: 'approved',
             width: 160,
@@ -273,9 +289,9 @@ class Wrapper extends React.Component {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '100%'
-            }
-          }
+              height: '100%',
+            },
+          },
         ],
         context: { componentParent: this },
         frameworkComponents: {
@@ -284,11 +300,11 @@ class Wrapper extends React.Component {
           dateShort: DateField,
           approvedbtn: ApprovedBtn,
           uppercase: Uppercase,
-          viewfiles: ViewFiles
+          viewfiles: ViewFiles,
         },
         rowSelection: 'multiple',
         paginationPageSize: 10,
-        rowClass: 'row-class'
+        rowClass: 'row-class',
       },
       personalRowData: [],
       personalGridOptions: {
@@ -298,36 +314,40 @@ class Wrapper extends React.Component {
           filter: true,
           selectable: false,
           editable: false,
-          suppressSizeToFit: true
+          suppressSizeToFit: true,
         },
         columnDefs: [
           {
             headerName: 'ID',
             field: 'id',
-            hide: true
-          }, {
+            hide: true,
+          },
+          {
             headerName: 'From',
             field: 'fromDate',
             tooltipField: 'fromDate',
             cellRenderer: 'dateShort',
-            width: 100
-          }, {
+            width: 100,
+          },
+          {
             headerName: 'To',
             field: 'toDate',
             tooltipField: 'toDate',
             cellRenderer: 'dateShort',
-            width: 100
-          }, {
+            width: 100,
+          },
+          {
             headerName: 'Days from Last Year',
             field: 'resturlaubVorjahr',
             cellStyle: {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '100%'
+              height: '100%',
             },
-            width: 200
-          }, {
+            width: 200,
+          },
+          {
             headerName: 'Days Earned This Year',
             field: 'jahresurlaubInsgesamt',
             tooltipField: 'jahresurlaubInsgesamt',
@@ -335,9 +355,10 @@ class Wrapper extends React.Component {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '100%'
-            }
-          }, {
+              height: '100%',
+            },
+          },
+          {
             headerName: 'Days spent this Year',
             field: 'jahresUrlaubAusgegeben',
             tooltipField: 'jahresUrlaubAusgegeben',
@@ -345,9 +366,10 @@ class Wrapper extends React.Component {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '100%'
-            }
-          }, {
+              height: '100%',
+            },
+          },
+          {
             headerName: 'Total Days Available',
             field: 'restjahresurlaubInsgesamt',
             width: 160,
@@ -355,58 +377,67 @@ class Wrapper extends React.Component {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '100%'
-            }
-          }, {
+              height: '100%',
+            },
+          },
+          {
             headerName: 'Requested Days',
             field: 'beantragt',
             cellStyle: {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '100%'
+              height: '100%',
             },
-            width: 160
-          }, {
+            width: 160,
+          },
+          {
             headerName: `Days Remaining ${thisYear}`,
             field: 'resturlaubJAHR',
             cellStyle: {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '100%'
+              height: '100%',
             },
-            width: 200
-          }, {
+            width: 200,
+          },
+          {
             headerName: 'Type',
             cellRenderer: 'uppercase',
             field: 'type',
-            width: 130
-          }, {
+            width: 130,
+          },
+          {
             headerName: 'Submitted',
             cellRenderer: 'dateTimeShort',
             field: 'submitted_datetime',
             sort: { direction: 'desc', priority: 0 },
-            width: 160
-          }, {
+            width: 160,
+          },
+          {
             headerName: 'Submitted By',
             field: 'submitted_by',
-            width: 140
-          }, {
+            width: 140,
+          },
+          {
             headerName: 'Approval Date/Time',
             field: 'approval_datetime',
             cellRenderer: 'dateTimeShort',
-            width: 160
-          }, {
+            width: 160,
+          },
+          {
             headerName: 'Manager',
             field: 'manager',
-            width: 160
-          }, {
+            width: 160,
+          },
+          {
             headerName: 'Notes',
             field: 'note',
             tooltipField: 'note',
-            width: 160
-          }, {
+            width: 160,
+          },
+          {
             headerName: 'Approved',
             field: 'approved',
             width: 120,
@@ -416,20 +447,20 @@ class Wrapper extends React.Component {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '100%'
-            }
-          }
+              height: '100%',
+            },
+          },
         ],
         context: { componentParent: this },
         frameworkComponents: {
           dateTimeShort: DateTimeField,
           dateShort: DateField,
           uppercase: Uppercase,
-          approved: ApprovedField
+          approved: ApprovedField,
         },
         rowSelection: 'multiple',
         paginationPageSize: 10,
-        rowClass: 'row-class'
+        rowClass: 'row-class',
       },
       gridOptions: {
         defaultColDef: {
@@ -438,31 +469,36 @@ class Wrapper extends React.Component {
           filter: true,
           selectable: false,
           editable: false,
-          suppressSizeToFit: true
+          suppressSizeToFit: true,
         },
         columnDefs: [
           {
             headerName: 'ID',
             field: 'id',
             hide: true,
-            sort: { direction: 'asc', priority: 0 }
-          }, {
+            sort: { direction: 'asc', priority: 0 },
+          },
+          {
             headerName: 'First Name',
             field: 'fname',
-            width: 140
-          }, {
+            width: 140,
+          },
+          {
             headerName: 'Last Name',
             field: 'lname',
-            width: 140
-          }, {
+            width: 140,
+          },
+          {
             headerName: 'Email',
             field: 'email',
-            width: 160
-          }, {
+            width: 160,
+          },
+          {
             headerName: 'Team',
             field: 'team',
-            width: 140
-          }, {
+            width: 140,
+          },
+          {
             headerName: 'Date Joined',
             field: 'dateJoined',
             editable: true,
@@ -471,9 +507,10 @@ class Wrapper extends React.Component {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '100%'
-            }
-          }, {
+              height: '100%',
+            },
+          },
+          {
             headerName: 'Days Available',
             editable: true,
             field: 'daysAvailable',
@@ -481,19 +518,19 @@ class Wrapper extends React.Component {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '100%'
-            }
-          }
+              height: '100%',
+            },
+          },
         ],
         context: { componentParent: this },
         frameworkComponents: {
           dateShort: DateField,
-          dateEditor: DateField
+          dateEditor: DateField,
         },
         rowSelection: 'multiple',
         paginationPageSize: 10,
-        rowClass: 'row-class'
-      }
+        rowClass: 'row-class',
+      },
     }
   }
 
@@ -501,7 +538,10 @@ class Wrapper extends React.Component {
     const selectUserList = []
     const userAdmin = JSON.parse(window.localStorage.getItem('mA'))
     this.props.users.userList.forEach(user => {
-      selectUserList.push({ value: user.email, label: `${user.fname} ${user.lname}` })
+      selectUserList.push({
+        value: user.email,
+        label: `${user.fname} ${user.lname}`,
+      })
     })
     const allYears = []
     const yearNow = moment().format('YYYY')
@@ -512,7 +552,9 @@ class Wrapper extends React.Component {
     const allMonths = []
     const monthNow = moment()
     for (let i = 0; i < 12; i++) {
-      const monthNowLoop = moment(monthNow).subtract(i, 'months').format('MMMM YYYY')
+      const monthNowLoop = moment(monthNow)
+        .subtract(i, 'months')
+        .format('MMMM YYYY')
       allMonths.push({ value: monthNowLoop, label: monthNowLoop })
     }
 
@@ -524,7 +566,7 @@ class Wrapper extends React.Component {
       }),
       admin: userAdmin,
       allMonths,
-      allYears
+      allYears,
     })
     const host = window.location.host
     const protocol = window.location.protocol
@@ -533,7 +575,7 @@ class Wrapper extends React.Component {
       .then(data => {
         if (data.userEntries) {
           this.setState({
-            allRowData: data.userEntries
+            allRowData: data.userEntries,
           })
           // window.gridApi && window.gridApi.refreshCells()
         }
@@ -544,7 +586,7 @@ class Wrapper extends React.Component {
       .then(data => {
         if (data.managerEntries) {
           this.setState({
-            managerRowData: data.managerEntries
+            managerRowData: data.managerEntries,
           })
           // window.gridApi && window.gridApi.refreshCells()
         }
@@ -563,7 +605,7 @@ class Wrapper extends React.Component {
         'beantragt',
         'resturlaubJAHR',
         'approved',
-        'approval_datetime'
+        'approval_datetime',
       ]
       if (type === 'sick') {
         sickHideColumns.forEach(column => {
@@ -581,7 +623,7 @@ class Wrapper extends React.Component {
     Notification.info({
       title: header,
       duration: 2000,
-      description: <div className='notify-body'>{text}</div>
+      description: <div className='notify-body'>{text}</div>,
     })
   }
 
@@ -589,7 +631,7 @@ class Wrapper extends React.Component {
     Notification.warning({
       title: header,
       duration: 2000,
-      description: <div className='notify-body'>{text}</div>
+      description: <div className='notify-body'>{text}</div>,
     })
   }
 
@@ -597,7 +639,7 @@ class Wrapper extends React.Component {
     Notification.error({
       title: header,
       duration: 3000,
-      description: <div className='notify-body'>{text}</div>
+      description: <div className='notify-body'>{text}</div>,
     })
   }
 
@@ -605,11 +647,11 @@ class Wrapper extends React.Component {
     Notification.success({
       title: header,
       duration: 3000,
-      description: <div className='notify-body'>{text}</div>
+      description: <div className='notify-body'>{text}</div>,
     })
   }
 
-  handleAllUserTypeChange = (selection) => {
+  handleAllUserTypeChange = selection => {
     const host = window.location.host
     const protocol = window.location.protocol
     const type = selection
@@ -619,7 +661,7 @@ class Wrapper extends React.Component {
         if (data.userEntries) {
           this.setState({
             allRowData: data.userEntries,
-            allUserType: type
+            allUserType: type,
           })
           // window.gridApi && window.gridApi.refreshCells()
         }
@@ -629,7 +671,7 @@ class Wrapper extends React.Component {
 
   handleAdGroupSync = () => {
     this.setState({
-      adLoading: true
+      adLoading: true,
     })
     const host = window.location.host
     const protocol = window.location.protocol
@@ -644,7 +686,13 @@ class Wrapper extends React.Component {
         data.users.map((user, index) => {
           const group = user.dn.split(',')[1]
           const groupName = group.substr(3, group.length)
-          adUsers.push({ id: index, fname: user.givenName, lname: user.sn, email: user.mail, team: groupName })
+          adUsers.push({
+            id: index,
+            fname: user.givenName,
+            lname: user.sn,
+            email: user.mail,
+            team: groupName,
+          })
         })
         const dbUsers = this.state.rowData
         let updateCount = 0
@@ -657,8 +705,10 @@ class Wrapper extends React.Component {
             let updateUser = 0
             const adUser = adUsers.filter(aduser => aduser.email === user.email)
             if (adUser.length > 0) {
-              if (user.fname !== adUser[0].fname) user.update = 1 && updateUser++
-              if (user.lname !== adUser[0].lname) user.update = 1 && updateUser++
+              if (user.fname !== adUser[0].fname)
+                user.update = 1 && updateUser++
+              if (user.lname !== adUser[0].lname)
+                user.update = 1 && updateUser++
               if (user.team !== adUser[0].team) user.update = 1 && updateUser++
               if (updateUser !== 0) {
                 updateCount++
@@ -670,8 +720,12 @@ class Wrapper extends React.Component {
         // check if there are new users in AD not in DB
         if (dbUsers.length !== adUsers.length) {
           // filter out users without email
-          const usersWithEmail = adUsers.filter(user => user.email !== undefined)
-          newUsers = usersWithEmail.filter(({ email: id1 }) => !dbUsers.some(({ email: id2 }) => id2 === id1))
+          const usersWithEmail = adUsers.filter(
+            user => user.email !== undefined
+          )
+          newUsers = usersWithEmail.filter(
+            ({ email: id1 }) => !dbUsers.some(({ email: id2 }) => id2 === id1)
+          )
           addCount = newUsers.length
         }
         if (addCount > 0 || updateCount > 0) {
@@ -682,12 +736,12 @@ class Wrapper extends React.Component {
             newUsersToDb: newUsers,
             adUsers: adUsers,
             showSyncModal: true,
-            adLoading: false
+            adLoading: false,
             // rowData: adUsers
           })
         } else {
           this.setState({
-            adLoading: false
+            adLoading: false,
           })
           this.notifySuccess('Success', 'Users up-to-date with LDAP')
         }
@@ -696,11 +750,7 @@ class Wrapper extends React.Component {
   }
 
   handleConfirmAdSync = () => {
-    const {
-      newUsersToDb,
-      updateUsers,
-      adUsers
-    } = this.state
+    const { newUsersToDb, updateUsers, adUsers } = this.state
 
     if (newUsersToDb.length > 0) {
       const host = window.location.host
@@ -708,11 +758,11 @@ class Wrapper extends React.Component {
       fetch(`${protocol}//${host}/api/user/add`, {
         method: 'POST',
         body: JSON.stringify({
-          users: newUsersToDb
+          users: newUsersToDb,
         }),
         headers: {
-          'X-CSRF-TOKEN': this.props.session.csrfToken
-        }
+          'X-CSRF-TOKEN': this.props.session.csrfToken,
+        },
       })
         .then(res => res.json())
         .then(data => {
@@ -723,15 +773,24 @@ class Wrapper extends React.Component {
             })
             this.setState({
               rowData: users,
-              showSyncModal: false
+              showSyncModal: false,
             })
-            if (this.gridApi) { this.gridApi.refreshCells() }
-            this.notifySuccess('Success', `Successfully added ${newUsersToDb.length} users`, 5000)
+            if (this.gridApi) {
+              this.gridApi.refreshCells()
+            }
+            this.notifySuccess(
+              'Success',
+              `Successfully added ${newUsersToDb.length} users`,
+              5000
+            )
           } else {
             this.setState({
-              showSyncModal: false
+              showSyncModal: false,
             })
-            this.notifyWarn('Warning', `Error adding ${newUsersToDb.length} - ${data.error}`)
+            this.notifyWarn(
+              'Warning',
+              `Error adding ${newUsersToDb.length} - ${data.error}`
+            )
           }
         })
         .catch(err => console.error(err))
@@ -747,11 +806,11 @@ class Wrapper extends React.Component {
       fetch(`${protocol}//${host}/api/user/update`, {
         method: 'POST',
         body: JSON.stringify({
-          users: updateUserDetails
+          users: updateUserDetails,
         }),
         headers: {
-          'X-CSRF-TOKEN': this.props.session.csrfToken
-        }
+          'X-CSRF-TOKEN': this.props.session.csrfToken,
+        },
       })
         .then(res => res.json())
         .then(data => {
@@ -765,15 +824,24 @@ class Wrapper extends React.Component {
             })
             this.setState({
               rowData: users,
-              showSyncModal: false
+              showSyncModal: false,
             })
-            if (this.gridApi) { this.gridApi.refreshCells() }
-            this.notifySuccess('Success', `Successfully updated ${updateUsers.length} users`, 5000)
+            if (this.gridApi) {
+              this.gridApi.refreshCells()
+            }
+            this.notifySuccess(
+              'Success',
+              `Successfully updated ${updateUsers.length} users`,
+              5000
+            )
           } else {
             this.setState({
-              showSyncModal: false
+              showSyncModal: false,
             })
-            this.notifyWarn('Warning', `Error updating ${updateUsers.length} - ${data.error}`)
+            this.notifyWarn(
+              'Warning',
+              `Error updating ${updateUsers.length} - ${data.error}`
+            )
           }
         })
         .catch(err => console.error(err))
@@ -817,14 +885,16 @@ class Wrapper extends React.Component {
       const username = email.substr(0, email.lastIndexOf('@'))
       const params = {
         allColumns: true,
-        fileName: `${username}_timeoff_${moment(new Date()).format('YYYYMMDD')}.csv`,
-        columnSeparator: ';'
+        fileName: `${username}_timeoff_${moment(new Date()).format(
+          'YYYYMMDD'
+        )}.csv`,
+        columnSeparator: ';',
       }
       this.personalGridApi.exportDataAsCsv(params)
     }
   }
 
-  handlePersonalSelectChange = (user) => {
+  handlePersonalSelectChange = user => {
     const host = window.location.host
     const protocol = window.location.protocol
     fetch(`${protocol}//${host}/api/user/entries?user=${user}&t=vacation`)
@@ -833,7 +903,7 @@ class Wrapper extends React.Component {
         if (data.userEntries) {
           this.setState({
             personalRowData: data.userEntries,
-            selectedUser: user
+            selectedUser: user,
           })
           // window.gridApi && window.gridApi.refreshCells()
         }
@@ -845,14 +915,16 @@ class Wrapper extends React.Component {
     if (this.allGridApi) {
       const params = {
         allColumns: true,
-        fileName: `newtelco_allUsers_timeoff_${moment(new Date()).format('YYYYMMDD')}.csv`,
-        columnSeparator: ';'
+        fileName: `newtelco_allUsers_timeoff_${moment(new Date()).format(
+          'YYYYMMDD'
+        )}.csv`,
+        columnSeparator: ';',
       }
       this.allGridApi.exportDataAsCsv(params)
     }
   }
 
-  toggleManagerEditModal = (manager) => {
+  toggleManagerEditModal = manager => {
     if (!this.state.openManagerEditModal) {
       const host = window.location.host
       const protocol = window.location.protocol
@@ -863,7 +935,9 @@ class Wrapper extends React.Component {
           data.teamInfos.forEach(team => {
             teamsSelect.push({ value: team.id, label: team.name })
           })
-          const activeId = data.teamInfos.filter(team => team.name === manager.team)
+          const activeId = data.teamInfos.filter(
+            team => team.name === manager.team
+          )
           this.setState({
             teamSelectData: teamsSelect,
             openManagerEditModal: !this.state.openManagerEditModal,
@@ -871,14 +945,14 @@ class Wrapper extends React.Component {
               id: manager.id,
               name: manager.name,
               team: activeId[0].id,
-              email: manager.email
-            }
+              email: manager.email,
+            },
           })
         })
         .catch(err => console.error(err))
     } else {
       this.setState({
-        openManagerEditModal: !this.state.openManagerEditModal
+        openManagerEditModal: !this.state.openManagerEditModal,
       })
     }
   }
@@ -896,35 +970,37 @@ class Wrapper extends React.Component {
           })
           this.setState({
             teamSelectData: teamsSelect,
-            openManagerAddModal: !this.state.openManagerAddModal
+            openManagerAddModal: !this.state.openManagerAddModal,
           })
         })
         .catch(err => console.error(err))
     } else {
       this.setState({
-        openManagerAddModal: !this.state.openManagerAddModal
+        openManagerAddModal: !this.state.openManagerAddModal,
       })
     }
   }
 
-  toggleViewFilesModal = (files) => {
+  toggleViewFilesModal = files => {
     console.log(files)
     this.setState({
       viewFilesModal: !this.state.viewFilesModal,
-      viewFiles: files
+      viewFiles: files,
     })
   }
 
-  handleManagerDelete = (id) => {
+  handleManagerDelete = id => {
     const host = window.location.host
     const protocol = window.location.protocol
     fetch(`${protocol}//${host}/api/managers/delete?id=${id}`)
       .then(res => res.json())
       .then(data => {
         if (data.managerDelete && data.managerDelete.affectedRows === 1) {
-          const managers = this.state.managerRowData.filter(man => man.id !== id)
+          const managers = this.state.managerRowData.filter(
+            man => man.id !== id
+          )
           this.setState({
-            managerRowData: managers
+            managerRowData: managers,
           })
           this.notifyInfo('Manager Removed')
         }
@@ -932,44 +1008,41 @@ class Wrapper extends React.Component {
       .catch(err => console.error(err))
   }
 
-  handleManagerNameChange = (value) => {
+  handleManagerNameChange = value => {
     this.setState({
       activeManager: {
         ...this.state.activeManager,
-        name: value
-      }
+        name: value,
+      },
     })
   }
 
-  handleManagerTeamChange = (value) => {
+  handleManagerTeamChange = value => {
     this.setState({
       activeManager: {
         ...this.state.activeManager,
-        team: value
-      }
+        team: value,
+      },
     })
   }
 
-  handleManagerEmailChange = (value) => {
+  handleManagerEmailChange = value => {
     this.setState({
       activeManager: {
         ...this.state.activeManager,
-        email: value
-      }
+        email: value,
+      },
     })
   }
 
   handleConfirmManagerSave = () => {
     const host = window.location.host
     const protocol = window.location.protocol
-    const {
-      id,
-      name,
-      email,
-      team
-    } = this.state.activeManager
+    const { id, name, email, team } = this.state.activeManager
 
-    fetch(`${protocol}//${host}/api/managers/edit?id=${id}&name=${name}&email=${email}&team=${team}`)
+    fetch(
+      `${protocol}//${host}/api/managers/edit?id=${id}&name=${name}&email=${email}&team=${team}`
+    )
       .then(res => res.json())
       .then(data => {
         if (data.managerEdit && data.managerEdit.affectedRows === 1) {
@@ -978,11 +1051,13 @@ class Wrapper extends React.Component {
           const activeId = managers.findIndex(man => man.id === id)
           managers[activeId].name = name
           managers[activeId].email = email
-          const teamLabel = this.state.teamSelectData.filter(t => t.value === team)
+          const teamLabel = this.state.teamSelectData.filter(
+            t => t.value === team
+          )
           managers[activeId].team = teamLabel[0].label
           this.setState({
             openManagerEditModal: !this.state.openManagerEditModal,
-            managerRowData: managers
+            managerRowData: managers,
           })
           this.notifyInfo('Manager Info Saved')
         }
@@ -990,30 +1065,30 @@ class Wrapper extends React.Component {
       .catch(err => console.error(err))
   }
 
-  handleConfirmAddManager = (manager) => {
+  handleConfirmAddManager = manager => {
     const host = window.location.host
     const protocol = window.location.protocol
-    const {
-      name,
-      email,
-      team
-    } = this.state.activeManager
+    const { name, email, team } = this.state.activeManager
 
-    fetch(`${protocol}//${host}/api/managers/add?name=${name}&email=${email}&team=${team}`)
+    fetch(
+      `${protocol}//${host}/api/managers/add?name=${name}&email=${email}&team=${team}`
+    )
       .then(res => res.json())
       .then(data => {
         if (data.managerAdd && data.managerAdd.affectedRows === 1) {
           const managers = this.state.managerRowData
-          const teamLabel = this.state.teamSelectData.filter(t => t.value === team)
+          const teamLabel = this.state.teamSelectData.filter(
+            t => t.value === team
+          )
           managers.push({
             id: data.managerAdd.insertId,
             name: name,
             email: email,
-            team: teamLabel[0].label
+            team: teamLabel[0].label,
           })
           this.setState({
             openManagerAddModal: !this.state.openManagerAddModal,
-            managerRowData: managers
+            managerRowData: managers,
           })
           this.notifyInfo('Manager Added')
         }
@@ -1021,7 +1096,7 @@ class Wrapper extends React.Component {
       .catch(err => console.error(err))
   }
 
-  handleCellEdit = (params) => {
+  handleCellEdit = params => {
     const id = params.data.id
     const daysRemaining = params.data.daysAvailable
     // const dateJoined = params.data.dateJoined
@@ -1033,9 +1108,14 @@ class Wrapper extends React.Component {
     const month = date[1]
     const year = date[2]
 
-    fetch(`${protocol}//${host}/api/settings/user/edit?id=${id}&daysRemaining=${encodeURIComponent(daysRemaining)}&dateJoined=${encodeURIComponent(`${year}-${month}-${day}`)}`, {
-      method: 'get'
-    })
+    fetch(
+      `${protocol}//${host}/api/settings/user/edit?id=${id}&daysRemaining=${encodeURIComponent(
+        daysRemaining
+      )}&dateJoined=${encodeURIComponent(`${year}-${month}-${day}`)}`,
+      {
+        method: 'get',
+      }
+    )
       .then(resp => resp.json())
       .then(data => {
         if (data.userUpdate.affectedRows === 1) {
@@ -1061,69 +1141,74 @@ class Wrapper extends React.Component {
         tableData = [
           {
             title: 'Colleague',
-            value: request.name
+            value: request.name,
           },
           {
             title: 'From',
-            value: request.fromDate
+            value: request.fromDate,
           },
           {
             title: 'To',
-            value: request.toDate
+            value: request.toDate,
           },
           {
             title: 'Manager',
-            value: request.manager
+            value: request.manager,
           },
           {
             title: 'Type',
-            value: request.type.charAt(0).toUpperCase() + request.type.slice(1)
+            value: request.type.charAt(0).toUpperCase() + request.type.slice(1),
           },
           {
             title: 'Submitted On',
-            value: moment(request.submitted_datetime).format('DD.MM.YYYY HH:mm')
-          }
+            value: moment(request.submitted_datetime).format(
+              'DD.MM.YYYY HH:mm'
+            ),
+          },
         ]
       } else {
         tableData = [
           {
             title: 'Colleague',
-            value: request.name
+            value: request.name,
           },
           {
             title: 'From',
-            value: request.fromDate
+            value: request.fromDate,
           },
           {
             title: 'To',
-            value: request.toDate
+            value: request.toDate,
           },
           {
             title: 'Manager',
-            value: request.manager
+            value: request.manager,
           },
           {
             title: 'Type',
-            value: request.type.charAt(0).toUpperCase() + request.type.slice(1)
+            value: request.type.charAt(0).toUpperCase() + request.type.slice(1),
           },
           {
             title: 'Requested Days',
-            value: request.beantragt
+            value: request.beantragt,
           },
           {
             title: 'Remaining Days',
-            value: request.resturlaubJAHR
+            value: request.resturlaubJAHR,
           },
           {
             title: 'Submitted On',
-            value: moment(request.submitted_datetime).format('DD.MM.YYYY HH:mm')
-          }
+            value: moment(request.submitted_datetime).format(
+              'DD.MM.YYYY HH:mm'
+            ),
+          },
         ]
       }
       this.setState({
-        openConfirmPersonalDeleteModal: !this.state.openConfirmPersonalDeleteModal,
+        openConfirmPersonalDeleteModal: !this.state
+          .openConfirmPersonalDeleteModal,
         confirmPersonalDeleteData: tableData,
-        personalToDelete: request.id || 0
+        personalToDelete: request.id || 0,
       })
     }
   }
@@ -1141,69 +1226,73 @@ class Wrapper extends React.Component {
         tableData = [
           {
             title: 'Colleague',
-            value: request.name
+            value: request.name,
           },
           {
             title: 'From',
-            value: request.fromDate
+            value: request.fromDate,
           },
           {
             title: 'To',
-            value: request.toDate
+            value: request.toDate,
           },
           {
             title: 'Manager',
-            value: request.manager
+            value: request.manager,
           },
           {
             title: 'Type',
-            value: request.type.charAt(0).toUpperCase() + request.type.slice(1)
+            value: request.type.charAt(0).toUpperCase() + request.type.slice(1),
           },
           {
             title: 'Submitted On',
-            value: moment(request.submitted_datetime).format('DD.MM.YYYY HH:mm')
-          }
+            value: moment(request.submitted_datetime).format(
+              'DD.MM.YYYY HH:mm'
+            ),
+          },
         ]
       } else {
         tableData = [
           {
             title: 'Colleague',
-            value: request.name
+            value: request.name,
           },
           {
             title: 'From',
-            value: request.fromDate
+            value: request.fromDate,
           },
           {
             title: 'To',
-            value: request.toDate
+            value: request.toDate,
           },
           {
             title: 'Manager',
-            value: request.manager
+            value: request.manager,
           },
           {
             title: 'Type',
-            value: request.type.charAt(0).toUpperCase() + request.type.slice(1)
+            value: request.type.charAt(0).toUpperCase() + request.type.slice(1),
           },
           {
             title: 'Requested Days',
-            value: request.beantragt
+            value: request.beantragt,
           },
           {
             title: 'Remaining Days',
-            value: request.resturlaubJAHR
+            value: request.resturlaubJAHR,
           },
           {
             title: 'Submitted On',
-            value: moment(request.submitted_datetime).format('DD.MM.YYYY HH:mm')
-          }
+            value: moment(request.submitted_datetime).format(
+              'DD.MM.YYYY HH:mm'
+            ),
+          },
         ]
       }
       this.setState({
         openConfirmDeleteModal: !this.state.openConfirmDeleteModal,
         confirmDeleteData: tableData,
-        toDelete: request.id || 0
+        toDelete: request.id || 0,
       })
     }
   }
@@ -1220,10 +1309,13 @@ class Wrapper extends React.Component {
         } else {
           this.notifyError('Error Deleting Request')
         }
-        const newRowData = this.state.personalRowData.filter(row => row.id !== deleteId)
+        const newRowData = this.state.personalRowData.filter(
+          row => row.id !== deleteId
+        )
         this.setState({
           personalRowData: newRowData,
-          openConfirmPersonalDeleteModal: !this.state.openConfirmPersonalDeleteModal
+          openConfirmPersonalDeleteModal: !this.state
+            .openConfirmPersonalDeleteModal,
         })
         this.allGridApi.refreshCells()
       })
@@ -1242,10 +1334,12 @@ class Wrapper extends React.Component {
         } else {
           this.notifyError('Error Deleting Request')
         }
-        const newRowData = this.state.allRowData.filter(row => row.id !== deleteId)
+        const newRowData = this.state.allRowData.filter(
+          row => row.id !== deleteId
+        )
         this.setState({
           allRowData: newRowData,
-          openConfirmDeleteModal: !this.state.openConfirmDeleteModal
+          openConfirmDeleteModal: !this.state.openConfirmDeleteModal,
         })
         this.allGridApi.refreshCells()
       })
@@ -1255,38 +1349,38 @@ class Wrapper extends React.Component {
   setPersonalEditData = (files, data) => {
     if (!data) {
       this.setState({
-        files: files
+        files: files,
       })
     } else {
       this.setState({
         personalEditData: data,
-        files: files
+        files: files,
       })
     }
   }
 
-  setPersonalRowData = (data) => {
+  setPersonalRowData = data => {
     this.setState({
-      personalRowData: data
+      personalRowData: data,
     })
   }
 
   setEditData = (files, data) => {
     if (!data) {
       this.setState({
-        files: files
+        files: files,
       })
     } else {
       this.setState({
         editData: data,
-        files: files
+        files: files,
       })
     }
   }
 
-  setRowData = (data) => {
+  setRowData = data => {
     this.setState({
-      allRowData: data
+      allRowData: data,
     })
   }
 
@@ -1302,7 +1396,7 @@ class Wrapper extends React.Component {
       const request = selectedRow[0]
       this.setState({
         loadingFiles: true,
-        editAvailable: true
+        editAvailable: true,
       })
       const rawFrom = request.fromDate.split('.')
       const rawTo = request.toDate.split('.')
@@ -1318,7 +1412,9 @@ class Wrapper extends React.Component {
         id: request.id,
         note: request.note,
         approved: request.approved,
-        type: request.type && request.type[0].toUpperCase() + request.type.substring(1)
+        type:
+          request.type &&
+          request.type[0].toUpperCase() + request.type.substring(1),
       }
       fetch(`${protocol}//${host}/api/mail/file?id=${request.id}`)
         .then(data => data.json())
@@ -1332,7 +1428,7 @@ class Wrapper extends React.Component {
             personalEditData: tableData,
             files: files,
             loadingFiles: false,
-            openPersonalEditModal: !this.state.openPersonalEditModal
+            openPersonalEditModal: !this.state.openPersonalEditModal,
           })
         })
         .catch(err => console.error(err))
@@ -1351,7 +1447,7 @@ class Wrapper extends React.Component {
       const request = selectedRow[0]
       this.setState({
         loadingFiles: true,
-        editAvailable: true
+        editAvailable: true,
       })
       const rawFrom = request.fromDate.split('.')
       const rawTo = request.toDate.split('.')
@@ -1367,7 +1463,9 @@ class Wrapper extends React.Component {
         id: request.id,
         note: request.note,
         approved: request.approved,
-        type: request.type && request.type[0].toUpperCase() + request.type.substring(1)
+        type:
+          request.type &&
+          request.type[0].toUpperCase() + request.type.substring(1),
       }
       fetch(`${protocol}//${host}/api/mail/file?id=${request.id}`)
         .then(data => data.json())
@@ -1380,7 +1478,7 @@ class Wrapper extends React.Component {
             editData: tableData,
             files: files,
             loadingFiles: false,
-            openAdminEditModal: !this.state.openAdminEditModal
+            openAdminEditModal: !this.state.openAdminEditModal,
           })
         })
         .catch(err => console.error(err))
@@ -1414,12 +1512,15 @@ class Wrapper extends React.Component {
       personalEditData,
       confirmDeleteData,
       confirmPersonalDeleteData,
-      adLoading
+      adLoading,
     } = this.state
 
     if (this.props.session.user && this.state.admin) {
       return (
-        <Layout user={this.props.session.user.email} token={this.props.session.csrfToken}>
+        <Layout
+          user={this.props.session.user.email}
+          token={this.props.session.csrfToken}
+        >
           <Container className='settings-admin-container'>
             <Subheader header='Administration' subheader='Settings' />
             <Row className='settings-admin-row'>
@@ -1428,12 +1529,16 @@ class Wrapper extends React.Component {
                   bordered
                   style={{
                     width: '100%',
-                    display: 'inline-block'
+                    display: 'inline-block',
                   }}
                 >
                   <Header className='user-content-header'>
                     <h4>Managers</h4>
-                    <IconButton icon={<Icon icon='plus' />} appearance='ghost' onClick={this.toggleManagerAddModal}>
+                    <IconButton
+                      icon={<Icon icon='plus' />}
+                      appearance='ghost'
+                      onClick={this.toggleManagerAddModal}
+                    >
                       Add
                     </IconButton>
                   </Header>
@@ -1442,7 +1547,7 @@ class Wrapper extends React.Component {
                     loading={!managerRowData}
                     data={managerRowData}
                     style={{
-                      width: '100%'
+                      width: '100%',
                     }}
                   >
                     <Column width={120} fixed='left'>
@@ -1458,11 +1563,27 @@ class Wrapper extends React.Component {
                           return (
                             <ButtonToolbar>
                               <ButtonGroup>
-                                <Button size='sm' className='manager-btn' appearance='ghost' onClick={handleEdit}>
-                                  <FontAwesomeIcon icon={faPencilAlt} width='0.8rem' />
+                                <Button
+                                  size='sm'
+                                  className='manager-btn'
+                                  appearance='ghost'
+                                  onClick={handleEdit}
+                                >
+                                  <FontAwesomeIcon
+                                    icon={faPencilAlt}
+                                    width='0.8rem'
+                                  />
                                 </Button>
-                                <Button size='sm' className='manager-btn' appearance='ghost' onClick={handleDelete}>
-                                  <FontAwesomeIcon icon={faTrashAlt} width='0.7rem' />
+                                <Button
+                                  size='sm'
+                                  className='manager-btn'
+                                  appearance='ghost'
+                                  onClick={handleDelete}
+                                >
+                                  <FontAwesomeIcon
+                                    icon={faTrashAlt}
+                                    width='0.7rem'
+                                  />
                                 </Button>
                               </ButtonGroup>
                             </ButtonToolbar>
@@ -1490,12 +1611,21 @@ class Wrapper extends React.Component {
                   bordered
                   style={{
                     width: '100%',
-                    display: 'inline-block'
+                    display: 'inline-block',
                   }}
                 >
                   <Header className='user-content-header'>
                     <h4>Users</h4>
-                    <IconButton icon={<Icon className={adLoading ? 'loading' : ''} icon='refresh' />} appearance='ghost' onClick={this.handleAdGroupSync}>
+                    <IconButton
+                      icon={
+                        <Icon
+                          className={adLoading ? 'loading' : ''}
+                          icon='refresh'
+                        />
+                      }
+                      appearance='ghost'
+                      onClick={this.handleAdGroupSync}
+                    >
                       Sync Domain Users
                     </IconButton>
                   </Header>
@@ -1509,7 +1639,7 @@ class Wrapper extends React.Component {
                         onCellEditingStopped={this.handleCellEdit}
                         stopEditingWhenGridLosesFocus
                         deltaRowDataMode
-                        getRowNodeId={(data) => {
+                        getRowNodeId={data => {
                           return data.id
                         }}
                         pagination
@@ -1531,7 +1661,14 @@ class Wrapper extends React.Component {
                     <TabPanel>
                       <Header className='user-content-header'>
                         <span className='section-header'>
-                          <span style={{ fontSize: '1rem', marginRight: '10px', display: 'flex', alignItems: 'center' }}>
+                          <span
+                            style={{
+                              fontSize: '1rem',
+                              marginRight: '10px',
+                              display: 'flex',
+                              alignItems: 'center',
+                            }}
+                          >
                             Type:
                           </span>
                           <SelectPicker
@@ -1542,7 +1679,7 @@ class Wrapper extends React.Component {
                               { label: 'Sick', value: 'sick' },
                               { label: 'Trip', value: 'trip' },
                               { label: 'Moving', value: 'moving' },
-                              { label: 'Other', value: 'other' }
+                              { label: 'Other', value: 'other' },
                             ]}
                             placeholder='Please Select a Type'
                             style={{ width: '300px' }}
@@ -1551,13 +1688,25 @@ class Wrapper extends React.Component {
                         <span>
                           <ButtonToolbar>
                             <ButtonGroup>
-                              <IconButton icon={<Icon icon='pencil' />} appearance='primary' onClick={this.toggleAdminEditModal}>
+                              <IconButton
+                                icon={<Icon icon='pencil' />}
+                                appearance='primary'
+                                onClick={this.toggleAdminEditModal}
+                              >
                                 Edit
                               </IconButton>
-                              <IconButton icon={<Icon icon='trash' />} appearance='ghost' onClick={this.handleDeleteFromAllModal}>
+                              <IconButton
+                                icon={<Icon icon='trash' />}
+                                appearance='ghost'
+                                onClick={this.handleDeleteFromAllModal}
+                              >
                                 Delete
                               </IconButton>
-                              <IconButton icon={<Icon icon='export' />} appearance='ghost' onClick={this.handleAllGridExport}>
+                              <IconButton
+                                icon={<Icon icon='export' />}
+                                appearance='ghost'
+                                onClick={this.handleAllGridExport}
+                              >
                                 Export
                               </IconButton>
                             </ButtonGroup>
@@ -1588,13 +1737,25 @@ class Wrapper extends React.Component {
                         </span>
                         <ButtonToolbar>
                           <ButtonGroup>
-                            <IconButton icon={<Icon icon='pencil' />} appearance='primary' onClick={this.togglePersonalEditModal}>
+                            <IconButton
+                              icon={<Icon icon='pencil' />}
+                              appearance='primary'
+                              onClick={this.togglePersonalEditModal}
+                            >
                               Edit
                             </IconButton>
-                            <IconButton icon={<Icon icon='trash' />} appearance='ghost' onClick={this.handleDeleteFromPersonalModal}>
+                            <IconButton
+                              icon={<Icon icon='trash' />}
+                              appearance='ghost'
+                              onClick={this.handleDeleteFromPersonalModal}
+                            >
                               Delete
                             </IconButton>
-                            <IconButton icon={<Icon icon='export' />} appearance='ghost' onClick={this.handlePersonalGridExport}>
+                            <IconButton
+                              icon={<Icon icon='export' />}
+                              appearance='ghost'
+                              onClick={this.handlePersonalGridExport}
+                            >
                               Export
                             </IconButton>
                           </ButtonGroup>
@@ -1624,11 +1785,10 @@ class Wrapper extends React.Component {
               </Modal.Header>
               <Modal.Body>
                 <p>
-                  You have <b>{updateCount}</b> Users which need to be updated and <b>{addCount}</b> users which need to be added.
+                  You have <b>{updateCount}</b> Users which need to be updated
+                  and <b>{addCount}</b> users which need to be added.
                 </p>
-                <p>
-                  Would you like to proceed?
-                </p>
+                <p>Would you like to proceed?</p>
               </Modal.Body>
               <Modal.Footer>
                 <Button onClick={this.handleConfirmAdSync} appearance='primary'>
@@ -1653,11 +1813,20 @@ class Wrapper extends React.Component {
                 <Form fluid>
                   <FormGroup>
                     <ControlLabel>Name</ControlLabel>
-                    <FormControl onChange={this.handleManagerNameChange} name='name' value={activeManager.name} />
+                    <FormControl
+                      onChange={this.handleManagerNameChange}
+                      name='name'
+                      value={activeManager.name}
+                    />
                   </FormGroup>
                   <FormGroup>
                     <ControlLabel>Email</ControlLabel>
-                    <FormControl onChange={this.handleManagerEmailChange} name='email' type='email' value={activeManager.email} />
+                    <FormControl
+                      onChange={this.handleManagerEmailChange}
+                      name='email'
+                      type='email'
+                      value={activeManager.email}
+                    />
                   </FormGroup>
                   <FormGroup>
                     <ControlLabel>Team</ControlLabel>
@@ -1672,10 +1841,16 @@ class Wrapper extends React.Component {
                 </Form>
               </Modal.Body>
               <Modal.Footer>
-                <Button onClick={this.handleConfirmManagerSave} appearance='primary'>
+                <Button
+                  onClick={this.handleConfirmManagerSave}
+                  appearance='primary'
+                >
                   Save
                 </Button>
-                <Button onClick={this.toggleManagerEditModal} appearance='subtle'>
+                <Button
+                  onClick={this.toggleManagerEditModal}
+                  appearance='subtle'
+                >
                   Cancel
                 </Button>
               </Modal.Footer>
@@ -1694,11 +1869,20 @@ class Wrapper extends React.Component {
                 <Form fluid>
                   <FormGroup>
                     <ControlLabel>Name</ControlLabel>
-                    <FormControl onChange={this.handleManagerNameChange} name='name' value={activeManager.name} />
+                    <FormControl
+                      onChange={this.handleManagerNameChange}
+                      name='name'
+                      value={activeManager.name}
+                    />
                   </FormGroup>
                   <FormGroup>
                     <ControlLabel>Email</ControlLabel>
-                    <FormControl onChange={this.handleManagerEmailChange} name='email' type='email' value={activeManager.email} />
+                    <FormControl
+                      onChange={this.handleManagerEmailChange}
+                      name='email'
+                      type='email'
+                      value={activeManager.email}
+                    />
                   </FormGroup>
                   <FormGroup>
                     <ControlLabel>Team</ControlLabel>
@@ -1713,42 +1897,76 @@ class Wrapper extends React.Component {
                 </Form>
               </Modal.Body>
               <Modal.Footer>
-                <Button onClick={this.handleConfirmAddManager} appearance='primary'>
+                <Button
+                  onClick={this.handleConfirmAddManager}
+                  appearance='primary'
+                >
                   Save
                 </Button>
-                <Button onClick={this.toggleManagerAddModal} appearance='subtle'>
+                <Button
+                  onClick={this.toggleManagerAddModal}
+                  appearance='subtle'
+                >
                   Cancel
                 </Button>
               </Modal.Footer>
             </Modal>
           )}
           {viewFilesModal && (
-            <Modal
-              show={viewFilesModal}
-              onHide={this.toggleViewFilesModal}
-            >
+            <Modal show={viewFilesModal} onHide={this.toggleViewFilesModal}>
               <Modal.Header>
                 <Modal.Title>View Files</Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                {Array.isArray(viewFiles) && viewFiles.map((file, index) => {
-                  return (
-                    <div className='view-file-item' key={index}>
-                      <a target='_blank' rel='noopener noreferrer' title='attachment Url' href={file.url}>{file.name}</a>
-                    </div>
-                  )
-                })}
+                {Array.isArray(viewFiles) &&
+                  viewFiles.map((file, index) => {
+                    return (
+                      <div className='view-file-item' key={index}>
+                        <a
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          title='attachment Url'
+                          href={file.url}
+                        >
+                          {file.name}
+                        </a>
+                      </div>
+                    )
+                  })}
               </Modal.Body>
             </Modal>
           )}
           {openConfirmPersonalDeleteModal && (
-            <Modal enforceFocus size='sm' backdrop show={openConfirmPersonalDeleteModal} onHide={this.handleDeleteFromPersonalModal} style={{ marginTop: '50px' }}>
+            <Modal
+              enforceFocus
+              size='sm'
+              backdrop
+              show={openConfirmPersonalDeleteModal}
+              onHide={this.handleDeleteFromPersonalModal}
+              style={{ marginTop: '50px' }}
+            >
               <Modal.Header>
-                <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>Confirm Submit</Modal.Title>
+                <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>
+                  Confirm Submit
+                </Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                <span style={{ textAlign: 'center', display: 'block', fontWeight: '600' }}>Are you sure you want to delete this request?</span>
-                <Table showHeader={false} height={confirmPersonalDeleteData.length * 50} bordered={false} data={confirmPersonalDeleteData} style={{ margin: '20px 50px' }}>
+                <span
+                  style={{
+                    textAlign: 'center',
+                    display: 'block',
+                    fontWeight: '600',
+                  }}
+                >
+                  Are you sure you want to delete this request?
+                </span>
+                <Table
+                  showHeader={false}
+                  height={confirmPersonalDeleteData.length * 50}
+                  bordered={false}
+                  data={confirmPersonalDeleteData}
+                  style={{ margin: '20px 50px' }}
+                >
                   <Column width={200} align='left'>
                     <HeaderCell>Field: </HeaderCell>
                     <Cell dataKey='title' />
@@ -1759,13 +1977,29 @@ class Wrapper extends React.Component {
                   </Column>
                 </Table>
               </Modal.Body>
-              <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
+              <Modal.Footer
+                style={{ display: 'flex', justifyContent: 'center' }}
+              >
                 <ButtonToolbar style={{ width: '100%' }}>
-                  <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-                    <Button onClick={this.handleDeleteFromPersonalModal} style={{ width: '33%', fontSize: '16px' }} appearance='default'>
+                  <ButtonGroup
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Button
+                      onClick={this.handleDeleteFromPersonalModal}
+                      style={{ width: '33%', fontSize: '16px' }}
+                      appearance='default'
+                    >
                       Cancel
                     </Button>
-                    <Button onClick={this.handleSubmitPersonalDelete} style={{ width: '33%', fontSize: '16px' }} appearance='primary'>
+                    <Button
+                      onClick={this.handleSubmitPersonalDelete}
+                      style={{ width: '33%', fontSize: '16px' }}
+                      appearance='primary'
+                    >
                       Confirm
                     </Button>
                   </ButtonGroup>
@@ -1774,13 +2008,36 @@ class Wrapper extends React.Component {
             </Modal>
           )}
           {openConfirmDeleteModal && (
-            <Modal enforceFocus size='sm' backdrop show={openConfirmDeleteModal} onHide={this.handleDeleteFromAllModal} style={{ marginTop: '50px' }}>
+            <Modal
+              enforceFocus
+              size='sm'
+              backdrop
+              show={openConfirmDeleteModal}
+              onHide={this.handleDeleteFromAllModal}
+              style={{ marginTop: '50px' }}
+            >
               <Modal.Header>
-                <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>Confirm Submit</Modal.Title>
+                <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>
+                  Confirm Submit
+                </Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                <span style={{ textAlign: 'center', display: 'block', fontWeight: '600' }}>Are you sure you want to delete this request?</span>
-                <Table showHeader={false} height={confirmDeleteData.length * 50} bordered={false} data={confirmDeleteData} style={{ margin: '20px 50px' }}>
+                <span
+                  style={{
+                    textAlign: 'center',
+                    display: 'block',
+                    fontWeight: '600',
+                  }}
+                >
+                  Are you sure you want to delete this request?
+                </span>
+                <Table
+                  showHeader={false}
+                  height={confirmDeleteData.length * 50}
+                  bordered={false}
+                  data={confirmDeleteData}
+                  style={{ margin: '20px 50px' }}
+                >
                   <Column width={200} align='left'>
                     <HeaderCell>Field: </HeaderCell>
                     <Cell dataKey='title' />
@@ -1791,13 +2048,29 @@ class Wrapper extends React.Component {
                   </Column>
                 </Table>
               </Modal.Body>
-              <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
+              <Modal.Footer
+                style={{ display: 'flex', justifyContent: 'center' }}
+              >
                 <ButtonToolbar style={{ width: '100%' }}>
-                  <ButtonGroup style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-                    <Button onClick={this.handleDeleteFromAllModal} style={{ width: '33%', fontSize: '16px' }} appearance='default'>
+                  <ButtonGroup
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Button
+                      onClick={this.handleDeleteFromAllModal}
+                      style={{ width: '33%', fontSize: '16px' }}
+                      appearance='default'
+                    >
                       Cancel
                     </Button>
-                    <Button onClick={this.handleSubmitDelete} style={{ width: '33%', fontSize: '16px' }} appearance='primary'>
+                    <Button
+                      onClick={this.handleSubmitDelete}
+                      style={{ width: '33%', fontSize: '16px' }}
+                      appearance='primary'
+                    >
                       Confirm
                     </Button>
                   </ButtonGroup>
@@ -1829,169 +2102,449 @@ class Wrapper extends React.Component {
               setRowData={this.setRowData}
             />
           )}
-          <style jsx>{`
-            @media screen and (max-width: 500px) {
-              :global(.wrapper) {
-                width: 100%;
+          <style jsx>
+            {`
+              @media screen and (max-width: 500px) {
+                :global(.wrapper) {
+                  width: 100%;
+                }
+                :global(.settings-admin-container) {
+                  width: 80%;
+                }
+                :global(.settings-admin-row) {
+                  flex-direction: column;
+                }
+                :global(.settings-admin-col-2) {
+                  width: 100% !important;
+                }
+                :global(.settings-admin-col-1) {
+                  width: 100% !important;
+                }
+                :global(.person-panel-body .rs-panel-body) {
+                  padding: 20px !important;
+                }
               }
-              :global(.settings-admin-container) {
-                width: 80%;
+              :global(.loading) {
+                animation: rotating 1.5s linear infinite;
+                @keyframes rotating {
+                  from {
+                    transform: rotate(0deg);
+                  }
+                  to {
+                    transform: rotate(360deg);
+                  }
+                }
               }
-              :global(.settings-admin-row) {
-                flex-direction: column;
+              :global(.rs-table-cell-group-fixed-right) {
+                right: 80px !important;
+                left: unset !important;
               }
-              :global(.settings-admin-col-2) {
-                width: 100% !important;
+              :global(.table-tab-list) {
+                margin-bottom: 20px;
+                padding-left: 0px !important;
               }
-              :global(.settings-admin-col-1) {
-                width: 100% !important;
+              :global(.reports-header) {
+                padding-top: 10px;
+                padding-left: 20px;
+                padding-bottom: 20px;
               }
-              :global(.person-panel-body .rs-panel-body) {
+              :global(.rs-panel-default .rs-panel-body .rs-panel-default) {
+                margin-top: 0px;
+              }
+              :global(.reports-panel) {
+                padding: 10px;
+              }
+              :global(.reports-panel .rs-panel-body) {
                 padding: 20px !important;
               }
-            }
-            :global(.loading) {
-              animation: rotating 1.5s linear infinite;
-              @keyframes rotating {
-                from {
-                  transform: rotate(0deg);
+              :global(.reports-panel .rs-panel) {
+                margin-top: 20px;
+              }
+              :global(.reports-panel .rs-form-group) {
+                margin: 10px;
+              }
+              :global(.reports-panel .rs-picker-select) {
+                margin: 10px 0;
+                width: 100%;
+              }
+              .reports-hr {
+                width: 80%;
+                margin: 0 auto;
+              }
+              :global(.table-tab-list .react-tabs__tab) {
+                padding: 10px;
+                transition: border 250ms ease-in-out;
+              }
+              :global(.react-tabs__tab--selected) {
+                border: 1px solid #67b246 !important;
+                color: #67b246 !important;
+                border-radius: 10px !important;
+              }
+              :global(.react-tabs__tab:focus) {
+                box-shadow: 0 0 5px #67b246;
+                border-color: #67b246;
+              }
+              :global(.settings-admin-container > .rs-panel) {
+                margin: 10px;
+              }
+              :global(.settings-admin-row) {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-around;
+              }
+              :global(.settings-admin-col-1) {
+                margin: 10px;
+              }
+              :global(.settings-admin-col-2) {
+                display: inline-block;
+                width: 50%;
+                margin: 10px;
+              }
+              :global(.manager-user-wrapper > div) {
+                width: 100%;
+              }
+              :global(.manager-user-wrapper) {
+                display: flex;
+                flex-wrap: nowrap;
+              }
+              :global(.accordion__heading) {
+                background-color: #ececec;
+                padding: 15px;
+                border-radius: 5px;
+                margin-top: 10px;
+              }
+              :global(.accordion__heading:hover) {
+                cursor: pointer;
+              }
+              :global(.user-content-header) {
+                display: flex;
+                width: 100%;
+                justify-content: space-between;
+                margin-bottom: 20px;
+              }
+              :global(.rs-btn-ghost) {
+                transition: box-shadow 250ms ease-in-out;
+              }
+              :global(.rs-btn-ghost:hover) {
+                box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.15);
+              }
+              :global(.accordion__button:focus) {
+                outline: none;
+              }
+              :global(.user-content-header:focus) {
+                outline: none;
+              }
+              :global(.user-grid-wrapper) {
+                height: 50vh;
+              }
+              :global(.user-grid) {
+                height: 50vh;
+              }
+              :global(.person-grid) {
+                margin-bottom: 20px;
+              }
+              :global(.person-panel-body .rs-panel-body) {
+                padding: 40px;
+              }
+              :global(.row-awaitingResponse) {
+                background-color: transparent;
+              }
+              :global(.section-header) {
+                font-size: 1.3rem;
+                display: flex;
+                margin-bottom: 20px;
+              }
+              :global(.rs-table) {
+                max-width: 100%;
+              }
+              :global(.manager-btn) {
+                line-height: 1;
+                padding-top: 7px !important;
+                transition: box-shadow 250ms ease-in-out;
+              }
+              :global(.manager-btn:hover) {
+                box-shadow: 0 2px 0 rgba(247, 130, 130, 0.11),
+                  0 4px 8px rgba(247, 130, 130, 0.12),
+                  0 10px 10px rgba(247, 130, 130, 0.06),
+                  0 7px 70px rgba(247, 130, 130, 0.1);
+              }
+            `}
+          </style>
+        </Layout>
+      )
+    } else {
+      return <RequireLogin />
+    }
+  }
+}
+
+export default Wrapper
+                </ButtonToolbar>
+              </Modal.Footer>
+            </Modal>
+          )}
+          {openConfirmDeleteModal && (
+            <Modal
+              enforceFocus
+              size='sm'
+              backdrop
+              show={openConfirmDeleteModal}
+              onHide={this.handleDeleteFromAllModal}
+              style={{ marginTop: '50px' }}
+            >
+              <Modal.Header>
+                <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>
+                  Confirm Submit
+                </Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <span
+                  style={{
+                    textAlign: 'center',
+                    display: 'block',
+                    fontWeight: '600',
+                  }}
+                >
+                  Are you sure you want to delete this request?
+                </span>
+                <Table
+                  showHeader={false}
+                  height={confirmDeleteData.length * 50}
+                  bordered={false}
+                  data={confirmDeleteData}
+                  style={{ margin: '20px 50px' }}
+                >
+                  <Column width={200} align='left'>
+                    <HeaderCell>Field: </HeaderCell>
+                    <Cell dataKey='title' />
+                  </Column>
+                  <Column width={250} align='left'>
+                    <HeaderCell>Value: </HeaderCell>
+                    <Cell dataKey='value' />
+                  </Column>
+                </Table>
+              </Modal.Body>
+              <Modal.Footer
+                style={{ display: 'flex', justifyContent: 'center' }}
+              >
+                <ButtonToolbar style={{ width: '100%' }}>
+                  <ButtonGroup
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Button
+                      onClick={this.handleDeleteFromAllModal}
+                      style={{ width: '33%', fontSize: '16px' }}
+                      appearance='default'
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={this.handleSubmitDelete}
+                      style={{ width: '33%', fontSize: '16px' }}
+                      appearance='primary'
+                    >
+                      Confirm
+                    </Button>
+                  </ButtonGroup>
+                </ButtonToolbar>
+              </Modal.Footer>
+            </Modal>
+          )}
+          {openPersonalEditModal && (
+            <EditModal
+              open={openPersonalEditModal}
+              data={personalEditData}
+              rowData={personalRowData}
+              gridApi={this.personalGridApi}
+              setEditData={this.setPersonalEditData}
+              toggleEditModal={this.togglePersonalEditModal}
+              session={this.props.session}
+              setRowData={this.setPersonalRowData}
+            />
+          )}
+          {openAdminEditModal && (
+            <EditModal
+              open={openAdminEditModal}
+              data={editData}
+              rowData={allRowData}
+              gridApi={this.allGridApi}
+              setEditData={this.setEditData}
+              toggleEditModal={this.toggleAdminEditModal}
+              session={this.props.session}
+              setRowData={this.setRowData}
+            />
+          )}
+          <style jsx>
+            {`
+              @media screen and (max-width: 500px) {
+                :global(.wrapper) {
+                  width: 100%;
                 }
-                to {
-                  transform: rotate(360deg);
+                :global(.settings-admin-container) {
+                  width: 80%;
+                }
+                :global(.settings-admin-row) {
+                  flex-direction: column;
+                }
+                :global(.settings-admin-col-2) {
+                  width: 100% !important;
+                }
+                :global(.settings-admin-col-1) {
+                  width: 100% !important;
+                }
+                :global(.person-panel-body .rs-panel-body) {
+                  padding: 20px !important;
                 }
               }
-            }
-            :global(.rs-table-cell-group-fixed-right) {
-              right: 80px !important;
-              left: unset !important;
-            }
-            :global(.table-tab-list) {
-              margin-bottom: 20px;
-              padding-left: 0px !important;
-            }
-            :global(.reports-header) {
-              padding-top: 10px;
-              padding-left: 20px;
-              padding-bottom: 20px;
-            }
-            :global(.rs-panel-default .rs-panel-body .rs-panel-default) {
-              margin-top: 0px;
-            }
-            :global(.reports-panel) {
-              padding: 10px;
-            }
-            :global(.reports-panel .rs-panel-body) {
-              padding: 20px !important;
-            }
-            :global(.reports-panel .rs-panel) {
-              margin-top: 20px;
-            }
-            :global(.reports-panel .rs-form-group) {
-              margin: 10px;
-            }
-            :global(.reports-panel .rs-picker-select) {
-              margin: 10px 0;
-              width: 100%;
-            }
-            .reports-hr {
-              width: 80%;
-              margin: 0 auto;
-            }
-            :global(.table-tab-list .react-tabs__tab) {
-              padding: 10px;
-              transition: border 250ms ease-in-out;
-            }
-            :global(.react-tabs__tab--selected) {
-              border: 1px solid #67B246 !important;
-              color: #67b246 !important;
-              border-radius: 10px !important;
-            }
-            :global(.react-tabs__tab:focus) {
-              box-shadow: 0 0 5px #67B246;
-              border-color: #67B246;
-            }
-            :global(.settings-admin-container > .rs-panel) {
-              margin: 10px;
-            }
-            :global(.settings-admin-row) {
-              display: flex;
-              align-items: flex-start;
-              justify-content: space-around;
-            }
-            :global(.settings-admin-col-1) {
-               margin: 10px;
-            }
-            :global(.settings-admin-col-2) {
-               display: inline-block;
-               width: 50%;
-               margin: 10px;
-            }
-            :global(.manager-user-wrapper > div) {
-              width: 100%; 
-            }
-            :global(.manager-user-wrapper) {
-              display: flex;
-              flex-wrap: nowrap;
-            }
-            :global(.accordion__heading) {
-              background-color: #ececec;
-              padding: 15px;
-              border-radius: 5px;
-              margin-top: 10px;
-            }
-            :global(.accordion__heading:hover) {
-              cursor: pointer;
-            }
-            :global(.user-content-header) {
-              display: flex;
-              width: 100%;
-              justify-content: space-between;
-              margin-bottom: 20px;
-            }
-            :global(.rs-btn-ghost) {
-              transition: box-shadow 250ms ease-in-out;
-            }
-            :global(.rs-btn-ghost:hover) {
-              box-shadow: 0px 3px 5px rgba(0,0,0,0.15);
-            }
-            :global(.accordion__button:focus) {
-              outline: none;
-            }
-            :global(.user-content-header:focus) {
-              outline: none;
-            }
-            :global(.user-grid-wrapper) {
-              height: 50vh;
-            }
-            :global(.user-grid) {
-              height: 50vh;
-            }
-            :global(.person-grid) { 
-              margin-bottom: 20px;
-            }
-            :global(.person-panel-body .rs-panel-body) {
-              padding: 40px;
-            }
-            :global(.row-awaitingResponse) {
-              background-color: transparent;
-            }
-            :global(.section-header) {
-              font-size: 1.3rem;
-              display: flex;
-              margin-bottom: 20px;
-            }
-            :global(.rs-table) {
-              max-width: 100%;
-            }
-            :global(.manager-btn) {
-              line-height: 1.0;
-              padding-top: 7px !important;
-              transition: box-shadow 250ms ease-in-out;
-            }
-            :global(.manager-btn:hover) {
-              box-shadow: 0 2px 0 rgba(247, 130, 130,.11), 0 4px 8px rgba(247, 130, 130,.12), 0 10px 10px rgba(247, 130, 130,.06), 0 7px 70px rgba(247, 130, 130,.1);
-            }
-          `}
+              :global(.loading) {
+                animation: rotating 1.5s linear infinite;
+                @keyframes rotating {
+                  from {
+                    transform: rotate(0deg);
+                  }
+                  to {
+                    transform: rotate(360deg);
+                  }
+                }
+              }
+              :global(.rs-table-cell-group-fixed-right) {
+                right: 80px !important;
+                left: unset !important;
+              }
+              :global(.table-tab-list) {
+                margin-bottom: 20px;
+                padding-left: 0px !important;
+              }
+              :global(.reports-header) {
+                padding-top: 10px;
+                padding-left: 20px;
+                padding-bottom: 20px;
+              }
+              :global(.rs-panel-default .rs-panel-body .rs-panel-default) {
+                margin-top: 0px;
+              }
+              :global(.reports-panel) {
+                padding: 10px;
+              }
+              :global(.reports-panel .rs-panel-body) {
+                padding: 20px !important;
+              }
+              :global(.reports-panel .rs-panel) {
+                margin-top: 20px;
+              }
+              :global(.reports-panel .rs-form-group) {
+                margin: 10px;
+              }
+              :global(.reports-panel .rs-picker-select) {
+                margin: 10px 0;
+                width: 100%;
+              }
+              .reports-hr {
+                width: 80%;
+                margin: 0 auto;
+              }
+              :global(.table-tab-list .react-tabs__tab) {
+                padding: 10px;
+                transition: border 250ms ease-in-out;
+              }
+              :global(.react-tabs__tab--selected) {
+                border: 1px solid #67b246 !important;
+                color: #67b246 !important;
+                border-radius: 10px !important;
+              }
+              :global(.react-tabs__tab:focus) {
+                box-shadow: 0 0 5px #67b246;
+                border-color: #67b246;
+              }
+              :global(.settings-admin-container > .rs-panel) {
+                margin: 10px;
+              }
+              :global(.settings-admin-row) {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-around;
+              }
+              :global(.settings-admin-col-1) {
+                margin: 10px;
+              }
+              :global(.settings-admin-col-2) {
+                display: inline-block;
+                width: 50%;
+                margin: 10px;
+              }
+              :global(.manager-user-wrapper > div) {
+                width: 100%;
+              }
+              :global(.manager-user-wrapper) {
+                display: flex;
+                flex-wrap: nowrap;
+              }
+              :global(.accordion__heading) {
+                background-color: #ececec;
+                padding: 15px;
+                border-radius: 5px;
+                margin-top: 10px;
+              }
+              :global(.accordion__heading:hover) {
+                cursor: pointer;
+              }
+              :global(.user-content-header) {
+                display: flex;
+                width: 100%;
+                justify-content: space-between;
+                margin-bottom: 20px;
+              }
+              :global(.rs-btn-ghost) {
+                transition: box-shadow 250ms ease-in-out;
+              }
+              :global(.rs-btn-ghost:hover) {
+                box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.15);
+              }
+              :global(.accordion__button:focus) {
+                outline: none;
+              }
+              :global(.user-content-header:focus) {
+                outline: none;
+              }
+              :global(.user-grid-wrapper) {
+                height: 50vh;
+              }
+              :global(.user-grid) {
+                height: 50vh;
+              }
+              :global(.person-grid) {
+                margin-bottom: 20px;
+              }
+              :global(.person-panel-body .rs-panel-body) {
+                padding: 40px;
+              }
+              :global(.row-awaitingResponse) {
+                background-color: transparent;
+              }
+              :global(.section-header) {
+                font-size: 1.3rem;
+                display: flex;
+                margin-bottom: 20px;
+              }
+              :global(.rs-table) {
+                max-width: 100%;
+              }
+              :global(.manager-btn) {
+                line-height: 1;
+                padding-top: 7px !important;
+                transition: box-shadow 250ms ease-in-out;
+              }
+              :global(.manager-btn:hover) {
+                box-shadow: 0 2px 0 rgba(247, 130, 130, 0.11),
+                  0 4px 8px rgba(247, 130, 130, 0.12),
+                  0 10px 10px rgba(247, 130, 130, 0.06),
+                  0 7px 70px rgba(247, 130, 130, 0.1);
+              }
+            `}
           </style>
         </Layout>
       )
