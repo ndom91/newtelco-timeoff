@@ -9,7 +9,10 @@ import Subheader from '../components/content-subheader'
 import { Container, Content, Panel, Notification } from 'rsuite'
 import { motion } from 'framer-motion'
 
-const Calendar = dynamic(() => import('../components/calendar'), {
+/* const Calendar = dynamic(() => import('../components/calendar'), { */
+/*   ssr: false, */
+/* }) */
+const RCalendar = dynamic(() => import('../components/calendar'), {
   ssr: false,
 })
 
@@ -201,7 +204,7 @@ class Wrapper extends React.Component {
             </motion.div>
             <Panel bordered>
               <Content>
-                <Calendar />
+                <RCalendar />
               </Content>
             </Panel>
           </Container>
@@ -234,6 +237,12 @@ class Wrapper extends React.Component {
               }
               :global(.sstat-wrapper > .rs-panel:nth-child(4)) {
                 background-color: #c24c61 !important;
+              }
+              :global(.dx-scheduler-appointment) {
+                background-color: #67b246;
+              }
+              :global(.dx-button-mode-contained.dx-button-default) {
+                background-color: #4c8532;
               }
             `}
           </style>

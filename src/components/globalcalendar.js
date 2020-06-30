@@ -21,26 +21,27 @@ class TuiCalendar extends React.Component {
     this.calendarRef = React.createRef()
 
     this.state = {
-      teamSchedules: [],
       currentView: 'month',
+      rowData: [],
     }
   }
 
   componentDidMount() {
     const host = window.location.host
     const protocol = window.location.protocol
-    const team = 'Technik'
-    fetch(`${protocol}//${host}/api/team/cal?t=${team}`)
+    fetch(`${protocol}//${host}/api/report/cal`)
       .then(res => res.json())
       .then(data => {
-        if (data.userEntries) {
+        console.log(data)
+        if (data.companyVacations) {
           this.setState({
-            rowData: data.userEntries,
+            rowData: data.companyVacations,
           })
           window.gridApi && window.gridApi.refreshCells()
         }
       })
       .catch(err => console.error(err))
+
     const calendarInstance = this.calendarRef.current.getInstance()
     const monthHeader = this.getMonthHeader(
       calendarInstance.getDateRangeStart(),
@@ -173,14 +174,6 @@ class TuiCalendar extends React.Component {
         </Header>
         <Calendar
           ref={this.calendarRef}
-          calendars={[
-            {
-              id: '069',
-              name: 'Private',
-              bgColor: '#67B246',
-              borderColor: '#9e5fff',
-            },
-          ]}
           disableDblClick
           disableClick={false}
           isReadOnly
@@ -196,11 +189,11 @@ class TuiCalendar extends React.Component {
           timezones={[
             {
               timezoneOffset: 60,
-              displayLabel: 'GMT+01:00',
+              displayLabel: 'Berlin',
               tooltip: 'Berlin',
             },
           ]}
-          schedules={this.props.vacations}
+          initialevents={this.state.rowData}
         />
         <style jsx global>
           {`

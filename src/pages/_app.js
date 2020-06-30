@@ -75,6 +75,16 @@ export default class AppWrapper extends App {
             href='/static/img/favicon/favicon.ico'
           />
           <script src='https://analytics.newtelco.dev/ingress/1a00ef94-c309-4171-8ba6-184263f2693c/script.js' />
+          <link
+            rel='stylesheet'
+            type='text/css'
+            href='https://cdn3.devexpress.com/jslib/20.1.4/css/dx.common.css'
+          />
+          <link
+            rel='stylesheet'
+            type='text/css'
+            href='https://cdn3.devexpress.com/jslib/20.1.4/css/dx.softblue.css'
+          />
         </Head>
         <noscript>
           <img src='https://analytics.newtelco.dev/ingress/1a00ef94-c309-4171-8ba6-184263f2693c/pixel.gif' />
