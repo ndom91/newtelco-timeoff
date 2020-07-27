@@ -452,7 +452,10 @@ class Wrapper extends React.Component {
 
   toggleSubmitModal = () => {
     if (!this.state.openConfirmModal) {
-      if (!this.state.vaca.confirmIllness[0]) {
+      if (
+        this.state.vaca.type === 'sick' &&
+        !this.state.vaca.confirmIllness[0]
+      ) {
         this.notifyWarn('You must confirm the information to continue')
         return
       }

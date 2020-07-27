@@ -1,8 +1,11 @@
 import response from './responseMessages'
 import moment from 'moment-timezone'
+import { getSession } from 'next-auth/client'
+
+require('dotenv').config({ path: './.env' })
+
 const db = require('../../../lib/db')
 const escape = require('sql-template-strings')
-require('dotenv').config({ path: './.env' })
 const { google } = require('googleapis')
 
 const key = require('../../../../serviceacct2.json')
@@ -11,13 +14,18 @@ module.exports = async (req, res) => {
   const approvalHash = req.query.h
   const action = req.query.a
   const forward = req.query.b
+  const session = await getSession({ req })
 
-  if (!req.session.google) {
-    req.session.save(err => {
-      if (err) console.error(err)
-      req.session.returnTo = req._parsedUrl.query
-      res.redirect('/')
+  if (!session) {
+    // req.session.save(err => {
+    //   if (err) console.error(err)
+    //   req.session.returnTo = req._parsedUrl.query
+    // })
+    // res.redirect(`/auth/signin?h=${approvalHash}&a=${action}`)
+    res.writeHead(302, {
+      Location: `/auth/signin?h=${approvalHash}&a=${action}&b=0`,
     })
+    res.end()
     return
   }
 
@@ -149,17 +157,12 @@ https://vacation.newtelco.de`,
       (err, info) => {
         if (err) {
           console.error('Error sending email to ' + name, err)
-          if (forward != 0) {
-            res.status(500).redirect(`/?a=${action}&code=500`)
-          } else {
-            res.status(500).json({ code: 500, msg: info })
-          }
+          res.status(500).json({ code: 500, msg: info })
         }
-        if (forward != 0) {
-          res.redirect(`/?a=${action}&code=200`)
-        } else {
-          res.status(200).json({ code: 200, a: action })
-        }
+        res.writeHead(302, {
+          Location: `/?a=${action}&code=200&b=1`,
+        })
+        res.end()
       }
     )
   } else {

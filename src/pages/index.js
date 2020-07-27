@@ -26,7 +26,6 @@ class Wrapper extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      returnTo: props.returnTo,
       dashboard: {
         lastYear: 0,
         thisYear: 0,
@@ -53,69 +52,78 @@ class Wrapper extends React.Component {
   }
 
   componentDidMount() {
+    // const searchParams = `?${this.props.returnTo}`
+    // params = new URLSearchParams(searchParams)
     if (typeof window !== 'undefined') {
-      let params
-      if (this.props.returnTo && !window.location.search) {
-        const searchParams = `?${this.props.returnTo}`
-        params = new URLSearchParams(searchParams)
-        const approvalHash = params.get('h')
-        const actionCode = params.get('a')
-        const host = window.location.host
-        const protocol = window.location.protocol
-
-        fetch(
-          `${protocol}//${host}/api/mail/response?h=${approvalHash}&a=${actionCode}&b=0`
-        )
-          .then(resp => resp.json())
-          .then(data => {
-            const code = data.code
-            const action = data.a
-            if (code === 200 && action === 'a') {
-              this.notifyInfo('Absence Successfully Approved')
-            } else if (code === 200 && action === 'd') {
-              this.notifyInfo('Absence Successfully Denied')
-            } else if (code === 500) {
-              this.notifyWarn('Error Responding to Request')
-            }
-          })
-          .catch(err => console.error(err))
-      } else {
-        const windowUrl = window.location.search
-        params = new URLSearchParams(windowUrl)
-        const action = params.get('a')
-        const code = params.get('code')
-
-        if (code === '200' && action === 'a') {
-          this.notifyInfo('Absence Successfully Approved')
-        } else if (code === '200' && action === 'd') {
-          this.notifyInfo('Absence Successfully Denied')
-        } else if (code === '500') {
-          this.notifyWarn('Error Responding to Request')
-        }
-      }
       const host = window.location.host
       const protocol = window.location.protocol
-      if (this.props.session) {
-        fetch(
-          `${protocol}//${host}/api/user/entries/dashboard?u=${encodeURIComponent(
-            this.props.session.user.email
-          )}`
-        )
-          .then(resp => resp.json())
-          .then(data => {
-            if (data.userEntries[0]) {
-              const user = data.userEntries[0]
-              this.setState({
-                dashboard: {
-                  lastYear: user.resturlaubVorjahr || 0,
-                  thisYear: user.jahresurlaubInsgesamt || 0,
-                  spent: user.jahresUrlaubAusgegeben || 0,
-                  available: user.resturlaubJAHR || 0,
-                },
-              })
-            }
-          })
-          .catch(err => console.error(err))
+      let params = new URL(document.location).searchParams
+      const approvalCompleted = params.get('b')
+      const approvalHash = params.get('h')
+      const action = params.get('a')
+      const code = params.get('code')
+      console.log(approvalCompleted, approvalHash, action, code)
+
+      if (approvalCompleted === '0') {
+        if (window.location.search) {
+          fetch(`/api/mail/checkApproval?hash=${approvalHash}&a=${action}`)
+            .then(resp => resp.json())
+            .then(data => {
+              const approvalStatus = data.status
+              if (approvalStatus === 0) {
+                fetch(`/api/mail/response?h=${approvalHash}&a=${action}&b=0`)
+                  .then(resp => resp.json())
+                  .then(data => {
+                    const code = data.code
+                    const action = data.a
+                    if (code === 200 && action === 'a') {
+                      this.notifyInfo('Absence Successfully Approved')
+                    } else if (code === 200 && action === 'd') {
+                      this.notifyInfo('Absence Successfully Denied')
+                    } else if (code === 500) {
+                      this.notifyWarn('Error Responding to Request')
+                    }
+                  })
+                  .catch(err => console.error(err))
+              } else {
+                this.notifyInfo('Request already answered')
+              }
+            })
+            .catch(err => console.error(err))
+        } else {
+        }
+        const host = window.location.host
+        const protocol = window.location.protocol
+      } else {
+        if (this.props.session) {
+          if (code === '200' && action === 'a') {
+            this.notifyInfo('Absence Successfully Approved')
+          } else if (code === '200' && action === 'd') {
+            this.notifyInfo('Absence Successfully Denied')
+          } else if (code === '500') {
+            this.notifyWarn('Error Responding to Request')
+          }
+          fetch(
+            `${protocol}//${host}/api/user/entries/dashboard?u=${encodeURIComponent(
+              this.props.session.user.email
+            )}`
+          )
+            .then(resp => resp.json())
+            .then(data => {
+              if (data.userEntries[0]) {
+                const user = data.userEntries[0]
+                this.setState({
+                  dashboard: {
+                    lastYear: user.resturlaubVorjahr || 0,
+                    thisYear: user.jahresurlaubInsgesamt || 0,
+                    spent: user.jahresUrlaubAusgegeben || 0,
+                    available: user.resturlaubJAHR || 0,
+                  },
+                })
+              }
+            })
+            .catch(err => console.error(err))
+        }
       }
     }
   }

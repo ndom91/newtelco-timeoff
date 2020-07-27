@@ -24,10 +24,20 @@ import Wrapper from './wrapper'
 import './index.css'
 
 export default class App extends React.Component {
-  static async getInitialProps({ req }) {
+  static async getInitialProps({ req, query }) {
+    console.log(req)
+    const approvalHash = query.h
+    const action = query.a
+    const completed = query.b
+
     return {
       session: await getSession({ req }),
       providers: await getProviders({ req }),
+      params: {
+        approvalHash,
+        action,
+        completed,
+      },
     }
   }
 
@@ -54,6 +64,11 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
+    if (this.props.session) {
+      const { approvalHash, action, completed } = this.props.params
+
+      Router.push(`/?h=${approvalHash}&a=${action}&b=${completed}`)
+    }
     this.animateText()
     const host = window.location.host
     const protocol = window.location.protocol
