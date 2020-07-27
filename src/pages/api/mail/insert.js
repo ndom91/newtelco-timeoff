@@ -21,7 +21,7 @@ module.exports = async (req, res) => {
   const note = vaca.notes
   const approvalHash = body.ah
   const files = JSON.stringify(body.files)
-  const confirmIllness = body.confirmIllness
+  const confirmIllness = vaca.confirmIllness
 
   let insertAbsence
   if (type === 'sick' || type === 'trip') {
