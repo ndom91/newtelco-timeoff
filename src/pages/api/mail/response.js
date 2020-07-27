@@ -35,9 +35,15 @@ module.exports = async (req, res) => {
     let approvalValue
     const name = checkApprovalHash[0].name
     const manager = checkApprovalHash[0].manager
-    const toDate = new Date(checkApprovalHash[0].toDate).toLocaleDateString('de-DE')
-    const fromDate = new Date(checkApprovalHash[0].fromDate).toLocaleDateString('de-DE')
-    const submittedOn = new Date(checkApprovalHash[0].submitted_datetime).toLocaleString('de-DE')
+    const toDate = new Date(checkApprovalHash[0].toDate).toLocaleDateString(
+      'de-DE'
+    )
+    const fromDate = new Date(checkApprovalHash[0].fromDate).toLocaleDateString(
+      'de-DE'
+    )
+    const submittedOn = new Date(
+      checkApprovalHash[0].submitted_datetime
+    ).toLocaleString('de-DE')
     const approvedOn = new Date().toLocaleString('de-DE')
     const email = checkApprovalHash[0].email
 
@@ -49,7 +55,8 @@ module.exports = async (req, res) => {
         key.client_email,
         null,
         key.private_key,
-        ['https://www.googleapis.com/auth/calendar'])
+        ['https://www.googleapis.com/auth/calendar']
+      )
 
       jwtClient.authorize(function (err, tokens) {
         if (err) {
@@ -68,30 +75,35 @@ Approved On: ${approvedOn}
 https://vacation.newtelco.de`,
         start: {
           date: checkApprovalHash[0].fromGoogle,
-          timeZone: 'Europe/Berlin'
+          timeZone: 'Europe/Berlin',
         },
         end: {
-          date: moment(checkApprovalHash[0].toGoogle).add(1, 'days').format('YYYY-MM-DD'),
-          timeZone: 'Europe/Berlin'
-        }
+          date: moment(checkApprovalHash[0].toGoogle)
+            .add(1, 'days')
+            .format('YYYY-MM-DD'),
+          timeZone: 'Europe/Berlin',
+        },
       }
       const calendar = google.calendar('v3')
-      calendar.events.insert({
-        auth: jwtClient,
-        calendarId: process.env.GOOGLE_CAL_ID,
-        resource: event
-      }, function (err, response) {
-        if (err) {
-          console.error(`Calendar Insert Error: ${err}`)
-          return
-        }
-        if (response.data.status === 'confirmed') {
-          const gCalId = response.data.id
-          db.query(escape`
+      calendar.events.insert(
+        {
+          auth: jwtClient,
+          calendarId: process.env.GOOGLE_CAL_ID,
+          resource: event,
+        },
+        function (err, response) {
+          if (err) {
+            console.error(`Calendar Insert Error: ${err}`)
+            return
+          }
+          if (response.data.status === 'confirmed') {
+            const gCalId = response.data.id
+            db.query(escape`
             UPDATE vacations SET gcal = ${gCalId} WHERE approval_hash LIKE ${approvalHash} 
           `)
+          }
         }
-      })
+      )
     } else if (action === 'd') {
       mailBody = response.denied_body
       actionLabel = 'Denied'
@@ -101,7 +113,7 @@ https://vacation.newtelco.de`,
     mailBody = mailBody.replace('[USERNAME]', name)
     mailBody = mailBody.replace('[START]', fromDate)
     mailBody = mailBody.replace('[END]', toDate)
-    mailBody = mailBody.replace(/SERVER_URL/g, process.env.SERVER_URL)
+    mailBody = mailBody.replace(/NEXTAUTH_URL/g, process.env.NEXTAUTH_URL)
 
     let nodemailerTransport = nodemailerDirectTransport()
     if (
@@ -115,16 +127,16 @@ https://vacation.newtelco.de`,
         secure: process.env.EMAIL_SECURE || true,
         auth: {
           user: process.env.EMAIL_USERNAME,
-          pass: process.env.EMAIL_PASSWORD
-        }
+          pass: process.env.EMAIL_PASSWORD,
+        },
       })
     }
 
     await db.query(escape`
       UPDATE vacations SET approved = ${approvalValue}, approval_datetime = ${new Date()
-        .toISOString()
-        .slice(0, 19)
-        .replace('T', ' ')} WHERE approval_hash LIKE ${approvalHash}
+      .toISOString()
+      .slice(0, 19)
+      .replace('T', ' ')} WHERE approval_hash LIKE ${approvalHash}
     `)
 
     nodemailer.createTransport(nodemailerTransport).sendMail(
@@ -132,7 +144,7 @@ https://vacation.newtelco.de`,
         to: email,
         from: 'device@newtelco.de',
         subject: `[NT] Absence Response - ${actionLabel}`,
-        html: mailBody
+        html: mailBody,
       },
       (err, info) => {
         if (err) {

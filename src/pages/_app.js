@@ -1,6 +1,7 @@
 import React from 'react'
 import App from 'next/app'
 import Head from 'next/head'
+import { Provider } from 'next-auth/client'
 import LogRocket from 'logrocket'
 
 export default class AppWrapper extends App {
@@ -89,7 +90,9 @@ export default class AppWrapper extends App {
         <noscript>
           <img src='https://analytics.newtelco.dev/ingress/1a00ef94-c309-4171-8ba6-184263f2693c/pixel.gif' />
         </noscript>
-        <Component {...pageProps} />
+        <Provider session={pageProps.session}>
+          <Component {...pageProps} />
+        </Provider>
         <style jsx global>
           {`
             body,

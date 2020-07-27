@@ -21,15 +21,25 @@ module.exports = async (req, res) => {
   const note = vaca.notes
   const approvalHash = body.ah
   const files = JSON.stringify(body.files)
+  const confirmIllness = body.confirmIllness
 
   let insertAbsence
   if (type === 'sick' || type === 'trip') {
     insertAbsence = await db.query(escape`
-        INSERT INTO vacations (name, email, type, fromDate, toDate, manager, note, submitted_datetime, submitted_by, approval_hash, files) VALUES (${name}, ${email}, ${type}, ${dateFrom}, ${dateTo}, ${manager}, ${note}, ${new Date().toISOString().slice(0, 19).replace('T', ' ')}, ${submittedBy}, ${approvalHash}, ${files} ) 
+        INSERT INTO vacations (name, email, type, fromDate, toDate, manager, note, submitted_datetime, submitted_by, approval_hash, files, confirmIllness) VALUES (${name}, ${email}, ${type}, ${dateFrom}, ${dateTo}, ${manager}, ${note}, ${new Date()
+      .toISOString()
+      .slice(0, 19)
+      .replace(
+        'T',
+        ' '
+      )}, ${submittedBy}, ${approvalHash}, ${files}, ${confirmIllness} ) 
     `)
   } else {
     insertAbsence = await db.query(escape`
-        INSERT INTO vacations (name, email, resturlaubVorjahr, jahresurlaubInsgesamt, jahresUrlaubAusgegeben, restjahresurlaubInsgesamt, beantragt, resturlaubJAHR, type, fromDate, toDate, manager, note, submitted_datetime, submitted_by, approval_hash, files) VALUES (${name}, ${email}, ${lastYear}, ${thisYear}, ${spentThisYear}, ${total}, ${requested}, ${remaining}, ${type}, ${dateFrom}, ${dateTo}, ${manager}, ${note}, ${new Date().toISOString().slice(0, 19).replace('T', ' ')}, ${submittedBy}, ${approvalHash}, ${files} ) 
+        INSERT INTO vacations (name, email, resturlaubVorjahr, jahresurlaubInsgesamt, jahresUrlaubAusgegeben, restjahresurlaubInsgesamt, beantragt, resturlaubJAHR, type, fromDate, toDate, manager, note, submitted_datetime, submitted_by, approval_hash, files) VALUES (${name}, ${email}, ${lastYear}, ${thisYear}, ${spentThisYear}, ${total}, ${requested}, ${remaining}, ${type}, ${dateFrom}, ${dateTo}, ${manager}, ${note}, ${new Date()
+      .toISOString()
+      .slice(0, 19)
+      .replace('T', ' ')}, ${submittedBy}, ${approvalHash}, ${files} ) 
     `)
   }
   if (insertAbsence.affectedRows === 1) {
@@ -41,6 +51,6 @@ module.exports = async (req, res) => {
 
 export const config = {
   api: {
-    bodyParser: false
-  }
+    bodyParser: false,
+  },
 }

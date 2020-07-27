@@ -1,7 +1,7 @@
 import React from 'react'
 import Layout from '../../components/layout/index'
 import Router from 'next/router'
-import { NextAuth } from 'next-auth/client'
+import { getSession } from 'next-auth/client'
 import RequireLogin from '../../components/requiredLogin'
 import Comments from '../../components/comments'
 import Subheader from '../../components/content-subheader'
@@ -11,18 +11,8 @@ const { Column, HeaderCell, Cell } = Table
 
 class Wrapper extends React.Component {
   static async getInitialProps({ res, req, query }) {
-    if (req && !req.user) {
-      if (res) {
-        res.writeHead(302, {
-          Location: '/auth',
-        })
-        res.end()
-      } else {
-        Router.push('/auth')
-      }
-    }
     return {
-      session: await NextAuth.init({ req }),
+      session: await getSession({ req }),
     }
   }
 
@@ -66,7 +56,7 @@ class Wrapper extends React.Component {
   render() {
     const { team, teamName, teamLoading } = this.state
 
-    if (this.props.session.user) {
+    if (this.props.session) {
       return (
         <Layout
           user={this.props.session.user.email}

@@ -1,7 +1,7 @@
 import React from 'react'
 import Layout from '../components/layout/index'
 import Router from 'next/router'
-import { NextAuth } from 'next-auth/client'
+import { getSession, getCsrfToken } from 'next-auth/client'
 import RequireLogin from '../components/requiredLogin'
 import Subheader from '../components/content-subheader'
 import moment from 'moment'
@@ -48,6 +48,8 @@ import {
   Animation,
   Tooltip,
   Whisper,
+  Checkbox,
+  CheckboxGroup,
 } from 'rsuite'
 
 const { Slide } = Animation
@@ -56,18 +58,9 @@ const { Column, HeaderCell, Cell } = Table
 
 class Wrapper extends React.Component {
   static async getInitialProps({ res, req, query }) {
-    if (req && !req.user) {
-      if (res) {
-        res.writeHead(302, {
-          Location: '/auth',
-        })
-        res.end()
-      } else {
-        Router.push('/auth')
-      }
-    }
     return {
-      session: await NextAuth.init({ req }),
+      session: await getSession({ req }),
+      csrfToken: await getCsrfToken({ req }),
     }
   }
 
@@ -106,6 +99,7 @@ class Wrapper extends React.Component {
         dateTo: '',
         manager: '',
         notes: '',
+        confirmIllness: [],
       },
       lastRequest: {
         submitted: '',
@@ -428,6 +422,16 @@ class Wrapper extends React.Component {
     })
   }
 
+  handleConfirmIllnessChange = value => {
+    console.log(value)
+    this.setState({
+      vaca: {
+        ...this.state.vaca,
+        confirmIllness: value,
+      },
+    })
+  }
+
   handleClear = () => {
     this.setState({
       vaca: {
@@ -448,6 +452,10 @@ class Wrapper extends React.Component {
 
   toggleSubmitModal = () => {
     if (!this.state.openConfirmModal) {
+      if (!this.state.vaca.confirmIllness[0]) {
+        this.notifyWarn('You must confirm the information to continue')
+        return
+      }
       if (
         this.state.vaca.dateFrom &&
         this.state.vaca.dateTo &&
@@ -501,15 +509,19 @@ class Wrapper extends React.Component {
 
     const approvalHash = uuid()
 
+    const confirmed = this.state.vaca.confirmIllness[0] === 'confirmed' ? 1 : 0
     fetch(`${protocol}//${host}/api/mail/insert`, {
       method: 'POST',
       body: JSON.stringify({
-        vaca: this.state.vaca,
+        vaca: {
+          ...this.state.vaca,
+          confirmIllness: confirmed,
+        },
         ah: approvalHash,
         files: this.state.uploadedFiles,
       }),
       headers: {
-        'X-CSRF-TOKEN': this.props.session.csrfToken,
+        'X-CSRF-TOKEN': this.props.csrfToken,
       },
     })
       .then(resp => resp.json())
@@ -528,7 +540,7 @@ class Wrapper extends React.Component {
             files: this.state.uploadedFiles,
           }),
           headers: {
-            'X-CSRF-TOKEN': this.props.session.csrfToken,
+            'X-CSRF-TOKEN': this.props.csrfToken,
           },
         })
           .then(resp => resp.json())
@@ -624,11 +636,11 @@ class Wrapper extends React.Component {
       },
     }
 
-    if (this.props.session.user) {
+    if (this.props.session) {
       return (
         <Layout
           user={this.props.session.user.email}
-          token={this.props.session.csrfToken}
+          token={this.props.csrfToken}
         >
           <Container style={{ alignItems: 'center' }}>
             <Subheader header='New Request' subheader='Create New' />
@@ -944,6 +956,19 @@ class Wrapper extends React.Component {
                       />
                     </div>
                   </FormGroup>
+                  {vaca.type === 'sick' && (
+                    <FormGroup>
+                      <CheckboxGroup
+                        onChange={this.handleConfirmIllnessChange}
+                        value={vaca.confirmIllness}
+                      >
+                        <Checkbox value='confirmed'>
+                          I hereby confirm that I was sick on the above named
+                          days and the information is correct.
+                        </Checkbox>
+                      </CheckboxGroup>
+                    </FormGroup>
+                  )}
                   <FormGroup>
                     <ButtonGroup justified>
                       <Button

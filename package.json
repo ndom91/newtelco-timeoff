@@ -4,12 +4,12 @@
   "description": "Absence Management Application",
   "main": "index.js",
   "scripts": {
-    "dev": "NODE_ENV=development node index.js",
-    "dev:inspect": "NODE_OPTIONS='--inspect' NODE_ENV=development node index.js",
+    "dev": "NODE_ENV=development next",
+    "dev:inspect": "NODE_OPTIONS='--inspect' NODE_ENV=development next",
     "ci": "npm build",
     "build": "next build",
-    "start": "PORT=7666 NODE_ENV=production node index.js",
-    "start:nt": "PORT=7666 node index.js",
+    "start": "PORT=7666 NODE_ENV=production next start",
+    "start:nt": "PORT=7666 next start",
     "prettier": "prettier ./src/**/*.js",
     "prettier:fix": "prettier --write ./src/**/*.js",
     "export": "next build && next export"
@@ -66,7 +66,7 @@
     "moment-timezone": "^0.5.31",
     "nedb": "^1.8.0",
     "next": "^9.4.4",
-    "next-auth": "^1.12.1",
+    "next-auth": "^3.0.0",
     "next-images": "^1.4.0",
     "nodemailer": "^6.4.10",
     "nodemailer-direct-transport": "^3.3.2",
@@ -86,6 +86,7 @@
     "rsuite": "^4.7.4",
     "serverless-mysql": "^1.5.4",
     "sql-template-strings": "^2.2.2",
+    "sqlite3": "^5.0.0",
     "v4-uuid": "^1.1.0"
   },
   "devDependencies": {

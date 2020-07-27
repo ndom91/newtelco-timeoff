@@ -2,41 +2,24 @@ import React from 'react'
 import dynamic from 'next/dynamic'
 import Layout from '../components/layout/index'
 import Router from 'next/router'
-import { NextAuth } from 'next-auth/client'
 import RequireLogin from '../components/requiredLogin'
 import DashStat from '../components/dashstat'
 import Subheader from '../components/content-subheader'
 import { Container, Content, Panel, Notification } from 'rsuite'
 import { motion } from 'framer-motion'
+import { getSession } from 'next-auth/client'
 
-/* const Calendar = dynamic(() => import('../components/calendar'), { */
-/*   ssr: false, */
-/* }) */
-const RCalendar = dynamic(() => import('../components/calendar'), {
+const Calendar = dynamic(() => import('../components/gcalendar'), {
   ssr: false,
 })
+// const RCalendar = dynamic(() => import('../components/calendar'), {
+//   ssr: false,
+// })
 
 class Wrapper extends React.Component {
   static async getInitialProps({ res, req, query }) {
-    if (req && !req.user) {
-      if (res) {
-        res.writeHead(302, {
-          Location: '/auth',
-        })
-        res.end()
-      } else {
-        Router.push('/auth')
-      }
-    }
-    if (req) {
-      return {
-        session: await NextAuth.init({ req }),
-        returnTo: req.session.returnTo,
-      }
-    } else {
-      return {
-        session: await NextAuth.init({ req }),
-      }
+    return {
+      session: await getSession({ req }),
     }
   }
 
@@ -204,7 +187,7 @@ class Wrapper extends React.Component {
             </motion.div>
             <Panel bordered>
               <Content>
-                <RCalendar />
+                <Calendar />
               </Content>
             </Panel>
           </Container>

@@ -76,7 +76,7 @@ module.exports = async (req, res) => {
   mailBody = mailBody.replace('[FROM]', from)
   mailBody = mailBody.replace('[TO]', to)
   mailBody = mailBody.replace('[DATE_TODAY]', dateToday)
-  mailBody = mailBody.replace(/SERVER_URL/g, process.env.SERVER_URL)
+  mailBody = mailBody.replace(/NEXTAUTH_URL/g, process.env.NEXTAUTH_URL)
   if (files.length > 0) {
     let filesHtml = '<h3>Uploaded Files</h3>'
     files.forEach(file => {
@@ -135,7 +135,7 @@ module.exports = async (req, res) => {
     })
   } else {
     const headerText = `Please approve or deny this new ${type} request from <b>${name}</b>.<br /><br /> This user will be notified via email of your decision and upon approval the calendar entry will be created.`
-    const approvalButtons = `<table border="0" cellpadding="0" cellspacing="30" role="presentation"> <tr> <td align="center" class="hover-bg-green-600" style="background-color: #67B246; border-radius: 3px;" bgcolor="#67B246"> <a href="${process.env.SERVER_URL}/api/mail/response?h=${approvalHash}&a=a" target="_blank" class="all-font-sans hover-border-green-600" style="border: 1px solid #67B246; border-radius: 2px; display: inline-block; font-size: 20px; padding: 15px 25px; color: #ffffff; text-decoration: none;">Approve</a> </td> <td align="center" class="hover-bg-red-600" style="background-color: #fa2147; border-radius: 3px;" bgcolor="#fa2147"> <a href="${process.env.SERVER_URL}/api/mail/response?h=${approvalHash}&a=d" target="_blank" class="all-font-sans hover-border-red-600" style="border: 1px solid #fa2147; border-radius: 2px; display: inline-block; font-size: 20px; padding: 15px 25px; color: #ffffff; text-decoration: none;">Deny</a> </td> </tr> </table>`
+    const approvalButtons = `<table border="0" cellpadding="0" cellspacing="30" role="presentation"> <tr> <td align="center" class="hover-bg-green-600" style="background-color: #67B246; border-radius: 3px;" bgcolor="#67B246"> <a href="${process.env.NEXTAUTH_URL}/api/mail/response?h=${approvalHash}&a=a" target="_blank" class="all-font-sans hover-border-green-600" style="border: 1px solid #67B246; border-radius: 2px; display: inline-block; font-size: 20px; padding: 15px 25px; color: #ffffff; text-decoration: none;">Approve</a> </td> <td align="center" class="hover-bg-red-600" style="background-color: #fa2147; border-radius: 3px;" bgcolor="#fa2147"> <a href="${process.env.NEXTAUTH_URL}/api/mail/response?h=${approvalHash}&a=d" target="_blank" class="all-font-sans hover-border-red-600" style="border: 1px solid #fa2147; border-radius: 2px; display: inline-block; font-size: 20px; padding: 15px 25px; color: #ffffff; text-decoration: none;">Deny</a> </td> </tr> </table>`
     mailBody = mailBody.replace('[APPROVAL_BUTTONS]', approvalButtons)
     mailBody = mailBody.replace('[SICKBODY]', '')
     mailBody = mailBody.replace('[HEADER_TEXT]', headerText)

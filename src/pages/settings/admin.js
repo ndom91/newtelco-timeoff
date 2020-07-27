@@ -2,7 +2,7 @@ import React from 'react'
 import Layout from '../../components/layout/index'
 import Router from 'next/router'
 import moment from 'moment-timezone'
-import { NextAuth } from 'next-auth/client'
+import { getSession } from 'next-auth/client'
 import RequireLogin from '../../components/requiredLogin'
 import EditModal from '../../components/editRequestModal'
 import { AgGridReact } from 'ag-grid-react'
@@ -46,16 +46,6 @@ const { Column, HeaderCell, Cell } = Table
 
 class Wrapper extends React.Component {
   static async getInitialProps({ res, req, query }) {
-    if (req && !req.user) {
-      if (res) {
-        res.writeHead(302, {
-          Location: '/auth',
-        })
-        res.end()
-      } else {
-        Router.push('/auth')
-      }
-    }
     const host = req ? req.headers['x-forwarded-host'] : location.host
     const protocol =
       typeof window === 'undefined' ? 'http:' : window.location.protocol
@@ -63,7 +53,7 @@ class Wrapper extends React.Component {
     const userRequest = await fetch(pageRequest)
     const userJson = await userRequest.json()
     return {
-      session: await NextAuth.init({ req }),
+      session: await getSession({ req }),
       users: userJson,
       admin: query.admin,
     }
@@ -1515,7 +1505,7 @@ class Wrapper extends React.Component {
       adLoading,
     } = this.state
 
-    if (this.props.session.user && this.state.admin) {
+    if (this.props.session && this.state.admin) {
       return (
         <Layout
           user={this.props.session.user.email}
@@ -2278,3 +2268,4 @@ class Wrapper extends React.Component {
   }
 }
 
+export default Wrapper

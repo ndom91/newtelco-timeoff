@@ -2,7 +2,7 @@ import React from 'react'
 import Layout from '../../components/layout/index'
 import Router from 'next/router'
 import moment from 'moment-timezone'
-import { NextAuth } from 'next-auth/client'
+import { getSession } from 'next-auth/client'
 import RequireLogin from '../../components/requiredLogin'
 import Subheader from '../../components/content-subheader'
 import 'react-tabs/style/react-tabs.css'
@@ -30,18 +30,8 @@ const StackedBarChart = React.lazy(() =>
 
 class Wrapper extends React.Component {
   static async getInitialProps({ res, req, query }) {
-    if (req && !req.user) {
-      if (res) {
-        res.writeHead(302, {
-          Location: '/auth',
-        })
-        res.end()
-      } else {
-        Router.push('/auth')
-      }
-    }
     return {
-      session: await NextAuth.init({ req }),
+      session: await getSession({ req }),
       admin: query.admin,
     }
   }
@@ -332,7 +322,7 @@ class Wrapper extends React.Component {
   render() {
     const { allMonths, allYears } = this.state
 
-    if (this.props.session.user && this.state.admin) {
+    if (this.props.session && this.state.admin) {
       return (
         <Layout
           user={this.props.session.user.email}
