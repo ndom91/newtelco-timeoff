@@ -1,4 +1,4 @@
-<img align="right" src="https://vacation.newtelco.de/static/img/nt-gray.png" width="190" height="190">
+<img align="right" src="https://imgur.com/Sy2J4UT.png" width="250" />
 
 # ⏰ Time Off Management
 
