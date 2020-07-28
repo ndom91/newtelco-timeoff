@@ -133,7 +133,7 @@ class Wrapper extends React.Component {
     const item = { hidden: { y: [-50, 0], opacity: [0, 1] } }
 
     const { dashboard } = this.state
-    if (this.props.session.user) {
+    if (this.props.session) {
       return (
         <Layout
           user={this.props.session.user.email}
