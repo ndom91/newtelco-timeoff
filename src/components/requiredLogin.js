@@ -63,7 +63,7 @@ export default class RequireLogin extends React.Component {
                     </FormGroup>
                     <FormGroup>
                       <ButtonToolbar>
-                        <Link href='/auth'>
+                        <Link href='/auth/signin'>
                           <Button block appearance='ghost'>
                             Sign in
                           </Button>
