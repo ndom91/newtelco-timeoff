@@ -1,4 +1,4 @@
-<img align="right" src="https://imgur.com/Sy2J4UT.png" width="250" />
+<img align="right" src="https://imgur.com/Sy2J4UT.png" width="350" />
 
 # ⏰ Time Off Management
 
