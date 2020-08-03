@@ -52,8 +52,6 @@ class Wrapper extends React.Component {
   }
 
   componentDidMount() {
-    // const searchParams = `?${this.props.returnTo}`
-    // params = new URLSearchParams(searchParams)
     if (typeof window !== 'undefined') {
       const host = window.location.host
       const protocol = window.location.protocol

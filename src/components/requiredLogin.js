@@ -29,18 +29,21 @@ export default class RequireLogin extends React.Component {
 
   componentDidMount() {
     if (typeof window !== 'undefined') {
-      const companyInfo = JSON.parse(window.localStorage.getItem('company'))
-      this.setState({
-        companyInfo,
-      })
+      if (window.localStorage.getItem('company')) {
+        const companyInfo = JSON.parse(window.localStorage.getItem('company'))
+        this.setState({
+          companyInfo,
+        })
+      }
     }
   }
 
   render() {
+    const {companyInfo} = this.state
     return (
       <div className='show-fake-browser login-page'>
         <Container>
-          <Content style={{ marginTop: '50px' }}>
+          <Content style={{marginTop: '50px'}}>
             <FlexboxGrid justify='center'>
               <FlexboxGrid.Item md={8} lg={6}>
                 <Panel
@@ -76,8 +79,11 @@ export default class RequireLogin extends React.Component {
             </FlexboxGrid>
           </Content>
           <Footer>
-            {this.state.companyInfo.companyName} -{' '}
-            {this.state.companyInfo.address}
+            {companyInfo.companyName !== '' && (
+              <span>
+                {companyInfo.companyName} - {companyInfo.address}
+              </span>
+            )}
           </Footer>
         </Container>
         <style jsx>
