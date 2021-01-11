@@ -16,7 +16,7 @@ class StackedBarChart extends React.Component {
       return months
     }
     this.state = {
-      series: [],
+      series: [{ data: [0, 0, 0, 0, 0, 0], name: '' }],
       options: {
         chart: {
           type: 'bar',
@@ -105,6 +105,7 @@ class StackedBarChart extends React.Component {
           )
           const options = this.state.options
           options.xaxis.categories = newXAxis
+          console.log(series)
           this.setState({
             series: series,
             options: options,

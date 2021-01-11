@@ -81,7 +81,7 @@ class Wrapper extends React.Component {
             headerName: 'ID',
             field: 'id',
             hide: true,
-            sort: { direction: 'asc', priority: 0 },
+            sort: 'desc',
           },
           {
             headerName: 'Submitted',
@@ -165,7 +165,7 @@ class Wrapper extends React.Component {
             width: 160,
           },
           {
-            headerName: `Days Remaining ${thisYear}`,
+            headerName: `Days Remaining`,
             field: 'resturlaubJAHR',
             cellStyle: {
               display: 'flex',

@@ -131,7 +131,7 @@ class Wrapper extends React.Component {
             headerName: 'ID',
             field: 'id',
             hide: true,
-            sort: { direction: 'asc', priority: 0 },
+            sort: 'desc',
           },
           {
             headerName: 'Name',
@@ -210,7 +210,7 @@ class Wrapper extends React.Component {
             width: 160,
           },
           {
-            headerName: `Days Remaining ${thisYear}`,
+            headerName: `Days Remaining`,
             field: 'resturlaubJAHR',
             cellStyle: {
               display: 'flex',
@@ -382,7 +382,7 @@ class Wrapper extends React.Component {
             width: 160,
           },
           {
-            headerName: `Days Remaining ${thisYear}`,
+            headerName: `Days Remaining`,
             field: 'resturlaubJAHR',
             cellStyle: {
               display: 'flex',
@@ -402,7 +402,7 @@ class Wrapper extends React.Component {
             headerName: 'Submitted',
             cellRenderer: 'dateTimeShort',
             field: 'submitted_datetime',
-            sort: { direction: 'desc', priority: 0 },
+            sort: 'desc',
             width: 160,
           },
           {
@@ -466,7 +466,7 @@ class Wrapper extends React.Component {
             headerName: 'ID',
             field: 'id',
             hide: true,
-            sort: { direction: 'asc', priority: 0 },
+            sort: 'asc',
           },
           {
             headerName: 'First Name',
