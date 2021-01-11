@@ -2,11 +2,11 @@ import React from 'react'
 import SidebarNT from './sidebar'
 import '../../style/newtelco-rsuite.less'
 import VacaPattern from '../../../public/static/img/vacation_pattern.svg'
-import { Container, Content, Alert } from 'rsuite'
+import { Container, Content } from 'rsuite'
 
-Alert.config({
-  duration: 4000,
-})
+// Alert.config({
+//   duration: 4000,
+// })
 
 class Layout extends React.Component {
   constructor(props) {

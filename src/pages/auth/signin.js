@@ -1,6 +1,5 @@
 import React from 'react'
 import Router from 'next/router'
-import Link from 'next/link'
 import { getSession, getProviders, signIn } from 'next-auth/client'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGoogle } from '@fortawesome/free-brands-svg-icons'
@@ -14,7 +13,6 @@ import {
   Footer,
   FlexboxGrid,
   Panel,
-  Form,
   FormGroup,
   ButtonToolbar,
   Button,
@@ -102,23 +100,13 @@ export default class App extends React.Component {
             <Content className='login-content-wrapper'>
               <FlexboxGrid justify='center' className='login-grid-wrapper'>
                 <NewtelcoSvg />
-                <FlexboxGrid.Item
-                  componentClass={Col}
-                  colspan={3}
-                  lg={6}
-                  md={7}
-                  sm={10}
-                  xs={18}
-                >
+                <FlexboxGrid.Item justify='center'>
                   <Panel
                     header={<h3 className='login-text-header'>Login</h3>}
                     bordered
+                    shaded
                   >
-                    <FormGroup>
-                      <ButtonToolbar>
-                        <SignInButtons providers={this.props.providers} />
-                      </ButtonToolbar>
-                    </FormGroup>
+                    <SignInButtons providers={this.props.providers} />
                   </Panel>
                 </FlexboxGrid.Item>
               </FlexboxGrid>
@@ -232,7 +220,7 @@ export class SignInButtons extends React.Component {
               key={provider.name}
               onClick={() => signIn(provider.id)}
               className='google-signin-btn'
-              appearance='primary'
+              appearance='secondary'
             >
               <FontAwesomeIcon
                 icon={faGoogle}

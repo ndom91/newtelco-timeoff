@@ -2,7 +2,8 @@ import React from 'react'
 import Link from 'next/link'
 import Router from 'next/router'
 import { NextAuth } from 'next-auth/client'
-import { Nav, Navbar, Dropdown, Sidenav, Sidebar, Icon, Modal } from 'rsuite'
+import { Nav, Navbar, Dropdown, Sidenav, Sidebar, Modal, Icon } from 'rsuite'
+// import { Icon } from '@rsuite/icons'
 import NTLogo from '../../../public/static/img/newtelco_letters.svg'
 import NTLogoL from '../../../public/static/img/newtelco.svg'
 import NDOLogo from '../../../public/static/img/ndo-gray.png'
@@ -54,7 +55,7 @@ const NavToggle = ({
             onClick={onChange}
             style={{ width: 56, textAlign: 'center' }}
           >
-            <Icon icon={expand ? 'angle-left' : 'angle-right'} />
+            <Icon as={expand ? 'angle-left' : 'angle-right'} />
           </Nav.Item>
         </Nav>
       </Navbar.Body>

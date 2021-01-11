@@ -3,6 +3,7 @@ import App from 'next/app'
 import Head from 'next/head'
 import { Provider } from 'next-auth/client'
 import LogRocket from 'logrocket'
+import 'rsuite/lib/styles/index.less'
 
 export default class AppWrapper extends App {
   static async getInitialProps({ Component, ctx }) {

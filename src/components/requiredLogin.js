@@ -11,7 +11,6 @@ import {
   Panel,
   Form,
   FormGroup,
-  ControlLabel,
   ButtonToolbar,
   Button,
 } from 'rsuite'
@@ -39,11 +38,11 @@ export default class RequireLogin extends React.Component {
   }
 
   render() {
-    const {companyInfo} = this.state
+    const { companyInfo } = this.state
     return (
       <div className='show-fake-browser login-page'>
         <Container>
-          <Content style={{marginTop: '50px'}}>
+          <Content style={{ marginTop: '50px' }}>
             <FlexboxGrid justify='center'>
               <FlexboxGrid.Item md={8} lg={6}>
                 <Panel
@@ -52,7 +51,7 @@ export default class RequireLogin extends React.Component {
                 >
                   <Form fluid>
                     <FormGroup>
-                      <ControlLabel
+                      <div
                         style={{
                           fontSize: '14px',
                           marginTop: '10px',
@@ -62,7 +61,7 @@ export default class RequireLogin extends React.Component {
                         You must be signed in to view this content. <br />
                         <br />
                         Please click below to continue.
-                      </ControlLabel>
+                      </div>
                     </FormGroup>
                     <FormGroup>
                       <ButtonToolbar>
