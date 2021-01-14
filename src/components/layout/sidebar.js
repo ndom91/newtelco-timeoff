@@ -336,7 +336,7 @@ class SidebarNT extends React.Component {
                   <br />
                   <b>ndomino[at]newtelco.de</b>
                   <br />
-                  2019-2020 ©
+                  2019-2021 ©
                 </div>
               </div>
               <div
