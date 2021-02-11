@@ -44,7 +44,7 @@
     "@zeit/next-less": "^1.0.1",
     "activedirectory2": "^2.1.0",
     "animejs": "^3.2.1",
-    "apexcharts": "^3.23.1",
+    "apexcharts": "^3.24.0",
     "aws-sdk": "^2.823.0",
     "date-fns": "^2.16.1",
     "devextreme": "^20.2.4",
