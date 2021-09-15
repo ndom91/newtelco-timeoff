@@ -1,6 +1,6 @@
 {
   "name": "company-timeoff",
-  "version": "1.8.0",
+  "version": "1.9.9",
   "description": "Absence Management Application",
   "scripts": {
     "dev": "NODE_ENV=development next -p 3007",
@@ -29,11 +29,6 @@
   "homepage": "https://github.com/newtelco/timeoff",
   "license": "MIT",
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^1.2.36",
-    "@fortawesome/free-brands-svg-icons": "^5.15.4",
-    "@fortawesome/free-regular-svg-icons": "^5.15.4",
-    "@fortawesome/free-solid-svg-icons": "^5.15.4",
-    "@fortawesome/react-fontawesome": "^0.1.15",
     "@fullcalendar/core": "^5.9.0",
     "@fullcalendar/daygrid": "^5.9.0",
     "@fullcalendar/google-calendar": "^5.9.0",

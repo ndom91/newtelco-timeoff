@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"
 import Upload from "../components/upload"
 import moment from "moment-timezone"
+import { notifySuccess, notifyError } from "../lib/notify"
 import {
   Button,
   ButtonToolbar,
@@ -13,24 +14,7 @@ import {
   FormGroup,
   ControlLabel,
   DatePicker,
-  Notification,
 } from "rsuite"
-
-const notifySuccess = (header, text) => {
-  Notification.success({
-    title: header,
-    duration: 2000,
-    description: <div className="notify-body">{text}</div>,
-  })
-}
-
-const notifyError = (header, text) => {
-  Notification.error({
-    title: header,
-    duration: 3000,
-    description: <div className="notify-body">{text}</div>,
-  })
-}
 
 const EditModal = (props) => {
   const openEditModal = props.open

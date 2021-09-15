@@ -1,6 +1,5 @@
 import React from "react"
 import Layout from "../components/layout/index"
-import Router from "next/router"
 import Moment from "moment-timezone"
 import { getSession } from "next-auth/react"
 import RequireLogin from "../components/requiredLogin"
@@ -17,6 +16,7 @@ import "ag-grid-community/dist/styles/ag-theme-material.css"
 import { extendMoment } from "moment-range"
 import EditModal from "../components/editRequestModal"
 import DeleteModal from "../components/deleteRequestModal"
+import { notifyInfo } from "../lib/notify"
 import {
   Container,
   Header,
@@ -27,14 +27,13 @@ import {
   Panel,
   Icon,
   Modal,
-  Notification,
   SelectPicker,
 } from "rsuite"
 
 const moment = extendMoment(Moment)
 
-class Wrapper extends React.Component {
-  static async getInitialProps({ res, req, query }) {
+class User extends React.Component {
+  static async getInitialProps({ req }) {
     return {
       session: await getSession({ req }),
     }
@@ -42,7 +41,6 @@ class Wrapper extends React.Component {
 
   constructor(props) {
     super(props)
-    const thisYear = new Date().getFullYear()
 
     this.state = {
       rowData: [],
@@ -250,38 +248,6 @@ class Wrapper extends React.Component {
     }
   }
 
-  notifyInfo = (header, text) => {
-    Notification.info({
-      title: header,
-      duration: 2000,
-      description: <div className="notify-body">{text}</div>,
-    })
-  }
-
-  notifyWarn = (header, text) => {
-    Notification.warning({
-      title: header,
-      duration: 2000,
-      description: <div className="notify-body">{text}</div>,
-    })
-  }
-
-  notifyError = (header, text) => {
-    Notification.error({
-      title: header,
-      duration: 3000,
-      description: <div className="notify-body">{text}</div>,
-    })
-  }
-
-  notifySuccess = (header, text) => {
-    Notification.success({
-      title: header,
-      duration: 3000,
-      description: <div className="notify-body">{text}</div>,
-    })
-  }
-
   componentDidMount() {
     const host = window.location.host
     const protocol = window.location.protocol
@@ -290,22 +256,9 @@ class Wrapper extends React.Component {
       .then((res) => res.json())
       .then((data) => {
         if (data.userEntries) {
-          // const heatmap = []
           this.setState({
             rowData: data.userEntries,
           })
-          // data.userEntries.forEach(entry => {
-          //   const from = moment(entry.from)
-          //   const to = moment(entry.to)
-          //   const range = moment.range(from, to)
-          //   for (const day of range.by('day')) {
-          //     heatmap.push({ date: day, value: 1 })
-          //   }
-          // https://www.npmjs.com/package/reactjs-calendar-heatmap
-          // })
-          // this.setState({
-          //   heatmapData: heatmap
-          // })
           window.gridApi && window.gridApi.refreshCells()
         }
       })
@@ -410,7 +363,7 @@ class Wrapper extends React.Component {
     if (this.gridApi) {
       const selectedRow = this.gridApi.getSelectedRows()
       if (!selectedRow[0]) {
-        this.notifyInfo("Please select an entry to delete!")
+        notifyInfo("Please select an entry to delete!")
         return
       }
       const request = selectedRow[0]
@@ -454,7 +407,7 @@ class Wrapper extends React.Component {
       const protocol = window.location.protocol
       const selectedRow = this.gridApi.getSelectedRows()
       if (!selectedRow[0]) {
-        this.notifyInfo("Please select a row to edit")
+        notifyInfo("Please select a row to edit")
         return
       }
       const request = selectedRow[0]
@@ -484,7 +437,7 @@ class Wrapper extends React.Component {
         .then((data) => data.json())
         .then((data) => {
           let files = []
-          if (data.files[0].files.length !== 0) {
+          if (data.files[0]?.files?.length !== 0) {
             files = JSON.parse(data.files[0].files)
           }
           this.setState({
@@ -878,4 +831,4 @@ class Wrapper extends React.Component {
   }
 }
 
-export default Wrapper
+export default User

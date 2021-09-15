@@ -79,6 +79,7 @@ Manager: ${manager}
 Approved On: ${approvedOn}
 
 https://vacation.newtelco.de`,
+        attendees: [{ email, responseStatus: "accepted", displayName: name }],
         start: {
           date: checkApprovalHash[0].fromGoogle,
           timeZone: "Europe/Berlin",

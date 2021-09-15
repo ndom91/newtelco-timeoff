@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Container, Content, Panel } from "rsuite"
-import { getSession } from "next-auth/react"
+import { useSession } from "next-auth/react"
 import { motion } from "framer-motion"
 import dynamic from "next/dynamic"
 import Layout from "../components/layout/index"
@@ -13,7 +13,8 @@ const Calendar = dynamic(() => import("../components/gcalendar"), {
   ssr: false,
 })
 
-const Wrapper = ({ session }) => {
+const Dashboard = () => {
+  const { data: session } = useSession()
   const [dashboard, setDashboard] = useState({
     lastYear: 0,
     thisYear: 0,
@@ -201,12 +202,4 @@ const Wrapper = ({ session }) => {
   }
 }
 
-export async function getServerSideProps(context) {
-  return {
-    props: {
-      session: await getSession(context),
-    },
-  }
-}
-
-export default Wrapper
+export default Dashboard

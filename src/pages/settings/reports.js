@@ -1,18 +1,16 @@
 import React from "react"
 import Layout from "../../components/layout/index"
-import Router from "next/router"
 import moment from "moment-timezone"
 import { getSession } from "next-auth/react"
 import RequireLogin from "../../components/requiredLogin"
 import Subheader from "../../components/content-subheader"
 import "react-tabs/style/react-tabs.css"
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
 import {
   Container,
   Header,
   IconButton,
   Icon,
-  Notification,
   Panel,
   SelectPicker,
   FormGroup,
@@ -28,8 +26,8 @@ const StackedBarChart = React.lazy(() =>
   import("../../components/stackedBarChart")
 )
 
-class Wrapper extends React.Component {
-  static async getInitialProps({ res, req, query }) {
+class AdminReports extends React.Component {
+  static async getInitialProps({ req, query }) {
     return {
       session: await getSession({ req }),
       admin: query.admin,
@@ -66,38 +64,6 @@ class Wrapper extends React.Component {
       admin: userAdmin,
       allMonths,
       allYears,
-    })
-  }
-
-  notifyInfo = (header, text) => {
-    Notification.info({
-      title: header,
-      duration: 2000,
-      description: <div className="notify-body">{text}</div>,
-    })
-  }
-
-  notifyWarn = (header, text) => {
-    Notification.warning({
-      title: header,
-      duration: 2000,
-      description: <div className="notify-body">{text}</div>,
-    })
-  }
-
-  notifyError = (header, text) => {
-    Notification.error({
-      title: header,
-      duration: 3000,
-      description: <div className="notify-body">{text}</div>,
-    })
-  }
-
-  notifySuccess = (header, text) => {
-    Notification.success({
-      title: header,
-      duration: 3000,
-      description: <div className="notify-body">{text}</div>,
     })
   }
 
@@ -571,4 +537,4 @@ class Wrapper extends React.Component {
   }
 }
 
-export default Wrapper
+export default AdminReports

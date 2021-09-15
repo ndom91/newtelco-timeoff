@@ -1,28 +1,6 @@
 import React from "react"
-import {
-  Button,
-  ButtonToolbar,
-  ButtonGroup,
-  Modal,
-  Table,
-  Notification,
-} from "rsuite"
-
-const notifySuccess = (header, text) => {
-  Notification.success({
-    title: header,
-    duration: 2000,
-    description: <div className="notify-body">{text}</div>,
-  })
-}
-
-const notifyError = (header, text) => {
-  Notification.error({
-    title: header,
-    duration: 3000,
-    description: <div className="notify-body">{text}</div>,
-  })
-}
+import { notifySuccess, notifyError } from "../lib/notify"
+import { Button, ButtonToolbar, ButtonGroup, Modal, Table } from "rsuite"
 
 const { Column, HeaderCell, Cell } = Table
 

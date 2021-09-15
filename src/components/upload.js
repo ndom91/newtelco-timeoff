@@ -18,8 +18,8 @@ registerPlugin(
 const spacesEndpoint = new aws.Endpoint("fra1.digitaloceanspaces.com")
 const s3 = new aws.S3({
   endpoint: spacesEndpoint,
-  accessKeyId: process.env.DO_SPACE_KEY,
-  secretAccessKey: process.env.DO_SPACE_SECRET,
+  accessKeyId: process.env.NEXT_PUBLIC_DO_SPACE_KEY,
+  secretAccessKey: process.env.NEXT_PUBLIC_DO_SPACE_SECRET,
 })
 
 export default class Upload extends React.Component {
@@ -32,10 +32,6 @@ export default class Upload extends React.Component {
     this.handleFileUploadSuccess = props.handleFileUploadSuccess
   }
 
-  handleInit() {
-    // console.log('FilePond instance has initialised', this.pond)
-  }
-
   render() {
     return (
       <div className="App">
@@ -46,7 +42,7 @@ export default class Upload extends React.Component {
           allowFilePoster
           allowImageCrop
           allowRevert={false}
-          oninit={() => this.handleInit()}
+          // oninit={() => this.handleInit()}
           onupdatefiles={(fileItems) => {
             // Set currently active file objects to this.state
             this.setState({
@@ -54,7 +50,6 @@ export default class Upload extends React.Component {
             })
           }}
           server={{
-            // fake server to simulate loading a 'local' server file and processing a file
             process: (fieldName, file, metadata, load) => {
               const key = `${Date.now()}_${file.name}`
               var params = {

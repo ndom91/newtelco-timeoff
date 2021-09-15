@@ -5,7 +5,6 @@ import moment from "moment"
 import Lottie from "react-lottie"
 import { format } from "date-fns"
 import { CSSTransition } from "react-transition-group"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Joyride, { STATUS } from "react-joyride"
 
 import Layout from "../components/layout/index"
@@ -16,14 +15,7 @@ import Upload from "../components/upload"
 import lottieSuccess from "../style/lottie-success.json"
 import lottieError from "../style/error-icon.json"
 
-import {
-  faCalendarAlt,
-  faUser,
-  faHistory,
-  faAngleRight,
-  faAngleLeft,
-  faExclamationCircle,
-} from "@fortawesome/free-solid-svg-icons"
+import { notifyWarn, notifyError, notifyInfo } from "../lib/notify"
 
 import {
   Container,
@@ -43,7 +35,6 @@ import {
   ButtonGroup,
   SelectPicker,
   Modal,
-  Notification,
   Table,
   Animation,
   Tooltip,
@@ -55,8 +46,8 @@ import {
 const { Slide } = Animation
 const { Column, HeaderCell, Cell } = Table
 
-class Wrapper extends React.Component {
-  static async getInitialProps({ res, req, query }) {
+class New extends React.Component {
+  static async getInitialProps({ req }) {
     return {
       session: await getSession({ req }),
       csrfToken: await getCsrfToken({ req }),
@@ -116,38 +107,6 @@ class Wrapper extends React.Component {
         },
       ],
     }
-  }
-
-  notifyInfo = (header, text) => {
-    Notification.info({
-      title: header,
-      duration: 3000,
-      description: <div className="notify-body">{text}</div>,
-    })
-  }
-
-  notifyError = (header, text) => {
-    Notification.error({
-      title: header,
-      duration: 3000,
-      description: <div className="notify-body">{text}</div>,
-    })
-  }
-
-  notifySuccess = (header, text) => {
-    Notification.success({
-      title: header,
-      duration: 3000,
-      description: <div className="notify-body">{text}</div>,
-    })
-  }
-
-  notifyWarn = (header, text) => {
-    Notification.warning({
-      title: header,
-      duration: 3000,
-      description: <div className="notify-body">{text}</div>,
-    })
   }
 
   componentDidMount() {
@@ -389,7 +348,6 @@ class Wrapper extends React.Component {
   }
 
   handleConfirmIllnessChange = (value) => {
-    console.log(value)
     this.setState({
       vaca: {
         ...this.state.vaca,
@@ -422,7 +380,7 @@ class Wrapper extends React.Component {
         this.state.vaca.type === "sick" &&
         !this.state.vaca.confirmIllness[0]
       ) {
-        this.notifyWarn("You must confirm the information to continue")
+        notifyWarn("You must confirm the information to continue")
         return
       }
       if (
@@ -454,7 +412,7 @@ class Wrapper extends React.Component {
           confirmTableData: tableData,
         })
       } else {
-        this.notifyInfo("Please complete the form")
+        notifyInfo("Please complete the form")
       }
     } else {
       this.setState({
@@ -523,7 +481,7 @@ class Wrapper extends React.Component {
                 successfullySent: true,
               })
             } else if (data.code === 500) {
-              this.notifyError(`Error - ${data.msg}`)
+              notifyError(`Error - ${data.msg}`)
             }
           })
           .catch((err) => console.error(err))
@@ -626,16 +584,22 @@ class Wrapper extends React.Component {
                       style={{ position: "relative" }}
                     >
                       User
-                      <FontAwesomeIcon
-                        icon={faUser}
-                        width="1em"
-                        style={{
-                          marginLeft: "10px",
-                          top: "2px",
-                          position: "absolute",
-                          color: "secondary",
-                        }}
-                      />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        style={{ marginLeft: "15px" }}
+                        width={25}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                        />
+                      </svg>
                     </h4>
                   }
                 >
@@ -701,16 +665,22 @@ class Wrapper extends React.Component {
                           style={{ position: "relative" }}
                         >
                           History
-                          <FontAwesomeIcon
-                            icon={faHistory}
-                            width="1em"
-                            style={{
-                              marginLeft: "10px",
-                              top: "2px",
-                              position: "absolute",
-                              color: "secondary",
-                            }}
-                          />
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-6 w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            style={{ marginLeft: "15px" }}
+                            width={25}
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"
+                            />
+                          </svg>
                         </h4>
                       }
                     >
@@ -827,11 +797,41 @@ class Wrapper extends React.Component {
                               <Tooltip>Calculator for Days Available</Tooltip>
                             }
                           >
-                            <FontAwesomeIcon
-                              className="calc-btn"
-                              icon={!showCalc ? faAngleRight : faAngleLeft}
-                              width="1.5em"
-                            />
+                            {!showCalc ? (
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-6 w-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                style={{ marginLeft: "15px" }}
+                                width={25}
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M9 5l7 7-7 7"
+                                />
+                              </svg>
+                            ) : (
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-6 w-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                style={{ marginLeft: "15px" }}
+                                width={25}
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M15 19l-7-7 7-7"
+                                />
+                              </svg>
+                            )}
                           </Whisper>
                         </div>
                       </div>
@@ -848,16 +848,22 @@ class Wrapper extends React.Component {
                       style={{ position: "relative" }}
                     >
                       Dates
-                      <FontAwesomeIcon
-                        icon={faCalendarAlt}
-                        width="1em"
-                        style={{
-                          marginLeft: "10px",
-                          top: "2px",
-                          position: "absolute",
-                          color: "secondary",
-                        }}
-                      />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        style={{ marginLeft: "15px" }}
+                        width={25}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
                     </h4>
                   }
                 >
@@ -890,21 +896,32 @@ class Wrapper extends React.Component {
                   {vaca.type === "sick" && (
                     <FormGroup>
                       <ControlLabel className="sick-warning">
-                        <FontAwesomeIcon
-                          icon={faExclamationCircle}
-                          width="5.5rem"
-                          style={{ margin: "10px" }}
-                        />
-                        When submitting a sick notice, don't forget to submit a
-                        doctors note now, or later in your dashboard by editing
-                        this request if sick for more than 3 days.
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-6 w-6"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          style={{ marginRight: "15px" }}
+                          width={100}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        <span>
+                          When submitting a sick notice, don't forget to submit
+                          a doctors note now, or later in your dashboard by
+                          editing this request{" "}
+                          <strong>if sick for more than 3 days</strong>.
+                        </span>
                       </ControlLabel>
                     </FormGroup>
                   )}
                   <FormGroup style={{ marginBottom: "20px" }}>
-                    <ControlLabel className="filedrop-label">
-                      Documents
-                    </ControlLabel>
                     <div className="upload-file">
                       <Upload
                         handleFileUploadSuccess={this.onFileUploadSuccess}
@@ -1332,6 +1349,11 @@ class Wrapper extends React.Component {
               :global(.rs-modal-backdrop.in) {
                 opacity: 0.8;
               }
+              :global(.form-section-heading) {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              }
             `}
           </style>
         </Layout>
@@ -1342,4 +1364,4 @@ class Wrapper extends React.Component {
   }
 }
 
-export default Wrapper
+export default New

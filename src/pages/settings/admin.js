@@ -1,6 +1,5 @@
-import React from "react"
 import Layout from "../../components/layout/index"
-import Router from "next/router"
+import React from "react"
 import moment from "moment-timezone"
 import { getSession } from "next-auth/react"
 import RequireLogin from "../../components/requiredLogin"
@@ -18,7 +17,12 @@ import ViewFiles from "../../components/aggrid/viewfiles"
 import Subheader from "../../components/content-subheader"
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs"
 import "react-tabs/style/react-tabs.css"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import {
+  notifySuccess,
+  notifyInfo,
+  notifyWarn,
+  notifyError,
+} from "../../lib/notify"
 import {
   Container,
   Header,
@@ -28,7 +32,6 @@ import {
   Icon,
   ButtonGroup,
   ButtonToolbar,
-  Notification,
   Modal,
   Panel,
   SelectPicker,
@@ -40,14 +43,13 @@ import {
   Row,
   Col,
 } from "rsuite"
-import { faPencilAlt, faTrashAlt } from "@fortawesome/free-solid-svg-icons"
 
 const { Column, HeaderCell, Cell } = Table
 
-class Wrapper extends React.Component {
+class AdminSettings extends React.Component {
   constructor(props) {
     super(props)
-    const thisYear = new Date().getFullYear()
+
     this.state = {
       addCount: 0,
       allMonths: [],
@@ -595,38 +597,6 @@ class Wrapper extends React.Component {
     }
   }
 
-  notifyInfo = (header, text) => {
-    Notification.info({
-      title: header,
-      duration: 2000,
-      description: <div className="notify-body">{text}</div>,
-    })
-  }
-
-  notifyWarn = (header, text) => {
-    Notification.warning({
-      title: header,
-      duration: 2000,
-      description: <div className="notify-body">{text}</div>,
-    })
-  }
-
-  notifyError = (header, text) => {
-    Notification.error({
-      title: header,
-      duration: 3000,
-      description: <div className="notify-body">{text}</div>,
-    })
-  }
-
-  notifySuccess = (header, text) => {
-    Notification.success({
-      title: header,
-      duration: 3000,
-      description: <div className="notify-body">{text}</div>,
-    })
-  }
-
   handleAllUserTypeChange = (selection) => {
     const host = window.location.host
     const protocol = window.location.protocol
@@ -655,7 +625,7 @@ class Wrapper extends React.Component {
       .then((res) => res.json())
       .then((data) => {
         if (data.status === 500) {
-          this.notifyError("Error", "Error connecting to LDAP Server")
+          notifyError("Error", "Error connecting to LDAP Server")
           return
         }
         const adUsers = []
@@ -721,7 +691,7 @@ class Wrapper extends React.Component {
           this.setState({
             adLoading: false,
           })
-          this.notifySuccess("Success", "Users up-to-date with LDAP")
+          notifySuccess("Success", "Users up-to-date with LDAP")
         }
       })
       .catch((err) => console.error(err))
@@ -756,7 +726,7 @@ class Wrapper extends React.Component {
             if (this.gridApi) {
               this.gridApi.refreshCells()
             }
-            this.notifySuccess(
+            notifySuccess(
               "Success",
               `Successfully added ${newUsersToDb.length} users`,
               5000
@@ -765,7 +735,7 @@ class Wrapper extends React.Component {
             this.setState({
               showSyncModal: false,
             })
-            this.notifyWarn(
+            notifyWarn(
               "Warning",
               `Error adding ${newUsersToDb.length} - ${data.error}`
             )
@@ -809,7 +779,7 @@ class Wrapper extends React.Component {
             if (this.gridApi) {
               this.gridApi.refreshCells()
             }
-            this.notifySuccess(
+            notifySuccess(
               "Success",
               `Successfully updated ${updateUsers.length} users`,
               5000
@@ -818,7 +788,7 @@ class Wrapper extends React.Component {
             this.setState({
               showSyncModal: false,
             })
-            this.notifyWarn(
+            notifyWarn(
               "Warning",
               `Error updating ${updateUsers.length} - ${data.error}`
             )
@@ -982,7 +952,7 @@ class Wrapper extends React.Component {
           this.setState({
             managerRowData: managers,
           })
-          this.notifyInfo("Manager Removed")
+          notifyInfo("Manager Removed")
         }
       })
       .catch((err) => console.error(err))
@@ -1039,7 +1009,7 @@ class Wrapper extends React.Component {
             openManagerEditModal: !this.state.openManagerEditModal,
             managerRowData: managers,
           })
-          this.notifyInfo("Manager Info Saved")
+          notifyInfo("Manager Info Saved")
         }
       })
       .catch((err) => console.error(err))
@@ -1070,7 +1040,7 @@ class Wrapper extends React.Component {
             openManagerAddModal: !this.state.openManagerAddModal,
             managerRowData: managers,
           })
-          this.notifyInfo("Manager Added")
+          notifyInfo("Manager Added")
         }
       })
       .catch((err) => console.error(err))
@@ -1099,9 +1069,9 @@ class Wrapper extends React.Component {
       .then((resp) => resp.json())
       .then((data) => {
         if (data.userUpdate.affectedRows === 1) {
-          this.notifyInfo("User Info Saved")
+          notifyInfo("User Info Saved")
         } else {
-          this.notifyError("Error Saving User Info")
+          notifyError("Error Saving User Info")
         }
       })
       .catch((err) => console.error(err))
@@ -1112,7 +1082,7 @@ class Wrapper extends React.Component {
     if (this.personalGridApi) {
       const selectedRow = this.personalGridApi.getSelectedRows()
       if (!selectedRow[0]) {
-        this.notifyWarn("Please select a row")
+        notifyWarn("Please select a row")
         return
       }
       const request = selectedRow[0]
@@ -1197,7 +1167,7 @@ class Wrapper extends React.Component {
     if (this.allGridApi) {
       const selectedRow = this.allGridApi.getSelectedRows()
       if (!selectedRow[0]) {
-        this.notifyWarn("Please select a row")
+        notifyWarn("Please select a row")
         return
       }
       const request = selectedRow[0]
@@ -1285,9 +1255,9 @@ class Wrapper extends React.Component {
       .then((res) => res.json())
       .then((data) => {
         if (data.deleteQuery.affectedRows > 0) {
-          this.notifySuccess("Request Deleted")
+          notifySuccess("Request Deleted")
         } else {
-          this.notifyError("Error Deleting Request")
+          notifyError("Error Deleting Request")
         }
         const newRowData = this.state.personalRowData.filter(
           (row) => row.id !== deleteId
@@ -1310,9 +1280,9 @@ class Wrapper extends React.Component {
       .then((res) => res.json())
       .then((data) => {
         if (data.deleteQuery.affectedRows > 0) {
-          this.notifySuccess("Request Deleted")
+          notifySuccess("Request Deleted")
         } else {
-          this.notifyError("Error Deleting Request")
+          notifyError("Error Deleting Request")
         }
         const newRowData = this.state.allRowData.filter(
           (row) => row.id !== deleteId
@@ -1370,7 +1340,7 @@ class Wrapper extends React.Component {
       const protocol = window.location.protocol
       const selectedRow = this.personalGridApi.getSelectedRows()
       if (!selectedRow[0]) {
-        this.notifyInfo("Please select a row to edit")
+        notifyInfo("Please select a row to edit")
         return
       }
       const request = selectedRow[0]
@@ -1421,7 +1391,7 @@ class Wrapper extends React.Component {
       const protocol = window.location.protocol
       const selectedRow = this.allGridApi.getSelectedRows()
       if (!selectedRow[0]) {
-        this.notifyInfo("Please select a row to edit")
+        notifyInfo("Please select a row to edit")
         return
       }
       const request = selectedRow[0]
@@ -1532,7 +1502,7 @@ class Wrapper extends React.Component {
                   >
                     <Column width={120} fixed="left">
                       <HeaderCell>Action</HeaderCell>
-                      <Cell style={{ padding: "8px" }}>
+                      <Cell className="edit-column-cell">
                         {(rowData) => {
                           const handleEdit = () => {
                             this.toggleManagerEditModal(rowData)
@@ -1549,10 +1519,21 @@ class Wrapper extends React.Component {
                                   appearance="ghost"
                                   onClick={handleEdit}
                                 >
-                                  <FontAwesomeIcon
-                                    icon={faPencilAlt}
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-6 w-6"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
                                     width="0.8rem"
-                                  />
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                                    />
+                                  </svg>
                                 </Button>
                                 <Button
                                   size="sm"
@@ -1560,10 +1541,21 @@ class Wrapper extends React.Component {
                                   appearance="ghost"
                                   onClick={handleDelete}
                                 >
-                                  <FontAwesomeIcon
-                                    icon={faTrashAlt}
-                                    width="0.7rem"
-                                  />
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-6 w-6"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    width="0.8rem"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                    />
+                                  </svg>
                                 </Button>
                               </ButtonGroup>
                             </ButtonToolbar>
@@ -1571,7 +1563,7 @@ class Wrapper extends React.Component {
                         }}
                       </Cell>
                     </Column>
-                    <Column width={200}>
+                    <Column width={150}>
                       <HeaderCell>Name</HeaderCell>
                       <Cell dataKey="name" />
                     </Column>
@@ -1617,8 +1609,8 @@ class Wrapper extends React.Component {
                         onGridReady={this.handleGridReady}
                         animateRows
                         onCellEditingStopped={this.handleCellEdit}
-                        stopEditingWhenGridLosesFocus
-                        deltaRowDataMode
+                        stopEditingWhenGridLoseFocus
+                        immutableData
                         getRowNodeId={(data) => {
                           return data.id
                         }}
@@ -2119,6 +2111,9 @@ class Wrapper extends React.Component {
                 right: 80px !important;
                 left: unset !important;
               }
+              :global(.edit-column-cell .rs-table-cell-content) {
+                padding: 10px 5px;
+              }
               :global(.table-tab-list) {
                 margin-bottom: 20px;
                 padding-left: 0px !important;
@@ -2258,15 +2253,16 @@ class Wrapper extends React.Component {
   }
 }
 
-export default Wrapper
+export default AdminSettings
 
-export async function getServerSideProps({ res, req }) {
-  const host = req ? req.headers["x-forwarded-host"] : location.host
-  const protocol =
-    typeof window === "undefined" ? "http:" : window.location.protocol
-  const pageRequest = `${protocol}//${host || "localhost:3007"}/api/user/list`
-  const userRequest = await fetch(pageRequest)
-  const userJson = await userRequest.json()
+export async function getServerSideProps({ req }) {
+  const host = req && (req.headers["x-forwarded-host"] ?? req.headers["host"])
+  let protocol = "https"
+  if (host.includes("localhost")) {
+    protocol = "http"
+  }
+  const res = await fetch(`${protocol}://${host}/api/user/list`)
+  const userJson = await res.json()
   return {
     props: {
       session: await getSession({ req }),
