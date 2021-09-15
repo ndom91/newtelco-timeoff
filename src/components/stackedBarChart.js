@@ -1,6 +1,6 @@
-import React from 'react'
-import moment from 'moment-timezone'
-import Chart from 'react-apexcharts'
+import React from "react"
+import moment from "moment-timezone"
+import Chart from "react-apexcharts"
 
 class StackedBarChart extends React.Component {
   constructor(props) {
@@ -8,18 +8,18 @@ class StackedBarChart extends React.Component {
     const MONTHS = () => {
       const months = []
       const dateStart = moment()
-      const dateEnd = moment().subtract(6, 'month')
-      while (dateEnd.diff(dateStart, 'months') <= 0) {
-        months.push(`${dateStart.format('MMM')} ${dateStart.format('YYYY')}`)
-        dateStart.subtract(1, 'month')
+      const dateEnd = moment().subtract(6, "month")
+      while (dateEnd.diff(dateStart, "months") <= 0) {
+        months.push(`${dateStart.format("MMM")} ${dateStart.format("YYYY")}`)
+        dateStart.subtract(1, "month")
       }
       return months
     }
     this.state = {
-      series: [{ data: [0, 0, 0, 0, 0, 0], name: '' }],
+      series: [{ data: [0, 0, 0, 0, 0, 0], name: "" }],
       options: {
         chart: {
-          type: 'bar',
+          type: "bar",
           height: 350,
           stacked: true,
           toolbar: {
@@ -34,7 +34,7 @@ class StackedBarChart extends React.Component {
             breakpoint: 480,
             options: {
               legend: {
-                position: 'bottom',
+                position: "bottom",
                 offsetX: -10,
                 offsetY: 0,
               },
@@ -47,11 +47,11 @@ class StackedBarChart extends React.Component {
           },
         },
         xaxis: {
-          type: 'category',
+          type: "category",
           categories: MONTHS(),
         },
         legend: {
-          position: 'right',
+          position: "right",
           offsetY: 40,
         },
         fill: {
@@ -65,17 +65,19 @@ class StackedBarChart extends React.Component {
     const host = window.location.host
     const protocol = window.location.protocol
     fetch(`${protocol}//${host}/api/report/stackedbarchart`)
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         if (data.query) {
           const teamSeries = []
           const series = []
           const teams = Array.from(
-            new Set(data.query.map(obj => JSON.stringify({ group: obj.group })))
+            new Set(
+              data.query.map((obj) => JSON.stringify({ group: obj.group }))
+            )
           ).map(JSON.parse)
-          teams.forEach(team => {
+          teams.forEach((team) => {
             const teamData = data.query
-              .filter(vaca => vaca.group === team.group)
+              .filter((vaca) => vaca.group === team.group)
               .sort((a, b) => {
                 // if (a.year > b.year) return -1
                 // else if (a.year < b.year) return 1
@@ -96,12 +98,12 @@ class StackedBarChart extends React.Component {
               })
             teamSeries.push(teamData)
           })
-          teamSeries.forEach(team => {
-            const data = team.map(team => team.count)
+          teamSeries.forEach((team) => {
+            const data = team.map((team) => team.count)
             series.push({ data: data, name: team[0].group })
           })
           const newXAxis = teamSeries[0].map(
-            month => `${month.month} ${month.year}`
+            (month) => `${month.month} ${month.year}`
           )
           const options = this.state.options
           options.xaxis.categories = newXAxis
@@ -112,7 +114,7 @@ class StackedBarChart extends React.Component {
           })
         }
       })
-      .catch(err => console.error(err))
+      .catch((err) => console.error(err))
   }
 
   render() {
@@ -121,7 +123,7 @@ class StackedBarChart extends React.Component {
       <Chart
         options={options}
         series={series}
-        type='bar'
+        type="bar"
         width={600}
         height={320}
       />

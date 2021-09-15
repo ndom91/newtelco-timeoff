@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
+import React, { Component } from "react"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faCloudUploadAlt } from "@fortawesome/free-solid-svg-icons"
 
 export default class Dropzone extends Component {
   constructor(props) {
@@ -14,7 +14,7 @@ export default class Dropzone extends Component {
     this.fileInputRef.current.click()
   }
 
-  fileListToArray = list => {
+  fileListToArray = (list) => {
     const array = []
     for (var i = 0; i < list.length; i++) {
       array.push(list.item(i))
@@ -22,7 +22,7 @@ export default class Dropzone extends Component {
     return array
   }
 
-  onDragOver = e => {
+  onDragOver = (e) => {
     e.preventDefault()
     if (this.props.disabled) return
     this.setState({ hightlight: true })
@@ -32,7 +32,7 @@ export default class Dropzone extends Component {
     this.setState({ hightlight: false })
   }
 
-  onDrop = e => {
+  onDrop = (e) => {
     e.preventDefault()
 
     if (this.props.disabled) return
@@ -45,7 +45,7 @@ export default class Dropzone extends Component {
     this.setState({ hightlight: false })
   }
 
-  onFilesAdded = e => {
+  onFilesAdded = (e) => {
     if (this.props.disabled) return
     const files = e.target.files
     if (this.props.onFilesAdded) {
@@ -57,22 +57,22 @@ export default class Dropzone extends Component {
   render() {
     return (
       <div
-        className={`Dropzone ${this.state.hightlight ? 'Highlight' : ''}`}
+        className={`Dropzone ${this.state.hightlight ? "Highlight" : ""}`}
         onDragOver={this.onDragOver}
         onDragLeave={this.onDragLeave}
         onDrop={this.onDrop}
         onClick={this.openFileDialog}
-        style={{ cursor: this.props.disabled ? 'default' : 'pointer' }}
+        style={{ cursor: this.props.disabled ? "default" : "pointer" }}
       >
         <FontAwesomeIcon
           icon={faCloudUploadAlt}
-          width='4em'
-          style={{ color: '#67B246' }}
+          width="4em"
+          style={{ color: "#67B246" }}
         />
         <input
           ref={this.fileInputRef}
-          className='FileInput'
-          type='file'
+          className="FileInput"
+          type="file"
           multiple
           onChange={this.onFilesAdded}
         />

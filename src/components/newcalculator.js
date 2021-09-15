@@ -1,5 +1,5 @@
-import React from 'react'
-import { Form, Radio, RadioGroup, Panel, FormGroup, InputNumber } from 'rsuite'
+import React from "react"
+import { Form, Radio, RadioGroup, Panel, FormGroup, InputNumber } from "rsuite"
 
 export default class Calculator extends React.Component {
   constructor(props) {
@@ -8,11 +8,11 @@ export default class Calculator extends React.Component {
       curYears: 0,
       curMonths: 0,
       daysAvailable: 0,
-      displayCalc: '',
+      displayCalc: "",
     }
   }
 
-  handleMonthsChange = value => {
+  handleMonthsChange = (value) => {
     let daysAvailable
     if (value < 13) {
       daysAvailable = (value / 12) * 26
@@ -27,7 +27,7 @@ export default class Calculator extends React.Component {
     })
   }
 
-  handleYearsChange = value => {
+  handleYearsChange = (value) => {
     let daysAvailable
     if (value < 5 && value > 1) {
       daysAvailable = 26 + parseInt(value) - 1
@@ -44,17 +44,17 @@ export default class Calculator extends React.Component {
     })
   }
 
-  handleLengthChange = value => {
-    if (value === 'years') {
+  handleLengthChange = (value) => {
+    if (value === "years") {
       this.setState({
-        displayCalc: 'years',
+        displayCalc: "years",
         daysAvailable: 0,
         curMonths: 0,
         curYears: 0,
       })
-    } else if (value === 'months') {
+    } else if (value === "months") {
       this.setState({
-        displayCalc: 'months',
+        displayCalc: "months",
         daysAvailable: 0,
         curMonths: 0,
         curYears: 0,
@@ -66,60 +66,60 @@ export default class Calculator extends React.Component {
     const { curMonths, curYears, daysAvailable, displayCalc } = this.state
 
     return (
-      <div className='calc-wrapper'>
-        <span style={{ fontSize: '1.2rem' }}>
-          How long have you been at{' '}
-          <font style={{ color: '#67B246' }}>Newtelco</font>?
+      <div className="calc-wrapper">
+        <span style={{ fontSize: "1.2rem" }}>
+          How long have you been at{" "}
+          <font style={{ color: "#67B246" }}>Newtelco</font>?
         </span>
         <Panel
-          className='calc-panel-body'
+          className="calc-panel-body"
           style={{
-            boxShadow: 'none',
-            marginTop: '15px',
-            marginBottom: '20px',
-            width: '100%',
-            padding: '0',
+            boxShadow: "none",
+            marginTop: "15px",
+            marginBottom: "20px",
+            width: "100%",
+            padding: "0",
           }}
         >
           <RadioGroup
             onChange={this.handleLengthChange}
-            name='radioList'
+            name="radioList"
             inline
-            appearance='picker'
-            defaultValue='years'
-            style={{ width: '170px' }}
+            appearance="picker"
+            defaultValue="years"
+            style={{ width: "170px" }}
           >
-            <Radio className='calc-radio-item' value='years'>
+            <Radio className="calc-radio-item" value="years">
               1 Year+
             </Radio>
-            <Radio className='calc-radio-item' value='months'>
+            <Radio className="calc-radio-item" value="months">
               1-12 Months
             </Radio>
           </RadioGroup>
           <div>
-            {displayCalc === 'months' ? (
+            {displayCalc === "months" ? (
               <FormGroup>
                 <InputNumber
-                  name='months'
-                  inputMode='numeric'
-                  className='calc-input'
+                  name="months"
+                  inputMode="numeric"
+                  className="calc-input"
                   onChange={this.handleMonthsChange}
                   value={curMonths}
                   min={0}
                   max={12}
-                  postfix='months'
+                  postfix="months"
                 />
                 <Panel
                   bordered
                   style={{
-                    boxShadow: 'none',
-                    height: '40px',
-                    marginTop: '15px',
-                    width: '170px',
+                    boxShadow: "none",
+                    height: "40px",
+                    marginTop: "15px",
+                    width: "170px",
                   }}
                 >
                   {curMonths !== 0 && (
-                    <span className='days-available'>
+                    <span className="days-available">
                       {`${parseInt(daysAvailable)} days earned`}
                     </span>
                   )}
@@ -128,26 +128,26 @@ export default class Calculator extends React.Component {
             ) : (
               <FormGroup>
                 <InputNumber
-                  name='years'
-                  inputMode='numeric'
-                  className='calc-input'
+                  name="years"
+                  inputMode="numeric"
+                  className="calc-input"
                   onChange={this.handleYearsChange}
                   value={curYears}
                   min={0}
-                  postfix='years'
+                  postfix="years"
                 />
                 <Panel
                   bordered
                   style={{
-                    boxShadow: 'none',
-                    height: '40px',
-                    marginTop: '15px',
-                    width: '170px',
-                    fontWeight: '300',
+                    boxShadow: "none",
+                    height: "40px",
+                    marginTop: "15px",
+                    width: "170px",
+                    fontWeight: "300",
                   }}
                 >
                   {curYears !== 0 && (
-                    <span className='days-available'>
+                    <span className="days-available">
                       {`${daysAvailable} days earned`}
                     </span>
                   )}

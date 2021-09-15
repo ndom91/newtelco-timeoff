@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react"
 import {
   Button,
   ButtonToolbar,
@@ -6,13 +6,13 @@ import {
   Modal,
   Table,
   Notification,
-} from 'rsuite'
+} from "rsuite"
 
 const notifySuccess = (header, text) => {
   Notification.success({
     title: header,
     duration: 2000,
-    description: <div className='notify-body'>{text}</div>,
+    description: <div className="notify-body">{text}</div>,
   })
 }
 
@@ -20,51 +20,51 @@ const notifyError = (header, text) => {
   Notification.error({
     title: header,
     duration: 3000,
-    description: <div className='notify-body'>{text}</div>,
+    description: <div className="notify-body">{text}</div>,
   })
 }
 
 const { Column, HeaderCell, Cell } = Table
 
-const DeleteModal = props => {
+const DeleteModal = (props) => {
   console.log(props)
   const handleSubmitDelete = () => {
     const deleteId = props.toDelete
     const host = window.location.host
     const protocol = window.location.protocol
     fetch(`${protocol}//${host}/api/user/entries/delete?id=${deleteId}`)
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         if (data.deleteQuery.affectedRows > 0) {
-          notifySuccess('Request Deleted')
+          notifySuccess("Request Deleted")
         } else {
-          notifyError('Error Deleting Request')
+          notifyError("Error Deleting Request")
         }
-        const newRowData = props.rowData.filter(row => row.id !== deleteId)
+        const newRowData = props.rowData.filter((row) => row.id !== deleteId)
         props.setRowData(newRowData)
         props.toggleDeleteModal()
         props.gridApi.refreshCells()
       })
-      .catch(err => console.error(err))
+      .catch((err) => console.error(err))
   }
 
   return (
     <Modal
       enforceFocus
-      size='sm'
+      size="sm"
       backdrop
       show={props.open}
       onHide={props.toggleDeleteModal}
-      style={{ marginTop: '150px' }}
+      style={{ marginTop: "150px" }}
     >
       <Modal.Header>
-        <Modal.Title style={{ textAlign: 'center', fontSize: '24px' }}>
+        <Modal.Title style={{ textAlign: "center", fontSize: "24px" }}>
           Confirm Submit
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <span
-          style={{ textAlign: 'center', display: 'block', fontWeight: '600' }}
+          style={{ textAlign: "center", display: "block", fontWeight: "600" }}
         >
           Are you sure you want to delete this request?
         </span>
@@ -73,34 +73,34 @@ const DeleteModal = props => {
           autoHeight
           bordered={false}
           data={props.data}
-          style={{ margin: '20px 50px' }}
+          style={{ margin: "20px 50px" }}
         >
-          <Column width={200} align='left'>
+          <Column width={200} align="left">
             <HeaderCell>Field: </HeaderCell>
-            <Cell dataKey='title' />
+            <Cell dataKey="title" />
           </Column>
-          <Column width={250} align='left'>
+          <Column width={250} align="left">
             <HeaderCell>Value: </HeaderCell>
-            <Cell dataKey='value' />
+            <Cell dataKey="value" />
           </Column>
         </Table>
       </Modal.Body>
-      <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
-        <ButtonToolbar style={{ width: '100%' }}>
+      <Modal.Footer style={{ display: "flex", justifyContent: "center" }}>
+        <ButtonToolbar style={{ width: "100%" }}>
           <ButtonGroup
-            style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
+            style={{ width: "100%", display: "flex", justifyContent: "center" }}
           >
             <Button
               onClick={props.toggleDeleteModal}
-              style={{ width: '33%', fontSize: '16px' }}
-              appearance='default'
+              style={{ width: "33%", fontSize: "16px" }}
+              appearance="default"
             >
               Cancel
             </Button>
             <Button
               onClick={handleSubmitDelete}
-              style={{ width: '33%', fontSize: '16px' }}
-              appearance='primary'
+              style={{ width: "33%", fontSize: "16px" }}
+              appearance="primary"
             >
               Confirm
             </Button>

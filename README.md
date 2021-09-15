@@ -8,26 +8,28 @@ Company Time-Off Management Application
 
 ## ⚛️  Features
 
-- [x] Management Confirmation via Email for each request
-- [x] Export Lists / Reports to Excel
-- [x] Active Directory User Sync
-- [x] Multiple Absence types (Sick, Vacation, Maternity, etc.)
+- [x] Optional Management Confirmation
+- [x] Active Directory User Sync and Authentication
+- [x] Multiple Absence types (Illness, Vacation, Maternity, etc.)
 - [x] Company Dashboard
 - [x] Admin Dashboard
-- [x] Graphical Reports + Excel Exporting
+- [x] Graphical Reports
+- [x] Export data to Excel
 
 ## ⚙️  Setup
 
 1. Clone the repo `git clone https://github.com/newtelco/timeoff`
 2. Install dependencies `npm i`
 3. Run `npm start`
-4. For more permanent installations, I recommend [`pm2`](https://pm2.io) to manage the process long-term.
+
+For more long-term use, I recommend [`pm2`](https://pm2.io) to manage the process.
 
 ## 👷 Contributing
 
 1. Clone the repo `git clone https://github.com/newtelco/timeoff`
 2. Install dependencies `npm i`
 3. Start Dev Environment `npm run dev`
+4. Stick to our `prettier`/`eslint` settings 🙏
 
 ## 📝 License
 
