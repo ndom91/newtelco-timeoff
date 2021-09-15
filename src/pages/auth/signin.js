@@ -137,7 +137,7 @@ export default function SignIn({ providers, params }) {
 const SignInButtons = ({ providers }) => {
   return (
     <>
-      {Object.values(providers).map((provider, i) => {
+      {Object.values(providers).map((provider) => {
         return (
           <Button
             style={{

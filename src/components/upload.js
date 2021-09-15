@@ -50,7 +50,7 @@ export default class Upload extends React.Component {
             })
           }}
           server={{
-            process: (fieldName, file, metadata, load) => {
+            process: (_, file, __, load) => {
               const key = `${Date.now()}_${file.name}`
               var params = {
                 Bucket: "nt-timeoff",
@@ -58,7 +58,7 @@ export default class Upload extends React.Component {
                 Body: file,
                 ACL: "public-read",
               }
-              s3.putObject(params, (err, data) => {
+              s3.putObject(params, (err, _) => {
                 if (err) console.error(err, err.stack)
                 else {
                   this.props.handleFileUploadSuccess(

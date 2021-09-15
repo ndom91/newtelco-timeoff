@@ -11,7 +11,7 @@ const key = require("../../../../serviceacct.json")
 module.exports = async (req, res) => {
   const approvalHash = req.query.h
   const action = req.query.a
-  const forward = req.query.b
+  // const forward = req.query.b
   const session = await getSession({ req })
 
   if (!session) {
@@ -64,7 +64,7 @@ module.exports = async (req, res) => {
         ["https://www.googleapis.com/auth/calendar"]
       )
 
-      jwtClient.authorize(function (err, tokens) {
+      jwtClient.authorize(function (err, _) {
         if (err) {
           console.error(`Error: ${err}`)
         }

@@ -1,7 +1,7 @@
-const db = require('../../../lib/db')
-const escape = require('sql-template-strings')
+const db = require("../../../lib/db")
+const escape = require("sql-template-strings")
 
-module.exports = async (req, res) => {
+module.exports = async (_, res) => {
   const query = await db.query(escape`
       select MONTH(vacations.fromDate) as 'month', YEAR(vacations.fromDate) as 'year',  users.team as 'group', count(vacations.id) as 'count'
       from vacations

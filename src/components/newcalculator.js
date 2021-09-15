@@ -1,5 +1,5 @@
 import React from "react"
-import { Form, Radio, RadioGroup, Panel, FormGroup, InputNumber } from "rsuite"
+import { Radio, RadioGroup, Panel, FormGroup, InputNumber } from "rsuite"
 
 export default class Calculator extends React.Component {
   constructor(props) {

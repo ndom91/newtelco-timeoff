@@ -1015,7 +1015,7 @@ class AdminSettings extends React.Component {
       .catch((err) => console.error(err))
   }
 
-  handleConfirmAddManager = (manager) => {
+  handleConfirmAddManager = () => {
     const host = window.location.host
     const protocol = window.location.protocol
     const { name, email, team } = this.state.activeManager

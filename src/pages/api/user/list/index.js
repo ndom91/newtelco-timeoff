@@ -1,7 +1,7 @@
-const db = require('../../../../lib/db')
-const escape = require('sql-template-strings')
+const db = require("../../../../lib/db")
+const escape = require("sql-template-strings")
 
-module.exports = async (req, res) => {
+module.exports = async (_, res) => {
   const userList = await db.query(escape`
     SELECT id, fname, lname, email, team, DATE_FORMAT(dateJoined, \"%d.%m.%Y\") as dateJoined, daysAvailable FROM users
   `)
