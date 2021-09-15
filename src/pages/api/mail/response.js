@@ -64,7 +64,7 @@ module.exports = async (req, res) => {
         ["https://www.googleapis.com/auth/calendar"]
       )
 
-      jwtClient.authorize(function (err, _) {
+      jwtClient.authorize(function (err) {
         if (err) {
           console.error(`Error: ${err}`)
         }

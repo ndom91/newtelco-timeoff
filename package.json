@@ -87,14 +87,16 @@
     "simple-git-hooks": "^2.6.1"
   },
   "prettier": {
-    "semi": false
+    "semi": false,
+    "singleQuote": false,
+    "jsxSingleQuote": false
   },
   "eslintConfig": {
     "rules": {
-      "no-irregular-whitespace": 0,
       "react/prop-types": 0,
       "@next/next/no-img-element": 0,
-      "import/no-anonymous-default-export": 0
+      "import/no-anonymous-default-export": 0,
+      "react/no-unescaped-entities": 0
     },
     "extends": [
       "eslint:recommended",

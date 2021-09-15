@@ -915,7 +915,7 @@ class New extends React.Component {
                         <span>
                           When submitting a sick notice, don't forget to submit
                           a doctors note now, or later in your dashboard by
-                          editing this request{" "}
+                          editing this request{`&apos;``&apos;`}
                           <strong>if sick for more than 3 days</strong>.
                         </span>
                       </ControlLabel>

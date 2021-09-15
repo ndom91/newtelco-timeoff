@@ -58,7 +58,7 @@ export default class Upload extends React.Component {
                 Body: file,
                 ACL: "public-read",
               }
-              s3.putObject(params, (err, _) => {
+              s3.putObject(params, (err) => {
                 if (err) console.error(err, err.stack)
                 else {
                   this.props.handleFileUploadSuccess(
