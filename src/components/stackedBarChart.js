@@ -71,6 +71,7 @@ class StackedBarChart extends React.Component {
           const teamSeries = []
           const series = []
           const teams = Array.from(
+            /* eslint-disable-next-line */
             new Set(
               data.query.map((obj) => JSON.stringify({ group: obj.group }))
             )
