@@ -350,7 +350,11 @@ const Navigation = ({ expand, admin, token, handleToggle }) => {
                 {"Nico Domino"}
                 <br />
                 <b>ndomino[at]newtelco.de</b> (
-                <a href="https://ndo.dev?utm_source=ntvacation" target="_blank">
+                <a
+                  href="https://ndo.dev?utm_source=ntvacation"
+                  rel="noreferrer noopener"
+                  target="_blank"
+                >
                   ndo.dev
                 </a>
                 )
