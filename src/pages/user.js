@@ -1,22 +1,22 @@
-import React from 'react'
-import Layout from '../components/layout/index'
-import Router from 'next/router'
-import Moment from 'moment-timezone'
-import { getSession } from 'next-auth/client'
-import RequireLogin from '../components/requiredLogin'
-import Subheader from '../components/content-subheader'
-import DateTimeField from '../components/aggrid/datetime'
-import DateField from '../components/aggrid/date'
-import Uppercase from '../components/aggrid/uppercase'
-import ApprovedField from '../components/aggrid/approved'
-import ViewFiles from '../components/aggrid/viewfiles'
-import TypeField from '../components/aggrid/type'
-import { AgGridReact } from 'ag-grid-react'
-import 'ag-grid-community/dist/styles/ag-grid.css'
-import 'ag-grid-community/dist/styles/ag-theme-material.css'
-import { extendMoment } from 'moment-range'
-import EditModal from '../components/editRequestModal'
-import DeleteModal from '../components/deleteRequestModal'
+import React from "react"
+import Layout from "../components/layout/index"
+import Router from "next/router"
+import Moment from "moment-timezone"
+import { getSession } from "next-auth/react"
+import RequireLogin from "../components/requiredLogin"
+import Subheader from "../components/content-subheader"
+import DateTimeField from "../components/aggrid/datetime"
+import DateField from "../components/aggrid/date"
+import Uppercase from "../components/aggrid/uppercase"
+import ApprovedField from "../components/aggrid/approved"
+import ViewFiles from "../components/aggrid/viewfiles"
+import TypeField from "../components/aggrid/type"
+import { AgGridReact } from "ag-grid-react"
+import "ag-grid-community/dist/styles/ag-grid.css"
+import "ag-grid-community/dist/styles/ag-theme-material.css"
+import { extendMoment } from "moment-range"
+import EditModal from "../components/editRequestModal"
+import DeleteModal from "../components/deleteRequestModal"
 import {
   Container,
   Header,
@@ -29,7 +29,7 @@ import {
   Modal,
   Notification,
   SelectPicker,
-} from 'rsuite'
+} from "rsuite"
 
 const moment = extendMoment(Moment)
 
@@ -50,23 +50,23 @@ class Wrapper extends React.Component {
       uploadedFiles: [],
       loadingFiles: false,
       openConfirmDeleteModal: false,
-      gridType: 'vacation',
+      gridType: "vacation",
       openEditModal: false,
       editAvailable: false,
       viewFilesModal: false,
       editData: {
-        from: '',
-        to: '',
-        lastYear: '',
-        thisYear: '',
-        spent: '',
-        total: '',
-        requested: '',
-        remaining: '',
-        id: '',
-        note: '',
-        approved: '',
-        type: '',
+        from: "",
+        to: "",
+        lastYear: "",
+        thisYear: "",
+        spent: "",
+        total: "",
+        requested: "",
+        remaining: "",
+        id: "",
+        note: "",
+        approved: "",
+        type: "",
       },
       gridOptions: {
         defaultColDef: {
@@ -78,150 +78,150 @@ class Wrapper extends React.Component {
         },
         columnDefs: [
           {
-            headerName: 'ID',
-            field: 'id',
+            headerName: "ID",
+            field: "id",
             hide: true,
-            sort: 'desc',
+            sort: "desc",
           },
           {
-            headerName: 'Submitted',
-            cellRenderer: 'dateTimeShort',
-            field: 'submitted_datetime',
+            headerName: "Submitted",
+            cellRenderer: "dateTimeShort",
+            field: "submitted_datetime",
             width: 160,
           },
           {
-            headerName: 'Type',
-            field: 'type',
-            cellRenderer: 'uppercase',
+            headerName: "Type",
+            field: "type",
+            cellRenderer: "uppercase",
             width: 100,
           },
           {
-            headerName: 'From',
-            field: 'fromDate',
-            tooltipField: 'fromDate',
-            cellRenderer: 'dateShort',
+            headerName: "From",
+            field: "fromDate",
+            tooltipField: "fromDate",
+            cellRenderer: "dateShort",
             width: 100,
           },
           {
-            headerName: 'To',
-            field: 'toDate',
-            tooltipField: 'toDate',
-            cellRenderer: 'dateShort',
+            headerName: "To",
+            field: "toDate",
+            tooltipField: "toDate",
+            cellRenderer: "dateShort",
             width: 100,
           },
           {
-            headerName: 'Days from Last Year',
-            field: 'resturlaubVorjahr',
+            headerName: "Days from Last Year",
+            field: "resturlaubVorjahr",
             cellStyle: {
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100%',
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
             },
             width: 180,
           },
           {
-            headerName: 'Days Earned this Year',
-            field: 'jahresurlaubInsgesamt',
-            tooltipField: 'jahresurlaubInsgesamt',
+            headerName: "Days Earned this Year",
+            field: "jahresurlaubInsgesamt",
+            tooltipField: "jahresurlaubInsgesamt",
             cellStyle: {
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100%',
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
             },
           },
           {
-            headerName: 'Days spent this Year',
-            field: 'jahresUrlaubAusgegeben',
-            tooltipField: 'jahresUrlaubAusgegeben',
+            headerName: "Days spent this Year",
+            field: "jahresUrlaubAusgegeben",
+            tooltipField: "jahresUrlaubAusgegeben",
             cellStyle: {
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100%',
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
             },
           },
           {
-            headerName: 'Total Days Available',
-            field: 'restjahresurlaubInsgesamt',
+            headerName: "Total Days Available",
+            field: "restjahresurlaubInsgesamt",
             width: 160,
             cellStyle: {
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100%',
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
             },
           },
           {
-            headerName: 'Requested Days',
-            field: 'beantragt',
+            headerName: "Requested Days",
+            field: "beantragt",
             cellStyle: {
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100%',
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
             },
             width: 160,
           },
           {
             headerName: `Days Remaining`,
-            field: 'resturlaubJAHR',
+            field: "resturlaubJAHR",
             cellStyle: {
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100%',
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
             },
             width: 180,
           },
           {
-            headerName: 'Notes',
-            field: 'note',
+            headerName: "Notes",
+            field: "note",
             width: 160,
           },
           {
-            headerName: 'Manager',
-            field: 'manager',
+            headerName: "Manager",
+            field: "manager",
             width: 160,
           },
           {
-            headerName: 'Approval Date/Time',
-            field: 'approval_datetime',
-            cellRenderer: 'dateTimeShort',
+            headerName: "Approval Date/Time",
+            field: "approval_datetime",
+            cellRenderer: "dateTimeShort",
             width: 160,
           },
           {
-            headerName: 'Submitted By',
-            field: 'submitted_by',
+            headerName: "Submitted By",
+            field: "submitted_by",
             width: 140,
           },
           {
-            headerName: 'View Files',
+            headerName: "View Files",
             width: 160,
-            cellRenderer: 'viewfiles',
+            cellRenderer: "viewfiles",
             cellRendererParams: {
               viewFiles: this.toggleViewFilesModal,
             },
             cellStyle: {
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100%',
-              border: 'none',
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+              border: "none",
             },
           },
           {
-            headerName: 'Approved',
-            field: 'approved',
+            headerName: "Approved",
+            field: "approved",
             width: 120,
-            cellRenderer: 'approved',
-            pinned: 'right',
+            cellRenderer: "approved",
+            pinned: "right",
             cellStyle: {
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100%',
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
             },
           },
         ],
@@ -234,13 +234,13 @@ class Wrapper extends React.Component {
           type: TypeField,
           viewfiles: ViewFiles,
         },
-        rowSelection: 'multiple',
+        rowSelection: "multiple",
         paginationPageSize: 10,
-        rowClass: 'row-class',
+        rowClass: "row-class",
         rowClassRules: {
-          'row-awaitingResponse': function (params) {
+          "row-awaitingResponse": function (params) {
             const approved = params.data.approved
-            if (approved !== '2') {
+            if (approved !== "2") {
               return true
             }
             return false
@@ -254,7 +254,7 @@ class Wrapper extends React.Component {
     Notification.info({
       title: header,
       duration: 2000,
-      description: <div className='notify-body'>{text}</div>,
+      description: <div className="notify-body">{text}</div>,
     })
   }
 
@@ -262,7 +262,7 @@ class Wrapper extends React.Component {
     Notification.warning({
       title: header,
       duration: 2000,
-      description: <div className='notify-body'>{text}</div>,
+      description: <div className="notify-body">{text}</div>,
     })
   }
 
@@ -270,7 +270,7 @@ class Wrapper extends React.Component {
     Notification.error({
       title: header,
       duration: 3000,
-      description: <div className='notify-body'>{text}</div>,
+      description: <div className="notify-body">{text}</div>,
     })
   }
 
@@ -278,7 +278,7 @@ class Wrapper extends React.Component {
     Notification.success({
       title: header,
       duration: 3000,
-      description: <div className='notify-body'>{text}</div>,
+      description: <div className="notify-body">{text}</div>,
     })
   }
 
@@ -287,8 +287,8 @@ class Wrapper extends React.Component {
     const protocol = window.location.protocol
     const user = this.props.session.user.email
     fetch(`${protocol}//${host}/api/user/entries?user=${user}&t=vacation`)
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         if (data.userEntries) {
           // const heatmap = []
           this.setState({
@@ -309,28 +309,28 @@ class Wrapper extends React.Component {
           window.gridApi && window.gridApi.refreshCells()
         }
       })
-      .catch(err => console.error(err))
+      .catch((err) => console.error(err))
   }
 
   componentDidUpdate = () => {
     const type = this.state.gridType
     if (this.gridColumnApi) {
       const sickHideColumns = [
-        'resturlaubVorjahr',
-        'jahresurlaubInsgesamt',
-        'jahresUrlaubAusgegeben',
-        'restjahresurlaubInsgesamt',
-        'beantragt',
-        'resturlaubJAHR',
-        'approved',
-        'approval_datetime',
+        "resturlaubVorjahr",
+        "jahresurlaubInsgesamt",
+        "jahresUrlaubAusgegeben",
+        "restjahresurlaubInsgesamt",
+        "beantragt",
+        "resturlaubJAHR",
+        "approved",
+        "approval_datetime",
       ]
-      if (type === 'sick') {
-        sickHideColumns.forEach(column => {
+      if (type === "sick") {
+        sickHideColumns.forEach((column) => {
           this.gridColumnApi.setColumnVisible(column, false)
         })
       } else {
-        sickHideColumns.forEach(column => {
+        sickHideColumns.forEach((column) => {
           this.gridColumnApi.setColumnVisible(column, true)
         })
       }
@@ -350,45 +350,45 @@ class Wrapper extends React.Component {
     }
   }
 
-  setRowData = data => {
+  setRowData = (data) => {
     this.setState({
       rowData: data,
     })
   }
 
-  handleGridReady = params => {
+  handleGridReady = (params) => {
     this.gridApi = params.api
     window.gridApi = params.api
     this.gridColumnApi = params.columnApi
   }
 
-  onFirstDataRendered = params => {
+  onFirstDataRendered = (params) => {
     params.columnApi.autoSizeColumns()
   }
 
   handleGridExport = () => {
     if (this.gridApi) {
       const email = this.props.session.user.email
-      const username = email.substr(0, email.lastIndexOf('@'))
+      const username = email.substr(0, email.lastIndexOf("@"))
       const params = {
         allColumns: true,
         fileName: `${username}_timeoff_${moment(new Date()).format(
-          'YYYYMMDD'
+          "YYYYMMDD"
         )}.csv`,
-        columnSeparator: ',',
+        columnSeparator: ",",
       }
       this.gridApi.exportDataAsCsv(params)
     }
   }
 
-  handleTypeChange = selection => {
+  handleTypeChange = (selection) => {
     const host = window.location.host
     const protocol = window.location.protocol
     const user = this.props.session.user.email
     const type = selection
     fetch(`${protocol}//${host}/api/user/entries?user=${user}&t=${type}`)
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         if (data.userEntries) {
           this.setState({
             rowData: data.userEntries,
@@ -397,7 +397,7 @@ class Wrapper extends React.Component {
           window.gridApi && window.gridApi.refreshCells()
         }
       })
-      .catch(err => console.error(err))
+      .catch((err) => console.error(err))
   }
 
   toggleConfirmDeleteModal = () => {
@@ -410,33 +410,33 @@ class Wrapper extends React.Component {
     if (this.gridApi) {
       const selectedRow = this.gridApi.getSelectedRows()
       if (!selectedRow[0]) {
-        this.notifyInfo('Please select an entry to delete!')
+        this.notifyInfo("Please select an entry to delete!")
         return
       }
       const request = selectedRow[0]
       const tableData = [
         {
-          title: 'From',
+          title: "From",
           value: request.fromDate,
         },
         {
-          title: 'To',
+          title: "To",
           value: request.toDate,
         },
         {
-          title: 'Manager',
+          title: "Manager",
           value: request.manager,
         },
         {
-          title: 'Type',
+          title: "Type",
           value: request.type.charAt(0).toUpperCase() + request.type.slice(1),
         },
         {
-          title: 'Requested Days',
+          title: "Requested Days",
           value: request.beantragt,
         },
         {
-          title: 'Remaining Days',
+          title: "Remaining Days",
           value: request.resturlaubJAHR,
         },
       ]
@@ -454,7 +454,7 @@ class Wrapper extends React.Component {
       const protocol = window.location.protocol
       const selectedRow = this.gridApi.getSelectedRows()
       if (!selectedRow[0]) {
-        this.notifyInfo('Please select a row to edit')
+        this.notifyInfo("Please select a row to edit")
         return
       }
       const request = selectedRow[0]
@@ -462,8 +462,8 @@ class Wrapper extends React.Component {
         loadingFiles: true,
         editAvailable: !request.approved == 0,
       })
-      const rawFrom = request.fromDate.split('.')
-      const rawTo = request.toDate.split('.')
+      const rawFrom = request.fromDate.split(".")
+      const rawTo = request.toDate.split(".")
       const tableData = {
         from: `${rawFrom[2]}-${rawFrom[1]}-${rawFrom[0]}`,
         to: `${rawTo[2]}-${rawTo[1]}-${rawTo[0]}`,
@@ -481,8 +481,8 @@ class Wrapper extends React.Component {
           request.type[0].toUpperCase() + request.type.substring(1),
       }
       fetch(`${protocol}//${host}/api/mail/file?id=${request.id}`)
-        .then(data => data.json())
-        .then(data => {
+        .then((data) => data.json())
+        .then((data) => {
           let files = []
           if (data.files[0].files.length !== 0) {
             files = JSON.parse(data.files[0].files)
@@ -495,11 +495,11 @@ class Wrapper extends React.Component {
             editAvailable: this.state.editAvailable,
           })
         })
-        .catch(err => console.error(err))
+        .catch((err) => console.error(err))
     }
   }
 
-  toggleViewFilesModal = files => {
+  toggleViewFilesModal = (files) => {
     if (files === null) {
       this.setState({
         viewFilesModal: !this.state.viewFilesModal,
@@ -509,7 +509,7 @@ class Wrapper extends React.Component {
       // const i = data.findIndex(entry => entry.id === id)
       // const files = data[i].files || []
       // console.log(files)
-      const viewFiles = typeof files === 'string' ? JSON.parse(files) : files
+      const viewFiles = typeof files === "string" ? JSON.parse(files) : files
       console.log(viewFiles)
       this.setState({
         viewFilesModal: !this.state.viewFilesModal,
@@ -537,49 +537,49 @@ class Wrapper extends React.Component {
           token={this.props.session.csrfToken}
         >
           <Container>
-            <Subheader header='User' subheader='Dashboard' />
+            <Subheader header="User" subheader="Dashboard" />
             <Panel bordered>
-              <Header className='user-content-header'>
-                <div className='section-header'>My Vacations</div>
+              <Header className="user-content-header">
+                <div className="section-header">My Vacations</div>
                 <div
                   style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
+                    display: "flex",
+                    justifyContent: "space-between",
                   }}
                 >
                   <SelectPicker
-                    defaultValue='vacation'
+                    defaultValue="vacation"
                     onChange={this.handleTypeChange}
                     data={[
-                      { label: 'Vacation', value: 'vacation' },
-                      { label: 'Sick', value: 'sick' },
-                      { label: 'Trip', value: 'trip' },
-                      { label: 'Moving', value: 'moving' },
-                      { label: 'Other', value: 'other' },
+                      { label: "Vacation", value: "vacation" },
+                      { label: "Sick", value: "sick" },
+                      { label: "Trip", value: "trip" },
+                      { label: "Moving", value: "moving" },
+                      { label: "Other", value: "other" },
                     ]}
-                    placeholder='Please Select a Type'
-                    style={{ width: '200px', marginRight: '20px' }}
+                    placeholder="Please Select a Type"
+                    style={{ width: "200px", marginRight: "20px" }}
                   />
                   <span>
                     <ButtonToolbar>
                       <ButtonGroup>
                         <IconButton
-                          icon={<Icon icon='edit' />}
-                          appearance='primary'
+                          icon={<Icon icon="edit" />}
+                          appearance="primary"
                           onClick={this.toggleEditModal}
                         >
                           Edit
                         </IconButton>
                         <IconButton
-                          icon={<Icon icon='trash' />}
-                          appearance='ghost'
+                          icon={<Icon icon="trash" />}
+                          appearance="ghost"
                           onClick={this.toggleConfirmDeleteModal}
                         >
                           Delete
                         </IconButton>
                         <IconButton
-                          icon={<Icon icon='export' />}
-                          appearance='ghost'
+                          icon={<Icon icon="export" />}
+                          appearance="ghost"
                           onClick={this.handleGridExport}
                         >
                           Export
@@ -589,8 +589,8 @@ class Wrapper extends React.Component {
                   </span>
                 </div>
               </Header>
-              <Content className='user-grid-wrapper'>
-                <div className='ag-theme-material user-grid'>
+              <Content className="user-grid-wrapper">
+                <div className="ag-theme-material user-grid">
                   <AgGridReact
                     gridOptions={gridOptions}
                     rowData={rowData}
@@ -635,43 +635,43 @@ class Wrapper extends React.Component {
                   <Modal.Title>View Files</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                  <ul className='view-file-list'>
+                  <ul className="view-file-list">
                     {viewFiles &&
                       viewFiles.map((file, index) => {
                         return (
-                          <li className='view-file-list-item' key={index}>
-                            <div className='view-file-item'>
+                          <li className="view-file-list-item" key={index}>
+                            <div className="view-file-item">
                               {file.name ? (
-                                file.name.includes('pdf') ? (
+                                file.name.includes("pdf") ? (
                                   <>
                                     <Icon
-                                      size='lg'
-                                      style={{ marginRight: '10px' }}
-                                      icon='file-pdf-o'
+                                      size="lg"
+                                      style={{ marginRight: "10px" }}
+                                      icon="file-pdf-o"
                                     />
                                     <a
-                                      target='_blank'
-                                      rel='noopener noreferrer'
-                                      className='view-file-link'
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="view-file-link"
                                       title={file.name}
                                       href={file.url}
                                     >
                                       {file.name}
                                     </a>
                                   </>
-                                ) : ['png', 'jpg', 'bmp', 'gif'].includes(
+                                ) : ["png", "jpg", "bmp", "gif"].includes(
                                     file.format
                                   ) ? (
                                   <>
                                     <Icon
-                                      size='lg'
-                                      style={{ marginRight: '10px' }}
-                                      icon='file-image-o'
+                                      size="lg"
+                                      style={{ marginRight: "10px" }}
+                                      icon="file-image-o"
                                     />
                                     <a
-                                      target='_blank'
-                                      rel='noopener noreferrer'
-                                      className='view-file-link'
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="view-file-link"
                                       title={file.name}
                                       href={file.url}
                                     >
@@ -681,14 +681,14 @@ class Wrapper extends React.Component {
                                 ) : (
                                   <>
                                     <Icon
-                                      size='lg'
-                                      style={{ marginRight: '10px' }}
-                                      icon='file-o'
+                                      size="lg"
+                                      style={{ marginRight: "10px" }}
+                                      icon="file-o"
                                     />
                                     <a
-                                      target='_blank'
-                                      rel='noopener noreferrer'
-                                      className='view-file-link'
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="view-file-link"
                                       title={file.name}
                                       href={file.url}
                                     >
@@ -696,36 +696,36 @@ class Wrapper extends React.Component {
                                     </a>
                                   </>
                                 )
-                              ) : file.format === 'pdf' ? (
+                              ) : file.format === "pdf" ? (
                                 <>
                                   <Icon
-                                    size='lg'
-                                    style={{ marginRight: '10px' }}
-                                    icon='file-pdf-o'
+                                    size="lg"
+                                    style={{ marginRight: "10px" }}
+                                    icon="file-pdf-o"
                                   />
                                   <a
-                                    target='_blank'
-                                    rel='noopener noreferrer'
-                                    className='view-file-link'
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="view-file-link"
                                     title={file.name}
                                     href={file.url}
                                   >
                                     {file.name}.{file.format}
                                   </a>
                                 </>
-                              ) : ['png', 'jpg', 'bmp', 'gif'].includes(
+                              ) : ["png", "jpg", "bmp", "gif"].includes(
                                   file.format
                                 ) ? (
                                 <>
                                   <Icon
-                                    size='lg'
-                                    style={{ marginRight: '10px' }}
-                                    icon='file-image-o'
+                                    size="lg"
+                                    style={{ marginRight: "10px" }}
+                                    icon="file-image-o"
                                   />
                                   <a
-                                    target='_blank'
-                                    rel='noopener noreferrer'
-                                    className='view-file-link'
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="view-file-link"
                                     title={file.name}
                                     href={file.url}
                                   >
@@ -735,14 +735,14 @@ class Wrapper extends React.Component {
                               ) : (
                                 <>
                                   <Icon
-                                    size='lg'
-                                    style={{ marginRight: '10px' }}
-                                    icon='file-o'
+                                    size="lg"
+                                    style={{ marginRight: "10px" }}
+                                    icon="file-o"
                                   />
                                   <a
-                                    target='_blank'
-                                    rel='noopener noreferrer'
-                                    className='view-file-link'
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="view-file-link"
                                     title={file.name}
                                     href={file.url}
                                   >
@@ -828,7 +828,7 @@ class Wrapper extends React.Component {
                 overflow: hidden;
               }
               .view-file-link::before {
-                content: '';
+                content: "";
                 display: inline-block;
                 height: 32px;
                 width: 5px;

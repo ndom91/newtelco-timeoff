@@ -1,45 +1,26 @@
-import React, { useState, useEffect } from 'react'
-import Router from 'next/router'
-import { providers, useSession, signIn } from 'next-auth/client'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGoogle } from '@fortawesome/free-brands-svg-icons'
-import NewtelcoSvg from '../../components/newtelcosvg'
-import anime from 'animejs'
-import '../../style/newtelco-rsuite.less'
-import { Container, Content, Footer, FlexboxGrid, Panel, Button } from 'rsuite'
-import Wrapper from './wrapper'
-import './index.css'
+import Router from "next/router"
+import { useEffect } from "react"
+import { getProviders, useSession, signIn } from "next-auth/react"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faGoogle } from "@fortawesome/free-brands-svg-icons"
+import NewtelcoSvg from "../../components/newtelcosvg"
+import anime from "animejs"
+import { Container, Content, Footer, FlexboxGrid, Panel, Button } from "rsuite"
 
 export default function SignIn({ providers, params }) {
-  // static async getInitialProps({ req, query }) {
-  //   const approvalHash = query.h
-  //   const action = query.a
-  //   const completed = query.b
-
-  //   return {
-  //     session: await getSession({ req }),
-  //     providers: await getProviders({ req }),
-  //     params: {
-  //       approvalHash,
-  //       action,
-  //       completed,
-  //     },
-  //   }
-  // }
-
-  const [session, loading] = useSession()
-  const [companyName, setCompanyName] = useState('')
+  const { data: session, status } = useSession()
+  const loading = status === "loading"
 
   const animateText = () => {
     anime({
-      targets: '.path0, .path1',
+      targets: ".path0, .path1",
       strokeDashoffset: [anime.setDashoffset, 3],
-      easing: 'easeInOutSine',
+      easing: "easeInOutSine",
       duration: 3500,
-      delay: function (el, i) {
+      delay: function (_, i) {
         return i * 250
       },
-      direction: 'alternate',
+      direction: "alternate",
       loop: false,
     })
   }
@@ -51,27 +32,17 @@ export default function SignIn({ providers, params }) {
       Router.push(`/?h=${approvalHash}&a=${action}&b=${completed}`)
     }
     animateText()
-    const host = window.location.host
-    const protocol = window.location.protocol
-    fetch(`${protocol}//${host}/api/settings/company/info`)
-      .then(res => res.json())
-      .then(data => {
-        if (data) {
-          setCompanyName(data.companyInfo[0].companyName)
-        }
-      })
-      .catch(err => console.error(err))
   }, [session, loading])
 
   return (
-    <div className='show-fake-browser login-page'>
-      <Container className='login-wrapper'>
-        <Content className='login-content-wrapper'>
-          <FlexboxGrid justify='center' className='login-grid-wrapper'>
+    <div className="show-fake-browser login-page">
+      <Container className="login-wrapper">
+        <Content className="login-content-wrapper">
+          <FlexboxGrid justify="center" className="login-grid-wrapper">
             <NewtelcoSvg />
-            <FlexboxGrid.Item justify='center'>
+            <FlexboxGrid.Item justify="center">
               <Panel
-                header={<h3 className='login-text-header'>Login</h3>}
+                header={<h3 className="login-text-header">Absences</h3>}
                 bordered
                 shaded
               >
@@ -80,8 +51,8 @@ export default function SignIn({ providers, params }) {
             </FlexboxGrid.Item>
           </FlexboxGrid>
         </Content>
-        <Footer className='login-footer-wrapper'>
-          {companyName && `${companyName} ${new Date().getFullYear()}`}
+        <Footer className="login-footer-wrapper">
+          NewTelco {new Date().getFullYear()}
         </Footer>
       </Container>
       <style jsx>
@@ -138,7 +109,7 @@ export default function SignIn({ providers, params }) {
             height: 100vh;
           }
           :global(.login-text-header) {
-            font-weight: 100;
+            font-weight: 200;
           }
           :global(.login-content-wrapper) {
             background-color: transparent;
@@ -150,7 +121,7 @@ export default function SignIn({ providers, params }) {
             padding: 10px 30px;
             align-items: center;
             background-color: #e4e4e4;
-            font-family: 'Roboto', Helvetica;
+            font-family: "Roboto", Helvetica;
             font-weight: 300;
           }
           :global(a.btn-outline-secondary:hover) {
@@ -172,32 +143,32 @@ const SignInButtons = ({ providers }) => {
         return (
           <Button
             style={{
-              width: '100%',
-              height: '40px',
-              fontSize: '0.9rem',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              margin: '10px 0',
-              padding: '0 50px',
+              width: "100%",
+              height: "40px",
+              fontSize: "0.9rem",
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              margin: "10px 0",
+              padding: "0 50px",
             }}
             key={provider.name}
             onClick={() => signIn(provider.id)}
-            className='google-signin-btn'
-            appearance='secondary'
+            className="google-signin-btn"
+            appearance="primary"
           >
             <FontAwesomeIcon
               icon={faGoogle}
-              width='1.2em'
+              width="1.2em"
               style={{
-                width: '1.2rem',
-                height: '1.2rem',
-                color: 'secondary',
-                marginRight: '5px',
-                flexGrow: '1',
+                width: "1.2rem",
+                height: "1.2rem",
+                color: "secondary",
+                marginRight: "5px",
+                flexGrow: "1",
               }}
             />
-            <span style={{ flexGrow: '4' }}>Sign in with {provider.name}</span>
+            <span style={{ flexGrow: "4" }}>Sign in with {provider.name}</span>
           </Button>
         )
       })}
@@ -205,13 +176,13 @@ const SignInButtons = ({ providers }) => {
   )
 }
 
-SignIn.getInitialProps = async context => {
+SignIn.getInitialProps = async (context) => {
   const query = context.query
   const approvalHash = query.h
   const action = query.a
   const completed = query.b
   return {
-    providers: await providers(context),
+    providers: await getProviders(context),
     params: {
       approvalHash,
       action,

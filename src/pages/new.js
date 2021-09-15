@@ -1,20 +1,21 @@
-import React from 'react'
-import Layout from '../components/layout/index'
-import Router from 'next/router'
-import { getSession, getCsrfToken } from 'next-auth/client'
-import RequireLogin from '../components/requiredLogin'
-import Subheader from '../components/content-subheader'
-import moment from 'moment'
-import { CSSTransition } from 'react-transition-group'
-import Calculator from '../components/newcalculator'
-import Upload from '../components/upload'
-import uuid from 'v4-uuid'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import Joyride, { STATUS } from 'react-joyride'
-import { format } from 'date-fns'
-import Lottie from 'react-lottie'
-import lottieSuccess from '../style/lottie-success.json'
-import lottieError from '../style/error-icon.json'
+import React from "react"
+import { getSession, getCsrfToken } from "next-auth/react"
+import uuid from "v4-uuid"
+import moment from "moment"
+import Lottie from "react-lottie"
+import { format } from "date-fns"
+import { CSSTransition } from "react-transition-group"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import Joyride, { STATUS } from "react-joyride"
+
+import Layout from "../components/layout/index"
+import RequireLogin from "../components/requiredLogin"
+import Subheader from "../components/content-subheader"
+import Calculator from "../components/newcalculator"
+import Upload from "../components/upload"
+import lottieSuccess from "../style/lottie-success.json"
+import lottieError from "../style/error-icon.json"
+
 import {
   faCalendarAlt,
   faUser,
@@ -22,7 +23,8 @@ import {
   faAngleRight,
   faAngleLeft,
   faExclamationCircle,
-} from '@fortawesome/free-solid-svg-icons'
+} from "@fortawesome/free-solid-svg-icons"
+
 import {
   Container,
   Content,
@@ -36,24 +38,21 @@ import {
   Button,
   Radio,
   RadioGroup,
-  PanelGroup,
   Panel,
   ButtonToolbar,
   ButtonGroup,
   SelectPicker,
   Modal,
   Notification,
-  HelpBlock,
   Table,
   Animation,
   Tooltip,
   Whisper,
   Checkbox,
   CheckboxGroup,
-} from 'rsuite'
+} from "rsuite"
 
 const { Slide } = Animation
-
 const { Column, HeaderCell, Cell } = Table
 
 class Wrapper extends React.Component {
@@ -70,17 +69,16 @@ class Wrapper extends React.Component {
     this.state = {
       openConfirmModal: false,
       confirmed: false,
-      confirmText: '',
+      confirmText: "",
       successfullySent: false,
       sendSuccess: false,
       calcSideBar: -30,
       uploading: false,
       loaded: 0,
       hideHistory: false,
-      showSidebar: false,
       showCalc: false,
       joyrideRun: true,
-      message: 'Please click or drop file',
+      message: "Please click or drop file",
       tutorialComplete: false,
       uploadedFiles: [],
       availableUsers: [],
@@ -94,39 +92,27 @@ class Wrapper extends React.Component {
         total: 0,
         requested: 0,
         remaining: 0,
-        type: 'vacation',
-        dateFrom: '',
-        dateTo: '',
-        manager: '',
-        notes: '',
+        type: "vacation",
+        dateFrom: "",
+        dateTo: "",
+        manager: "",
+        notes: "",
         confirmIllness: [],
-      },
-      lastRequest: {
-        submitted: '',
-        lastYear: 0,
-        spentThisYear: 0,
-        thisYear: 0,
-        total: 0,
-        requested: 0,
-        remaining: 0,
-        from: '',
-        to: '',
       },
       tutSteps: [
         {
-          target: '.last-btn',
-          content:
-            'Click here to open the slider. There you can quickly view the details of your last request.',
+          target: "#type-of-absence",
+          content: "Select the appropriate type of absence for this request.",
         },
         {
-          target: '.calc-btn',
+          target: "#requested-days",
           content:
-            'Click this slider to access the calculator for days available this year.',
+            "Next, enter how many days you would like off with this request.",
         },
         {
-          target: '.absence-select',
+          target: "#which-days",
           content:
-            'Finally, begin by selecting the type of absence you would like to submit.',
+            "Finally, enter the day you are leaving and returning, select your manager, and press submit!",
         },
       ],
     }
@@ -136,7 +122,7 @@ class Wrapper extends React.Component {
     Notification.info({
       title: header,
       duration: 3000,
-      description: <div className='notify-body'>{text}</div>,
+      description: <div className="notify-body">{text}</div>,
     })
   }
 
@@ -144,7 +130,7 @@ class Wrapper extends React.Component {
     Notification.error({
       title: header,
       duration: 3000,
-      description: <div className='notify-body'>{text}</div>,
+      description: <div className="notify-body">{text}</div>,
     })
   }
 
@@ -152,7 +138,7 @@ class Wrapper extends React.Component {
     Notification.success({
       title: header,
       duration: 3000,
-      description: <div className='notify-body'>{text}</div>,
+      description: <div className="notify-body">{text}</div>,
     })
   }
 
@@ -160,70 +146,50 @@ class Wrapper extends React.Component {
     Notification.warning({
       title: header,
       duration: 3000,
-      description: <div className='notify-body'>{text}</div>,
+      description: <div className="notify-body">{text}</div>,
     })
   }
 
   componentDidMount() {
     const host = window.location.host
     const protocol = window.location.protocol
-    const tutorial = window.localStorage.getItem('tut')
+    const tutorial = window.localStorage.getItem("tut")
     const isMobile = window.innerWidth < 500
     if (isMobile) {
       this.setState({
         joyrideRun: false,
-        isMobile: isMobile,
       })
     } else {
-      if (tutorial === 'true') {
+      if (tutorial === "true") {
         this.setState({
           joyrideRun: false,
         })
       }
     }
     fetch(`${protocol}//${host}/api/managers`)
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         const managerData = []
-        data.managerEntries.forEach(m => {
+        data.managerEntries.forEach((m) => {
           managerData.push({ label: m.name, value: m.email })
         })
         this.setState({
           availableManagers: managerData,
         })
       })
-      .catch(err => console.error(err))
+      .catch((err) => console.error(err))
 
     const email = this.props.session.user.email
-    fetch(`${protocol}//${host}/api/user/entries/last?u=${email}`)
-      .then(res => res.json())
-      .then(data => {
-        const newRequest = {
-          lastYear: data.lastRequest[0].resturlaubVorjahr || 0,
-          thisYear: data.lastRequest[0].jahresurlaubInsgesamt || 0,
-          spentThisYear: data.lastRequest[0].jahresUrlaubAusgegeben || 0,
-          total: data.lastRequest[0].restjahresurlaubInsgesamt || 0,
-          requested: data.lastRequest[0].beantragt || 0,
-          remaining: data.lastRequest[0].resturlaubJAHR || 0,
-          from: moment(data.lastRequest[0].fromDate).format('DD.MM.YYYY'),
-          to: moment(data.lastRequest[0].toDate).format('DD.MM.YYYY'),
-          submitted: moment(data.lastRequest[0].submitted_datetime).format(
-            'DD.MM.YYYY HH:mm'
-          ),
-        }
-        this.setState({
-          lastRequest: newRequest,
-        })
-      })
-      .catch(err => console.error(err))
 
-    fetch('/api/user/list')
-      .then(res => res.json())
-      .then(data => {
+    fetch("/api/user/list")
+      .then((res) => res.json())
+      .then((data) => {
         const availableUsers = []
-        data.userList.forEach(m => {
-          if (m.email === 'device@newtelco.de') return
-          if (m.email === 'jcleese@newtelco.de') return
+        data.userList.forEach((m) => {
+          if (m.email === "device@newtelco.de") return
+          if (m.email === "jcleese@newtelco.de") return
+          if (m.email === "maintenance@newtelco.de") return
+          if (m.email === "support@newtelco.de") return
           m.email &&
             availableUsers.push({
               label: `${m.fname} ${m.lname}`,
@@ -234,11 +200,11 @@ class Wrapper extends React.Component {
           availableUsers,
         })
       })
-      .catch(err => console.error(err))
+      .catch((err) => console.error(err))
 
     fetch(`/api/user/entries/new?email=${email}`)
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         const lastRequest = data.newestEntry[0]
         if (lastRequest) {
           let existingData = this.state.vaca
@@ -258,14 +224,14 @@ class Wrapper extends React.Component {
           })
         }
       })
-      .catch(err => console.error(err))
+      .catch((err) => console.error(err))
   }
 
-  handleNameChange = email => {
-    const user = this.state.availableUsers.find(u => u.value === email)
+  handleNameChange = (email) => {
+    const user = this.state.availableUsers.find((u) => u.value === email)
     fetch(`/api/user/entries/new?email=${email}`)
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         const lastEntry = data.newestEntry[0]
         if (lastEntry) {
           const lastRequest = {
@@ -301,10 +267,10 @@ class Wrapper extends React.Component {
           })
         }
       })
-      .catch(err => console.error(err))
+      .catch((err) => console.error(err))
   }
 
-  handleEmailChange = value => {
+  handleEmailChange = (value) => {
     this.setState({
       vaca: {
         ...this.state.vaca,
@@ -313,7 +279,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  handleLastYearChange = value => {
+  handleLastYearChange = (value) => {
     this.setState({
       vaca: {
         ...this.state.vaca,
@@ -322,7 +288,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  handleSpentThisYearChange = value => {
+  handleSpentThisYearChange = (value) => {
     this.setState({
       vaca: {
         ...this.state.vaca,
@@ -331,7 +297,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  handleThisYearChange = value => {
+  handleThisYearChange = (value) => {
     this.setState({
       vaca: {
         ...this.state.vaca,
@@ -340,7 +306,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  handleTotalAvailableChange = value => {
+  handleTotalAvailableChange = (value) => {
     this.setState({
       vaca: {
         ...this.state.vaca,
@@ -349,7 +315,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  handleRequestedChange = value => {
+  handleRequestedChange = (value) => {
     if (this.state.disableDaysInput) {
       this.setState({
         vaca: {
@@ -369,7 +335,7 @@ class Wrapper extends React.Component {
     }
   }
 
-  handleRemainingChange = value => {
+  handleRemainingChange = (value) => {
     this.setState({
       vaca: {
         ...this.state.vaca,
@@ -378,11 +344,11 @@ class Wrapper extends React.Component {
     })
   }
 
-  handleTypeChange = value => {
+  handleTypeChange = (value) => {
     let hideHistory = false
-    if (value === 'sick') {
+    if (value === "sick") {
       hideHistory = true
-    } else if (value === 'trip') {
+    } else if (value === "trip") {
       hideHistory = true
     }
     this.setState({
@@ -394,17 +360,17 @@ class Wrapper extends React.Component {
     })
   }
 
-  handleDateChange = value => {
+  handleDateChange = (value) => {
     this.setState({
       vaca: {
         ...this.state.vaca,
-        dateFrom: format(new Date(value[0]), 'MM/dd/yyyy'),
-        dateTo: format(new Date(value[1]), 'MM/dd/yyyy'),
+        dateFrom: format(new Date(value[0]), "MM/dd/yyyy"),
+        dateTo: format(new Date(value[1]), "MM/dd/yyyy"),
       },
     })
   }
 
-  handleManagerChange = manager => {
+  handleManagerChange = (manager) => {
     this.setState({
       vaca: {
         ...this.state.vaca,
@@ -413,7 +379,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  handleNotesChange = value => {
+  handleNotesChange = (value) => {
     this.setState({
       vaca: {
         ...this.state.vaca,
@@ -422,7 +388,7 @@ class Wrapper extends React.Component {
     })
   }
 
-  handleConfirmIllnessChange = value => {
+  handleConfirmIllnessChange = (value) => {
     console.log(value)
     this.setState({
       vaca: {
@@ -453,10 +419,10 @@ class Wrapper extends React.Component {
   toggleSubmitModal = () => {
     if (!this.state.openConfirmModal) {
       if (
-        this.state.vaca.type === 'sick' &&
+        this.state.vaca.type === "sick" &&
         !this.state.vaca.confirmIllness[0]
       ) {
-        this.notifyWarn('You must confirm the information to continue')
+        this.notifyWarn("You must confirm the information to continue")
         return
       }
       if (
@@ -467,19 +433,19 @@ class Wrapper extends React.Component {
         const { vaca } = this.state
         const tableData = [
           {
-            title: 'From',
-            value: moment(vaca.dateFrom).format('DD.MM.YYYY'),
+            title: "From",
+            value: moment(vaca.dateFrom).format("DD.MM.YYYY"),
           },
           {
-            title: 'To',
-            value: moment(vaca.dateTo).format('DD.MM.YYYY'),
+            title: "To",
+            value: moment(vaca.dateTo).format("DD.MM.YYYY"),
           },
           {
-            title: 'Manager',
+            title: "Manager",
             value: vaca.manager,
           },
           {
-            title: 'Type',
+            title: "Type",
             value: vaca.type.charAt(0).toUpperCase() + vaca.type.slice(1),
           },
         ]
@@ -488,7 +454,7 @@ class Wrapper extends React.Component {
           confirmTableData: tableData,
         })
       } else {
-        this.notifyInfo('Please complete the form')
+        this.notifyInfo("Please complete the form")
       }
     } else {
       this.setState({
@@ -500,21 +466,14 @@ class Wrapper extends React.Component {
   handleSubmit = () => {
     const host = window.location.host
     const protocol = window.location.protocol
-    const {
-      dateFrom,
-      dateTo,
-      manager,
-      type,
-      email,
-      name,
-      notes,
-    } = this.state.vaca
+    const { dateFrom, dateTo, manager, type, email, name, notes } =
+      this.state.vaca
 
     const approvalHash = uuid()
 
-    const confirmed = this.state.vaca.confirmIllness[0] === 'confirmed' ? 1 : 0
+    const confirmed = this.state.vaca.confirmIllness[0] === "confirmed" ? 1 : 0
     fetch(`${protocol}//${host}/api/mail/insert`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({
         vaca: {
           ...this.state.vaca,
@@ -524,13 +483,13 @@ class Wrapper extends React.Component {
         files: this.state.uploadedFiles,
       }),
       headers: {
-        'X-CSRF-TOKEN': this.props.csrfToken,
+        "X-CSRF-TOKEN": this.props.csrfToken,
       },
     })
-      .then(resp => resp.json())
-      .then(data1 => {
+      .then((resp) => resp.json())
+      .then((data1) => {
         fetch(`${protocol}//${host}/api/mail/send`, {
-          method: 'POST',
+          method: "POST",
           body: JSON.stringify({
             manager: manager,
             from: dateFrom,
@@ -543,11 +502,11 @@ class Wrapper extends React.Component {
             files: this.state.uploadedFiles,
           }),
           headers: {
-            'X-CSRF-TOKEN': this.props.csrfToken,
+            "X-CSRF-TOKEN": this.props.csrfToken,
           },
         })
-          .then(resp => resp.json())
-          .then(data => {
+          .then((resp) => resp.json())
+          .then((data) => {
             if (this.state.openConfirmModal) {
               this.setState({
                 confirmed: true,
@@ -567,20 +526,14 @@ class Wrapper extends React.Component {
               this.notifyError(`Error - ${data.msg}`)
             }
           })
-          .catch(err => console.error(err))
+          .catch((err) => console.error(err))
       })
-      .catch(err => console.error(err))
+      .catch((err) => console.error(err))
   }
 
   showTimeCalculator = () => {
     this.setState({
       showCalc: !this.state.showCalc,
-    })
-  }
-
-  showLastRequestSidebar = () => {
-    this.setState({
-      showSidebar: !this.state.showSidebar,
     })
   }
 
@@ -592,13 +545,13 @@ class Wrapper extends React.Component {
     })
   }
 
-  handleJoyrideCallback = data => {
+  handleJoyrideCallback = (data) => {
     const { status } = data
 
     if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
       // Need to set our running state to false, so we can restart if we click start again.
       // this.setState({ run: false })
-      window.localStorage.setItem('tut', true)
+      window.localStorage.setItem("tut", true)
     }
   }
 
@@ -609,15 +562,12 @@ class Wrapper extends React.Component {
       openConfirmModal,
       confirmTableData,
       successfullySent,
-      showSidebar,
       showCalc,
       confirmed,
       sendSuccess,
-      lastRequest,
       hideHistory,
       tutSteps,
       joyrideRun,
-      isMobile,
       disableDaysInput,
     } = this.state
 
@@ -626,7 +576,7 @@ class Wrapper extends React.Component {
       autoplay: true,
       animationData: lottieSuccess,
       rendererSettings: {
-        preserveAspectRatio: 'xMidYMid slice',
+        preserveAspectRatio: "xMidYMid slice",
       },
     }
 
@@ -635,7 +585,7 @@ class Wrapper extends React.Component {
       autoplay: true,
       animationData: lottieError,
       rendererSettings: {
-        preserveAspectRatio: 'xMidYMid slice',
+        preserveAspectRatio: "xMidYMid slice",
       },
     }
 
@@ -645,14 +595,14 @@ class Wrapper extends React.Component {
           user={this.props.session.user.email}
           token={this.props.csrfToken}
         >
-          <Container style={{ alignItems: 'center' }}>
-            <Subheader header='New Request' subheader='Create New' />
-            <Content style={{ width: '410px' }}>
+          <Container style={{ alignItems: "center" }}>
+            <Subheader header="New Request" subheader="Create New" />
+            <Content style={{ width: "410px" }}>
               <Form
-                className='new-request-form'
-                layout='vertical'
+                className="new-request-form"
+                layout="vertical"
                 fluid
-                style={{ flexDirection: 'column' }}
+                style={{ flexDirection: "column" }}
               >
                 <Joyride
                   steps={tutSteps}
@@ -669,21 +619,21 @@ class Wrapper extends React.Component {
                 />
                 <Panel
                   bordered
-                  style={{ position: 'relative', padding: '10px' }}
+                  style={{ position: "relative", padding: "10px" }}
                   header={
                     <h4
-                      className='form-section-heading'
-                      style={{ position: 'relative' }}
+                      className="form-section-heading"
+                      style={{ position: "relative" }}
                     >
                       User
                       <FontAwesomeIcon
                         icon={faUser}
-                        width='1em'
+                        width="1em"
                         style={{
-                          marginLeft: '10px',
-                          top: '2px',
-                          position: 'absolute',
-                          color: 'secondary',
+                          marginLeft: "10px",
+                          top: "2px",
+                          position: "absolute",
+                          color: "secondary",
                         }}
                       />
                     </h4>
@@ -692,20 +642,19 @@ class Wrapper extends React.Component {
                   <FormGroup>
                     <ControlLabel>Name</ControlLabel>
                     <SelectPicker
-                      name='name'
+                      name="name"
                       onChange={this.handleNameChange}
                       defaultValue={vaca.email}
                       data={this.state.availableUsers}
-                      style={{ width: '100%' }}
+                      style={{ width: "100%" }}
                     />
                   </FormGroup>
                   <FormGroup>
                     <ControlLabel>Email</ControlLabel>
                     <FormControl
-                      block
-                      name='email'
-                      inputMode='email'
-                      autoComplete='email'
+                      name="email"
+                      inputMode="email"
+                      autoComplete="email"
                       onChange={this.handleEmailChange}
                       value={vaca.email}
                     />
@@ -714,139 +663,141 @@ class Wrapper extends React.Component {
                     <ControlLabel>Type of Absence</ControlLabel>
                     <RadioGroup
                       onChange={this.handleTypeChange}
-                      name='radioList'
+                      name="radioList"
                       inline
-                      appearance='picker'
-                      defaultValue='vacation'
-                      className='absence-select'
+                      id="type-of-absence"
+                      appearance="picker"
+                      defaultValue="vacation"
+                      className="absence-select"
                     >
-                      <Radio value='vacation'>Vacation</Radio>
-                      <Radio value='sick'>Illness</Radio>
-                      <Radio value='trip'>Trip</Radio>
-                      <Radio value='moving'>Moving</Radio>
-                      <Radio value='other'>Other</Radio>
+                      <Radio value="vacation">Vacation</Radio>
+                      <Radio value="sick">Illness</Radio>
+                      <Radio value="trip">Trip</Radio>
+                      <Radio value="moving">Moving</Radio>
+                      <Radio value="other">Other</Radio>
                     </RadioGroup>
                   </FormGroup>
                 </Panel>
                 <CSSTransition
                   in={!hideHistory}
                   timeout={1000}
-                  classNames='panel'
+                  classNames="panel"
                   unmountOnExit
                 >
                   <div
                     style={{
-                      position: 'relative',
-                      overflow: 'visible',
-                      zIndex: '3',
-                      marginBottom: '20px',
+                      position: "relative",
+                      overflow: "visible",
+                      zIndex: "3",
+                      marginBottom: "20px",
                     }}
                   >
                     <Panel
                       bordered
-                      style={{ padding: '10px' }}
+                      style={{ padding: "10px" }}
                       header={
                         <h4
-                          className='form-section-heading'
-                          style={{ position: 'relative' }}
+                          className="form-section-heading"
+                          style={{ position: "relative" }}
                         >
                           History
                           <FontAwesomeIcon
                             icon={faHistory}
-                            width='1em'
+                            width="1em"
                             style={{
-                              marginLeft: '10px',
-                              top: '2px',
-                              position: 'absolute',
-                              color: 'secondary',
+                              marginLeft: "10px",
+                              top: "2px",
+                              position: "absolute",
+                              color: "secondary",
                             }}
                           />
                         </h4>
                       }
                     >
-                      <FormGroup className='history-input-wrapper'>
+                      <FormGroup className="history-input-wrapper">
                         <ControlLabel>Days from Last Year</ControlLabel>
                         <InputNumber
                           min={0}
-                          size='lg'
-                          postfix='days'
+                          size="lg"
+                          postfix="days"
                           value={vaca.lastYear}
                           onChange={this.handleLastYearChange}
                           disabled={disableDaysInput}
                         />
                       </FormGroup>
-                      <FormGroup className='history-input-wrapper'>
+                      <FormGroup className="history-input-wrapper">
                         <ControlLabel>Days from this Year</ControlLabel>
                         <InputNumber
                           min={0}
-                          size='lg'
-                          postfix='days'
-                          name='daysThisYear'
+                          size="lg"
+                          postfix="days"
+                          name="daysThisYear"
                           onChange={this.handleThisYearChange}
                           value={vaca.thisYear}
                           disabled={disableDaysInput}
                         />
                       </FormGroup>
-                      <FormGroup className='history-input-wrapper'>
+                      <FormGroup className="history-input-wrapper">
                         <ControlLabel>Days spent This Year</ControlLabel>
                         <InputNumber
                           min={0}
-                          size='lg'
-                          postfix='days'
-                          name='daysSpentThisYear'
+                          size="lg"
+                          postfix="days"
+                          name="daysSpentThisYear"
                           onChange={this.handleSpentThisYearChange}
                           value={vaca.spentThisYear}
                           disabled={disableDaysInput}
                         />
                       </FormGroup>
-                      <FormGroup className='history-input-wrapper'>
+                      <FormGroup className="history-input-wrapper">
                         <ControlLabel>Total Days Available</ControlLabel>
                         <InputNumber
                           min={0}
-                          size='lg'
-                          postfix='days'
-                          name='totalDaysAvailable'
+                          size="lg"
+                          postfix="days"
+                          name="totalDaysAvailable"
                           onChange={this.handleTotalAvailableChange}
                           value={vaca.total}
                           disabled={disableDaysInput}
                         />
                       </FormGroup>
-                      <FormGroup className='history-input-wrapper'>
+                      <FormGroup className="history-input-wrapper">
                         <ControlLabel>Requested Days</ControlLabel>
                         <InputNumber
                           step={0.5}
-                          size='lg'
-                          postfix='days'
-                          name='requestedDays'
+                          size="lg"
+                          id="requested-days"
+                          postfix="days"
+                          name="requestedDays"
                           onChange={this.handleRequestedChange}
                           value={vaca.requested}
                         />
                       </FormGroup>
                       <FormGroup
                         style={{
-                          margin: '5px 20px 30px 20px',
-                          color: '#a7a7a7',
+                          margin: "5px 20px 30px 20px",
+                          color: "#a7a7a7",
                         }}
                       >
                         <small>
-                          Remember, do not count weekends or{' '}
+                          Remember, do not count weekends or{" "}
                           <a
-                            target='_blank'
-                            rel='noopener noreferrer'
-                            href='https://www.officeholidays.com/countries/germany/2020'
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href="https://www.officeholidays.com/countries/germany/2020"
                           >
                             German Federal Holidays
-                          </a>{' '}
+                          </a>{" "}
                           in your number of requested days.
                         </small>
                       </FormGroup>
-                      <FormGroup className='history-input-wrapper'>
+                      <FormGroup className="history-input-wrapper">
                         <ControlLabel>Days Remaining</ControlLabel>
                         <InputNumber
                           min={0}
-                          size='lg'
-                          postfix='days'
-                          name='remainingDays'
+                          size="lg"
+                          postfix="days"
+                          name="remainingDays"
                           onChange={this.handleRemainingChange}
                           value={vaca.remaining}
                           disabled={disableDaysInput}
@@ -854,21 +805,21 @@ class Wrapper extends React.Component {
                       </FormGroup>
                     </Panel>
                     <div
-                      className={`${showCalc ? 'active' : ''} calc-sidebar `}
+                      className={`${showCalc ? "active" : ""} calc-sidebar `}
                     >
                       <Calculator />
                       <div
-                        className='sidebar-button'
+                        className="sidebar-button"
                         onClick={this.showTimeCalculator}
                       >
                         <div
-                          className='calc-btn'
+                          className="calc-btn"
                           style={{
-                            marginLeft: '10px',
-                            right: '5px',
-                            top: '110px',
-                            position: 'absolute',
-                            color: 'secondary',
+                            marginLeft: "10px",
+                            right: "5px",
+                            top: "110px",
+                            position: "absolute",
+                            color: "secondary",
                           }}
                         >
                           <Whisper
@@ -877,9 +828,9 @@ class Wrapper extends React.Component {
                             }
                           >
                             <FontAwesomeIcon
-                              className='calc-btn'
+                              className="calc-btn"
                               icon={!showCalc ? faAngleRight : faAngleLeft}
-                              width='1.5em'
+                              width="1.5em"
                             />
                           </Whisper>
                         </div>
@@ -889,21 +840,22 @@ class Wrapper extends React.Component {
                 </CSSTransition>
                 <Panel
                   bordered
-                  style={{ padding: '10px' }}
+                  style={{ padding: "10px" }}
+                  id="which-days"
                   header={
                     <h4
-                      className='form-section-heading'
-                      style={{ position: 'relative' }}
+                      className="form-section-heading"
+                      style={{ position: "relative" }}
                     >
                       Dates
                       <FontAwesomeIcon
                         icon={faCalendarAlt}
-                        width='1em'
+                        width="1em"
                         style={{
-                          marginLeft: '10px',
-                          top: '2px',
-                          position: 'absolute',
-                          color: 'secondary',
+                          marginLeft: "10px",
+                          top: "2px",
+                          position: "absolute",
+                          color: "secondary",
                         }}
                       />
                     </h4>
@@ -912,7 +864,7 @@ class Wrapper extends React.Component {
                   <FormGroup>
                     <ControlLabel>On which days?</ControlLabel>
                     <DateRangePicker
-                      placement='top'
+                      placement="top"
                       showWeekNumbers
                       block
                       onChange={this.handleDateChange}
@@ -929,19 +881,19 @@ class Wrapper extends React.Component {
                   <FormGroup>
                     <ControlLabel>Note</ControlLabel>
                     <Input
-                      componentClass='textarea'
+                      componentClass="textarea"
                       rows={3}
-                      placeholder='Optional Note'
+                      placeholder="Optional Note"
                       onChange={this.handleNotesChange}
                     />
                   </FormGroup>
-                  {vaca.type === 'sick' && (
+                  {vaca.type === "sick" && (
                     <FormGroup>
-                      <ControlLabel className='sick-warning'>
+                      <ControlLabel className="sick-warning">
                         <FontAwesomeIcon
                           icon={faExclamationCircle}
-                          width='5.5rem'
-                          style={{ margin: '10px' }}
+                          width="5.5rem"
+                          style={{ margin: "10px" }}
                         />
                         When submitting a sick notice, don't forget to submit a
                         doctors note now, or later in your dashboard by editing
@@ -949,23 +901,23 @@ class Wrapper extends React.Component {
                       </ControlLabel>
                     </FormGroup>
                   )}
-                  <FormGroup style={{ marginBottom: '20px' }}>
-                    <ControlLabel className='filedrop-label'>
+                  <FormGroup style={{ marginBottom: "20px" }}>
+                    <ControlLabel className="filedrop-label">
                       Documents
                     </ControlLabel>
-                    <div className='upload-file'>
+                    <div className="upload-file">
                       <Upload
                         handleFileUploadSuccess={this.onFileUploadSuccess}
                       />
                     </div>
                   </FormGroup>
-                  {vaca.type === 'sick' && (
+                  {vaca.type === "sick" && (
                     <FormGroup>
                       <CheckboxGroup
                         onChange={this.handleConfirmIllnessChange}
                         value={vaca.confirmIllness}
                       >
-                        <Checkbox value='confirmed'>
+                        <Checkbox value="confirmed">
                           I hereby confirm that I was sick on the above named
                           days and the information is correct.
                         </Checkbox>
@@ -975,17 +927,17 @@ class Wrapper extends React.Component {
                   <FormGroup>
                     <ButtonGroup justified>
                       <Button
-                        style={{ width: '50%' }}
+                        style={{ width: "50%" }}
                         onClick={this.handleClear}
-                        appearance='default'
+                        appearance="default"
                       >
                         Clear
                       </Button>
                       <Button
-                        style={{ width: '50%' }}
+                        style={{ width: "50%" }}
                         onClick={this.toggleSubmitModal}
                         disabled={successfullySent}
-                        appearance='primary'
+                        appearance="primary"
                       >
                         Submit
                       </Button>
@@ -995,94 +947,24 @@ class Wrapper extends React.Component {
               </Form>
             </Content>
           </Container>
-          <div
-            className={`${
-              this.state.showSidebar ? 'active' : ''
-            } last-request-sidebar`}
-          >
-            <Panel
-              className='last-request-panel'
-              header='Last Request'
-              style={{ boxShadow: 'none' }}
-            >
-              <FormGroup>
-                <ControlLabel>Submitted</ControlLabel>
-                <Input disabled value={lastRequest.submitted} />
-              </FormGroup>
-              <FormGroup>
-                <ControlLabel>Days from Last Year</ControlLabel>
-                <Input disabled value={lastRequest.lastYear} />
-              </FormGroup>
-              <FormGroup>
-                <ControlLabel>Days from This Year</ControlLabel>
-                <Input disabled value={lastRequest.thisYear} />
-              </FormGroup>
-              <FormGroup>
-                <ControlLabel>Days already Spent</ControlLabel>
-                <Input disabled value={lastRequest.spentThisYear} />
-              </FormGroup>
-              <FormGroup>
-                <ControlLabel>Total Days Available Today</ControlLabel>
-                <Input disabled value={lastRequest.total} />
-              </FormGroup>
-              <FormGroup>
-                <ControlLabel>Requested Days</ControlLabel>
-                <Input disabled value={lastRequest.requested} />
-              </FormGroup>
-              <FormGroup>
-                <ControlLabel>Days Remaining</ControlLabel>
-                <Input disabled value={lastRequest.remaining} />
-              </FormGroup>
-              <FormGroup>
-                <ControlLabel>From</ControlLabel>
-                <Input disabled value={lastRequest.from} />
-              </FormGroup>
-              <FormGroup>
-                <ControlLabel style={{ marginRight: '20px' }}>To</ControlLabel>
-                <Input disabled value={lastRequest.to} />
-              </FormGroup>
-            </Panel>
-            <div
-              className='sidebar-button'
-              onClick={this.showLastRequestSidebar}
-            >
-              <div
-                style={{
-                  marginLeft: '10px',
-                  right: '13px',
-                  top: '325px',
-                  position: 'absolute',
-                  color: 'secondary',
-                }}
-              >
-                <Whisper speaker={<Tooltip>Last Request</Tooltip>}>
-                  <FontAwesomeIcon
-                    className='last-btn'
-                    icon={!showSidebar ? faAngleRight : faAngleLeft}
-                    width='1.5em'
-                  />
-                </Whisper>
-              </div>
-            </div>
-          </div>
           {openConfirmModal && (
             <Slide
               in={openConfirmModal}
-              placement='top'
-              exitingClassName='modal-out'
+              placement="top"
+              exitingClassName="modal-out"
             >
               <Modal
                 enforceFocus
-                size='sm'
+                size="sm"
                 backdrop
                 show={openConfirmModal}
                 onHide={this.toggleSubmitModal}
-                style={{ marginTop: '80px' }}
+                style={{ marginTop: "80px" }}
               >
                 <Modal.Header>
                   {!confirmed && (
                     <Modal.Title
-                      style={{ textAlign: 'center', fontSize: '24px' }}
+                      style={{ textAlign: "center", fontSize: "24px" }}
                     >
                       Confirm Submit
                     </Modal.Title>
@@ -1093,9 +975,9 @@ class Wrapper extends React.Component {
                     <>
                       <span
                         style={{
-                          textAlign: 'center',
-                          display: 'block',
-                          fontWeight: '600',
+                          textAlign: "center",
+                          display: "block",
+                          fontWeight: "600",
                         }}
                       >
                         Are you sure you want to submit the following absence
@@ -1106,24 +988,24 @@ class Wrapper extends React.Component {
                         height={200}
                         bordered={false}
                         data={confirmTableData}
-                        style={{ margin: '20px 50px' }}
+                        style={{ margin: "20px 50px" }}
                       >
-                        <Column width={200} align='left'>
+                        <Column width={200} align="left">
                           <HeaderCell>Field: </HeaderCell>
-                          <Cell dataKey='title' />
+                          <Cell dataKey="title" />
                         </Column>
-                        <Column width={250} align='left'>
+                        <Column width={250} align="left">
                           <HeaderCell>Value: </HeaderCell>
-                          <Cell dataKey='value' />
+                          <Cell dataKey="value" />
                         </Column>
                       </Table>
                       {hideHistory && (
                         <span
                           style={{
-                            textAlign: 'center',
-                            display: 'block',
-                            maxWidth: '80%',
-                            margin: '40px auto 20px auto',
+                            textAlign: "center",
+                            display: "block",
+                            maxWidth: "80%",
+                            margin: "40px auto 20px auto",
                           }}
                         >
                           You have selected to submit an absence which does not
@@ -1134,7 +1016,7 @@ class Wrapper extends React.Component {
                       )}
                     </>
                   ) : sendSuccess ? (
-                    <div className='confirmation-wrapper'>
+                    <div className="confirmation-wrapper">
                       <Lottie
                         options={successOptions}
                         height={300}
@@ -1142,35 +1024,35 @@ class Wrapper extends React.Component {
                       />
                     </div>
                   ) : (
-                    <div className='confirmation-wrapper'>
+                    <div className="confirmation-wrapper">
                       <Lottie options={errorOptions} height={300} width={300} />
                     </div>
                   )}
                 </Modal.Body>
                 <Modal.Footer
-                  style={{ display: 'flex', justifyContent: 'center' }}
+                  style={{ display: "flex", justifyContent: "center" }}
                 >
-                  <ButtonToolbar style={{ width: '100%' }}>
+                  <ButtonToolbar style={{ width: "100%" }}>
                     <ButtonGroup
                       style={{
-                        width: '100%',
-                        display: 'flex',
-                        justifyContent: 'center',
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: "center",
                       }}
                     >
                       {!confirmed && (
                         <>
                           <Button
                             onClick={this.toggleSubmitModal}
-                            style={{ width: '33%', fontSize: '16px' }}
-                            appearance='default'
+                            style={{ width: "33%", fontSize: "16px" }}
+                            appearance="default"
                           >
                             Cancel
                           </Button>
                           <Button
                             onClick={this.handleSubmit}
-                            style={{ width: '33%', fontSize: '16px' }}
-                            appearance='primary'
+                            style={{ width: "33%", fontSize: "16px" }}
+                            appearance="primary"
                           >
                             Confirm
                           </Button>
