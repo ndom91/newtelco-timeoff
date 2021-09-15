@@ -754,7 +754,7 @@ class New extends React.Component {
                           <a
                             target="_blank"
                             rel="noopener noreferrer"
-                            href="https://www.officeholidays.com/countries/germany/2020"
+                            href={`https://www.officeholidays.com/countries/germany/${new Date().getFullYear()}`}
                           >
                             German Federal Holidays
                           </a>{" "}

@@ -349,9 +349,13 @@ const Navigation = ({ expand, admin, token, handleToggle }) => {
               <div style={{ width: "150px", lineHeight: "1.4rem" }}>
                 {"Nico Domino"}
                 <br />
-                <b>ndomino[at]newtelco.de</b>
+                <b>ndomino[at]newtelco.de</b> (
+                <a href="https://ndo.dev?utm_source=ntvacation" target="_blank">
+                  ndo.dev
+                </a>
+                )
                 <br />
-                2019-2021 ©
+                2019-{new Date().getFullYear()} ©
               </div>
             </div>
             <div
