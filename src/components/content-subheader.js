@@ -1,16 +1,16 @@
-const Subheader = props => {
+const Subheader = (props) => {
   return (
     <div
       style={{
-        textAlign: 'left',
-        width: '100%',
-        marginLeft: '20px',
-        marginBottom: '20px',
+        textAlign: "left",
+        width: "100%",
+        marginLeft: "20px",
+        marginBottom: "20px",
       }}
     >
       <h3
         style={{
-          fontWeight: '100',
+          fontWeight: "100",
         }}
       >
         {props.header}

@@ -4,37 +4,33 @@
 
 Company Time-Off Management Application
 
-> 🏗️ Built With Next.js / React, RSuite UI, Google APIs and 💚
+> 🏗️ Built With Next.j, RSuite UI, Google APIs and 💚
 
 ## ⚛️  Features
 
-- [x] Management Confirmation via Email for each request
-- [x] Export Lists / Reports to Excel
-- [x] Active Directory User Sync
-- [x] Multiple Absence types (Sick, Vacation, Maternity, etc.)
-- [x] Customizable Company / Color / Logo
-- [x] Company Overview / Team Overview
-- [x] Team Chat
-- [x] Admin Dashboard incl. Report Exports
+- [x] Optional Management Confirmation
+- [x] Active Directory User Sync and Authentication
+- [x] Multiple Absence types (Illness, Vacation, Maternity, etc.)
+- [x] Company Dashboard
+- [x] Admin Dashboard
+- [x] Graphical Reports
+- [x] Export data to Excel
 
 ## ⚙️  Setup
 
 1. Clone the repo `git clone https://github.com/newtelco/timeoff`
 2. Install dependencies `npm i`
 3. Run `npm start`
-4. For more permanent instances, I recommend [`forever`](https://www.npmjs.com/package/forever) or [`pm2`](https://pm2.io) to manage the process.
+
+For more long-term use, I recommend [`pm2`](https://pm2.io) to manage the process.
 
 ## 👷 Contributing
 
 1. Clone the repo `git clone https://github.com/newtelco/timeoff`
 2. Install dependencies `npm i`
 3. Start Dev Environment `npm run dev`
-
-## 🤝 Contributors
-
-![Nico Domino](https://avatars1.githubusercontent.com/u/7415984?s=64&v=1)
+4. Stick to our `prettier`/`eslint` settings 🙏
 
 ## 📝 License
 
 MIT
-
