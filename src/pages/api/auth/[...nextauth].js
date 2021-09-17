@@ -1,12 +1,12 @@
-import NextAuth from 'next-auth'
-import Providers from 'next-auth/providers'
+import NextAuth from "next-auth"
+import GoogleProvider from "next-auth/providers/google"
 
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
-const options = {
+export default NextAuth({
   // https://next-auth.js.org/configuration/providers
   providers: [
-    Providers.Google({
+    GoogleProvider({
       clientId: process.env.GOOGLE_ID,
       clientSecret: process.env.GOOGLE_SECRET,
     }),
@@ -44,7 +44,7 @@ const options = {
   // https://next-auth.js.org/configuration/options#jwt
   jwt: {
     // A secret to use for key generation (you should set this explicitly)
-    // secret: 'INp8IvdIyeMcoGAgFGoA61DdBglwwSqnXJZkgz8PSnw',
+    secret: "INp8IvdIyeMcoGAgFGoA61DdBglwwSqnXJZkgz8PSnw",
     // Set to true to use encryption (default: false)
     // encryption: true,
     // You can define your own encode/decode functions for signing and encryption
@@ -58,7 +58,7 @@ const options = {
   // pages is not specified for that route.
   // https://next-auth.js.org/configuration/pages
   pages: {
-    signIn: '/auth/signin', // Displays signin buttons
+    signIn: "/auth/signin", // Displays signin buttons
     // signOut: '/api/auth/signout', // Displays form with sign out button
     // error: '/api/auth/error', // Error code passed in query string as ?error=
     // verifyRequest: '/api/auth/verify-request', // Used for check email page
@@ -76,6 +76,4 @@ const options = {
 
   // Enable debug messages in the console if you are having problems
   debug: false,
-}
-
-export default (req, res) => NextAuth(req, res, options)
+})
