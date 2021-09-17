@@ -180,25 +180,34 @@ export async function getServerSideProps({ req }) {
   if (host.includes("localhost")) {
     protocol = "http"
   }
-
   const session = await getSession({ req })
-  const userRes = await fetch(
-    `${protocol}://${host}/api/user/entries/dashboard?u=${encodeURIComponent(
-      session.user.email
-    )}`
-  )
-  const userJson = await userRes.json()
-  const user = userJson.userEntries[0]
-  return {
-    props: {
-      session,
-      dashboard: {
-        lastYear: user.resturlaubVorjahr || 0,
-        thisYear: user.jahresurlaubInsgesamt || 0,
-        spent: user.jahresUrlaubAusgegeben || 0,
-        available: user.resturlaubJAHR || 0,
+
+  if (!session) {
+    return {
+      props: {
+        session,
+        dashboard: {},
       },
-    },
+    }
+  } else {
+    const userRes = await fetch(
+      `${protocol}://${host}/api/user/entries/dashboard?u=${encodeURIComponent(
+        session.user.email
+      )}`
+    )
+    const userJson = await userRes.json()
+    const user = userJson.userEntries[0]
+    return {
+      props: {
+        session,
+        dashboard: {
+          lastYear: user.resturlaubVorjahr || 0,
+          thisYear: user.jahresurlaubInsgesamt || 0,
+          spent: user.jahresUrlaubAusgegeben || 0,
+          available: user.resturlaubJAHR || 0,
+        },
+      },
+    }
   }
 }
 

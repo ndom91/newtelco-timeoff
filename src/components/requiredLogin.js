@@ -13,6 +13,12 @@ import {
 } from "rsuite"
 
 const RequireLogin = () => {
+  setTimeout(() => {
+    if (typeof window !== "undefined") {
+      window.location.href = "/auth/signin"
+    }
+  }, 2500)
+
   return (
     <div className="show-fake-browser login-page">
       <Container>
@@ -34,7 +40,8 @@ const RequireLogin = () => {
                     >
                       You must be signed in to view this content. <br />
                       <br />
-                      Please click below to continue.
+                      If you are not redirected automatically, please click
+                      below to continue.
                     </div>
                   </FormGroup>
                   <FormGroup>
