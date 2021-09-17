@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Container, Content, Panel } from "rsuite"
-import { useSession } from "next-auth/react"
+import { getSession } from "next-auth/react"
 import { motion } from "framer-motion"
 import dynamic from "next/dynamic"
 import Layout from "../components/layout/index"
@@ -13,19 +13,9 @@ const Calendar = dynamic(() => import("../components/gcalendar"), {
   ssr: false,
 })
 
-const Dashboard = () => {
-  const { data: session } = useSession()
-  const [dashboard, setDashboard] = useState({
-    lastYear: 0,
-    thisYear: 0,
-    spent: 0,
-    available: 0,
-  })
-
+const Dashboard = ({ session, dashboard }) => {
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const host = window.location.host
-      const protocol = window.location.protocol
       let params = new URL(document.location).searchParams
       const approvalCompleted = params.get("b")
       const approvalHash = params.get("h")
@@ -68,24 +58,6 @@ const Dashboard = () => {
           } else if (code === "500") {
             notifyWarn("Error Responding to Request")
           }
-          fetch(
-            `${protocol}//${host}/api/user/entries/dashboard?u=${encodeURIComponent(
-              session.user.email
-            )}`
-          )
-            .then((resp) => resp.json())
-            .then((data) => {
-              if (data.userEntries[0]) {
-                const user = data.userEntries[0]
-                setDashboard({
-                  lastYear: user.resturlaubVorjahr || 0,
-                  thisYear: user.jahresurlaubInsgesamt || 0,
-                  spent: user.jahresUrlaubAusgegeben || 0,
-                  available: user.resturlaubJAHR || 0,
-                })
-              }
-            })
-            .catch((err) => console.error(err))
         }
       }
     }
@@ -199,6 +171,34 @@ const Dashboard = () => {
     )
   } else {
     return <RequireLogin />
+  }
+}
+
+export async function getServerSideProps({ req }) {
+  const host = req && (req.headers["x-forwarded-host"] ?? req.headers["host"])
+  let protocol = "https"
+  if (host.includes("localhost")) {
+    protocol = "http"
+  }
+
+  const session = await getSession({ req })
+  const userRes = await fetch(
+    `${protocol}://${host}/api/user/entries/dashboard?u=${encodeURIComponent(
+      session.user.email
+    )}`
+  )
+  const userJson = await userRes.json()
+  const user = userJson.userEntries[0]
+  return {
+    props: {
+      session,
+      dashboard: {
+        lastYear: user.resturlaubVorjahr || 0,
+        thisYear: user.jahresurlaubInsgesamt || 0,
+        spent: user.jahresUrlaubAusgegeben || 0,
+        available: user.resturlaubJAHR || 0,
+      },
+    },
   }
 }
 
