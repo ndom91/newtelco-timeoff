@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { Container, Content, Panel } from "rsuite"
 import { getSession } from "next-auth/react"
 import { motion } from "framer-motion"
