@@ -12,6 +12,7 @@ import RequireLogin from "../components/requiredLogin"
 import Subheader from "../components/content-subheader"
 import Calculator from "../components/newcalculator"
 import Upload from "../components/upload"
+import HomeOffice from "../components/new/homeoffice"
 import lottieSuccess from "../style/lottie-success.json"
 import lottieError from "../style/error-icon.json"
 
@@ -305,9 +306,7 @@ class New extends React.Component {
 
   handleTypeChange = (value) => {
     let hideHistory = false
-    if (value === "sick") {
-      hideHistory = true
-    } else if (value === "trip") {
+    if (["sick", "homeoffice", "trip"].includes(value)) {
       hideHistory = true
     }
     this.setState({
@@ -637,7 +636,7 @@ class New extends React.Component {
                       <Radio value="vacation">Vacation</Radio>
                       <Radio value="sick">Illness</Radio>
                       <Radio value="trip">Trip</Radio>
-                      <Radio value="moving">Moving</Radio>
+                      <Radio value="homeoffice">Homeoffice</Radio>
                       <Radio value="other">Other</Radio>
                     </RadioGroup>
                   </FormGroup>
@@ -646,6 +645,7 @@ class New extends React.Component {
                   in={!hideHistory}
                   timeout={1000}
                   classNames="panel"
+                  mountOnEnter
                   unmountOnExit
                 >
                   <div
@@ -838,129 +838,144 @@ class New extends React.Component {
                     </div>
                   </div>
                 </CSSTransition>
-                <Panel
-                  bordered
-                  style={{ padding: "10px" }}
-                  id="which-days"
-                  header={
-                    <h4
-                      className="form-section-heading"
-                      style={{ position: "relative" }}
-                    >
-                      Dates
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        style={{ marginLeft: "15px" }}
-                        width={25}
+                {vaca.type === "homeoffice" ? (
+                  <HomeOffice
+                    values={{
+                      availableManagers,
+                      successfullySent,
+                    }}
+                    options={{
+                      handleManagerChange: this.handleManagerChange,
+                      handleNotesChange: this.handleNotesChange,
+                      handleSubmit: this.handleSubmit,
+                      handleClear: this.handleClear,
+                    }}
+                  />
+                ) : (
+                  <Panel
+                    bordered
+                    style={{ padding: "10px" }}
+                    id="which-days"
+                    header={
+                      <h4
+                        className="form-section-heading"
+                        style={{ position: "relative" }}
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                        />
-                      </svg>
-                    </h4>
-                  }
-                >
-                  <FormGroup>
-                    <ControlLabel>On which days?</ControlLabel>
-                    <DateRangePicker
-                      placement="top"
-                      showWeekNumbers
-                      block
-                      onChange={this.handleDateChange}
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <ControlLabel>Manager</ControlLabel>
-                    <SelectPicker
-                      block
-                      data={availableManagers}
-                      onChange={this.handleManagerChange}
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <ControlLabel>Note</ControlLabel>
-                    <Input
-                      componentClass="textarea"
-                      rows={3}
-                      placeholder="Optional Note"
-                      onChange={this.handleNotesChange}
-                    />
-                  </FormGroup>
-                  {vaca.type === "sick" && (
-                    <FormGroup>
-                      <ControlLabel className="sick-warning">
+                        Dates
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="h-6 w-6"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
-                          style={{ marginRight: "15px" }}
-                          width={100}
+                          style={{ marginLeft: "15px" }}
+                          width={25}
                         >
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
                             strokeWidth={2}
-                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                           />
                         </svg>
-                        <span>
-                          When submitting a sick notice, don't forget to submit
-                          a doctors note now, or later in your dashboard by
-                          editing this request{`&apos;``&apos;`}
-                          <strong>if sick for more than 3 days</strong>.
-                        </span>
-                      </ControlLabel>
-                    </FormGroup>
-                  )}
-                  <FormGroup style={{ marginBottom: "20px" }}>
-                    <div className="upload-file">
-                      <Upload
-                        handleFileUploadSuccess={this.onFileUploadSuccess}
-                      />
-                    </div>
-                  </FormGroup>
-                  {vaca.type === "sick" && (
+                      </h4>
+                    }
+                  >
                     <FormGroup>
-                      <CheckboxGroup
-                        onChange={this.handleConfirmIllnessChange}
-                        value={vaca.confirmIllness}
-                      >
-                        <Checkbox value="confirmed">
-                          I hereby confirm that I was sick on the above named
-                          days and the information is correct.
-                        </Checkbox>
-                      </CheckboxGroup>
+                      <ControlLabel>On which days?</ControlLabel>
+                      <DateRangePicker
+                        placement="top"
+                        showWeekNumbers
+                        block
+                        onChange={this.handleDateChange}
+                      />
                     </FormGroup>
-                  )}
-                  <FormGroup>
-                    <ButtonGroup justified>
-                      <Button
-                        style={{ width: "50%" }}
-                        onClick={this.handleClear}
-                        appearance="default"
-                      >
-                        Clear
-                      </Button>
-                      <Button
-                        style={{ width: "50%" }}
-                        onClick={this.toggleSubmitModal}
-                        disabled={successfullySent}
-                        appearance="primary"
-                      >
-                        Submit
-                      </Button>
-                    </ButtonGroup>
-                  </FormGroup>
-                </Panel>
+                    <FormGroup>
+                      <ControlLabel>Manager</ControlLabel>
+                      <SelectPicker
+                        block
+                        data={availableManagers}
+                        onChange={this.handleManagerChange}
+                      />
+                    </FormGroup>
+                    <FormGroup>
+                      <ControlLabel>Note</ControlLabel>
+                      <Input
+                        componentClass="textarea"
+                        rows={3}
+                        placeholder="Optional Note"
+                        onChange={this.handleNotesChange}
+                      />
+                    </FormGroup>
+                    {vaca.type === "sick" && (
+                      <FormGroup>
+                        <ControlLabel className="sick-warning">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-6 w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            style={{ marginRight: "15px" }}
+                            width={100}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          <span>
+                            When submitting a sick notice, don't forget to
+                            submit a doctors note now, or later in your
+                            dashboard by editing this request
+                            <strong>if sick for more than 3 days</strong>.
+                          </span>
+                        </ControlLabel>
+                      </FormGroup>
+                    )}
+                    <FormGroup style={{ marginBottom: "20px" }}>
+                      <div className="upload-file">
+                        <Upload
+                          handleFileUploadSuccess={this.onFileUploadSuccess}
+                        />
+                      </div>
+                    </FormGroup>
+                    {vaca.type === "sick" && (
+                      <FormGroup>
+                        <CheckboxGroup
+                          onChange={this.handleConfirmIllnessChange}
+                          value={vaca.confirmIllness}
+                        >
+                          <Checkbox value="confirmed">
+                            I hereby confirm that I was sick on the above named
+                            days and the information is correct.
+                          </Checkbox>
+                        </CheckboxGroup>
+                      </FormGroup>
+                    )}
+                    <FormGroup>
+                      <ButtonGroup justified>
+                        <Button
+                          style={{ width: "50%" }}
+                          onClick={this.handleClear}
+                          appearance="default"
+                        >
+                          Clear
+                        </Button>
+                        <Button
+                          style={{ width: "50%" }}
+                          onClick={this.toggleSubmitModal}
+                          disabled={successfullySent}
+                          appearance="primary"
+                        >
+                          Submit
+                        </Button>
+                      </ButtonGroup>
+                    </FormGroup>
+                  </Panel>
+                )}
               </Form>
             </Content>
           </Container>
