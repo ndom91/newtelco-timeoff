@@ -70,7 +70,6 @@ class StackedBarChart extends React.Component {
         if (data.query.length > 0) {
           const teamSeries = []
           const series = []
-          console.log(data.query)
           const teams = Array.from(
             /* eslint-disable-next-line */
             new Set(
@@ -100,7 +99,6 @@ class StackedBarChart extends React.Component {
                   ? 1
                   : 0
               })
-            console.log("teamData", teamData)
             teamSeries.push(teamData)
           })
           teamSeries.forEach((team) => {
@@ -113,7 +111,6 @@ class StackedBarChart extends React.Component {
             }
             series.push({ data: data, name: team[0].group })
           })
-          console.log(series)
           this.setState({
             series: series,
           })
@@ -124,7 +121,6 @@ class StackedBarChart extends React.Component {
 
   render() {
     const { options, series } = this.state
-    console.log("s", series)
     if (series.length > 0) {
       return (
         <Chart
