@@ -67,7 +67,7 @@ class StackedBarChart extends React.Component {
     fetch(`${protocol}//${host}/api/report/stackedbarchart`)
       .then((res) => res.json())
       .then((data) => {
-        if (data.query) {
+        if (data.query.length > 0) {
           const teamSeries = []
           const series = []
           const teams = Array.from(

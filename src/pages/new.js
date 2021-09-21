@@ -1133,23 +1133,6 @@ class New extends React.Component {
                   0 10px 10px rgba(90, 97, 105, 0.06),
                   0 7px 70px rgba(90, 97, 105, 0.1);
               }
-              .last-request-sidebar {
-                position: absolute;
-                left: -255px;
-                top: 200px;
-                height: 740px;
-                width: 300px;
-                border-radius: 10px;
-                background-color: #fff;
-                box-shadow: 0 2px 0 rgba(90, 97, 105, 0.11),
-                  0 4px 8px rgba(90, 97, 105, 0.12),
-                  0 10px 10px rgba(90, 97, 105, 0.06),
-                  0 7px 70px rgba(90, 97, 105, 0.1);
-                transition: left 250ms ease-in-out;
-              }
-              .last-request-sidebar.active {
-                left: -20px !important;
-              }
               :global(.last-request-sidebar .rs-form-group) {
                 margin-bottom: 10px !important;
               }
@@ -1166,7 +1149,7 @@ class New extends React.Component {
                 height: 100%;
                 transition: opacity 250ms ease-in-out;
               }
-              .calc-sidebar {
+              :global(.calc-sidebar) {
                 position: absolute;
                 right: -30px;
                 top: 100px;
@@ -1181,7 +1164,7 @@ class New extends React.Component {
                 transition: right 250ms ease-in-out;
                 z-index: -1;
               }
-              .calc-sidebar.active {
+              :global(.calc-sidebar.active) {
                 right: -240px;
               }
               :global(.history-input-wrapper) {
@@ -1359,7 +1342,14 @@ class New extends React.Component {
         </Layout>
       )
     } else {
-      return <RequireLogin />
+      return (
+        <Layout
+          user={this.props.session.user.email}
+          token={this.props.csrfToken}
+        >
+          <RequireLogin />
+        </Layout>
+      )
     }
   }
 }

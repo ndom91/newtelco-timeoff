@@ -2,7 +2,7 @@ import React from "react"
 import FullCalendar from "@fullcalendar/react"
 import dayGridPlugin from "@fullcalendar/daygrid"
 import googleCalendarPlugin from "@fullcalendar/google-calendar"
-import "../style/calendar.less"
+import "@fullcalendar/daygrid/main.css"
 
 const Calendar = () => {
   return (

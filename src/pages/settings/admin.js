@@ -65,7 +65,7 @@ class AdminSettings extends React.Component {
       openAdminEditModal: false,
       openPersonalEditModal: false,
       viewFilesModals: false,
-      admin: props.admin,
+      admin: false,
       adLoading: false,
       personalEditData: {
         from: "",
@@ -512,11 +512,8 @@ class AdminSettings extends React.Component {
     }
   }
 
-  // componentWillMount() {}
-
   componentDidMount() {
     const selectUserList = []
-    // const userAdmin = JSON.parse(window.localStorage.getItem("mA"))
     this.props.users?.userList?.forEach((user) => {
       selectUserList.push({
         value: user.email,
@@ -544,7 +541,6 @@ class AdminSettings extends React.Component {
           return -1
         }
       }),
-      // admin: userAdmin,
       allMonths,
       allYears,
     })
@@ -2253,7 +2249,14 @@ class AdminSettings extends React.Component {
         </Layout>
       )
     } else {
-      return <RequireLogin />
+      return (
+        <Layout
+          user={this.props.session.user.email}
+          token={this.props.session.csrfToken}
+        >
+          <RequireLogin />
+        </Layout>
+      )
     }
   }
 }

@@ -44,7 +44,6 @@ class AdminReports extends React.Component {
   }
 
   componentDidMount() {
-    const userAdmin = JSON.parse(window.localStorage.getItem("mA"))
     const allYears = []
     const yearNow = moment().format("YYYY")
     for (let i = 0; i < 3; i++) {
@@ -61,7 +60,6 @@ class AdminReports extends React.Component {
     }
 
     this.setState({
-      admin: userAdmin,
       allMonths,
       allYears,
     })
@@ -286,9 +284,13 @@ class AdminReports extends React.Component {
   }
 
   render() {
+    let userAdmin = false
+    if (typeof window !== "undefined") {
+      userAdmin = JSON.parse(window.localStorage.getItem("mA"))
+    }
     const { allMonths, allYears } = this.state
 
-    if (this.props.session && this.state.admin) {
+    if (this.props.session && userAdmin) {
       return (
         <Layout
           user={this.props.session.user.email}
@@ -532,7 +534,14 @@ class AdminReports extends React.Component {
         </Layout>
       )
     } else {
-      return <RequireLogin />
+      return (
+        <Layout
+          user={this.props.session.user.email}
+          token={this.props.session.csrfToken}
+        >
+          <RequireLogin />
+        </Layout>
+      )
     }
   }
 }

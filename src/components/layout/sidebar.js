@@ -86,7 +86,7 @@ const Navigation = ({ expand, admin, token, handleToggle }) => {
 
   return (
     <Sidebar
-      style={{ display: "flex", flexDirection: "column" }}
+      style={{ display: "flex", flexDirection: "column", marginTop: "0px" }}
       width={expand ? 260 : 56}
       className="sidebar-wrapper"
     >
@@ -95,8 +95,9 @@ const Navigation = ({ expand, admin, token, handleToggle }) => {
           className="sidenav-header"
           style={{ padding: expand ? "18px" : "8px" }}
         >
-          {!expand && <Image src={NTLogo} alt="Logo" height={80} width={80} />}
-          {expand && (
+          {!expand ? (
+            <Image src={NTLogo} alt="Logo" height={80} width={80} />
+          ) : (
             <span
               style={{
                 fontSize: "32px",
