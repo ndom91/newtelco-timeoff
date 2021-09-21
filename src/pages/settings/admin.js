@@ -512,9 +512,11 @@ class AdminSettings extends React.Component {
     }
   }
 
+  // componentWillMount() {}
+
   componentDidMount() {
     const selectUserList = []
-    const userAdmin = JSON.parse(window.localStorage.getItem("mA"))
+    // const userAdmin = JSON.parse(window.localStorage.getItem("mA"))
     this.props.users?.userList?.forEach((user) => {
       selectUserList.push({
         value: user.email,
@@ -542,7 +544,7 @@ class AdminSettings extends React.Component {
           return -1
         }
       }),
-      admin: userAdmin,
+      // admin: userAdmin,
       allMonths,
       allYears,
     })
@@ -932,7 +934,7 @@ class AdminSettings extends React.Component {
   }
 
   toggleViewFilesModal = (files) => {
-    console.log(files)
+    // console.log(files)
     this.setState({
       viewFilesModal: !this.state.viewFilesModal,
       viewFiles: files,
@@ -1077,7 +1079,6 @@ class AdminSettings extends React.Component {
       .catch((err) => console.error(err))
   }
 
-  j
   handleDeleteFromPersonalModal = () => {
     if (this.personalGridApi) {
       const selectedRow = this.personalGridApi.getSelectedRows()
@@ -1370,7 +1371,7 @@ class AdminSettings extends React.Component {
         .then((data) => data.json())
         .then((data) => {
           let files = []
-          console.log(data)
+          // console.log(data)
           if (data.files[0].files && data.files[0].files.length !== 0) {
             files = JSON.parse(data.files[0].files)
           }
@@ -1436,6 +1437,10 @@ class AdminSettings extends React.Component {
   }
 
   render() {
+    let userAdmin = false
+    if (typeof window !== "undefined") {
+      userAdmin = JSON.parse(window?.localStorage?.getItem("mA"))
+    }
     const {
       gridOptions,
       rowData,
@@ -1465,7 +1470,7 @@ class AdminSettings extends React.Component {
       adLoading,
     } = this.state
 
-    if (this.props.session && this.state.admin) {
+    if (this.props.session && userAdmin) {
       return (
         <Layout
           user={this.props.session.user.email}
