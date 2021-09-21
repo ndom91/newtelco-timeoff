@@ -8,7 +8,7 @@ class StackedBarChart extends React.Component {
     const MONTHS = () => {
       const months = []
       const dateStart = moment()
-      const dateEnd = moment().subtract(6, "month")
+      const dateEnd = moment().subtract(12, "month")
       while (dateEnd.diff(dateStart, "months") <= 0) {
         months.push(`${dateStart.format("MMM")} ${dateStart.format("YYYY")}`)
         dateStart.subtract(1, "month")
@@ -16,17 +16,17 @@ class StackedBarChart extends React.Component {
       return months
     }
     this.state = {
-      series: [{ data: [0, 0, 0, 0, 0, 0], name: "" }],
+      series: [],
       options: {
         chart: {
           type: "bar",
           height: 350,
           stacked: true,
           toolbar: {
-            show: true,
+            show: false,
           },
           zoom: {
-            enabled: true,
+            enabled: false,
           },
         },
         responsive: [
@@ -70,15 +70,18 @@ class StackedBarChart extends React.Component {
         if (data.query.length > 0) {
           const teamSeries = []
           const series = []
+          console.log(data.query)
           const teams = Array.from(
             /* eslint-disable-next-line */
             new Set(
-              data.query.map((obj) => JSON.stringify({ group: obj.group }))
+              data.query.map((obj) => {
+                return obj.group
+              })
             )
-          ).map(JSON.parse)
+          )
           teams.forEach((team) => {
             const teamData = data.query
-              .filter((vaca) => vaca.group === team.group)
+              .filter((vaca) => vaca.group === team)
               .sort((a, b) => {
                 // if (a.year > b.year) return -1
                 // else if (a.year < b.year) return 1
@@ -97,21 +100,22 @@ class StackedBarChart extends React.Component {
                   ? 1
                   : 0
               })
+            console.log("teamData", teamData)
             teamSeries.push(teamData)
           })
           teamSeries.forEach((team) => {
             const data = team.map((team) => team.count)
+            if (data.length < 12) {
+              const missingData = 12 - data.length
+              Array.from(Array(missingData)).forEach(() => {
+                data.push(0)
+              })
+            }
             series.push({ data: data, name: team[0].group })
           })
-          const newXAxis = teamSeries[0].map(
-            (month) => `${month.month} ${month.year}`
-          )
-          const options = this.state.options
-          options.xaxis.categories = newXAxis
           console.log(series)
           this.setState({
             series: series,
-            options: options,
           })
         }
       })
@@ -120,15 +124,20 @@ class StackedBarChart extends React.Component {
 
   render() {
     const { options, series } = this.state
-    return (
-      <Chart
-        options={options}
-        series={series}
-        type="bar"
-        width={600}
-        height={320}
-      />
-    )
+    console.log("s", series)
+    if (series.length > 0) {
+      return (
+        <Chart
+          options={options}
+          series={series}
+          width={600}
+          height={320}
+          type="bar"
+        />
+      )
+    } else {
+      return <div>Loading...</div>
+    }
   }
 }
 

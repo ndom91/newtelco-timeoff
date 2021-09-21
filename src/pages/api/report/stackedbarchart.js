@@ -7,7 +7,7 @@ module.exports = async (_, res) => {
       from vacations
       left join users
       on vacations.email = users.email
-      where vacations.fromDate BETWEEN CURDATE() - INTERVAL 6 MONTH AND CURDATE()
+      where vacations.fromDate BETWEEN CURDATE() - INTERVAL 12 MONTH AND CURDATE()
       and vacations.type = 'vacation'
       and vacations.disabled = 0
       and vacations.id is not null
