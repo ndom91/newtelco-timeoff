@@ -19,12 +19,13 @@ import {
   Col,
 } from "rsuite"
 
-const ResponsiveSwarmPlot = React.lazy(() =>
-  import("../../components/swarmplot")
-)
+// const ResponsiveSwarmPlot = React.lazy(() =>
+//   import("../../components/swarmplot")
+// )
 const StackedBarChart = React.lazy(() =>
   import("../../components/stackedBarChart")
 )
+const AreaChart = React.lazy(() => import("../../components/lineChart"))
 
 class AdminReports extends React.Component {
   static async getInitialProps({ req, query }) {
@@ -305,7 +306,7 @@ class AdminReports extends React.Component {
                     style={{ marginBottom: "20px" }}
                     className="user-content-header"
                   >
-                    <h4>Last 6 Months</h4>
+                    <h4>Last Year - Bar Chart</h4>
                   </Header>
                   <Panel bordered style={{ boxShadow: "none" }}>
                     <div style={{ height: "300px", width: "100%" }}>
@@ -322,12 +323,12 @@ class AdminReports extends React.Component {
                     style={{ marginBottom: "20px" }}
                     className="user-content-header"
                   >
-                    <h4>Last Year</h4>
+                    <h4>Last Year - Area Chart</h4>
                   </Header>
                   <Panel bordered style={{ boxShadow: "none" }}>
                     <div style={{ height: "300px", width: "100%" }}>
                       <React.Suspense fallback={<div />}>
-                        <ResponsiveSwarmPlot />
+                        <AreaChart />
                       </React.Suspense>
                     </div>
                   </Panel>
