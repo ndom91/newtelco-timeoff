@@ -4,22 +4,27 @@ const escape = require("sql-template-strings")
 const { format } = require("date-fns")
 
 module.exports = async (req, res) => {
-  const body = JSON.parse(req.body)
-  const to = format(new Date(body.to), "dd.MM.yyyy")
-  const from = format(new Date(body.from), "dd.MM.yyyy")
-  const manager = body.manager
-  const type = body.type.charAt(0).toUpperCase() + body.type.slice(1)
-  const name = body.name
-  const email = body.email
-  const approvalHash = body.ah
+  const {
+    to: dateTo,
+    from: dateFrom,
+    manager,
+    type: absenceType,
+    name,
+    email,
+    ah: approvalHash,
+    note,
+    days,
+    files,
+  } = req.body
+  const to = format(new Date(dateTo), "dd.MM.yyyy")
+  const from = format(new Date(dateFrom), "dd.MM.yyyy")
+  const type = absenceType.charAt(0).toUpperCase() + absenceType.slice(1)
   const dateToday = new Date().toLocaleDateString("de", {
     year: "numeric",
     day: "2-digit",
     month: "2-digit",
   })
-  const note = body.note
   let mailBody = mail
-  const files = body.files
 
   const sendMail = (manager, mailBody, name) => {
     const nodemailer = require("nodemailer")
@@ -134,9 +139,34 @@ module.exports = async (req, res) => {
     })
   } else {
     const headerText = `Please approve or deny this new ${type} request from <b>${name}</b>.<br /><br /> This user will be notified via email of your decision and upon approval the calendar entry will be created.`
-    const approvalButtons = `<table border="0" cellpadding="0" cellspacing="30" role="presentation"> <tr> <td align="center" class="hover-bg-green-600" style="background-color: #67B246; border-radius: 3px;" bgcolor="#67B246"> <a href="${process.env.NEXTAUTH_URL}/api/mail/response?h=${approvalHash}&a=a" target="_blank" class="all-font-sans hover-border-green-600" style="border: 1px solid #67B246; border-radius: 2px; display: inline-block; font-size: 20px; padding: 15px 25px; color: #ffffff; text-decoration: none;">Approve</a> </td> <td align="center" class="hover-bg-red-600" style="background-color: #fa2147; border-radius: 3px;" bgcolor="#fa2147"> <a href="${process.env.NEXTAUTH_URL}/api/mail/response?h=${approvalHash}&a=d" target="_blank" class="all-font-sans hover-border-red-600" style="border: 1px solid #fa2147; border-radius: 2px; display: inline-block; font-size: 20px; padding: 15px 25px; color: #ffffff; text-decoration: none;">Deny</a> </td> </tr> </table>`
+    const approvalButtons = `<table border="0" cellpadding="0" cellspacing="30" role="presentation"> <tr> <td align="center" class="hover-bg-green-600" style="background-color: #67B246; border-radius: 3px;" bgcolor="#67B246"> <a href="${
+      process.env.NEXTAUTH_URL
+    }/api/mail/response?h=${approvalHash}&a=a${
+      type === "Homeoffice" ? "&ho=true" : ""
+    }" target="_blank" class="all-font-sans hover-border-green-600" style="border: 1px solid #67B246; border-radius: 2px; display: inline-block; font-size: 20px; padding: 15px 25px; color: #ffffff; text-decoration: none;">Approve</a> </td> <td align="center" class="hover-bg-red-600" style="background-color: #fa2147; border-radius: 3px;" bgcolor="#fa2147"> <a href="${
+      process.env.NEXTAUTH_URL
+    }/api/mail/response?h=${approvalHash}&a=d${
+      type === "Homeoffice" ? "&ho=true" : ""
+    }" target="_blank" class="all-font-sans hover-border-red-600" style="border: 1px solid #fa2147; border-radius: 2px; display: inline-block; font-size: 20px; padding: 15px 25px; color: #ffffff; text-decoration: none;">Deny</a> </td> </tr> </table>`
     mailBody = mailBody.replace("[APPROVAL_BUTTONS]", approvalButtons)
-    mailBody = mailBody.replace("[SICKBODY]", "")
+    if (type === "Homeoffice") {
+      const selectedDays = Object.values(days).reduce((row, day) => {
+        if (day) {
+          row += "<td align='center'>✅</td>"
+        } else {
+          row += "<td align='center'>❌</td>"
+        }
+        return row
+      }, "")
+
+      mailBody = mailBody.replace(
+        "[SICKBODY]",
+        `<table border="0" cellpadding="0" cellspacing="10" role="presentation" class="all-font-sans" style="width: 90%; color: #666666;"><tr><td align='center'>Mon</td><td align='center'>Tue</td><td align='center'>Wed</td><td align='center'>Thu</td><td align='center'>Fri</td></tr>
+        <tr>${selectedDays}</tr></table>`
+      )
+    } else {
+      mailBody = mailBody.replace("[SICKBODY]", "")
+    }
     mailBody = mailBody.replace("[HEADER_TEXT]", headerText)
     sendMail(manager, mailBody, name)
   }

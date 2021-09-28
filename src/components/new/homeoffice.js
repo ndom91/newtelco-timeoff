@@ -9,22 +9,11 @@ import {
   ControlLabel,
   DateRangePicker,
   SelectPicker,
-  Schema,
   HelpBlock,
   Checkbox,
   CheckboxGroup,
 } from "rsuite"
 import DayCheckbox from "./dayCheckbox"
-
-const { ArrayType } = Schema.Types
-
-const WeekDaysModel = Schema.Model({
-  selectedDays: ArrayType().rangeLength(
-    0,
-    2,
-    "Please select no more than two home office days per week."
-  ),
-})
 
 const HomeOffice = ({ values, options }) => {
   const [selectedDays, setSelectedDays] = useState([])
@@ -33,26 +22,10 @@ const HomeOffice = ({ values, options }) => {
   const {
     handleManagerChange,
     handleNotesChange,
+    handleWeekChange,
     handleClear,
     toggleSubmitModal,
   } = options
-
-  const handleWeekChange = (val) => {
-    console.log(val)
-    const [start, end] = val
-    setSelectedWeek({
-      start,
-      end,
-    })
-  }
-
-  const addDay = (el) => {
-    console.log(el)
-    setSelectedDays([...selectedDays, el])
-    console.log("selectedDays", selectedDays)
-    const checkResults = WeekDaysModel.check(selectedDays)
-    console.log("res", checkResults)
-  }
 
   return (
     <Panel
@@ -81,7 +54,7 @@ const HomeOffice = ({ values, options }) => {
         </h4>
       }
     >
-      <Form model={WeekDaysModel}>
+      <Form onChange={(val) => console.log(val)}>
         <FormGroup>
           <ControlLabel>Week</ControlLabel>
           <DateRangePicker
@@ -101,45 +74,11 @@ const HomeOffice = ({ values, options }) => {
             of 2 per week
           </HelpBlock>
           <div className="weekCheck-wrapper">
-            {/* <Checkbox */}
-            {/*   value="monday" */}
-            {/*   name="monday" */}
-            {/*   inline */}
-            {/*   onChange={(val) => addDay(val)} */}
-            {/* > */}
-            {/*   Monday */}
-            {/* </Checkbox> */}
-            {/* <Checkbox */}
-            {/*   value="tuesday" */}
-            {/*   name="tuesday" */}
-            {/*   inline */}
-            {/*   onChange={(val) => addDay(val)} */}
-            {/* > */}
-            {/*   Tuesday */}
-            {/* </Checkbox> */}
-            {/* <Checkbox */}
-            {/*   value="wednesday" */}
-            {/*   name="wednesday" */}
-            {/*   inline */}
-            {/*   onChange={(val) => addDay(val)} */}
-            {/* /> */}
-            {/* <Checkbox */}
-            {/*   value="thursday" */}
-            {/*   name="thursday" */}
-            {/*   inline */}
-            {/*   onChange={(val) => addDay(val)} */}
-            {/* /> */}
-            {/* <Checkbox */}
-            {/*   value="friday" */}
-            {/*   name="friday" */}
-            {/*   inline */}
-            {/*   onChange={(val) => addDay(val)} */}
-            {/* /> */}
-            <DayCheckbox day="monday" />
-            <DayCheckbox day="tuesday" />
-            <DayCheckbox day="wednesday" />
-            <DayCheckbox day="thursday" />
-            <DayCheckbox day="friday" />
+            <DayCheckbox id="ho-mon" day="monday" />
+            <DayCheckbox id="ho-tue" day="tuesday" />
+            <DayCheckbox id="ho-wed" day="wednesday" />
+            <DayCheckbox id="ho-thu" day="thursday" />
+            <DayCheckbox id="ho-fri" day="friday" />
           </div>
         </FormGroup>
         <FormGroup>

@@ -1,9 +1,9 @@
 import { useState } from "react"
 
-const DayCheckbox = ({ day }) => {
+const DayCheckbox = ({ id, day }) => {
   const [checked, setChecked] = useState(false)
   return (
-    <div className="day-checkbox">
+    <div className="day-checkbox" onClick={() => setChecked(!checked)}>
       <div className="check-image">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -40,6 +40,7 @@ const DayCheckbox = ({ day }) => {
       </div>
       <input
         className="day-input"
+        id={id}
         type="checkbox"
         name={day}
         value={day}

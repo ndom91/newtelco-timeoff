@@ -139,8 +139,6 @@ class New extends React.Component {
       })
       .catch((err) => console.error(err))
 
-    const email = this.props.session.user.email
-
     fetch("/api/user/list")
       .then((res) => res.json())
       .then((data) => {
@@ -162,6 +160,7 @@ class New extends React.Component {
       })
       .catch((err) => console.error(err))
 
+    const email = this.props.session.user.email
     fetch(`/api/user/entries/new?email=${email}`)
       .then((res) => res.json())
       .then((data) => {
@@ -346,6 +345,17 @@ class New extends React.Component {
     })
   }
 
+  handleWeekChange = (val) => {
+    const [start, end] = val
+    this.setState({
+      vaca: {
+        ...this.state.vaca,
+        weekFrom: start,
+        weekTo: end,
+      },
+    })
+  }
+
   handleConfirmIllnessChange = (value) => {
     this.setState({
       vaca: {
@@ -374,36 +384,94 @@ class New extends React.Component {
   }
 
   toggleSubmitModal = () => {
+    const { vaca } = this.state
+    const {
+      type,
+      confirmIllness,
+      dateFrom,
+      dateTo,
+      manager,
+      weekFrom,
+      weekTo,
+    } = vaca
     if (!this.state.openConfirmModal) {
-      if (
-        this.state.vaca.type === "sick" &&
-        !this.state.vaca.confirmIllness[0]
-      ) {
+      if (type === "sick" && !confirmIllness[0]) {
         notifyWarn("You must confirm the information to continue")
         return
       }
-      if (
-        this.state.vaca.dateFrom &&
-        this.state.vaca.dateTo &&
-        this.state.vaca.manager
-      ) {
-        const { vaca } = this.state
+      if (type === "vacation" && vaca.requested === 0) {
+        notifyWarn("You must not leave Requested Days on 0!")
+        return
+      }
+      if (type !== "homeoffice" && dateFrom && dateTo && manager) {
         const tableData = [
           {
             title: "From",
-            value: moment(vaca.dateFrom).format("DD.MM.YYYY"),
+            value: moment(dateFrom).format("DD.MM.YYYY"),
           },
           {
             title: "To",
-            value: moment(vaca.dateTo).format("DD.MM.YYYY"),
+            value: moment(dateTo).format("DD.MM.YYYY"),
           },
           {
             title: "Manager",
-            value: vaca.manager,
+            value: manager,
           },
           {
             title: "Type",
-            value: vaca.type.charAt(0).toUpperCase() + vaca.type.slice(1),
+            value: type.charAt(0).toUpperCase() + type.slice(1),
+          },
+          {
+            title: "Requested Days",
+            value: vaca.requested,
+          },
+        ]
+        this.setState({
+          openConfirmModal: !this.state.openConfirmModal,
+          confirmTableData: tableData,
+        })
+      } else if (type === "homeoffice" && weekFrom && weekTo && manager) {
+        const days = {
+          mon: document.getElementById("ho-mon").checked,
+          tue: document.getElementById("ho-tue").checked,
+          wed: document.getElementById("ho-wed").checked,
+          thu: document.getElementById("ho-thu").checked,
+          fri: document.getElementById("ho-fri").checked,
+        }
+        if (Object.values(days).filter(Boolean).length > 2) {
+          notifyWarn(
+            "WFH",
+            "You may only select a maximum of 2 WFH days per week."
+          )
+          return
+        }
+        const daysValue = Object.entries(days).reduce((label, day) => {
+          const [name, val] = day
+          if (val) {
+            label += `${name.toUpperCase()} `
+          }
+          return label
+        }, "")
+        const tableData = [
+          {
+            title: "From",
+            value: moment(weekFrom).format("DD.MM.YYYY"),
+          },
+          {
+            title: "To",
+            value: moment(weekTo).format("DD.MM.YYYY"),
+          },
+          {
+            title: "Manager",
+            value: manager,
+          },
+          {
+            title: "Type",
+            value: type.charAt(0).toUpperCase() + type.slice(1),
+          },
+          {
+            title: "Days",
+            value: daysValue,
           },
         ]
         this.setState({
@@ -411,7 +479,7 @@ class New extends React.Component {
           confirmTableData: tableData,
         })
       } else {
-        notifyInfo("Please complete the form")
+        notifyInfo("Please complete the form first!")
       }
     } else {
       this.setState({
@@ -420,72 +488,122 @@ class New extends React.Component {
     }
   }
 
-  handleSubmit = () => {
+  handleSubmit = async () => {
     const host = window.location.host
     const protocol = window.location.protocol
-    const { dateFrom, dateTo, manager, type, email, name, notes } =
-      this.state.vaca
+    const {
+      requested,
+      dateFrom,
+      dateTo,
+      manager,
+      type,
+      email,
+      name,
+      notes,
+      weekFrom,
+      weekTo,
+    } = this.state.vaca
 
     const approvalHash = uuid()
 
-    const confirmed = this.state.vaca.confirmIllness[0] === "confirmed" ? 1 : 0
-    fetch(`${protocol}//${host}/api/mail/insert`, {
-      method: "POST",
-      body: JSON.stringify({
-        vaca: {
-          ...this.state.vaca,
-          confirmIllness: confirmed,
+    if (type === "vacation" && requested === 0) {
+      notifyWarn("Requested Days cannot be 0, please fill out days requested.")
+      return
+    }
+
+    let days = {}
+    let insertData
+    if (type === "homeoffice") {
+      days = {
+        mon: document.getElementById("ho-mon").checked,
+        tue: document.getElementById("ho-tue").checked,
+        wed: document.getElementById("ho-wed").checked,
+        thu: document.getElementById("ho-thu").checked,
+        fri: document.getElementById("ho-fri").checked,
+      }
+      const insertRes = await fetch(`${protocol}//${host}/api/homeoffice`, {
+        method: "POST",
+        body: JSON.stringify({
+          weekFrom,
+          weekTo,
+          days,
+          manager,
+          email,
+          name,
+          notes,
+          approvalHash,
+          approved: false,
+          submittedBy: this.props.session.user.email,
+        }),
+        headers: {
+          "content-type": "application/json",
         },
+      })
+      insertData = await insertRes.json()
+    } else {
+      const confirmed =
+        this.state.vaca.confirmIllness[0] === "confirmed" ? 1 : 0
+      const insertRes = await fetch(`${protocol}//${host}/api/mail/insert`, {
+        method: "POST",
+        body: JSON.stringify({
+          vaca: {
+            ...this.state.vaca,
+            confirmIllness: confirmed,
+          },
+          ah: approvalHash,
+          files: this.state.uploadedFiles,
+        }),
+        headers: {
+          "content-type": "application/json",
+        },
+      })
+      insertData = await insertRes.json()
+    }
+
+    if (insertData.affectedRows !== 1) {
+      return
+    }
+
+    const sendRes = await fetch(`${protocol}//${host}/api/mail/send`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        manager: manager,
+        from: dateFrom || weekFrom,
+        to: dateTo || weekTo,
+        type: type,
+        name: name,
+        note: notes,
+        email: email,
         ah: approvalHash,
+        days: days,
         files: this.state.uploadedFiles,
       }),
       headers: {
-        "X-CSRF-TOKEN": this.props.csrfToken,
+        "content-type": "application/json",
       },
     })
-      .then((resp) => resp.json())
-      .then((data1) => {
-        fetch(`${protocol}//${host}/api/mail/send`, {
-          method: "POST",
-          body: JSON.stringify({
-            manager: manager,
-            from: dateFrom,
-            to: dateTo,
-            type: type,
-            name: name,
-            note: notes,
-            email: email,
-            ah: approvalHash,
-            files: this.state.uploadedFiles,
-          }),
-          headers: {
-            "X-CSRF-TOKEN": this.props.csrfToken,
-          },
-        })
-          .then((resp) => resp.json())
-          .then((data) => {
-            if (this.state.openConfirmModal) {
-              this.setState({
-                confirmed: true,
-                sendSuccess: data.code === 200,
-              })
-              setTimeout(() => {
-                this.setState({
-                  openConfirmModal: !this.state.openConfirmModal,
-                })
-              }, 3000)
-            }
-            if (data1.code === 200 && data.code === 200) {
-              this.setState({
-                successfullySent: true,
-              })
-            } else if (data.code === 500) {
-              notifyError(`Error - ${data.msg}`)
-            }
-          })
-          .catch((err) => console.error(err))
+    const sendData = await sendRes.json()
+    if (this.state.openConfirmModal) {
+      this.setState({
+        confirmed: true,
+        sendSuccess: sendData.code === 200,
       })
-      .catch((err) => console.error(err))
+      setTimeout(() => {
+        this.setState({
+          openConfirmModal: !this.state.openConfirmModal,
+        })
+      }, 3000)
+    }
+    if (insertData.code === 200 && sendData.code === 200) {
+      this.setState({
+        successfullySent: true,
+      })
+    } else if (sendData.code === 500) {
+      notifyError(`Error - ${sendData.msg}`)
+    }
   }
 
   showTimeCalculator = () => {
@@ -847,7 +965,8 @@ class New extends React.Component {
                     options={{
                       handleManagerChange: this.handleManagerChange,
                       handleNotesChange: this.handleNotesChange,
-                      handleSubmit: this.handleSubmit,
+                      handleWeekChange: this.handleWeekChange,
+                      toggleSubmitModal: this.toggleSubmitModal,
                       handleClear: this.handleClear,
                     }}
                   />
@@ -1012,12 +1131,15 @@ class New extends React.Component {
                           fontWeight: "600",
                         }}
                       >
-                        Are you sure you want to submit the following absence
+                        Are you sure you want to submit the following
+                        {vaca.type === "homeoffice"
+                          ? " homeoffice "
+                          : " absence "}
                         request?
                       </span>
                       <Table
                         showHeader={false}
-                        height={200}
+                        height={300}
                         bordered={false}
                         data={confirmTableData}
                         style={{ margin: "20px 50px" }}
@@ -1031,7 +1153,7 @@ class New extends React.Component {
                           <Cell dataKey="value" />
                         </Column>
                       </Table>
-                      {hideHistory && (
+                      {(vaca.type === "sick" || vaca.type === "trip") && (
                         <span
                           style={{
                             textAlign: "center",

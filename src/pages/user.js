@@ -17,25 +17,30 @@ import { extendMoment } from "moment-range"
 import EditModal from "../components/editRequestModal"
 import DeleteModal from "../components/deleteRequestModal"
 import { notifyInfo } from "../lib/notify"
+import { format, isSameISOWeek } from "date-fns"
 import {
+  Badge,
   Container,
   Header,
   Content,
   ButtonToolbar,
   IconButton,
   ButtonGroup,
+  Button,
   Panel,
   Icon,
   Modal,
   SelectPicker,
+  Calendar,
 } from "rsuite"
 
 const moment = extendMoment(Moment)
 
 class User extends React.Component {
-  static async getInitialProps({ req }) {
+  static async getInitialProps({ req, query }) {
     return {
       session: await getSession({ req }),
+      view: query.ho === "true" ? "homeoffice" : "vacations",
     }
   }
 
@@ -46,12 +51,14 @@ class User extends React.Component {
       rowData: [],
       files: [],
       uploadedFiles: [],
+      homeofficeData: [],
       loadingFiles: false,
       openConfirmDeleteModal: false,
       gridType: "vacation",
       openEditModal: false,
       editAvailable: false,
       viewFilesModal: false,
+      view: props.view ?? "vacations",
       editData: {
         from: "",
         to: "",
@@ -248,21 +255,28 @@ class User extends React.Component {
     }
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const host = window.location.host
     const protocol = window.location.protocol
     const user = this.props.session.user.email
-    fetch(`${protocol}//${host}/api/user/entries?user=${user}&t=vacation`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.userEntries) {
-          this.setState({
-            rowData: data.userEntries,
-          })
-          window.gridApi && window.gridApi.refreshCells()
-        }
+    const vacaRes = await fetch(
+      `${protocol}//${host}/api/user/entries?user=${user}&t=vacation`
+    )
+    const vacaData = await vacaRes.json()
+    if (vacaData.userEntries) {
+      this.setState({
+        rowData: vacaData.userEntries,
       })
-      .catch((err) => console.error(err))
+      window.gridApi && window.gridApi.refreshCells()
+    }
+
+    const homeofficeRes = await fetch(
+      `${protocol}//${host}/api/homeoffice?uid=${user}`
+    )
+    const homeofficeData = await homeofficeRes.json()
+    this.setState({
+      homeofficeData,
+    })
   }
 
   componentDidUpdate = () => {
@@ -288,6 +302,108 @@ class User extends React.Component {
         })
       }
     }
+  }
+
+  homeofficeCalendarCell = (date) => {
+    return this.state.homeofficeData.map((week) => {
+      if (isSameISOWeek(new Date(week.weekTo), new Date(date))) {
+        const days = JSON.parse(week.days)
+        const dayVal = days[format(new Date(date), "EEE").toLowerCase()]
+        if (dayVal) {
+          return (
+            <>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="#67B246"
+                style={{ opacity: week.approved === 0 ? "0.5" : "1.0" }}
+                width="32"
+                height="32"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                />
+              </svg>
+              {week.approved === 0 ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  style={{
+                    position: "absolute",
+                    transform: "translate(-5px,-5px)",
+                  }}
+                  width="18"
+                  height="18"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              ) : (
+                <div />
+              )}
+            </>
+          )
+        } else if (typeof dayVal !== "undefined") {
+          return (
+            <>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="#CCC"
+                style={{ opacity: week.approved === 0 ? "0.5" : "1.0" }}
+                width="32"
+                height="32"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                />
+              </svg>
+              {week.approved === 0 ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  style={{
+                    position: "absolute",
+                    transform: "translate(-5px,-5px)",
+                  }}
+                  width="18"
+                  height="18"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              ) : (
+                <div />
+              )}
+            </>
+          )
+        }
+      }
+    })
   }
 
   setEditData = (files, data) => {
@@ -458,10 +574,6 @@ class User extends React.Component {
         viewFilesModal: !this.state.viewFilesModal,
       })
     } else {
-      // const data = this.state.rowData
-      // const i = data.findIndex(entry => entry.id === id)
-      // const files = data[i].files || []
-      // console.log(files)
       const viewFiles = typeof files === "string" ? JSON.parse(files) : files
       console.log(viewFiles)
       this.setState({
@@ -481,6 +593,7 @@ class User extends React.Component {
       editData,
       viewFilesModal,
       viewFiles,
+      view,
     } = this.state
 
     if (this.props.session) {
@@ -493,65 +606,101 @@ class User extends React.Component {
             <Subheader header="User" subheader="Dashboard" />
             <Panel bordered>
               <Header className="user-content-header">
-                <div className="section-header">My Vacations</div>
+                <div className="section-header">
+                  <ButtonGroup>
+                    <Button
+                      onClick={() => this.setState({ view: "vacations" })}
+                      appearance={view === "vacations" ? "primary" : "ghost"}
+                    >
+                      Vacations
+                    </Button>
+                    <Button
+                      onClick={() => this.setState({ view: "homeoffice" })}
+                      appearance={view === "homeoffice" ? "primary" : "ghost"}
+                    >
+                      Homeoffice
+                    </Button>
+                  </ButtonGroup>
+                </div>
                 <div
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
                   }}
                 >
-                  <SelectPicker
-                    defaultValue="vacation"
-                    onChange={this.handleTypeChange}
-                    data={[
-                      { label: "Vacation", value: "vacation" },
-                      { label: "Sick", value: "sick" },
-                      { label: "Trip", value: "trip" },
-                      { label: "Moving", value: "moving" },
-                      { label: "Other", value: "other" },
-                    ]}
-                    placeholder="Please Select a Type"
-                    style={{ width: "200px", marginRight: "20px" }}
-                  />
-                  <span>
+                  {view === "vacations" ? (
+                    <>
+                      <SelectPicker
+                        defaultValue="vacation"
+                        onChange={this.handleTypeChange}
+                        data={[
+                          { label: "Vacation", value: "vacation" },
+                          { label: "Sick", value: "sick" },
+                          { label: "Trip", value: "trip" },
+                          { label: "Moving", value: "moving" },
+                          { label: "Other", value: "other" },
+                        ]}
+                        placeholder="Please Select a Type"
+                        style={{ width: "200px", marginRight: "20px" }}
+                      />
+                      <ButtonToolbar>
+                        <ButtonGroup>
+                          <IconButton
+                            icon={<Icon icon="edit" />}
+                            appearance="primary"
+                            onClick={this.toggleEditModal}
+                          >
+                            Edit
+                          </IconButton>
+                          <IconButton
+                            icon={<Icon icon="trash" />}
+                            appearance="ghost"
+                            onClick={this.toggleConfirmDeleteModal}
+                          >
+                            Delete
+                          </IconButton>
+                          <IconButton
+                            icon={<Icon icon="export" />}
+                            appearance="ghost"
+                            onClick={this.handleGridExport}
+                          >
+                            Export
+                          </IconButton>
+                        </ButtonGroup>
+                      </ButtonToolbar>
+                    </>
+                  ) : (
                     <ButtonToolbar>
                       <ButtonGroup>
                         <IconButton
-                          icon={<Icon icon="edit" />}
-                          appearance="primary"
-                          onClick={this.toggleEditModal}
-                        >
-                          Edit
-                        </IconButton>
-                        <IconButton
-                          icon={<Icon icon="trash" />}
-                          appearance="ghost"
-                          onClick={this.toggleConfirmDeleteModal}
-                        >
-                          Delete
-                        </IconButton>
-                        <IconButton
                           icon={<Icon icon="export" />}
                           appearance="ghost"
-                          onClick={this.handleGridExport}
+                          onClick={this.handleHomeofficeGridExport}
                         >
                           Export
                         </IconButton>
                       </ButtonGroup>
                     </ButtonToolbar>
-                  </span>
+                  )}
                 </div>
               </Header>
               <Content className="user-grid-wrapper">
                 <div className="ag-theme-material user-grid">
-                  <AgGridReact
-                    gridOptions={gridOptions}
-                    rowData={rowData}
-                    onGridReady={this.handleGridReady}
-                    animateRows
-                    pagination
-                    onFirstDataRendered={this.onFirstDataRendered.bind(this)}
-                  />
+                  {view === "vacations" ? (
+                    <AgGridReact
+                      gridOptions={gridOptions}
+                      rowData={rowData}
+                      onGridReady={this.handleGridReady}
+                      animateRows
+                      pagination
+                      onFirstDataRendered={this.onFirstDataRendered.bind(this)}
+                    />
+                  ) : (
+                    <Calendar
+                      bordered
+                      renderCell={this.homeofficeCalendarCell}
+                    />
+                  )}
                 </div>
               </Content>
             </Panel>

@@ -11,15 +11,10 @@ const key = require("../../../../serviceacct.json")
 module.exports = async (req, res) => {
   const approvalHash = req.query.h
   const action = req.query.a
-  // const forward = req.query.b
+  const homeoffice = req.query.ho
   const session = await getSession({ req })
 
   if (!session) {
-    // req.session.save(err => {
-    //   if (err) console.error(err)
-    //   req.session.returnTo = req._parsedUrl.query
-    // })
-    // res.redirect(`/auth/signin?h=${approvalHash}&a=${action}`)
     res.writeHead(302, {
       Location: `/auth/signin?h=${approvalHash}&a=${action}&b=0`,
     })
@@ -31,28 +26,39 @@ module.exports = async (req, res) => {
   const nodemailerSmtpTransport = require("nodemailer-smtp-transport")
   const nodemailerDirectTransport = require("nodemailer-direct-transport")
 
-  const checkApprovalHash = await db.query(escape`
-    SELECT id, name, email, DATE_FORMAT(toDate, \"%Y-%m-%d\") as toGoogle,  DATE_FORMAT(fromDate, \"%Y-%m-%d\") as fromGoogle, fromDate, toDate, submitted_datetime, manager, approval_hash FROM vacations WHERE approval_hash LIKE ${approvalHash}
-  `)
+  let checkApprovalHash
+  if (homeoffice) {
+    checkApprovalHash = await db.query(escape`
+      SELECT id, name, email, DATE_FORMAT(weekTo, \"%Y-%m-%d\") as toGoogle,  DATE_FORMAT(weekFrom, \"%Y-%m-%d\") as fromGoogle, weekFrom as fromDate, weekTo as toDate, submittedDatetime, manager, approvalHash FROM homeoffice WHERE approvalHash LIKE ${approvalHash}
+    `)
+  } else {
+    checkApprovalHash = await db.query(escape`
+      SELECT id, name, email, DATE_FORMAT(toDate, \"%Y-%m-%d\") as toGoogle,  DATE_FORMAT(fromDate, \"%Y-%m-%d\") as fromGoogle, fromDate, toDate, submitted_datetime, manager, approval_hash FROM vacations WHERE approval_hash LIKE ${approvalHash}
+    `)
+  }
 
-  if (checkApprovalHash[0].id) {
-    let mailBody
-    let actionLabel
-    let approvalValue
-    const name = checkApprovalHash[0].name
-    const manager = checkApprovalHash[0].manager
-    const toDate = new Date(checkApprovalHash[0].toDate).toLocaleDateString(
-      "de-DE"
-    )
-    const fromDate = new Date(checkApprovalHash[0].fromDate).toLocaleDateString(
-      "de-DE"
-    )
-    const submittedOn = new Date(
-      checkApprovalHash[0].submitted_datetime
-    ).toLocaleString("de-DE")
-    const approvedOn = new Date().toLocaleString("de-DE")
-    const email = checkApprovalHash[0].email
+  if (!checkApprovalHash[0].id) {
+    res.status(501).json({ code: 501, msg: "Invalid Approval Hash" })
+  }
 
+  let mailBody
+  let actionLabel
+  let approvalValue
+  const name = checkApprovalHash[0].name
+  const manager = checkApprovalHash[0].manager
+  const toDate = new Date(checkApprovalHash[0].toDate).toLocaleDateString(
+    "de-DE"
+  )
+  const fromDate = new Date(checkApprovalHash[0].fromDate).toLocaleDateString(
+    "de-DE"
+  )
+  const submittedOn = new Date(
+    checkApprovalHash[0].submitted_datetime
+  ).toLocaleString("de-DE")
+  const approvedOn = new Date().toLocaleString("de-DE")
+  const email = checkApprovalHash[0].email
+
+  if (!homeoffice) {
     if (action === "a") {
       mailBody = response.approval_body
       actionLabel = "Approved"
@@ -116,55 +122,73 @@ https://vacation.newtelco.de`,
       actionLabel = "Denied"
       approvalValue = "1"
     }
-
-    mailBody = mailBody.replace("[USERNAME]", name)
-    mailBody = mailBody.replace("[START]", fromDate)
-    mailBody = mailBody.replace("[END]", toDate)
-    mailBody = mailBody.replace(/NEXTAUTH_URL/g, process.env.NEXTAUTH_URL)
-
-    let nodemailerTransport = nodemailerDirectTransport()
-    if (
-      process.env.EMAIL_SERVER &&
-      process.env.EMAIL_USERNAME &&
-      process.env.EMAIL_PASSWORD
-    ) {
-      nodemailerTransport = nodemailerSmtpTransport({
-        host: process.env.EMAIL_SERVER,
-        port: process.env.EMAIL_PORT || 25,
-        secure: process.env.EMAIL_SECURE || true,
-        auth: {
-          user: process.env.EMAIL_USERNAME,
-          pass: process.env.EMAIL_PASSWORD,
-        },
-      })
+  } else {
+    if (action === "a") {
+      mailBody = response.approval_body
+      actionLabel = "Approved"
+      approvalValue = "2"
+    } else {
+      mailBody = response.denied_body
+      actionLabel = "Denied"
+      approvalValue = "1"
     }
+  }
 
+  mailBody = mailBody.replace("[USERNAME]", name)
+  mailBody = mailBody.replace("[START]", fromDate)
+  mailBody = mailBody.replace("[END]", toDate)
+  mailBody = mailBody.replace(/NEXTAUTH_URL/g, process.env.NEXTAUTH_URL)
+
+  let nodemailerTransport = nodemailerDirectTransport()
+  if (
+    process.env.EMAIL_SERVER &&
+    process.env.EMAIL_USERNAME &&
+    process.env.EMAIL_PASSWORD
+  ) {
+    nodemailerTransport = nodemailerSmtpTransport({
+      host: process.env.EMAIL_SERVER,
+      port: process.env.EMAIL_PORT || 25,
+      secure: process.env.EMAIL_SECURE || true,
+      auth: {
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    })
+  }
+
+  if (homeoffice) {
+    await db.query(escape`
+      UPDATE homeoffice SET approved = ${approvalValue}, approvedDatetime = ${new Date()} WHERE approvalHash LIKE ${approvalHash}
+    `)
+  } else {
     await db.query(escape`
       UPDATE vacations SET approved = ${approvalValue}, approval_datetime = ${new Date()
       .toISOString()
       .slice(0, 19)
       .replace("T", " ")} WHERE approval_hash LIKE ${approvalHash}
     `)
-
-    nodemailer.createTransport(nodemailerTransport).sendMail(
-      {
-        to: email,
-        from: "device@newtelco.de",
-        subject: `[NT] Absence Response - ${actionLabel}`,
-        html: mailBody,
-      },
-      (err, info) => {
-        if (err) {
-          console.error("Error sending email to " + name, err)
-          res.status(500).json({ code: 500, msg: info })
-        }
-        res.writeHead(302, {
-          Location: `/?a=${action}&code=200&b=1`,
-        })
-        res.end()
-      }
-    )
-  } else {
-    res.status(501).json({ code: 501, msg: "Invalid Approval Hash" })
   }
+
+  nodemailer.createTransport(nodemailerTransport).sendMail(
+    {
+      to: email,
+      from: "device@newtelco.de",
+      subject: `[NT] ${
+        homeoffice ? "Homeoffice" : "Absence"
+      } Response - ${actionLabel}`,
+      html: mailBody,
+    },
+    (err, info) => {
+      if (err) {
+        console.error("Error sending email to " + name, err)
+        res.status(500).json({ code: 500, msg: info })
+      }
+      res.writeHead(302, {
+        Location: `/?a=${action}&code=200&b=1&ho=${
+          homeoffice ? "true" : "false"
+        }`,
+      })
+      res.end()
+    }
+  )
 }
