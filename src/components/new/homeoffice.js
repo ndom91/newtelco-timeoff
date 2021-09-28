@@ -54,7 +54,7 @@ const HomeOffice = ({ values, options }) => {
         </h4>
       }
     >
-      <Form onChange={(val) => console.log(val)}>
+      <Form>
         <FormGroup>
           <ControlLabel>Week</ControlLabel>
           <DateRangePicker

@@ -575,7 +575,6 @@ class User extends React.Component {
       })
     } else {
       const viewFiles = typeof files === "string" ? JSON.parse(files) : files
-      console.log(viewFiles)
       this.setState({
         viewFilesModal: !this.state.viewFilesModal,
         viewFiles: viewFiles,
