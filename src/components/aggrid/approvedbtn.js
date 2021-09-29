@@ -18,9 +18,8 @@ export default class ApprovedBtn extends Component {
       this.props.data.type === "homeoffice" ? "&ho=true" : ""
     }`
     fetch(url)
-      .then((res) => res.json())
       .then((data) => {
-        if (data.code === 200) {
+        if (data.status === 200) {
           this.setState({
             approval: 2,
           })
@@ -38,9 +37,8 @@ export default class ApprovedBtn extends Component {
       this.props.data.type === "homeoffice" ? "&ho=true" : ""
     }`
     fetch(url)
-      .then((res) => res.json())
       .then((data) => {
-        if (data.code === 200) {
+        if (data.status === 200) {
           this.setState({
             approval: 1,
           })

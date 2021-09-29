@@ -31,6 +31,8 @@ import {
   Icon,
   Modal,
   SelectPicker,
+  Tooltip,
+  Whisper,
   Calendar,
 } from "rsuite"
 
@@ -312,44 +314,48 @@ class User extends React.Component {
         if (dayVal) {
           return (
             <>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="#67B246"
-                style={{ opacity: week.approved === 0 ? "0.5" : "1.0" }}
-                width="32"
-                height="32"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                />
-              </svg>
-              {week.approved === 0 ? (
+              <Whisper speaker={<Tooltip>Home</Tooltip>}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-6 w-6"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  style={{
-                    position: "absolute",
-                    transform: "translate(-5px,-5px)",
-                  }}
-                  width="18"
-                  height="18"
+                  stroke="#67B246"
+                  style={{ opacity: week.approved === 0 ? "0.5" : "1.0" }}
+                  width="32"
+                  height="32"
                 >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
                   />
                 </svg>
+              </Whisper>
+              {week.approved === 0 ? (
+                <Whisper speaker={<Tooltip>Awaiting Approval</Tooltip>}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    style={{
+                      position: "absolute",
+                      transform: "translate(-5px,-5px)",
+                    }}
+                    width="18"
+                    height="18"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </Whisper>
               ) : (
                 <div />
               )}
@@ -358,44 +364,48 @@ class User extends React.Component {
         } else if (typeof dayVal !== "undefined") {
           return (
             <>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="#CCC"
-                style={{ opacity: week.approved === 0 ? "0.5" : "1.0" }}
-                width="32"
-                height="32"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                />
-              </svg>
-              {week.approved === 0 ? (
+              <Whisper speaker={<Tooltip>Office</Tooltip>}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-6 w-6"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  style={{
-                    position: "absolute",
-                    transform: "translate(-5px,-5px)",
-                  }}
-                  width="18"
-                  height="18"
+                  stroke="#CCC"
+                  style={{ opacity: week.approved === 0 ? "0.5" : "1.0" }}
+                  width="32"
+                  height="32"
                 >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                   />
                 </svg>
+              </Whisper>
+              {week.approved === 0 ? (
+                <Whisper speaker={<Tooltip>Awaiting Approval</Tooltip>}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    style={{
+                      position: "absolute",
+                      transform: "translate(-5px,-5px)",
+                    }}
+                    width="18"
+                    height="18"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </Whisper>
               ) : (
                 <div />
               )}
