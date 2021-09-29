@@ -460,6 +460,46 @@ class User extends React.Component {
     }
   }
 
+  handleHomeofficeGridExport = () => {
+    if (this.state.homeofficeData) {
+      const email = this.props.session.user.email
+      const username = email.substr(0, email.lastIndexOf("@"))
+      let csvContent = "data:text/csv;charset=utf-8,"
+
+      const rows = this.state.homeofficeData.reduce((rows, week) => {
+        const days = JSON.parse(week.days)
+        rows.push({
+          name: week.name,
+          manager: week.manager,
+          from: week.weekFrom,
+          to: week.weekTo,
+          mon: days.mon,
+          tue: days.tue,
+          wed: days.wed,
+          thu: days.thu,
+          fri: days.fri,
+          note: week.note,
+          submittedOn: week.submittedDatetime,
+        })
+        return rows
+      }, [])
+
+      // Get CSV Headers
+      csvContent += Object.keys(rows[0]).join(",") + "\r\n"
+
+      rows.forEach((rowArray) => {
+        let row = Object.values(rowArray).join(",")
+        csvContent += row + "\r\n"
+      })
+      const encodedUri = encodeURI(csvContent)
+      const link = document.createElement("a")
+      link.setAttribute("href", encodedUri)
+      link.setAttribute("download", `${username}_homeoffice.csv`)
+      document.body.appendChild(link)
+      link.click()
+    }
+  }
+
   handleTypeChange = (selection) => {
     const host = window.location.host
     const protocol = window.location.protocol

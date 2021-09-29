@@ -4,7 +4,7 @@ const db = require("../../../lib/db")
 const handler = async (req, res) => {
   const { query, method, body } = req
 
-  if (method === "GET" && query.uid.length) {
+  if (method === "GET" && query.uid?.length) {
     const { uid } = query
     const findOne = await db.query(escape`
       SELECT * FROM homeoffice
@@ -18,6 +18,9 @@ const handler = async (req, res) => {
   } else if (method === "GET") {
     const find = await db.query(escape`
       SELECT * FROM homeoffice
+      WHERE
+        disabled LIKE 0 AND
+        approved NOT LIKE 1
   `)
 
     res.status(200).json(find)
