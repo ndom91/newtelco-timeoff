@@ -128,8 +128,7 @@ module.exports = async (req, res) => {
                 sickBody
             }
             sickBody = sickBody + "</table>"
-            const headerText =
-              "Please be advised, your colleague has notified you of the following sick days."
+            const headerText = `Please be advised - your colleague, ${name}, will be out sick on the following days.`
             mailBody = mailBody.replace("[HEADER_TEXT]", headerText)
             mailBody = mailBody.replace("[SICKBODY]", sickBody)
             mailBody = mailBody.replace("[APPROVAL_BUTTONS]", "")
