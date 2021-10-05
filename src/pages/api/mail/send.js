@@ -84,8 +84,10 @@ module.exports = async (req, res) => {
   if (files.length > 0) {
     let filesHtml = "<h3>Uploaded Files</h3>"
     files.forEach((file) => {
-      filesHtml += `<a target="_blank" href="${file.url}">${file.name}</a><br />`
+      // filesHtml += `<a target="_blank" href="${file.url}">${file.name}</a><br />`
+      filesHtml += `<strong>${file.name}</strong><br />`
     })
+    filesHtml += `<small>For privacy reasons you can only access the above files in the admin portal</small><br/>`
     mailBody = mailBody.replace("[FILES]", filesHtml)
   } else {
     mailBody = mailBody.replace("[FILES]", "")

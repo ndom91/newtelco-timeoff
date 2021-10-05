@@ -88,7 +88,7 @@ class New extends React.Component {
         dateFrom: "",
         dateTo: "",
         manager: "",
-        notes: "",
+        notes: null,
         confirmIllness: [],
       },
       tutSteps: [

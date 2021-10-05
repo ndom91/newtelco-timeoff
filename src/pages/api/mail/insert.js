@@ -30,10 +30,9 @@ module.exports = async (req, res) => {
         INSERT INTO vacations (name, email, type, fromDate, toDate, manager, note, submitted_datetime, submitted_by, approval_hash, files, confirmIllness) VALUES (${name}, ${email}, ${type}, ${dateFrom}, ${dateTo}, ${manager}, ${note}, ${new Date()
       .toISOString()
       .slice(0, 19)
-      .replace(
-        "T",
-        " "
-      )}, ${submittedBy}, ${approvalHash}, ${files}, ${confirmIllness} )
+      .replace("T", " ")}, ${submittedBy}, ${approvalHash}, ${
+      files.length ? files : "[]"
+    }, ${confirmIllness} )
     `)
   } else {
     insertAbsence = await db.query(escape`
