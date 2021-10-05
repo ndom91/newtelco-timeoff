@@ -5,7 +5,6 @@ import { Button, ButtonToolbar, ButtonGroup, Modal, Table } from "rsuite"
 const { Column, HeaderCell, Cell } = Table
 
 const DeleteModal = (props) => {
-  console.log(props)
   const handleSubmitDelete = () => {
     const deleteId = props.toDelete
     const host = window.location.host

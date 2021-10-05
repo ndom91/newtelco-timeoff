@@ -1,11 +1,10 @@
-const db = require('../../../../../lib/db')
-const escape = require('sql-template-strings')
+const db = require("../../../../../lib/db")
+const escape = require("sql-template-strings")
 
 module.exports = async (req, res) => {
   const id = req.query.id
   const dateJoined = decodeURIComponent(req.query.dateJoined)
   const daysRemaining = decodeURIComponent(req.query.daysRemaining)
-  console.log(dateJoined, daysRemaining)
   let userUpdate
   if (dateJoined && !daysRemaining) {
     userUpdate = await db.query(escape`

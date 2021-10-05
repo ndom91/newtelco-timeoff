@@ -166,6 +166,7 @@ const Layout = ({ user, token, children }) => {
           }
           :global(.rs-notification-content) {
             display: flex;
+            flex-direction: column;
             align-items: center;
           }
           :global(.rs-tag-green) {

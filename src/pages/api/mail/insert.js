@@ -1,51 +1,55 @@
-const db = require('../../../lib/db')
-const escape = require('sql-template-strings')
-const { format } = require('date-fns')
+const db = require("../../../lib/db")
+const escape = require("sql-template-strings")
+const { format } = require("date-fns")
 
 module.exports = async (req, res) => {
-  const body = JSON.parse(req.body)
-  const vaca = body.vaca
-  const name = vaca.name
-  const email = vaca.email
-  const lastYear = vaca.lastYear
-  const thisYear = vaca.thisYear
-  const spentThisYear = vaca.spentThisYear
-  const total = vaca.total
-  const requested = vaca.requested
-  const remaining = vaca.remaining
-  const type = vaca.type
-  const dateFrom = format(new Date(vaca.dateFrom), 'yyyy-MM-dd')
-  const dateTo = format(new Date(vaca.dateTo), 'yyyy-MM-dd')
-  const manager = vaca.manager
-  const submittedBy = email.substring(0, email.lastIndexOf('@'))
-  const note = vaca.notes
-  const approvalHash = body.ah
-  const files = JSON.stringify(body.files)
-  const confirmIllness = vaca.confirmIllness
+  const { vaca, ah: approvalHash, files } = req.body
+  const {
+    name,
+    email,
+    lastYear,
+    thisYear,
+    spentThisYear,
+    total,
+    requested,
+    remaining,
+    type,
+    dateFrom: from,
+    dateTo: to,
+    manager,
+    notes: note,
+    confirmIllness,
+  } = vaca
+  const dateFrom = format(new Date(from), "yyyy-MM-dd")
+  const dateTo = format(new Date(to), "yyyy-MM-dd")
+  const submittedBy = email.substring(0, email.lastIndexOf("@"))
 
   let insertAbsence
-  if (type === 'sick' || type === 'trip') {
+  if (type === "sick" || type === "trip") {
     insertAbsence = await db.query(escape`
         INSERT INTO vacations (name, email, type, fromDate, toDate, manager, note, submitted_datetime, submitted_by, approval_hash, files, confirmIllness) VALUES (${name}, ${email}, ${type}, ${dateFrom}, ${dateTo}, ${manager}, ${note}, ${new Date()
       .toISOString()
       .slice(0, 19)
-      .replace(
-        'T',
-        ' '
-      )}, ${submittedBy}, ${approvalHash}, ${files}, ${confirmIllness} ) 
+      .replace("T", " ")}, ${submittedBy}, ${approvalHash}, ${
+      files.length ? files : "[]"
+    }, ${confirmIllness} )
     `)
   } else {
     insertAbsence = await db.query(escape`
         INSERT INTO vacations (name, email, resturlaubVorjahr, jahresurlaubInsgesamt, jahresUrlaubAusgegeben, restjahresurlaubInsgesamt, beantragt, resturlaubJAHR, type, fromDate, toDate, manager, note, submitted_datetime, submitted_by, approval_hash, files) VALUES (${name}, ${email}, ${lastYear}, ${thisYear}, ${spentThisYear}, ${total}, ${requested}, ${remaining}, ${type}, ${dateFrom}, ${dateTo}, ${manager}, ${note}, ${new Date()
       .toISOString()
       .slice(0, 19)
-      .replace('T', ' ')}, ${submittedBy}, ${approvalHash}, ${files} ) 
+      .replace("T", " ")}, ${submittedBy}, ${approvalHash}, ${
+      files.length ? files : "[]"
+    } )
     `)
   }
   if (insertAbsence.affectedRows === 1) {
-    res.status(200).json({ code: 200, id: insertAbsence.insertId })
+    res
+      .status(200)
+      .json({ code: 200, id: insertAbsence.insertId, affectedRows: 1 })
   } else {
-    res.status(500).json({ code: 500, err: insertAbsence })
+    res.status(500).json({ code: 500, err: insertAbsence, affectedRows: 0 })
   }
 }
 

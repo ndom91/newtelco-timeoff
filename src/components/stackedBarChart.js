@@ -122,15 +122,7 @@ class StackedBarChart extends React.Component {
   render() {
     const { options, series } = this.state
     if (series.length > 0) {
-      return (
-        <Chart
-          options={options}
-          series={series}
-          width={600}
-          height={320}
-          type="bar"
-        />
-      )
+      return <Chart options={options} series={series} height={320} type="bar" />
     } else {
       return <div>Loading...</div>
     }

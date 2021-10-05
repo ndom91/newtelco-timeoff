@@ -12,6 +12,7 @@ import RequireLogin from "../components/requiredLogin"
 import Subheader from "../components/content-subheader"
 import Calculator from "../components/newcalculator"
 import Upload from "../components/upload"
+import HomeOffice from "../components/new/homeoffice"
 import lottieSuccess from "../style/lottie-success.json"
 import lottieError from "../style/error-icon.json"
 
@@ -87,7 +88,7 @@ class New extends React.Component {
         dateFrom: "",
         dateTo: "",
         manager: "",
-        notes: "",
+        notes: null,
         confirmIllness: [],
       },
       tutSteps: [
@@ -138,8 +139,6 @@ class New extends React.Component {
       })
       .catch((err) => console.error(err))
 
-    const email = this.props.session.user.email
-
     fetch("/api/user/list")
       .then((res) => res.json())
       .then((data) => {
@@ -161,6 +160,7 @@ class New extends React.Component {
       })
       .catch((err) => console.error(err))
 
+    const email = this.props.session.user.email
     fetch(`/api/user/entries/new?email=${email}`)
       .then((res) => res.json())
       .then((data) => {
@@ -305,9 +305,7 @@ class New extends React.Component {
 
   handleTypeChange = (value) => {
     let hideHistory = false
-    if (value === "sick") {
-      hideHistory = true
-    } else if (value === "trip") {
+    if (["sick", "homeoffice", "trip"].includes(value)) {
       hideHistory = true
     }
     this.setState({
@@ -347,6 +345,17 @@ class New extends React.Component {
     })
   }
 
+  handleWeekChange = (val) => {
+    const [start, end] = val
+    this.setState({
+      vaca: {
+        ...this.state.vaca,
+        weekFrom: start,
+        weekTo: end,
+      },
+    })
+  }
+
   handleConfirmIllnessChange = (value) => {
     this.setState({
       vaca: {
@@ -375,36 +384,94 @@ class New extends React.Component {
   }
 
   toggleSubmitModal = () => {
+    const { vaca } = this.state
+    const {
+      type,
+      confirmIllness,
+      dateFrom,
+      dateTo,
+      manager,
+      weekFrom,
+      weekTo,
+    } = vaca
     if (!this.state.openConfirmModal) {
-      if (
-        this.state.vaca.type === "sick" &&
-        !this.state.vaca.confirmIllness[0]
-      ) {
+      if (type === "sick" && !confirmIllness[0]) {
         notifyWarn("You must confirm the information to continue")
         return
       }
-      if (
-        this.state.vaca.dateFrom &&
-        this.state.vaca.dateTo &&
-        this.state.vaca.manager
-      ) {
-        const { vaca } = this.state
+      if (type === "vacation" && vaca.requested === 0) {
+        notifyWarn("You must not leave Requested Days on 0!")
+        return
+      }
+      if (type !== "homeoffice" && dateFrom && dateTo && manager) {
         const tableData = [
           {
             title: "From",
-            value: moment(vaca.dateFrom).format("DD.MM.YYYY"),
+            value: moment(dateFrom).format("DD.MM.YYYY"),
           },
           {
             title: "To",
-            value: moment(vaca.dateTo).format("DD.MM.YYYY"),
+            value: moment(dateTo).format("DD.MM.YYYY"),
           },
           {
             title: "Manager",
-            value: vaca.manager,
+            value: manager,
           },
           {
             title: "Type",
-            value: vaca.type.charAt(0).toUpperCase() + vaca.type.slice(1),
+            value: type.charAt(0).toUpperCase() + type.slice(1),
+          },
+          {
+            title: "Requested Days",
+            value: vaca.requested,
+          },
+        ]
+        this.setState({
+          openConfirmModal: !this.state.openConfirmModal,
+          confirmTableData: tableData,
+        })
+      } else if (type === "homeoffice" && weekFrom && weekTo && manager) {
+        const days = {
+          mon: document.getElementById("ho-mon").checked,
+          tue: document.getElementById("ho-tue").checked,
+          wed: document.getElementById("ho-wed").checked,
+          thu: document.getElementById("ho-thu").checked,
+          fri: document.getElementById("ho-fri").checked,
+        }
+        if (Object.values(days).filter(Boolean).length > 2) {
+          notifyWarn(
+            "WFH",
+            "You may only select a maximum of 2 WFH days per week."
+          )
+          return
+        }
+        const daysValue = Object.entries(days).reduce((label, day) => {
+          const [name, val] = day
+          if (val) {
+            label += `${name.toUpperCase()} `
+          }
+          return label
+        }, "")
+        const tableData = [
+          {
+            title: "From",
+            value: moment(weekFrom).format("DD.MM.YYYY"),
+          },
+          {
+            title: "To",
+            value: moment(weekTo).format("DD.MM.YYYY"),
+          },
+          {
+            title: "Manager",
+            value: manager,
+          },
+          {
+            title: "Type",
+            value: type.charAt(0).toUpperCase() + type.slice(1),
+          },
+          {
+            title: "Days",
+            value: daysValue,
           },
         ]
         this.setState({
@@ -412,7 +479,7 @@ class New extends React.Component {
           confirmTableData: tableData,
         })
       } else {
-        notifyInfo("Please complete the form")
+        notifyInfo("Please complete the form first!")
       }
     } else {
       this.setState({
@@ -421,72 +488,122 @@ class New extends React.Component {
     }
   }
 
-  handleSubmit = () => {
+  handleSubmit = async () => {
     const host = window.location.host
     const protocol = window.location.protocol
-    const { dateFrom, dateTo, manager, type, email, name, notes } =
-      this.state.vaca
+    const {
+      requested,
+      dateFrom,
+      dateTo,
+      manager,
+      type,
+      email,
+      name,
+      notes,
+      weekFrom,
+      weekTo,
+    } = this.state.vaca
 
     const approvalHash = uuid()
 
-    const confirmed = this.state.vaca.confirmIllness[0] === "confirmed" ? 1 : 0
-    fetch(`${protocol}//${host}/api/mail/insert`, {
-      method: "POST",
-      body: JSON.stringify({
-        vaca: {
-          ...this.state.vaca,
-          confirmIllness: confirmed,
+    if (type === "vacation" && requested === 0) {
+      notifyWarn("Requested Days cannot be 0, please fill out days requested.")
+      return
+    }
+
+    let days = {}
+    let insertData
+    if (type === "homeoffice") {
+      days = {
+        mon: document.getElementById("ho-mon").checked,
+        tue: document.getElementById("ho-tue").checked,
+        wed: document.getElementById("ho-wed").checked,
+        thu: document.getElementById("ho-thu").checked,
+        fri: document.getElementById("ho-fri").checked,
+      }
+      const insertRes = await fetch(`${protocol}//${host}/api/homeoffice`, {
+        method: "POST",
+        body: JSON.stringify({
+          weekFrom,
+          weekTo,
+          days,
+          manager,
+          email,
+          name,
+          notes,
+          approvalHash,
+          approved: false,
+          submittedBy: this.props.session.user.email,
+        }),
+        headers: {
+          "content-type": "application/json",
         },
+      })
+      insertData = await insertRes.json()
+    } else {
+      const confirmed =
+        this.state.vaca.confirmIllness[0] === "confirmed" ? 1 : 0
+      const insertRes = await fetch(`${protocol}//${host}/api/mail/insert`, {
+        method: "POST",
+        body: JSON.stringify({
+          vaca: {
+            ...this.state.vaca,
+            confirmIllness: confirmed,
+          },
+          ah: approvalHash,
+          files: this.state.uploadedFiles,
+        }),
+        headers: {
+          "content-type": "application/json",
+        },
+      })
+      insertData = await insertRes.json()
+    }
+
+    if (insertData.affectedRows !== 1) {
+      return
+    }
+
+    const sendRes = await fetch(`${protocol}//${host}/api/mail/send`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        manager: manager,
+        from: dateFrom || weekFrom,
+        to: dateTo || weekTo,
+        type: type,
+        name: name,
+        note: notes,
+        email: email,
         ah: approvalHash,
+        days: days,
         files: this.state.uploadedFiles,
       }),
       headers: {
-        "X-CSRF-TOKEN": this.props.csrfToken,
+        "content-type": "application/json",
       },
     })
-      .then((resp) => resp.json())
-      .then((data1) => {
-        fetch(`${protocol}//${host}/api/mail/send`, {
-          method: "POST",
-          body: JSON.stringify({
-            manager: manager,
-            from: dateFrom,
-            to: dateTo,
-            type: type,
-            name: name,
-            note: notes,
-            email: email,
-            ah: approvalHash,
-            files: this.state.uploadedFiles,
-          }),
-          headers: {
-            "X-CSRF-TOKEN": this.props.csrfToken,
-          },
-        })
-          .then((resp) => resp.json())
-          .then((data) => {
-            if (this.state.openConfirmModal) {
-              this.setState({
-                confirmed: true,
-                sendSuccess: data.code === 200,
-              })
-              setTimeout(() => {
-                this.setState({
-                  openConfirmModal: !this.state.openConfirmModal,
-                })
-              }, 3000)
-            }
-            if (data1.code === 200 && data.code === 200) {
-              this.setState({
-                successfullySent: true,
-              })
-            } else if (data.code === 500) {
-              notifyError(`Error - ${data.msg}`)
-            }
-          })
-          .catch((err) => console.error(err))
+    const sendData = await sendRes.json()
+    if (this.state.openConfirmModal) {
+      this.setState({
+        confirmed: true,
+        sendSuccess: sendData.code === 200,
       })
-      .catch((err) => console.error(err))
+      setTimeout(() => {
+        this.setState({
+          openConfirmModal: !this.state.openConfirmModal,
+        })
+      }, 3000)
+    }
+    if (insertData.code === 200 && sendData.code === 200) {
+      this.setState({
+        successfullySent: true,
+      })
+    } else if (sendData.code === 500) {
+      notifyError(`Error - ${sendData.msg}`)
+    }
   }
 
   showTimeCalculator = () => {
@@ -637,7 +754,7 @@ class New extends React.Component {
                       <Radio value="vacation">Vacation</Radio>
                       <Radio value="sick">Illness</Radio>
                       <Radio value="trip">Trip</Radio>
-                      <Radio value="moving">Moving</Radio>
+                      <Radio value="homeoffice">Homeoffice</Radio>
                       <Radio value="other">Other</Radio>
                     </RadioGroup>
                   </FormGroup>
@@ -646,6 +763,7 @@ class New extends React.Component {
                   in={!hideHistory}
                   timeout={1000}
                   classNames="panel"
+                  mountOnEnter
                   unmountOnExit
                 >
                   <div
@@ -838,129 +956,145 @@ class New extends React.Component {
                     </div>
                   </div>
                 </CSSTransition>
-                <Panel
-                  bordered
-                  style={{ padding: "10px" }}
-                  id="which-days"
-                  header={
-                    <h4
-                      className="form-section-heading"
-                      style={{ position: "relative" }}
-                    >
-                      Dates
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        style={{ marginLeft: "15px" }}
-                        width={25}
+                {vaca.type === "homeoffice" ? (
+                  <HomeOffice
+                    values={{
+                      availableManagers,
+                      successfullySent,
+                    }}
+                    options={{
+                      handleManagerChange: this.handleManagerChange,
+                      handleNotesChange: this.handleNotesChange,
+                      handleWeekChange: this.handleWeekChange,
+                      toggleSubmitModal: this.toggleSubmitModal,
+                      handleClear: this.handleClear,
+                    }}
+                  />
+                ) : (
+                  <Panel
+                    bordered
+                    style={{ padding: "10px" }}
+                    id="which-days"
+                    header={
+                      <h4
+                        className="form-section-heading"
+                        style={{ position: "relative" }}
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                        />
-                      </svg>
-                    </h4>
-                  }
-                >
-                  <FormGroup>
-                    <ControlLabel>On which days?</ControlLabel>
-                    <DateRangePicker
-                      placement="top"
-                      showWeekNumbers
-                      block
-                      onChange={this.handleDateChange}
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <ControlLabel>Manager</ControlLabel>
-                    <SelectPicker
-                      block
-                      data={availableManagers}
-                      onChange={this.handleManagerChange}
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <ControlLabel>Note</ControlLabel>
-                    <Input
-                      componentClass="textarea"
-                      rows={3}
-                      placeholder="Optional Note"
-                      onChange={this.handleNotesChange}
-                    />
-                  </FormGroup>
-                  {vaca.type === "sick" && (
-                    <FormGroup>
-                      <ControlLabel className="sick-warning">
+                        Dates
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="h-6 w-6"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
-                          style={{ marginRight: "15px" }}
-                          width={100}
+                          style={{ marginLeft: "15px" }}
+                          width={25}
                         >
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
                             strokeWidth={2}
-                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                           />
                         </svg>
-                        <span>
-                          When submitting a sick notice, don't forget to submit
-                          a doctors note now, or later in your dashboard by
-                          editing this request{`&apos;``&apos;`}
-                          <strong>if sick for more than 3 days</strong>.
-                        </span>
-                      </ControlLabel>
-                    </FormGroup>
-                  )}
-                  <FormGroup style={{ marginBottom: "20px" }}>
-                    <div className="upload-file">
-                      <Upload
-                        handleFileUploadSuccess={this.onFileUploadSuccess}
-                      />
-                    </div>
-                  </FormGroup>
-                  {vaca.type === "sick" && (
+                      </h4>
+                    }
+                  >
                     <FormGroup>
-                      <CheckboxGroup
-                        onChange={this.handleConfirmIllnessChange}
-                        value={vaca.confirmIllness}
-                      >
-                        <Checkbox value="confirmed">
-                          I hereby confirm that I was sick on the above named
-                          days and the information is correct.
-                        </Checkbox>
-                      </CheckboxGroup>
+                      <ControlLabel>On which days?</ControlLabel>
+                      <DateRangePicker
+                        placement="top"
+                        showWeekNumbers
+                        block
+                        onChange={this.handleDateChange}
+                      />
                     </FormGroup>
-                  )}
-                  <FormGroup>
-                    <ButtonGroup justified>
-                      <Button
-                        style={{ width: "50%" }}
-                        onClick={this.handleClear}
-                        appearance="default"
-                      >
-                        Clear
-                      </Button>
-                      <Button
-                        style={{ width: "50%" }}
-                        onClick={this.toggleSubmitModal}
-                        disabled={successfullySent}
-                        appearance="primary"
-                      >
-                        Submit
-                      </Button>
-                    </ButtonGroup>
-                  </FormGroup>
-                </Panel>
+                    <FormGroup>
+                      <ControlLabel>Manager</ControlLabel>
+                      <SelectPicker
+                        block
+                        data={availableManagers}
+                        onChange={this.handleManagerChange}
+                      />
+                    </FormGroup>
+                    <FormGroup>
+                      <ControlLabel>Note</ControlLabel>
+                      <Input
+                        componentClass="textarea"
+                        rows={3}
+                        placeholder="Optional Note"
+                        onChange={this.handleNotesChange}
+                      />
+                    </FormGroup>
+                    {vaca.type === "sick" && (
+                      <FormGroup>
+                        <ControlLabel className="sick-warning">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-6 w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            style={{ marginRight: "15px" }}
+                            width={100}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          <span>
+                            When submitting a sick notice, don't forget to
+                            submit a doctors note now, or later in your
+                            dashboard by editing this request
+                            <strong>if sick for more than 3 days</strong>.
+                          </span>
+                        </ControlLabel>
+                      </FormGroup>
+                    )}
+                    <FormGroup style={{ marginBottom: "20px" }}>
+                      <div className="upload-file">
+                        <Upload
+                          handleFileUploadSuccess={this.onFileUploadSuccess}
+                        />
+                      </div>
+                    </FormGroup>
+                    {vaca.type === "sick" && (
+                      <FormGroup>
+                        <CheckboxGroup
+                          onChange={this.handleConfirmIllnessChange}
+                          value={vaca.confirmIllness}
+                        >
+                          <Checkbox value="confirmed">
+                            I hereby confirm that I was sick on the above named
+                            days and the information is correct.
+                          </Checkbox>
+                        </CheckboxGroup>
+                      </FormGroup>
+                    )}
+                    <FormGroup>
+                      <ButtonGroup justified>
+                        <Button
+                          style={{ width: "50%" }}
+                          onClick={this.handleClear}
+                          appearance="default"
+                        >
+                          Clear
+                        </Button>
+                        <Button
+                          style={{ width: "50%" }}
+                          onClick={this.toggleSubmitModal}
+                          disabled={successfullySent}
+                          appearance="primary"
+                        >
+                          Submit
+                        </Button>
+                      </ButtonGroup>
+                    </FormGroup>
+                  </Panel>
+                )}
               </Form>
             </Content>
           </Container>
@@ -997,12 +1131,15 @@ class New extends React.Component {
                           fontWeight: "600",
                         }}
                       >
-                        Are you sure you want to submit the following absence
+                        Are you sure you want to submit the following
+                        {vaca.type === "homeoffice"
+                          ? " homeoffice "
+                          : " absence "}
                         request?
                       </span>
                       <Table
                         showHeader={false}
-                        height={200}
+                        height={300}
                         bordered={false}
                         data={confirmTableData}
                         style={{ margin: "20px 50px" }}
@@ -1016,7 +1153,7 @@ class New extends React.Component {
                           <Cell dataKey="value" />
                         </Column>
                       </Table>
-                      {hideHistory && (
+                      {(vaca.type === "sick" || vaca.type === "trip") && (
                         <span
                           style={{
                             textAlign: "center",

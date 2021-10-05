@@ -17,6 +17,9 @@ const SentryWebpackPluginOptions = {
  */
 const nextConfig = {
   compress: false,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   maximumFileSizeToCacheInBytes: 5242880,
   webpack(config, { isServer }) {
     config.module.rules.push({

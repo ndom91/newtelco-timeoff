@@ -14,11 +14,12 @@ export default class ApprovedBtn extends Component {
     const approvalHash = this.props.data.approval_hash
     const host = window.location.host
     const protocol = window.location.protocol
-    const url = `${protocol}//${host}/api/mail/response?h=${approvalHash}&a=a&b=0`
+    const url = `${protocol}//${host}/api/mail/response?h=${approvalHash}&a=a&b=0${
+      this.props.data.type === "homeoffice" ? "&ho=true" : ""
+    }`
     fetch(url)
-      .then((res) => res.json())
       .then((data) => {
-        if (data.code === 200) {
+        if (data.status === 200) {
           this.setState({
             approval: 2,
           })
@@ -32,11 +33,12 @@ export default class ApprovedBtn extends Component {
     const approvalHash = this.props.data.approval_hash
     const host = window.location.host
     const protocol = window.location.protocol
-    const url = `${protocol}//${host}/api/mail/response?h=${approvalHash}&a=d&b=0`
+    const url = `${protocol}//${host}/api/mail/response?h=${approvalHash}&a=d&b=0${
+      this.props.data.type === "homeoffice" ? "&ho=true" : ""
+    }`
     fetch(url)
-      .then((res) => res.json())
       .then((data) => {
-        if (data.code === 200) {
+        if (data.status === 200) {
           this.setState({
             approval: 1,
           })

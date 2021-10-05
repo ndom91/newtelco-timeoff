@@ -20,7 +20,9 @@ const Dashboard = ({ session, dashboard }) => {
       const approvalCompleted = params.get("b")
       const approvalHash = params.get("h")
       const action = params.get("a")
+      const homeoffice = params.get("ho")
       const code = params.get("code")
+      const typeNoun = homeoffice === "true" ? "Homeoffice" : "Absence"
 
       if (approvalCompleted === "0") {
         if (window.location.search) {
@@ -35,9 +37,9 @@ const Dashboard = ({ session, dashboard }) => {
                     const code = data.code
                     const action = data.a
                     if (code === 200 && action === "a") {
-                      notifyInfo("Absence Successfully Approved")
+                      notifyInfo(`${typeNoun} Successfully Approved`)
                     } else if (code === 200 && action === "d") {
-                      notifyInfo("Absence Successfully Denied")
+                      notifyInfo(`${typeNoun} Successfully Denied`)
                     } else if (code === 500) {
                       notifyWarn("Error Responding to Request")
                     }
@@ -52,9 +54,9 @@ const Dashboard = ({ session, dashboard }) => {
       } else {
         if (session) {
           if (code === "200" && action === "a") {
-            notifyInfo("Absence Successfully Approved")
+            notifyInfo(`${typeNoun} Successfully Approved`)
           } else if (code === "200" && action === "d") {
-            notifyInfo("Absence Successfully Denied")
+            notifyInfo(`${typeNoun} Successfully Denied`)
           } else if (code === "500") {
             notifyWarn("Error Responding to Request")
           }

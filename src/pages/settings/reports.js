@@ -5,7 +5,6 @@ import { getSession } from "next-auth/react"
 import RequireLogin from "../../components/requiredLogin"
 import Subheader from "../../components/content-subheader"
 import "react-tabs/style/react-tabs.css"
-
 import {
   Container,
   Header,
@@ -19,9 +18,6 @@ import {
   Col,
 } from "rsuite"
 
-// const ResponsiveSwarmPlot = React.lazy(() =>
-//   import("../../components/swarmplot")
-// )
 const StackedBarChart = React.lazy(() =>
   import("../../components/stackedBarChart")
 )
@@ -64,6 +60,45 @@ class AdminReports extends React.Component {
       allMonths,
       allYears,
     })
+  }
+
+  homeofficeExport = async () => {
+    const homeofficeRes = await fetch("/api/homeoffice")
+    const homeofficeData = await homeofficeRes.json()
+    let csvContent = "data:text/csv;charset=utf-8,"
+
+    const rows = homeofficeData.reduce((rows, week) => {
+      const days = JSON.parse(week.days)
+      rows.push({
+        name: week.name,
+        manager: week.manager,
+        from: week.weekFrom,
+        to: week.weekTo,
+        mon: days.mon,
+        tue: days.tue,
+        wed: days.wed,
+        thu: days.thu,
+        fri: days.fri,
+        note: week.note,
+        submittedOn: week.submittedDatetime,
+      })
+      return rows
+    }, [])
+
+    // Get CSV Headers
+    csvContent += Object.keys(rows[0]).join(",") + "\r\n"
+
+    rows.forEach((rowArray) => {
+      let row = Object.values(rowArray).join(",")
+      csvContent += row + "\r\n"
+    })
+
+    const encodedUri = encodeURI(csvContent)
+    const link = document.createElement("a")
+    link.setAttribute("href", encodedUri)
+    link.setAttribute("download", `newtelco-homeoffice-requests.csv`)
+    document.body.appendChild(link)
+    link.click()
   }
 
   convertToCSV = (objArray) => {
@@ -348,6 +383,21 @@ class AdminReports extends React.Component {
                   >
                     <Panel style={{ boxShadow: "none" }}>
                       <FormGroup>
+                        <ControlLabel>All Homeoffice</ControlLabel>
+                        <IconButton
+                          block
+                          icon={<Icon icon="export" />}
+                          appearance="ghost"
+                          onClick={this.homeofficeExport}
+                          style={{ marginTop: "30px" }}
+                        >
+                          Export CSV
+                        </IconButton>
+                      </FormGroup>
+                    </Panel>
+                    <hr className="reports-hr" />
+                    <Panel style={{ boxShadow: "none" }}>
+                      <FormGroup>
                         <ControlLabel>Monthly</ControlLabel>
                         <SelectPicker
                           onChange={this.handleMonthReportSelectChange}
@@ -361,7 +411,7 @@ class AdminReports extends React.Component {
                           appearance="ghost"
                           onClick={this.handleMonthReportExport}
                         >
-                          Export
+                          Export CSV
                         </IconButton>
                       </FormGroup>
                     </Panel>
@@ -382,7 +432,7 @@ class AdminReports extends React.Component {
                           appearance="ghost"
                           onClick={this.handleYearReportExport}
                         >
-                          Export
+                          Export CSV
                         </IconButton>
                       </FormGroup>
                     </Panel>
@@ -403,7 +453,7 @@ class AdminReports extends React.Component {
                           appearance="ghost"
                           onClick={this.handleYearTDReportExport}
                         >
-                          Export
+                          Export CSV
                         </IconButton>
                       </FormGroup>
                     </Panel>
