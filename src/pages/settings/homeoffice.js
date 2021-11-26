@@ -75,7 +75,6 @@ const HomeOffice = ({ session, data }) => {
           weekFrom,
           weekTo
         )
-        console.log("DAYSSELECTED", daysSelected)
         return daysSelected
           .map((selectedDay) => {
             return [
@@ -103,9 +102,12 @@ const HomeOffice = ({ session, data }) => {
       "href",
       `data:text/csv;charset=utf-8,${encodeURIComponent(csvContent)}`
     )
-    const teamName = data.team.teamInfos.find(
-      (team) => team.id === selectedTeam
-    ).name
+    let teamName = "newtelco_all"
+    if (selectedTeam) {
+      teamName = data.team.teamInfos.find(
+        (team) => team.id === selectedTeam
+      ).name
+    }
     link.setAttribute("download", `${teamName}_homeofficeExport.csv`)
     link.style.display = "none"
     document.body.appendChild(link)
