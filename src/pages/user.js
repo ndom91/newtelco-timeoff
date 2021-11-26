@@ -19,7 +19,6 @@ import DeleteModal from "../components/deleteRequestModal"
 import { notifyInfo } from "../lib/notify"
 import { format, isSameISOWeek } from "date-fns"
 import {
-  Badge,
   Container,
   Header,
   Content,

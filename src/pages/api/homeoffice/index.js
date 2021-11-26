@@ -1,4 +1,5 @@
 const escape = require("sql-template-strings")
+const { formatISO, lastDayOfMonth, startOfMonth } = require("date-fns")
 const db = require("../../../lib/db")
 
 const handler = async (req, res) => {
@@ -15,6 +16,31 @@ const handler = async (req, res) => {
   `)
 
     res.status(200).json(findOne)
+  } else if (method === "GET" && query.month?.length) {
+    const beginDate = startOfMonth(new Date(query.year, query.month - 1))
+    const endDate = lastDayOfMonth(new Date(query.year, query.month - 1))
+    const monthHomeoffices = await db.query(escape`
+      SELECT * FROM homeoffice
+      WHERE
+        weekTo >= ${formatISO(beginDate)} AND
+        weekFrom < ${formatISO(endDate)}
+  `)
+    res.status(200).json(monthHomeoffices)
+  } else if (method === "GET" && query.team?.length) {
+    const teamUsers = await db.query(escape`
+      SELECT email FROM users
+      WHERE
+        team LIKE ${query.team}
+  `)
+    const findAllTeam = await db.query(`
+      SELECT * FROM homeoffice
+      WHERE
+        email IN ('${teamUsers.map((user) => user.email).join("','")}') AND
+        disabled LIKE 0 AND
+        approved NOT LIKE 1
+    `)
+
+    res.status(200).json(findAllTeam)
   } else if (method === "GET") {
     const find = await db.query(escape`
       SELECT * FROM homeoffice
