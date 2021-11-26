@@ -41,7 +41,7 @@ const approvedMap = {
 
 const HomeOffice = ({ session, data }) => {
   const [homeoffice, setHomeoffice] = useState(data.homeoffice)
-  const [selectedTeam, setSelectedTeam] = useState(1)
+  const [selectedTeam, setSelectedTeam] = useState()
 
   let userAdmin = false
   if (typeof window !== "undefined") {
@@ -191,6 +191,7 @@ const HomeOffice = ({ session, data }) => {
                   <SelectPicker
                     onChange={(e) => handleTeamChange(e)}
                     value={selectedTeam}
+                    placeholder="All"
                     style={{ width: "100%" }}
                     searchable={false}
                     cleanable={false}
