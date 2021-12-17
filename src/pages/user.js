@@ -253,6 +253,117 @@ class User extends React.Component {
           },
         },
       },
+      homeofficeGridOptions: {
+        defaultColDef: {
+          resizable: true,
+          sortable: true,
+          filter: true,
+          selectable: false,
+          editable: false,
+        },
+        columnDefs: [
+          {
+            headerName: "ID",
+            field: "id",
+            hide: true,
+            sort: "desc",
+          },
+          {
+            headerName: "Submitted",
+            cellRenderer: "dateTimeShort",
+            field: "submittedDatetime",
+            width: 160,
+          },
+          {
+            headerName: "Week From",
+            field: "weekFrom",
+            tooltipField: "weekFrom",
+            width: 120,
+            cellRenderer: (row) => {
+              return moment(row.data.weekFrom).format("DD.MM.YYYY")
+            },
+          },
+          {
+            headerName: "Week To",
+            field: "weekTo",
+            tooltipField: "weekTo",
+            width: 120,
+            cellRenderer: (row) => {
+              return moment(row.data.weekTo).format("DD.MM.YYYY")
+            },
+          },
+          {
+            headerName: "Days",
+            field: "days",
+            width: 260,
+            cellRenderer: (row) => {
+              const { mon, tue, wed, thu, fri } = JSON.parse(row.data.days)
+              return (
+                `${mon ? "Monday" : ""} ` +
+                `${tue ? "Tuesday" : ""} ` +
+                `${wed ? "Wednesday" : ""} ` +
+                `${thu ? "Thursday" : ""} ` +
+                `${fri ? "Friday" : ""} `
+              )
+            },
+          },
+          {
+            headerName: "Notes",
+            field: "note",
+            width: 160,
+          },
+          {
+            headerName: "Submitted By",
+            field: "submittedBy",
+            width: 140,
+          },
+          {
+            headerName: "Manager",
+            field: "manager",
+            width: 160,
+          },
+          {
+            headerName: "Approval Date/Time",
+            field: "approvedDatetime",
+            cellRenderer: "dateTimeShort",
+            width: 160,
+          },
+          {
+            headerName: "Approved",
+            field: "approved",
+            width: 120,
+            cellRenderer: "approved",
+            pinned: "right",
+            cellStyle: {
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+            },
+          },
+        ],
+        context: { componentParent: this },
+        frameworkComponents: {
+          dateTimeShort: DateTimeField,
+          dateShort: DateField,
+          approved: ApprovedField,
+          uppercase: Uppercase,
+          type: TypeField,
+          viewfiles: ViewFiles,
+        },
+        rowSelection: "multiple",
+        paginationPageSize: 10,
+        rowClass: "row-class",
+        rowClassRules: {
+          "row-awaitingResponse": function (params) {
+            const approved = params.data.approved
+            if (approved !== "2") {
+              return true
+            }
+            return false
+          },
+        },
+      },
     }
   }
 
@@ -635,6 +746,8 @@ class User extends React.Component {
     const {
       gridOptions,
       rowData,
+      homeofficeData,
+      homeofficeGridOptions,
       openConfirmDeleteModal,
       confirmDeleteData,
       openEditModal,
@@ -744,10 +857,22 @@ class User extends React.Component {
                       onFirstDataRendered={this.onFirstDataRendered.bind(this)}
                     />
                   ) : (
-                    <Calendar
-                      bordered
-                      renderCell={this.homeofficeCalendarCell}
-                    />
+                    <>
+                      <Calendar
+                        bordered
+                        renderCell={this.homeofficeCalendarCell}
+                      />
+                      <AgGridReact
+                        gridOptions={homeofficeGridOptions}
+                        rowData={homeofficeData}
+                        onGridReady={this.handleGridReady}
+                        animateRows
+                        pagination
+                        onFirstDataRendered={this.onFirstDataRendered.bind(
+                          this
+                        )}
+                      />
+                    </>
                   )}
                 </div>
               </Content>
