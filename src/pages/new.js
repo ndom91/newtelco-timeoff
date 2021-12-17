@@ -438,13 +438,6 @@ class New extends React.Component {
           thu: document.getElementById("ho-thu").checked,
           fri: document.getElementById("ho-fri").checked,
         }
-        if (Object.values(days).filter(Boolean).length > 2) {
-          notifyWarn(
-            "WFH",
-            "You may only select a maximum of 2 WFH days per week."
-          )
-          return
-        }
         const daysValue = Object.entries(days).reduce((label, day) => {
           const [name, val] = day
           if (val) {
