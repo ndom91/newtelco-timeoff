@@ -1004,6 +1004,7 @@ class New extends React.Component {
                       <ControlLabel>On which days?</ControlLabel>
                       <DateRangePicker
                         placement="top"
+                        isoWeek
                         showWeekNumbers
                         block
                         onChange={this.handleDateChange}

@@ -6,6 +6,7 @@ import { getSession } from "next-auth/react"
 import RequireLogin from "../../components/requiredLogin"
 import Subheader from "../../components/content-subheader"
 import "react-tabs/style/react-tabs.css"
+import { notifyError } from "../../lib/notify"
 import {
   Container,
   Header,
@@ -43,8 +44,8 @@ class AdminReports extends React.Component {
 
   componentDidMount() {
     const allYears = []
-    const yearNow = moment().format("YYYY")
-    for (let i = 0; i < 3; i++) {
+    const yearNow = moment().add(1, "y").format("YYYY")
+    for (let i = 0; i < 4; i++) {
       const yearNowLoop = yearNow - i
       allYears.push({ value: yearNowLoop, label: yearNowLoop })
     }
@@ -70,11 +71,13 @@ class AdminReports extends React.Component {
 
     const rows = homeofficeData.reduce((rows, week) => {
       const days = JSON.parse(week.days)
+      const countDays = Object.values(days).filter(Boolean).length
       rows.push({
         name: week.name,
         manager: week.manager,
         from: week.weekFrom,
         to: week.weekTo,
+        homeofficeCount: countDays,
         mon: days.mon,
         tue: days.tue,
         wed: days.wed,
@@ -110,13 +113,20 @@ class AdminReports extends React.Component {
     const homeofficeData = await homeofficeRes.json()
     let csvContent = "data:text/csv;charset=utf-8,"
 
+    if (!homeofficeData.length) {
+      notifyError("No data found for this month")
+      return
+    }
+
     const rows = homeofficeData.reduce((rows, week) => {
       const days = JSON.parse(week.days)
+      const countDays = Object.values(days).filter(Boolean).length
       rows.push({
         name: week.name,
         manager: week.manager,
         from: parseISO(week.weekFrom),
         to: parseISO(week.weekTo),
+        homeofficeCount: countDays,
         mon: days.mon,
         tue: days.tue,
         wed: days.wed,
@@ -151,7 +161,7 @@ class AdminReports extends React.Component {
     for (let i = 0; i < array.length; i++) {
       let line = ""
       for (const index in array[i]) {
-        if (line !== "") line += '";"'
+        if (line !== "") line += '","'
         line += array[i][index]
       }
       str += '"' + line + '"\r\n'
@@ -196,12 +206,12 @@ class AdminReports extends React.Component {
             id: data.id,
             name: data.name,
             email: data.email,
-            lastYear: data.resturlaubVorjahr,
-            thisYear: data.jahresurlaubInsgesamt,
-            spent: data.jahresUrlaubAusgegeben,
-            total: data.restjahresurlaubInsgesamt,
-            requested: data.beantragt,
-            remaining: data.resturlaubJAHR,
+            lastYear: data.resturlaubVorjahr.toString().replace(".", ","),
+            thisYear: data.jahresurlaubInsgesamt.toString().replace(".", ","),
+            spent: data.jahresUrlaubAusgegeben.toString().replace(".", ","),
+            total: data.restjahresurlaubInsgesamt.toString().replace(".", ","),
+            requested: data.beantragt.toString().replace(".", ","),
+            remaining: data.resturlaubJAHR.toString().replace(".", ","),
             type: data.type,
             from: moment(data.fromDate).format("DD.MM.YYYY"),
             to: moment(data.toDate).format("DD.MM.YYYY"),
@@ -271,12 +281,12 @@ class AdminReports extends React.Component {
             id: data.id,
             name: data.name,
             email: data.email,
-            lastYear: data.resturlaubVorjahr,
-            thisYear: data.jahresurlaubInsgesamt,
-            spent: data.jahresUrlaubAusgegeben,
-            total: data.restjahresurlaubInsgesamt,
-            requested: data.beantragt,
-            remaining: data.resturlaubJAHR,
+            lastYear: data.resturlaubVorjahr.toString().replace(".", ","),
+            thisYear: data.jahresurlaubInsgesamt.toString().replace(".", ","),
+            spent: data.jahresUrlaubAusgegeben.toString().replace(".", ","),
+            total: data.restjahresurlaubInsgesamt.toString().replace(".", ","),
+            requested: data.beantragt.toString().replace(".", ","),
+            remaining: data.resturlaubJAHR.toString().replace(".", ","),
             type: data.type,
             from: moment(data.fromDate).format("DD.MM.YYYY"),
             to: moment(data.toDate).format("DD.MM.YYYY"),
@@ -336,7 +346,7 @@ class AdminReports extends React.Component {
             id: data.id,
             name: data.name,
             email: data.email,
-            remaining: data.resturlaubJAHR,
+            remaining: data.resturlaubJAHR.toString().replace(".", ","),
             submitted: moment(data.submitted_datetime).format(
               "DD.MM.YYYY HH:mm"
             ),
