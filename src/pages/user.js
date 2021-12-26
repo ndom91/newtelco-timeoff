@@ -765,7 +765,7 @@ class User extends React.Component {
         >
           <Container>
             <Subheader header="User" subheader="Dashboard" />
-            <Panel bordered>
+            <Panel bordered className="scroll-panel">
               <Header className="user-content-header">
                 <div className="section-header">
                   <ButtonGroup>
@@ -1142,6 +1142,9 @@ class User extends React.Component {
                   0 4px 8px rgba(90, 97, 105, 0.12),
                   0 10px 10px rgba(90, 97, 105, 0.16),
                   0 7px 70px rgba(90, 97, 105, 0.1);
+              }
+              :global(.scroll-panel > .rs-panel-body) {
+                overflow-y: scroll;
               }
             `}
           </style>
