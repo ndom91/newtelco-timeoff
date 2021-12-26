@@ -8,13 +8,7 @@ const Subheader = (props) => {
         marginBottom: "20px",
       }}
     >
-      <h3
-        style={{
-          fontWeight: "100",
-        }}
-      >
-        {props.header}
-      </h3>
+      <h3 style={{ fontWeight: "100" }}>{props.header}</h3>
       <h5>{props.subheader}</h5>
     </div>
   )

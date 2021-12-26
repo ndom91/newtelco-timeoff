@@ -9,9 +9,6 @@ import {
   ControlLabel,
   DateRangePicker,
   SelectPicker,
-  HelpBlock,
-  Checkbox,
-  CheckboxGroup,
 } from "rsuite"
 import DayCheckbox from "./dayCheckbox"
 
@@ -69,10 +66,6 @@ const HomeOffice = ({ values, options }) => {
         </FormGroup>
         <FormGroup>
           <ControlLabel>Days</ControlLabel>
-          {/* <HelpBlock> */}
-          {/*   Please select the days on which you would like to work at home, max */}
-          {/*   of 2 per week */}
-          {/* </HelpBlock> */}
           <div className="weekCheck-wrapper">
             <DayCheckbox id="ho-mon" day="monday" />
             <DayCheckbox id="ho-tue" day="tuesday" />

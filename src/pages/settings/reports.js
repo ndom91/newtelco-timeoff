@@ -1,10 +1,12 @@
 import React from "react"
 import Layout from "../../components/layout/index"
+import { parseISO } from "date-fns"
 import moment from "moment-timezone"
 import { getSession } from "next-auth/react"
 import RequireLogin from "../../components/requiredLogin"
 import Subheader from "../../components/content-subheader"
 import "react-tabs/style/react-tabs.css"
+import { notifyError } from "../../lib/notify"
 import {
   Container,
   Header,
@@ -42,8 +44,8 @@ class AdminReports extends React.Component {
 
   componentDidMount() {
     const allYears = []
-    const yearNow = moment().format("YYYY")
-    for (let i = 0; i < 3; i++) {
+    const yearNow = moment().add(1, "y").format("YYYY")
+    for (let i = 0; i < 4; i++) {
       const yearNowLoop = yearNow - i
       allYears.push({ value: yearNowLoop, label: yearNowLoop })
     }
@@ -69,11 +71,13 @@ class AdminReports extends React.Component {
 
     const rows = homeofficeData.reduce((rows, week) => {
       const days = JSON.parse(week.days)
+      const countDays = Object.values(days).filter(Boolean).length
       rows.push({
         name: week.name,
         manager: week.manager,
         from: week.weekFrom,
         to: week.weekTo,
+        homeofficeCount: countDays,
         mon: days.mon,
         tue: days.tue,
         wed: days.wed,
@@ -101,6 +105,55 @@ class AdminReports extends React.Component {
     link.click()
   }
 
+  homeofficeMonthExport = async () => {
+    const { month, year } = this.state.reportSelection.month
+    const homeofficeRes = await fetch(
+      `/api/homeoffice?month=${month}&year=${year}`
+    )
+    const homeofficeData = await homeofficeRes.json()
+    let csvContent = "data:text/csv;charset=utf-8,"
+
+    if (!homeofficeData.length) {
+      notifyError("No data found for this month")
+      return
+    }
+
+    const rows = homeofficeData.reduce((rows, week) => {
+      const days = JSON.parse(week.days)
+      const countDays = Object.values(days).filter(Boolean).length
+      rows.push({
+        name: week.name,
+        manager: week.manager,
+        from: parseISO(week.weekFrom),
+        to: parseISO(week.weekTo),
+        homeofficeCount: countDays,
+        mon: days.mon,
+        tue: days.tue,
+        wed: days.wed,
+        thu: days.thu,
+        fri: days.fri,
+        note: week.note,
+        submittedOn: week.submittedDatetime,
+      })
+      return rows
+    }, [])
+
+    // Get CSV Headers
+    csvContent += Object.keys(rows[0]).join(",") + "\r\n"
+
+    rows.forEach((rowArray) => {
+      let row = Object.values(rowArray).join(",")
+      csvContent += row + "\r\n"
+    })
+
+    const encodedUri = encodeURI(csvContent)
+    const link = document.createElement("a")
+    link.setAttribute("href", encodedUri)
+    link.setAttribute("download", `newtelco-homeoffice-${month}${year}.csv`)
+    document.body.appendChild(link)
+    link.click()
+  }
+
   convertToCSV = (objArray) => {
     const array = typeof objArray !== "object" ? JSON.parse(objArray) : objArray
     let str = ""
@@ -108,7 +161,7 @@ class AdminReports extends React.Component {
     for (let i = 0; i < array.length; i++) {
       let line = ""
       for (const index in array[i]) {
-        if (line !== "") line += '";"'
+        if (line !== "") line += '","'
         line += array[i][index]
       }
       str += '"' + line + '"\r\n'
@@ -153,12 +206,12 @@ class AdminReports extends React.Component {
             id: data.id,
             name: data.name,
             email: data.email,
-            lastYear: data.resturlaubVorjahr,
-            thisYear: data.jahresurlaubInsgesamt,
-            spent: data.jahresUrlaubAusgegeben,
-            total: data.restjahresurlaubInsgesamt,
-            requested: data.beantragt,
-            remaining: data.resturlaubJAHR,
+            lastYear: data.resturlaubVorjahr.toString().replace(".", ","),
+            thisYear: data.jahresurlaubInsgesamt.toString().replace(".", ","),
+            spent: data.jahresUrlaubAusgegeben.toString().replace(".", ","),
+            total: data.restjahresurlaubInsgesamt.toString().replace(".", ","),
+            requested: data.beantragt.toString().replace(".", ","),
+            remaining: data.resturlaubJAHR.toString().replace(".", ","),
             type: data.type,
             from: moment(data.fromDate).format("DD.MM.YYYY"),
             to: moment(data.toDate).format("DD.MM.YYYY"),
@@ -228,12 +281,12 @@ class AdminReports extends React.Component {
             id: data.id,
             name: data.name,
             email: data.email,
-            lastYear: data.resturlaubVorjahr,
-            thisYear: data.jahresurlaubInsgesamt,
-            spent: data.jahresUrlaubAusgegeben,
-            total: data.restjahresurlaubInsgesamt,
-            requested: data.beantragt,
-            remaining: data.resturlaubJAHR,
+            lastYear: data.resturlaubVorjahr.toString().replace(".", ","),
+            thisYear: data.jahresurlaubInsgesamt.toString().replace(".", ","),
+            spent: data.jahresUrlaubAusgegeben.toString().replace(".", ","),
+            total: data.restjahresurlaubInsgesamt.toString().replace(".", ","),
+            requested: data.beantragt.toString().replace(".", ","),
+            remaining: data.resturlaubJAHR.toString().replace(".", ","),
             type: data.type,
             from: moment(data.fromDate).format("DD.MM.YYYY"),
             to: moment(data.toDate).format("DD.MM.YYYY"),
@@ -293,7 +346,7 @@ class AdminReports extends React.Component {
             id: data.id,
             name: data.name,
             email: data.email,
-            remaining: data.resturlaubJAHR,
+            remaining: data.resturlaubJAHR.toString().replace(".", ","),
             submitted: moment(data.submitted_datetime).format(
               "DD.MM.YYYY HH:mm"
             ),
@@ -398,7 +451,28 @@ class AdminReports extends React.Component {
                     <hr className="reports-hr" />
                     <Panel style={{ boxShadow: "none" }}>
                       <FormGroup>
-                        <ControlLabel>Monthly</ControlLabel>
+                        <ControlLabel>Monthly Homeoffice</ControlLabel>
+                        <SelectPicker
+                          onChange={this.handleMonthReportSelectChange}
+                          data={allMonths}
+                          placeholder="Please Select a month"
+                          placement="topStart"
+                        />
+                        <IconButton
+                          block
+                          icon={<Icon icon="export" />}
+                          appearance="ghost"
+                          onClick={this.homeofficeMonthExport}
+                          style={{ marginTop: "30px" }}
+                        >
+                          Export CSV
+                        </IconButton>
+                      </FormGroup>
+                    </Panel>
+                    <hr className="reports-hr" />
+                    <Panel style={{ boxShadow: "none" }}>
+                      <FormGroup>
+                        <ControlLabel>Monthly Absence</ControlLabel>
                         <SelectPicker
                           onChange={this.handleMonthReportSelectChange}
                           data={allMonths}
@@ -418,7 +492,7 @@ class AdminReports extends React.Component {
                     <hr className="reports-hr" />
                     <Panel style={{ boxShadow: "none" }}>
                       <FormGroup>
-                        <ControlLabel>Yearly</ControlLabel>
+                        <ControlLabel>Yearly Absence</ControlLabel>
                         <SelectPicker
                           onChange={this.handleYearReportSelectChange}
                           data={allYears}
@@ -439,7 +513,7 @@ class AdminReports extends React.Component {
                     <hr className="reports-hr" />
                     <Panel style={{ boxShadow: "none" }}>
                       <FormGroup>
-                        <ControlLabel>Year-end Remaining</ControlLabel>
+                        <ControlLabel>Year-end Remaining Absences</ControlLabel>
                         <SelectPicker
                           onChange={this.handleYearTDReportSelectChange}
                           data={allYears}
