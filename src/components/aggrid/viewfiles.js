@@ -1,24 +1,31 @@
-import React from 'react'
-import {
-  Icon,
-  IconButton
-} from 'rsuite'
+import React from "react"
+import { Icon, IconButton } from "rsuite"
 
 export default class ViewFiles extends React.Component {
   render() {
     if (this.props.data.files) {
       const files = JSON.parse(this.props.data.files)
-      if (files.length > 0) {
+      if (files?.length > 0) {
         return (
-          <span onClick={() => this.props.viewFiles(JSON.parse(this.props.data.files))} className='file-icon'>
-            <IconButton size='sm' icon={<Icon icon='download' />} appearance='ghost'>
+          <span
+            onClick={() =>
+              this.props.viewFiles(JSON.parse(this.props.data.files))
+            }
+            className="file-icon"
+          >
+            <IconButton
+              size="sm"
+              icon={<Icon icon="download" />}
+              appearance="ghost"
+            >
               Files
             </IconButton>
-            <style jsx>{`
-              .file-icon:hover {
-                cursor: pointer;
-              }
-            `}
+            <style jsx>
+              {`
+                .file-icon:hover {
+                  cursor: pointer;
+                }
+              `}
             </style>
           </span>
         )
@@ -29,4 +36,4 @@ export default class ViewFiles extends React.Component {
       return <span>N/A</span>
     }
   }
-};
+}
