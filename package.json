@@ -81,7 +81,7 @@
     "less": "^4.1.1",
     "less-loader": "^10.0.1",
     "lint-staged": "^11.1.2",
-    "mini-css-extract-plugin": "^2.2.0",
+    "mini-css-extract-plugin": "^2.6.0",
     "prettier": "^2.4.0",
     "rsuite": "^4.10.2",
     "simple-git-hooks": "^2.6.1"

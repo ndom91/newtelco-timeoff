@@ -21,7 +21,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   maximumFileSizeToCacheInBytes: 5242880,
-  webpack(config, { isServer }) {
+  webpack(config) {
     config.module.rules.push({
       test: /\.(le|c)ss$/,
       use: [
