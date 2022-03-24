@@ -1,4 +1,4 @@
-import ActiveDirectory from "activedirectory2"
+const AD = require("activedirectory2").promiseWrapper
 
 module.exports = async (_, res) => {
   const config = {
@@ -7,29 +7,18 @@ module.exports = async (_, res) => {
     username: process.env.LDAP_BIND_DN,
     password: process.env.LDAP_BIND_PW,
   }
-  const ad = new ActiveDirectory(config)
-  ad.authenticate(
-    process.env.LDAP_BIND_DN,
-    process.env.LDAP_BIND_PW,
-    function (err, auth) {
-      if (err) {
-        console.log("ERROR: " + JSON.stringify(err))
-      } else {
-        console.log("AUTH: " + JSON.stringify(auth))
-      }
-    }
-  )
-  const query = process.env.LDAP_USER_QUERY
-  ad.findUsers(query, true, function (err, users) {
-    if (err) {
-      console.log("ERROR: " + JSON.stringify(err))
-      res.status(500).json({ status: 500, error: err, ad, config })
-      return
+  const ad = new AD(config)
+  try {
+    await ad.authenticate(process.env.LDAP_BIND_DN, process.env.LDAP_BIND_PW)
+    const users = await ad.findUsers(process.env.LDAP_USER_QUERY, true)
+
+    if (!users || users.length === 0) {
+      console.log("No users found.")
+      res.status(500).json({ status: 500, error: err })
     }
 
-    if (!users || users.length === 0) console.log("No users found.")
-    else {
-      res.status(200).json({ status: 200, users })
-    }
-  })
+    res.status(200).json({ status: 200, users })
+  } catch (e) {
+    res.status(500).json({ status: 500, error: err })
+  }
 }

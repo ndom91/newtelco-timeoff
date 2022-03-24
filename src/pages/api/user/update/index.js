@@ -1,5 +1,5 @@
-const db = require('../../../../lib/db')
-const escape = require('sql-template-strings')
+const db = require("../../../../lib/db")
+const escape = require("sql-template-strings")
 
 module.exports = async (req, res) => {
   const body = JSON.parse(req.body)
@@ -7,24 +7,30 @@ module.exports = async (req, res) => {
   const userCount = users.length
   let userSuccessCount = 0
   let attemptCount = 0
-  let lastError = ''
-  users.forEach(async user => {
-    const updateQuery = await db.query(escape`
-        UPDATE users SET fname ${user.fname}, lname = ${user.lname}, team = ${user.team}
-      `)
-    if (updateQuery.affectedRows === 1) {
-      attemptCount++
-      userSuccessCount++
-    } else {
-      attemptCount++
-      lastError = updateQuery
-    }
-    if (attemptCount === userCount) {
-      if (userSuccessCount === userCount) {
-        res.status(200).json({ status: 200, text: `Successfully updated ${userCount} users` })
-      } else {
-        res.status(200).json({ status: 500, text: `Error updating ${userCount - userSuccessCount} users`, error: lastError })
-      }
+  let lastError = ""
+  const updateResults = await Promise.all(
+    users.map((user) => {
+      return db.query(escape`
+      UPDATE users SET fname = ${user.fname}, lname = ${user.lname}, team = ${user.team} where email = ${user.email}
+    `)
+    })
+  )
+
+  if (updateResults.length !== userCount) {
+    res
+      .status(500)
+      .json({ status: 500, text: `Error updating ${userCount} users` })
+  }
+
+  updateResults.map((res) => {
+    if (res.warningCount !== 0) {
+      res
+        .status(500)
+        .json({ status: 500, text: `Error updating ${userCount} users` })
     }
   })
+
+  res
+    .status(200)
+    .json({ status: 200, text: `Successfully updated ${userCount} users` })
 }
