@@ -100,7 +100,7 @@ class AdminReports extends React.Component {
     const encodedUri = encodeURI(csvContent)
     const link = document.createElement("a")
     link.setAttribute("href", encodedUri)
-    link.setAttribute("download", `newtelco-homeoffice-requests.csv`)
+    link.setAttribute("download", `newtelco-mobileoffice-requests.csv`)
     document.body.appendChild(link)
     link.click()
   }
@@ -149,7 +149,7 @@ class AdminReports extends React.Component {
     const encodedUri = encodeURI(csvContent)
     const link = document.createElement("a")
     link.setAttribute("href", encodedUri)
-    link.setAttribute("download", `newtelco-homeoffice-${month}${year}.csv`)
+    link.setAttribute("download", `newtelco-mobileoffice-${month}${year}.csv`)
     document.body.appendChild(link)
     link.click()
   }

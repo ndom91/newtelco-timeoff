@@ -747,7 +747,7 @@ class New extends React.Component {
                       <Radio value="vacation">Vacation</Radio>
                       <Radio value="sick">Illness</Radio>
                       <Radio value="trip">Trip</Radio>
-                      <Radio value="homeoffice">Homeoffice</Radio>
+                      <Radio value="homeoffice">Mobile Office</Radio>
                       <Radio value="other">Other</Radio>
                     </RadioGroup>
                   </FormGroup>

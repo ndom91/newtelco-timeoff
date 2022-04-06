@@ -174,7 +174,7 @@ https://vacation.newtelco.de`,
       to: email,
       from: "device@newtelco.de",
       subject: `[NT] ${
-        homeoffice ? "Homeoffice" : "Absence"
+        homeoffice ? "Mobile Office" : "Absence"
       } Response - ${actionLabel}`,
       html: mailBody,
     },

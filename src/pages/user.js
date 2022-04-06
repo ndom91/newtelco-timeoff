@@ -604,7 +604,7 @@ class User extends React.Component {
       const encodedUri = encodeURI(csvContent)
       const link = document.createElement("a")
       link.setAttribute("href", encodedUri)
-      link.setAttribute("download", `${username}_homeoffice.csv`)
+      link.setAttribute("download", `${username}_mobileoffice.csv`)
       document.body.appendChild(link)
       link.click()
     }
