@@ -69,6 +69,8 @@ module.exports = async (req, res) => {
 
   if (type === "Sick") {
     mailBody = mailBody.replace("[TYPE]", `${type} Notification`)
+  } else if (type === "Homeoffice") {
+    type = "Mobileoffice"
   } else {
     mailBody = mailBody.replace("[TYPE]", `${type} Request`)
   }
@@ -143,14 +145,14 @@ module.exports = async (req, res) => {
     const approvalButtons = `<table border="0" cellpadding="0" cellspacing="30" role="presentation"> <tr> <td align="center" class="hover-bg-green-600" style="background-color: #67B246; border-radius: 3px;" bgcolor="#67B246"> <a href="${
       process.env.NEXTAUTH_URL
     }/api/mail/response?h=${approvalHash}&a=a${
-      type === "Homeoffice" ? "&ho=true" : ""
+      type === "Mobileoffice" ? "&ho=true" : ""
     }" target="_blank" class="all-font-sans hover-border-green-600" style="border: 1px solid #67B246; border-radius: 2px; display: inline-block; font-size: 20px; padding: 15px 25px; color: #ffffff; text-decoration: none;">Approve</a> </td> <td align="center" class="hover-bg-red-600" style="background-color: #fa2147; border-radius: 3px;" bgcolor="#fa2147"> <a href="${
       process.env.NEXTAUTH_URL
     }/api/mail/response?h=${approvalHash}&a=d${
-      type === "Homeoffice" ? "&ho=true" : ""
+      type === "Mobileoffice" ? "&ho=true" : ""
     }" target="_blank" class="all-font-sans hover-border-red-600" style="border: 1px solid #fa2147; border-radius: 2px; display: inline-block; font-size: 20px; padding: 15px 25px; color: #ffffff; text-decoration: none;">Deny</a> </td> </tr> </table>`
     mailBody = mailBody.replace("[APPROVAL_BUTTONS]", approvalButtons)
-    if (type === "Homeoffice") {
+    if (type === "Mobileoffice") {
       const selectedDays = Object.values(days).reduce((row, day) => {
         if (day) {
           row += "<td align='center'>✅</td>"
