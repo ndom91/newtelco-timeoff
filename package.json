@@ -51,7 +51,7 @@
     "logrocket-react": "^4.0.1",
     "moment-range": "^4.0.2",
     "moment-timezone": "^0.5.33",
-    "next": "^11.1.2",
+    "next": "^12.1.0",
     "next-auth": "^4.0.0-beta.2",
     "nodemailer": "^6.6.3",
     "nodemailer-direct-transport": "^3.3.2",
