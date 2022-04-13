@@ -41,7 +41,7 @@ class User extends React.Component {
   static async getInitialProps({ req, query }) {
     return {
       session: await getSession({ req }),
-      view: query.ho === "true" ? "homeoffice" : "vacations",
+      view: query.ho === "true" ? "mobileworking" : "vacations",
     }
   }
 
@@ -278,7 +278,7 @@ class User extends React.Component {
             headerName: "Week From",
             field: "weekFrom",
             tooltipField: "weekFrom",
-            width: 120,
+            width: 150,
             cellRenderer: (row) => {
               return moment(row.data.weekFrom).format("DD.MM.YYYY")
             },
@@ -287,7 +287,7 @@ class User extends React.Component {
             headerName: "Week To",
             field: "weekTo",
             tooltipField: "weekTo",
-            width: 120,
+            width: 150,
             cellRenderer: (row) => {
               return moment(row.data.weekTo).format("DD.MM.YYYY")
             },
@@ -320,7 +320,7 @@ class User extends React.Component {
           {
             headerName: "Manager",
             field: "manager",
-            width: 160,
+            width: 200,
           },
           {
             headerName: "Approval Date/Time",
@@ -604,7 +604,7 @@ class User extends React.Component {
       const encodedUri = encodeURI(csvContent)
       const link = document.createElement("a")
       link.setAttribute("href", encodedUri)
-      link.setAttribute("download", `${username}_mobileoffice.csv`)
+      link.setAttribute("download", `${username}_mobileworking.csv`)
       document.body.appendChild(link)
       link.click()
     }
@@ -776,10 +776,12 @@ class User extends React.Component {
                       Vacations
                     </Button>
                     <Button
-                      onClick={() => this.setState({ view: "homeoffice" })}
-                      appearance={view === "homeoffice" ? "primary" : "ghost"}
+                      onClick={() => this.setState({ view: "mobileworking" })}
+                      appearance={
+                        view === "mobileworking" ? "primary" : "ghost"
+                      }
                     >
-                      Homeoffice
+                      Mobile Working
                     </Button>
                   </ButtonGroup>
                 </div>

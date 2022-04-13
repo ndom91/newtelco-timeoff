@@ -8,7 +8,7 @@
     "ci": "npm build",
     "build": "next build",
     "lint": "next lint",
-    "start": "NODE_ENV=production next start -p 7777",
+    "start": "NODE_ENV=production next start -p 7666",
     "prettier": "prettier ./src/**/*.js",
     "prettier:fix": "prettier --write ./src/**/*.js"
   },

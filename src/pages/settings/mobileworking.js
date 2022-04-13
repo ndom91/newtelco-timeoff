@@ -108,7 +108,7 @@ const HomeOffice = ({ session, data }) => {
         (team) => team.id === selectedTeam
       ).name
     }
-    link.setAttribute("download", `${teamName}_homeofficeExport.csv`)
+    link.setAttribute("download", `${teamName}_mobileworkingExport.csv`)
     link.style.display = "none"
     document.body.appendChild(link)
     link.click()

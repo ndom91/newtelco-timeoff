@@ -22,7 +22,7 @@ const Dashboard = ({ session, dashboard }) => {
       const action = params.get("a")
       const homeoffice = params.get("ho")
       const code = params.get("code")
-      const typeNoun = homeoffice === "true" ? "Homeoffice" : "Absence"
+      const typeNoun = homeoffice === "true" ? "Mobile Working" : "Absence"
 
       if (approvalCompleted === "0") {
         if (window.location.search) {

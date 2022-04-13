@@ -1657,7 +1657,10 @@ class AdminSettings extends React.Component {
                               { label: "Vacation", value: "vacation" },
                               { label: "Sick", value: "sick" },
                               { label: "Trip", value: "trip" },
-                              { label: "Homeoffice", value: "homeoffice" },
+                              {
+                                label: "Mobile Working",
+                                value: "mobileworking",
+                              },
                               { label: "Other", value: "other" },
                             ]}
                             placeholder="Please Select a Type"
