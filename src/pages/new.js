@@ -533,9 +533,9 @@ class New extends React.Component {
         },
       })
       insertData = await insertRes.json()
-    } else if (type === "sick") {
+    } else {
       const confirmed =
-        this.state.vaca.confirmIllness[0] === "confirmed" ? 1 : 0
+        this.state.vaca.confirmIllness?.[0] === "confirmed" ? 1 : 0
       const insertRes = await fetch(`${protocol}//${host}/api/mail/insert`, {
         method: "POST",
         body: JSON.stringify({
