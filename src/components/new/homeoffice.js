@@ -31,7 +31,7 @@ const HomeOffice = ({ values, options }) => {
       id="which-days"
       header={
         <h4 className="form-section-heading" style={{ position: "relative" }}>
-          Home Office
+          Mobile Working
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"

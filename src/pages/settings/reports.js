@@ -100,7 +100,7 @@ class AdminReports extends React.Component {
     const encodedUri = encodeURI(csvContent)
     const link = document.createElement("a")
     link.setAttribute("href", encodedUri)
-    link.setAttribute("download", `newtelco-homeoffice-requests.csv`)
+    link.setAttribute("download", `newtelco-mobileworking-requests.csv`)
     document.body.appendChild(link)
     link.click()
   }
@@ -149,7 +149,7 @@ class AdminReports extends React.Component {
     const encodedUri = encodeURI(csvContent)
     const link = document.createElement("a")
     link.setAttribute("href", encodedUri)
-    link.setAttribute("download", `newtelco-homeoffice-${month}${year}.csv`)
+    link.setAttribute("download", `newtelco-mobileworking-${month}${year}.csv`)
     document.body.appendChild(link)
     link.click()
   }
@@ -436,7 +436,7 @@ class AdminReports extends React.Component {
                   >
                     <Panel style={{ boxShadow: "none" }}>
                       <FormGroup>
-                        <ControlLabel>All Homeoffice</ControlLabel>
+                        <ControlLabel>All Mobile Working</ControlLabel>
                         <IconButton
                           block
                           icon={<Icon icon="export" />}
@@ -451,7 +451,7 @@ class AdminReports extends React.Component {
                     <hr className="reports-hr" />
                     <Panel style={{ boxShadow: "none" }}>
                       <FormGroup>
-                        <ControlLabel>Monthly Homeoffice</ControlLabel>
+                        <ControlLabel>Monthly Mobile Working</ControlLabel>
                         <SelectPicker
                           onChange={this.handleMonthReportSelectChange}
                           data={allMonths}

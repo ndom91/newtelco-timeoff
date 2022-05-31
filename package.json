@@ -3,7 +3,7 @@
   "version": "1.9.9",
   "description": "Absence Management Application",
   "scripts": {
-    "dev": "NODE_ENV=development next -p 3007",
+    "dev": "NODE_ENV=development next -p 7777",
     "dev:inspect": "NODE_OPTIONS='--inspect' NODE_ENV=development next",
     "ci": "npm build",
     "build": "next build",

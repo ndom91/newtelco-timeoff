@@ -643,22 +643,31 @@ class AdminSettings extends React.Component {
         let addCount = 0
         let newUsers = []
         const updateUsers = []
+
         // check for updates to users (fname, lname, team)
         if (dbUsers.length > 0) {
           dbUsers.forEach((user) => {
-            let updateUser = 0
             const adUser = adUsers.filter(
               (aduser) => aduser.email === user.email
             )
             if (adUser.length > 0) {
-              if (user.fname !== adUser[0].fname)
-                user.update = 1 && updateUser++
-              if (user.lname !== adUser[0].lname)
-                user.update = 1 && updateUser++
-              if (user.team !== adUser[0].team) user.update = 1 && updateUser++
-              if (updateUser !== 0) {
+              if (user.fname !== adUser[0].fname) {
+                user.update = true
                 updateCount++
-                updateUsers.push(adUser[0].id)
+                updateUsers.push(adUser[0])
+                return
+              }
+              if (user.lname !== adUser[0].lname) {
+                user.update = true
+                updateCount++
+                updateUsers.push(adUser[0])
+                return
+              }
+              if (user.team !== adUser[0].team) {
+                user.update = true
+                updateCount++
+                updateUsers.push(adUser[0])
+                return
               }
             }
           })
@@ -696,8 +705,9 @@ class AdminSettings extends React.Component {
   }
 
   handleConfirmAdSync = () => {
-    const { newUsersToDb, updateUsers, adUsers } = this.state
+    const { newUsersToDb, updateUsers } = this.state
 
+    // Add Users
     if (newUsersToDb.length > 0) {
       const host = window.location.host
       const protocol = window.location.protocol
@@ -741,18 +751,15 @@ class AdminSettings extends React.Component {
         })
         .catch((err) => console.error(err))
     }
+
+    // Update Users
     if (updateUsers.length > 0) {
       const host = window.location.host
       const protocol = window.location.protocol
-      const updateUserDetails = []
-      updateUsers.forEach((user) => {
-        const adUser = adUsers.find((adUser) => adUser.id === user)
-        updateUserDetails.push(adUser)
-      })
       fetch(`${protocol}//${host}/api/user/update`, {
         method: "POST",
         body: JSON.stringify({
-          users: updateUserDetails,
+          users: updateUsers,
         }),
         headers: {
           "X-CSRF-TOKEN": this.props.session.csrfToken,
@@ -760,15 +767,14 @@ class AdminSettings extends React.Component {
       })
         .then((res) => res.json())
         .then((data) => {
+          // Database users updated, now update UI users in table
           if (data.status === 200) {
             const users = this.state.rowData
-            updateUserDetails.forEach((user) => {
-              const toUpdateUserId = users.indexOf(
-                (u) => u.email === user.email
-              )
-              users[toUpdateUserId].fname = user.fname
-              users[toUpdateUserId].lname = user.lname
-              users[toUpdateUserId].team = user.team
+            updateUsers.forEach((user) => {
+              const toUpdateUser = users.find((u) => u.email === user.email)
+              toUpdateUser.fname = user.fname
+              toUpdateUser.lname = user.lname
+              toUpdateUser.team = user.team
             })
             this.setState({
               rowData: users,
@@ -1651,7 +1657,10 @@ class AdminSettings extends React.Component {
                               { label: "Vacation", value: "vacation" },
                               { label: "Sick", value: "sick" },
                               { label: "Trip", value: "trip" },
-                              { label: "Homeoffice", value: "homeoffice" },
+                              {
+                                label: "Mobile Working",
+                                value: "mobileworking",
+                              },
                               { label: "Other", value: "other" },
                             ]}
                             placeholder="Please Select a Type"

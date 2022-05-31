@@ -298,15 +298,15 @@ const Navigation = ({ expand, admin, token, handleToggle }) => {
                     Settings
                   </Dropdown.Item>
                 </Link>
-                <Link passHref href="/settings/homeoffice">
+                <Link passHref href="/settings/mobileworking">
                   <Dropdown.Item
                     eventKey="5-2"
                     active={
                       typeof window !== "undefined" &&
-                      Router.pathname === "/settings/homeoffice"
+                      Router.pathname === "/settings/mobileworking"
                     }
                   >
-                    Homeoffice
+                    Mobile Working
                   </Dropdown.Item>
                 </Link>
                 <Link passHref href="/settings/reports">

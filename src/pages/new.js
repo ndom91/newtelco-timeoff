@@ -305,7 +305,7 @@ class New extends React.Component {
 
   handleTypeChange = (value) => {
     let hideHistory = false
-    if (["sick", "homeoffice", "trip"].includes(value)) {
+    if (["sick", "mobileworking", "trip"].includes(value)) {
       hideHistory = true
     }
     this.setState({
@@ -403,7 +403,7 @@ class New extends React.Component {
         notifyWarn("You must not leave Requested Days on 0!")
         return
       }
-      if (type !== "homeoffice" && dateFrom && dateTo && manager) {
+      if (type !== "mobileworking" && dateFrom && dateTo && manager) {
         const tableData = [
           {
             title: "From",
@@ -430,7 +430,7 @@ class New extends React.Component {
           openConfirmModal: !this.state.openConfirmModal,
           confirmTableData: tableData,
         })
-      } else if (type === "homeoffice" && weekFrom && weekTo && manager) {
+      } else if (type === "mobileworking" && weekFrom && weekTo && manager) {
         const days = {
           mon: document.getElementById("ho-mon").checked,
           tue: document.getElementById("ho-tue").checked,
@@ -506,7 +506,7 @@ class New extends React.Component {
 
     let days = {}
     let insertData
-    if (type === "homeoffice") {
+    if (type === "mobileworking") {
       days = {
         mon: document.getElementById("ho-mon").checked,
         tue: document.getElementById("ho-tue").checked,
@@ -747,7 +747,7 @@ class New extends React.Component {
                       <Radio value="vacation">Vacation</Radio>
                       <Radio value="sick">Illness</Radio>
                       <Radio value="trip">Trip</Radio>
-                      <Radio value="homeoffice">Homeoffice</Radio>
+                      <Radio value="mobileworking">Mobile Working</Radio>
                       <Radio value="other">Other</Radio>
                     </RadioGroup>
                   </FormGroup>
@@ -949,7 +949,7 @@ class New extends React.Component {
                     </div>
                   </div>
                 </CSSTransition>
-                {vaca.type === "homeoffice" ? (
+                {vaca.type === "mobileworking" ? (
                   <HomeOffice
                     values={{
                       availableManagers,
@@ -1126,8 +1126,8 @@ class New extends React.Component {
                         }}
                       >
                         Are you sure you want to submit the following
-                        {vaca.type === "homeoffice"
-                          ? " homeoffice "
+                        {vaca.type === "mobileworking"
+                          ? " mobile working "
                           : " absence "}
                         request?
                       </span>
