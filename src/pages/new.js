@@ -533,7 +533,7 @@ class New extends React.Component {
         },
       })
       insertData = await insertRes.json()
-    } else {
+    } else if (type === "sick") {
       const confirmed =
         this.state.vaca.confirmIllness[0] === "confirmed" ? 1 : 0
       const insertRes = await fetch(`${protocol}//${host}/api/mail/insert`, {
@@ -574,10 +574,8 @@ class New extends React.Component {
         days: days,
         files: this.state.uploadedFiles,
       }),
-      headers: {
-        "content-type": "application/json",
-      },
     })
+
     const sendData = await sendRes.json()
     if (this.state.openConfirmModal) {
       this.setState({
