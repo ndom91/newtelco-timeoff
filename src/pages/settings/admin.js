@@ -626,18 +626,22 @@ class AdminSettings extends React.Component {
           notifyError("Error", "Error connecting to LDAP Server")
           return
         }
-        const adUsers = []
-        data.users.map((user, index) => {
-          const group = user.dn.split(",")[1]
-          const groupName = group.substr(3, group.length)
-          adUsers.push({
-            id: index,
-            fname: user.givenName,
-            lname: user.sn,
-            email: user.mail,
-            team: groupName,
+        // const adUsers = []
+        const adUsers = data.users
+          .map((user, index) => {
+            const group = user.dn.split(",")[1]
+            const groupName = group.substr(3, group.length)
+            return {
+              id: index,
+              fname: user.givenName,
+              lname: user.sn,
+              email: user.mail,
+              team: groupName,
+            }
           })
-        })
+          .filter((u) => u.fname)
+          .filter((u) => u.email)
+          .filter((u) => u.lname)
         const dbUsers = this.state.rowData
         let updateCount = 0
         let addCount = 0
@@ -672,14 +676,14 @@ class AdminSettings extends React.Component {
             }
           })
         }
+
         // check if there are new users in AD not in DB
         if (dbUsers.length !== adUsers.length) {
-          // filter out users without email
-          const usersWithEmail = adUsers.filter(
-            (user) => user.email !== undefined
-          )
-          newUsers = usersWithEmail.filter(
-            ({ email: id1 }) => !dbUsers.some(({ email: id2 }) => id2 === id1)
+          // newUsers = adUsers.filter(
+          //   ({ email: id1 }) => !dbUsers.some(({ email: id2 }) => id2 === id1)
+          // )
+          newUsers = adUsers.filter(
+            (user) => !dbUsers.find((dbUser) => dbUser.email === user.email)
           )
           addCount = newUsers.length
         }
