@@ -3,7 +3,7 @@
   "version": "1.9.9",
   "description": "Absence Management Application",
   "scripts": {
-    "dev": "NODE_ENV=development next -p 7777",
+    "dev": "NODE_ENV=development next -p 3007",
     "dev:inspect": "NODE_OPTIONS='--inspect' NODE_ENV=development next",
     "ci": "npm build",
     "build": "next build",
@@ -52,7 +52,7 @@
     "moment-range": "^4.0.2",
     "moment-timezone": "^0.5.33",
     "next": "^11.1.2",
-    "next-auth": "^4.0.0-beta.2",
+    "next-auth": "^4.10.3",
     "nodemailer": "^6.6.3",
     "nodemailer-direct-transport": "^3.3.2",
     "nodemailer-smtp-transport": "^2.7.4",
