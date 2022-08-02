@@ -1,6 +1,6 @@
 {
   "name": "company-timeoff",
-  "version": "1.9.9",
+  "version": "1.9.10",
   "description": "Absence Management Application",
   "scripts": {
     "dev": "NODE_ENV=development next -p 3007",

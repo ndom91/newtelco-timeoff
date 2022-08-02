@@ -7,7 +7,7 @@ module.exports = async (req, res) => {
   const checkApprovalQuery = await db.query(escape`
     SELECT id, approved FROM vacations WHERE approval_hash LIKE ${hash}
   `)
-  if (checkApprovalQuery[0].approved === 0) {
+  if (checkApprovalQuery[0]?.approved === 0) {
     res.status(200).json({ code: 200, status: 0 })
   } else {
     res.status(200).json({ code: 200, status: 1 })

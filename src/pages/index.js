@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { Container, Content, Panel } from "rsuite"
-import { getSession } from "next-auth/react"
+import { unstable_getServerSession } from "next-auth/next"
 import { motion } from "framer-motion"
 import dynamic from "next/dynamic"
 import Layout from "../components/layout/index"
@@ -8,6 +8,7 @@ import RequireLogin from "../components/requiredLogin"
 import DashStat from "../components/dashstat"
 import Subheader from "../components/content-subheader"
 import { notifyInfo, notifyWarn } from "../lib/notify"
+import { authOptions } from "./api/auth/[...nextauth]"
 
 const Calendar = dynamic(() => import("../components/gcalendar"), {
   ssr: false,
@@ -176,19 +177,24 @@ const Dashboard = ({ session, dashboard }) => {
   }
 }
 
-export async function getServerSideProps({ req }) {
+export async function getServerSideProps({ req, res }) {
   const host = req && (req.headers["x-forwarded-host"] ?? req.headers["host"])
   let protocol = "https"
   if (host.includes("localhost")) {
     protocol = "http"
   }
-  const session = await getSession({ req })
+  const session = await unstable_getServerSession(req, res, authOptions)
 
   if (!session) {
     return {
       props: {
         session,
-        dashboard: {},
+        dashboard: {
+          lastYear: 0,
+          thisYear: 0,
+          spent: 0,
+          available: 0,
+        },
       },
     }
   } else {
@@ -203,10 +209,10 @@ export async function getServerSideProps({ req }) {
       props: {
         session,
         dashboard: {
-          lastYear: user.resturlaubVorjahr || 0,
-          thisYear: user.jahresurlaubInsgesamt || 0,
-          spent: user.jahresUrlaubAusgegeben || 0,
-          available: user.resturlaubJAHR || 0,
+          lastYear: user?.resturlaubVorjahr || 0,
+          thisYear: user?.jahresurlaubInsgesamt || 0,
+          spent: user?.jahresUrlaubAusgegeben || 0,
+          available: user?.resturlaubJAHR || 0,
         },
       },
     }
