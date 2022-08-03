@@ -642,6 +642,7 @@ class AdminSettings extends React.Component {
           .filter((u) => u.fname)
           .filter((u) => u.email)
           .filter((u) => u.lname)
+          .filter((u) => u.email !== "device@newtelco.de")
         const dbUsers = this.state.rowData
         let updateCount = 0
         let addCount = 0
@@ -1061,28 +1062,30 @@ class AdminSettings extends React.Component {
     const host = window.location.host
     const protocol = window.location.protocol
 
-    const date = params.data.dateJoined.split(".")
-    const day = date[0]
-    const month = date[1]
-    const year = date[2]
+    const date = params.data.dateJoined?.split(".")
+    if (date) {
+      const day = date[0]
+      const month = date[1]
+      const year = date[2]
 
-    fetch(
-      `${protocol}//${host}/api/settings/user/edit?id=${id}&daysRemaining=${encodeURIComponent(
-        daysRemaining
-      )}&dateJoined=${encodeURIComponent(`${year}-${month}-${day}`)}`,
-      {
-        method: "get",
-      }
-    )
-      .then((resp) => resp.json())
-      .then((data) => {
-        if (data.userUpdate.affectedRows === 1) {
-          notifyInfo("User Info Saved")
-        } else {
-          notifyError("Error Saving User Info")
+      fetch(
+        `${protocol}//${host}/api/settings/user/edit?id=${id}&daysRemaining=${encodeURIComponent(
+          daysRemaining
+        )}&dateJoined=${encodeURIComponent(`${year}-${month}-${day}`)}`,
+        {
+          method: "get",
         }
-      })
-      .catch((err) => console.error(err))
+      )
+        .then((resp) => resp.json())
+        .then((data) => {
+          if (data.userUpdate.affectedRows === 1) {
+            notifyInfo("User Info Saved")
+          } else {
+            notifyError("Error Saving User Info")
+          }
+        })
+        .catch((err) => console.error(err))
+    }
   }
 
   handleDeleteFromPersonalModal = () => {
