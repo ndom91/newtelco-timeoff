@@ -663,7 +663,7 @@ class New extends React.Component {
         >
           <Container style={{ alignItems: "center" }}>
             <Subheader header="New Request" subheader="Create New" />
-            <Content style={{ width: "410px" }}>
+            <Content style={{ width: "450px" }}>
               <Form
                 className="new-request-form"
                 layout="vertical"
@@ -994,6 +994,7 @@ class New extends React.Component {
                     <FormGroup>
                       <ControlLabel>On which days?</ControlLabel>
                       <DateRangePicker
+                        preventOverflow
                         placement="top"
                         isoWeek
                         showWeekNumbers
@@ -1136,11 +1137,11 @@ class New extends React.Component {
                         data={confirmTableData}
                         style={{ margin: "20px 50px" }}
                       >
-                        <Column width={200} align="left">
+                        <Column width="150px" align="left">
                           <HeaderCell>Field: </HeaderCell>
                           <Cell dataKey="title" />
                         </Column>
-                        <Column width={250} align="left">
+                        <Column align="left">
                           <HeaderCell>Value: </HeaderCell>
                           <Cell dataKey="value" />
                         </Column>
@@ -1219,25 +1220,33 @@ class New extends React.Component {
                 :global(.calc-sidebar) {
                   display: none;
                 }
-                :global(.rs-form-control-wrapper input) {
-                  max-width: 80%;
+                :global(.rs-container-has-sidebar > .wrapper) {
+                  width: calc(100% - 56px) !important;
                 }
                 :global(.rs-content) {
-                  width: 100%;
+                  width: 100% !important;
                 }
                 :global(.new-request-form) {
-                  width: 80%;
-                }
-                :global(.rs-form-horizontal .rs-form-group .rs-control-label) {
-                  width: 60% !important;
-                }
-                :global(.rs-form-control-wrapper
-                    > .rs-input-number, .rs-form-control-wrapper > .rs-input) {
-                  max-width: 80% !important;
+                  width: 100%;
                 }
                 :global(textarea.rs-input) {
                   min-width: unset;
                 }
+                :global(.rs-picker-daterange-calendar-group) {
+                  display: flex;
+                  flex-direction: column;
+                  height: unset;
+                  min-width: unset;
+                }
+                :global(.rs-modal-sm) {
+                  width: auto;
+                }
+                :global(.rs-modal-sm .rs-table) {
+                  margin: 0 !important;
+                }
+              }
+              :global(.filepond--credits) {
+                display: none;
               }
               :global(.sick-warning) {
                 display: flex !important;
@@ -1268,6 +1277,7 @@ class New extends React.Component {
               :global(.absence-select) {
                 display: flex;
                 justify-content: space-around;
+                flex-wrap: wrap;
                 width: 100%;
               }
               .confirmation-wrapper {
@@ -1293,6 +1303,9 @@ class New extends React.Component {
                 transition: right 250ms ease-in-out;
                 z-index: -1;
               }
+              :global(.rs-picker-menu) {
+                z-index: 9999;
+              }
               :global(.calc-sidebar.active) {
                 right: -240px;
               }
@@ -1302,15 +1315,6 @@ class New extends React.Component {
                 align-items: flex-start;
                 margin: 15px 10px !important;
                 position: relative;
-              }
-              .input-number {
-                position: absolute;
-                top: -25px;
-                left: -15px;
-                opacity: 0.1;
-                font-size: 3rem;
-                font-weight: 600;
-                z-index: 1;
               }
               :global(.history-input-wrapper .rs-help-block) {
                 position: absolute;
@@ -1446,17 +1450,19 @@ class New extends React.Component {
                 padding: 20px;
                 border-radius: 10px;
               }
-              :global(.rs-form-control-wrapper
-                  > .rs-input-number, .rs-form-control-wrapper > .rs-input) {
-                width: 300px;
-              }
               :global(.rs-panel-heading) {
                 text-align: center;
+              }
+              :global(.rs-input) {
+                width: 100% !important;
               }
               :global(.rs-form-horizontal .rs-form-group .rs-control-label) {
                 width: 100%;
                 text-align: left;
                 font-weight: 600;
+              }
+              :global(.rs-input-group.rs-input-number) {
+                max-width: 100%;
               }
               :global(.rs-modal-backdrop.in) {
                 opacity: 0.8;

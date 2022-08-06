@@ -44,7 +44,7 @@ const Layout = ({ user, token, children }) => {
           admin={admin}
           token={token}
           expand={expand}
-          handleToggle={() => onToggle()}
+          handleToggle={onToggle}
         />
         <Container className="wrapper">
           <Content className="content-wrapper">{children}</Content>
