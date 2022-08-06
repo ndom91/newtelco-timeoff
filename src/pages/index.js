@@ -185,7 +185,7 @@ export async function getServerSideProps({ req, res }) {
   }
   const session = await unstable_getServerSession(req, res, authOptions)
 
-  if (!session.user.email) {
+  if (!session?.user?.email) {
     return {
       props: {
         session,
