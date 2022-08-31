@@ -16,6 +16,7 @@ import ApprovedField from "../../components/aggrid/approved"
 import ViewFiles from "../../components/aggrid/viewfiles"
 import Subheader from "../../components/content-subheader"
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs"
+import { differenceWith } from "lodash"
 import "react-tabs/style/react-tabs.css"
 import {
   notifySuccess,
@@ -645,8 +646,6 @@ class AdminSettings extends React.Component {
           .filter((u) => u.email !== "device@newtelco.de")
         const dbUsers = this.state.rowData
         let updateCount = 0
-        let addCount = 0
-        let newUsers = []
         const updateUsers = []
 
         // check for updates to users (fname, lname, team)
@@ -679,21 +678,15 @@ class AdminSettings extends React.Component {
         }
 
         // check if there are new users in AD not in DB
-        if (dbUsers.length !== adUsers.length) {
-          // newUsers = adUsers.filter(
-          //   ({ email: id1 }) => !dbUsers.some(({ email: id2 }) => id2 === id1)
-          // )
-          newUsers = adUsers.filter(
-            (user) => !dbUsers.find((dbUser) => dbUser.email === user.email)
-          )
-          addCount = newUsers.length
-        }
-        if (addCount > 0 || updateCount > 0) {
+        const userDiff = differenceWith(adUsers, dbUsers, (a, b) => {
+          return a.email === b.email
+        })
+        if (userDiff.length > 0 || updateCount > 0) {
           this.setState({
-            addCount: addCount,
+            addCount: userDiff.length,
             updateCount: updateCount,
             updateUsers: updateUsers,
-            newUsersToDb: newUsers,
+            newUsersToDb: userDiff,
             adUsers: adUsers,
             showSyncModal: true,
             adLoading: false,
@@ -1477,6 +1470,8 @@ class AdminSettings extends React.Component {
       confirmDeleteData,
       confirmPersonalDeleteData,
       adLoading,
+      newUsersToDb,
+      updateUsers,
     } = this.state
 
     if (this.props.session && userAdmin) {
@@ -1777,7 +1772,31 @@ class AdminSettings extends React.Component {
                   You have <b>{updateCount}</b> Users which need to be updated
                   and <b>{addCount}</b> users which need to be added.
                 </p>
-                <p>Would you like to proceed?</p>
+                {updateCount > 0 ? (
+                  <div style={{ marginTop: "1rem" }}>
+                    <b>Updating</b>
+                    <ul>
+                      {updateUsers.map((user) => (
+                        <li key={user.email}>
+                          {user.fname} {user.lname} - {user.email} ({user.team})
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+                {addCount > 0 ? (
+                  <div style={{ marginTop: "1rem" }}>
+                    <b>Adding</b>
+                    <ul>
+                      {newUsersToDb.map((user) => (
+                        <li key={user.email}>
+                          {user.fname} {user.lname} - {user.email} ({user.team})
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+                <p style={{ marginTop: "1rem" }}>Would you like to proceed?</p>
               </Modal.Body>
               <Modal.Footer>
                 <Button onClick={this.handleConfirmAdSync} appearance="primary">
